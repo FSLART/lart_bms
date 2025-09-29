@@ -1,0 +1,6 @@
+../Core/Src/ee24.c:40:6:EE24_Delay	1
+../Core/Src/ee24.c:59:6:EE24_Lock	2
+../Core/Src/ee24.c:70:6:EE24_UnLock	1
+../Core/Src/ee24.c:90:6:EE24_Init	4
+../Core/Src/ee24.c:162:6:EE24_Read	2
+../Core/Src/ee24.c:203:6:EE24_Write	5

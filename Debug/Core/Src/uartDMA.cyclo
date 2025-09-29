@@ -1,0 +1,4 @@
+../Core/Src/uartDMA.c:19:5:getDataLen	2
+../Core/Src/uartDMA.c:29:6:startUartDmaTx	3
+../Core/Src/uartDMA.c:43:6:HAL_UART_TxCpltCallback	4
+../Core/Src/uartDMA.c:61:5:printfDma	8

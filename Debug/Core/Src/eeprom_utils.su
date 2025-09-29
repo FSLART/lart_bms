@@ -1,0 +1,2 @@
+../Core/Src/eeprom_utils.c:15:6:Write_EEPROM	80	static
+../Core/Src/eeprom_utils.c:130:5:Read_EEPROM	80	static

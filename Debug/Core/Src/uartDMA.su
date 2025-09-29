@@ -1,0 +1,4 @@
+../Core/Src/uartDMA.c:19:5:getDataLen	16	static
+../Core/Src/uartDMA.c:29:6:startUartDmaTx	16	static
+../Core/Src/uartDMA.c:43:6:HAL_UART_TxCpltCallback	16	static
+../Core/Src/uartDMA.c:61:5:printfDma	48	dynamic

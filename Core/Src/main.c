@@ -325,8 +325,8 @@ int main(void)
 		}
 
 		if (updateUI) {
-			send_ivt_ui();
-			send_ad68_ui();
+			//send_ivt_ui();
+			//send_ad68_ui();
 			updateUI = false;
 		}
 

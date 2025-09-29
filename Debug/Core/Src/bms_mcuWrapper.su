@@ -1,0 +1,11 @@
+../Core/Src/bms_mcuWrapper.c:20:6:bms_csLow	8	static
+../Core/Src/bms_mcuWrapper.c:27:6:bms_csHigh	8	static
+../Core/Src/bms_mcuWrapper.c:34:6:bms_startTimer	8	static
+../Core/Src/bms_mcuWrapper.c:39:6:bms_stopTimer	8	static
+../Core/Src/bms_mcuWrapper.c:46:6:bms_stopTimer_delay	8	static
+../Core/Src/bms_mcuWrapper.c:52:6:bms_startTimer_delay	8	static
+../Core/Src/bms_mcuWrapper.c:58:10:bms_getTimCount_delay	4	static
+../Core/Src/bms_mcuWrapper.c:65:10:bms_getTimCount	4	static
+../Core/Src/bms_mcuWrapper.c:72:6:bms_wakeupChain	16	static
+../Core/Src/bms_mcuWrapper.c:84:6:bms_delayUs	16	static
+../Core/Src/bms_mcuWrapper.c:92:6:bms_delayMsActive	24	static

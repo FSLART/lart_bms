@@ -1,0 +1,6 @@
+../Core/Src/ee24.c:40:6:EE24_Delay	16	static
+../Core/Src/ee24.c:59:6:EE24_Lock	16	static
+../Core/Src/ee24.c:70:6:EE24_UnLock	16	static
+../Core/Src/ee24.c:90:6:EE24_Init	32	static
+../Core/Src/ee24.c:162:6:EE24_Read	56	static
+../Core/Src/ee24.c:203:6:EE24_Write	48	static
