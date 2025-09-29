@@ -163,9 +163,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
 	// Set CS2 Pin to HIGH to disable second SPI on 6822 + MSTR should be high by default
-	HAL_GPIO_WritePin(BMS_CS2_GPIO_Port, BMS_CS2_Pin, GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(BMS_CS2_GPIO_Port, BMS_CS2_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(BMS_MSTR_GPIO_Port, BMS_MSTR_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(BMS_MSTR2_GPIO_Port, BMS_MSTR2_Pin, GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(BMS_MSTR2_GPIO_Port, BMS_MSTR2_Pin, GPIO_PIN_SET);
 
 	// Start Timers
 	HAL_TIM_Base_Start_IT(&htim8);
@@ -850,10 +850,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(BMS_CS_GPIO_Port, BMS_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(BMS_CS2_GPIO_Port, BMS_CS2_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, BMS_MSTR2_Pin|BMS_MSTR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(BMS_MSTR_GPIO_Port, BMS_MSTR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -868,25 +865,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(BMS_CS_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : BMS_CS2_Pin */
-  GPIO_InitStruct.Pin = BMS_CS2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(BMS_CS2_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : BMS_WAKE2_Pin BMS_INT_Pin BMS_WAKE_Pin */
-  GPIO_InitStruct.Pin = BMS_WAKE2_Pin|BMS_INT_Pin|BMS_WAKE_Pin;
+  /*Configure GPIO pins : BMS_INT_Pin BMS_WAKE_Pin */
+  GPIO_InitStruct.Pin = BMS_INT_Pin|BMS_WAKE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : BMS_MSTR2_Pin BMS_MSTR_Pin */
-  GPIO_InitStruct.Pin = BMS_MSTR2_Pin|BMS_MSTR_Pin;
+  /*Configure GPIO pin : BMS_MSTR_Pin */
+  GPIO_InitStruct.Pin = BMS_MSTR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(BMS_MSTR_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);

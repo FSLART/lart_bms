@@ -13,9 +13,9 @@
 ../Core/Src/main.c:787:13:MX_USART1_UART_Init	2
 ../Core/Src/main.c:818:13:MX_DMA_Init	1
 ../Core/Src/main.c:836:13:MX_GPIO_Init	1
-../Core/Src/main.c:902:1:__io_putchar	2
-../Core/Src/main.c:913:6:HAL_TIM_PeriodElapsedCallback	4
-../Core/Src/main.c:935:10:getRuntimeMs	1
-../Core/Src/main.c:939:10:getRuntimeMsDiff	1
-../Core/Src/main.c:943:6:HAL_GPIO_EXTI_Callback	3
-../Core/Src/main.c:962:6:Error_Handler	1
+../Core/Src/main.c:892:1:__io_putchar	2
+../Core/Src/main.c:903:6:HAL_TIM_PeriodElapsedCallback	4
+../Core/Src/main.c:925:10:getRuntimeMs	1
+../Core/Src/main.c:929:10:getRuntimeMsDiff	1
+../Core/Src/main.c:933:6:HAL_GPIO_EXTI_Callback	3
+../Core/Src/main.c:952:6:Error_Handler	1

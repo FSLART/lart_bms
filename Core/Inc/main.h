@@ -88,16 +88,10 @@ void Error_Handler(void);
 #define CHARGER_CAN_RX_GPIO_Port GPIOB
 #define CHARGER_CAN_TX_Pin GPIO_PIN_13
 #define CHARGER_CAN_TX_GPIO_Port GPIOB
-#define BMS_CS2_Pin GPIO_PIN_7
-#define BMS_CS2_GPIO_Port GPIOC
 #define BMS_CAN_RX_Pin GPIO_PIN_11
 #define BMS_CAN_RX_GPIO_Port GPIOA
 #define BMS_CAN_TX_Pin GPIO_PIN_12
 #define BMS_CAN_TX_GPIO_Port GPIOA
-#define BMS_WAKE2_Pin GPIO_PIN_3
-#define BMS_WAKE2_GPIO_Port GPIOB
-#define BMS_MSTR2_Pin GPIO_PIN_4
-#define BMS_MSTR2_GPIO_Port GPIOB
 #define BMS_INT_Pin GPIO_PIN_5
 #define BMS_INT_GPIO_Port GPIOB
 #define BMS_WAKE_Pin GPIO_PIN_6
