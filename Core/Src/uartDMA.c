@@ -2,10 +2,14 @@
 #include "stdio.h"
 #include "stdarg.h"
 #include "stdbool.h"
+#include "stdint.h"
+#include "string.h"
 #include "main.h"
 
 #define uartHandle huart1
 #define BUFFER_SIZE 10000
+
+static void jsonSendEscaped(const char *s);
 
 char buffer[BUFFER_SIZE] = { 0 };
 volatile int head = 0;
@@ -101,4 +105,60 @@ int printfDma(const char *format, ...) {
 	}
 
 	return written;
+}
+
+/* One-size function:
+ * - printConsole("hello");
+ * - printConsole("cell %d = %.3f V", i, v);
+ * Emits: [{"console":"..."}]\n
+ * (change "console" to "cossole" if you need that exact key)
+ */
+void printConsole(const char *format, ...)
+{
+    if (!format) format = "";
+
+    enum { TEMP_SZ = 256 };       // tune if you need longer messages
+    char tmp[TEMP_SZ];
+
+    va_list args;
+    va_start(args, format);
+    int n = vsnprintf(tmp, TEMP_SZ, format, args);
+    va_end(args);
+
+    if (n < 0) {
+        tmp[0] = '\0';            // formatting error -> empty
+    } else if (n >= TEMP_SZ) {
+        tmp[TEMP_SZ - 1] = '\0';  // truncated but valid
+    }
+
+    printfDma("[");
+    printfDma("{\"console\":\"");
+    jsonSendEscaped(tmp);
+    printfDma("\"}");
+    printfDma("]\n");
+}
+
+
+/* Stream a JSON-escaped string through printfDma
+   Prevenir que a mensagem termine por emissão de caracteres especiais */
+static void jsonSendEscaped(const char *s)
+{
+    while (*s) {
+        unsigned char c = (unsigned char)*s++;
+        switch (c) {
+            case '\"': printfDma("\\\""); break;
+            case '\\': printfDma("\\\\"); break;
+            case '\b': printfDma("\\b");  break;
+            case '\f': printfDma("\\f");  break;
+            case '\n': printfDma("\\n");  break;
+            case '\r': printfDma("\\r");  break;
+            case '\t': printfDma("\\t");  break;
+            default:
+                if (c < 0x20) {
+                    printfDma("\\u%04X", (unsigned)c);
+                } else {
+                    printfDma("%c", c);
+                }
+        }
+    }
 }
