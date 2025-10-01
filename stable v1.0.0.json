@@ -1,0 +1,4441 @@
+[
+    {
+        "id": "21ec44b368b9d9c6",
+        "type": "tab",
+        "label": "Send commands + console ",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "627403360cf4778e",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "735cd1324e469561",
+        "type": "tab",
+        "label": "Flow 4",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "345c92b9b509ab4e",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "823cd654acf433ae",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-dark",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false,
+                "reset": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#097479",
+                    "value": "#097479",
+                    "edited": true
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#097479",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#0eb8c0",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#555555",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#eeeeee",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#097479",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey",
+                "palette": "light"
+            }
+        },
+        "site": {
+            "name": "BMS - LART",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "ce8d89e89f216172",
+        "type": "serial-port",
+        "name": "Serialport",
+        "serialport": "COM8",
+        "serialbaud": "230400",
+        "databits": 8,
+        "parity": "none",
+        "stopbits": 1,
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": 10000
+    },
+    {
+        "id": "43a109332d73803c",
+        "type": "serial-port",
+        "name": "STM32",
+        "serialport": "COM14",
+        "serialbaud": "230400",
+        "databits": 8,
+        "parity": "none",
+        "stopbits": 1,
+        "waitfor": "[",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "100000"
+    },
+    {
+        "id": "51a52d7b11c658d5",
+        "type": "serial-port",
+        "name": "",
+        "serialport": "/dev/ttyUSB0",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\r",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    },
+    {
+        "id": "379a501f.53b59",
+        "type": "ui_tab",
+        "name": "ui-table command",
+        "icon": "fa-table",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "c91332c0.50c11",
+        "type": "ui_group",
+        "name": "commands",
+        "tab": "379a501f.53b59",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "4f15d86c9404bd08",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "b2fa81c635688e71",
+        "type": "ui_tab",
+        "name": "Cells Overview",
+        "icon": "fa-battery-three-quarters",
+        "order": 3,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "35e189928bbdc4e3",
+        "type": "ui_group",
+        "name": "Cell Voltages",
+        "tab": "b2fa81c635688e71",
+        "order": 1,
+        "disp": true,
+        "width": "32",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "bdd7616a7bd6485d",
+        "type": "ui_group",
+        "name": "Overviwew",
+        "tab": "4f15d86c9404bd08",
+        "order": 2,
+        "disp": true,
+        "width": "22",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "38ba014e313973df",
+        "type": "ui_group",
+        "name": "Temperature Sensors",
+        "tab": "4f15d86c9404bd08",
+        "order": 3,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "21684ab34e4f059b",
+        "type": "ui_group",
+        "name": "CAN",
+        "tab": "4f15d86c9404bd08",
+        "order": 4,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "09bbd67aa15a609b",
+        "type": "ui_group",
+        "name": "Startup",
+        "tab": "4f15d86c9404bd08",
+        "order": 5,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "0ed4eeb8e062e528",
+        "type": "ui_tab",
+        "name": "ISA IVT-S",
+        "icon": "flash_auto",
+        "order": 4,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "feee56445f470f84",
+        "type": "ui_group",
+        "name": "Config",
+        "tab": "0ed4eeb8e062e528",
+        "order": 1,
+        "disp": true,
+        "width": "4",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ae2c1662b5240ce4",
+        "type": "ui_group",
+        "name": "Charts collum 1",
+        "tab": "b2fa81c635688e71",
+        "order": 2,
+        "disp": false,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "40ac40c8ab84a7e6",
+        "type": "ui_group",
+        "name": "Charts collum 3",
+        "tab": "b2fa81c635688e71",
+        "order": 4,
+        "disp": false,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "0f83b582153685dd",
+        "type": "ui_group",
+        "name": "Charts collum 2",
+        "tab": "b2fa81c635688e71",
+        "order": 3,
+        "disp": false,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "3eec74d228193152",
+        "type": "ui_group",
+        "name": "Real Time",
+        "tab": "0ed4eeb8e062e528",
+        "order": 3,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e8fa0ea368ed17ed",
+        "type": "ui_group",
+        "name": "Charts",
+        "tab": "0ed4eeb8e062e528",
+        "order": 4,
+        "disp": true,
+        "width": "8",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "cee958afbc772faa",
+        "type": "ui_group",
+        "name": "Faults",
+        "tab": "0ed4eeb8e062e528",
+        "order": 2,
+        "disp": true,
+        "width": "4",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "cedf17acc0ba7a0e",
+        "type": "ui_tab",
+        "name": "Terminal",
+        "icon": "fa-terminal",
+        "order": 5,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "a4a84291856ab1c5",
+        "type": "ui_group",
+        "name": "Console",
+        "tab": "cedf17acc0ba7a0e",
+        "order": 1,
+        "disp": false,
+        "width": "26",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "b075d2ac.a69f3",
+        "type": "ui_table",
+        "z": "21ec44b368b9d9c6",
+        "group": "",
+        "name": "",
+        "order": 0,
+        "width": "17",
+        "height": "9",
+        "columns": [
+            {
+                "field": "id",
+                "title": "id",
+                "width": "",
+                "align": "right",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "timestamp",
+                "title": "Timestamp",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "text",
+                "title": "Text",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 1,
+        "cts": true,
+        "x": 710,
+        "y": 380,
+        "wires": [
+            [
+                "588f316.0b070d",
+                "76c4495f.da70f8"
+            ]
+        ]
+    },
+    {
+        "id": "f8a9323b.fedf4",
+        "type": "inject",
+        "z": "21ec44b368b9d9c6",
+        "name": "add @ top",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 74,
+        "y": 278,
+        "wires": [
+            [
+                "eb577b4b.510388"
+            ]
+        ]
+    },
+    {
+        "id": "b54f6ce8.3b1a4",
+        "type": "debug",
+        "z": "21ec44b368b9d9c6",
+        "name": "addRow",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 295,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "eb577b4b.510388",
+        "type": "function",
+        "z": "21ec44b368b9d9c6",
+        "name": "addRow @ top",
+        "func": "var id=flow.get(\"lastId\") || 0;\n++id;\nmsg.payload={\n    command:\"addRow\",\n    arguments: [\n        [\n            {\n            \"id\":id,\n            \"timestamp\":msg.payload,\n            \"text\":\"addRow @ top (#\"+id+\")\"\n            }\n        ],\n        true\n    ],\n    returnPromise: true\n}\nflow.set(\"lastId\",id);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 315,
+        "y": 244,
+        "wires": [
+            [
+                "b54f6ce8.3b1a4",
+                "b075d2ac.a69f3"
+            ]
+        ],
+        "info": "# addRow([row],onTop)\n\n`onTop=true`\n\nadds a new Row on top of the table"
+    },
+    {
+        "id": "588f316.0b070d",
+        "type": "debug",
+        "z": "21ec44b368b9d9c6",
+        "name": "response from ui-table",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 1015,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "12606591.7a3dca",
+        "type": "inject",
+        "z": "21ec44b368b9d9c6",
+        "name": "Init 20 rows",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "20",
+        "payloadType": "num",
+        "x": 84,
+        "y": 108,
+        "wires": [
+            [
+                "d4dce9b4.1f2588"
+            ]
+        ]
+    },
+    {
+        "id": "d4dce9b4.1f2588",
+        "type": "function",
+        "z": "21ec44b368b9d9c6",
+        "name": "table with n rows as array",
+        "func": "var numberOfRows = msg.payload;\nflow.set(\"lastId\",numberOfRows);\nmsg.payload=[];\nfor (let i=1; i<=numberOfRows; i++) {\n    msg.payload.push({\"id\":i,\"timestamp\":Date.now(),\"text\":\"this is line\"+i})\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 345,
+        "y": 74,
+        "wires": [
+            [
+                "b075d2ac.a69f3",
+                "f9bfd98.abe1a28",
+                "76c4495f.da70f8"
+            ]
+        ]
+    },
+    {
+        "id": "8254f2d2.eeaa1",
+        "type": "function",
+        "z": "21ec44b368b9d9c6",
+        "name": "updateOrAddData (add)",
+        "func": "var id=flow.get(\"lastId\") || 0;\n++id;\nmsg.payload={\n    command:\"updateOrAddData\",\n    arguments: [\n        [\n            {\n            \"id\":id,\n            \"timestamp\":msg.payload,\n            \"text\":\"updateOrAddData (add) (#\"+id+\")\"\n            }\n        ]\n    ],\n    returnPromise: true\n}\nflow.set(\"lastId\",id);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 345,
+        "y": 431,
+        "wires": [
+            [
+                "570e922d.1d465c",
+                "b075d2ac.a69f3"
+            ]
+        ],
+        "info": "# updateOrAddData([row])\n\nadds a the row with a new id (same as addRow)"
+    },
+    {
+        "id": "cbd6baa0.fa7d78",
+        "type": "inject",
+        "z": "21ec44b368b9d9c6",
+        "name": "add",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 64,
+        "y": 465,
+        "wires": [
+            [
+                "8254f2d2.eeaa1"
+            ]
+        ]
+    },
+    {
+        "id": "570e922d.1d465c",
+        "type": "debug",
+        "z": "21ec44b368b9d9c6",
+        "name": "updateOrAddData",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 325,
+        "y": 550,
+        "wires": []
+    },
+    {
+        "id": "782ab41e.cbb66c",
+        "type": "inject",
+        "z": "21ec44b368b9d9c6",
+        "name": "add @ end",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 74,
+        "y": 363,
+        "wires": [
+            [
+                "760fde70.028f"
+            ]
+        ]
+    },
+    {
+        "id": "760fde70.028f",
+        "type": "function",
+        "z": "21ec44b368b9d9c6",
+        "name": "addRow @ end",
+        "func": "var id=flow.get(\"lastId\") || 0;\n++id;\nmsg.payload={\n    command:\"addRow\",\n    arguments: [\n        [\n            {\n            \"id\":id,\n            \"timestamp\":msg.payload,\n            \"text\":\"addRow @ end (#\"+id+\")\"\n            }\n        ],\n        false\n    ],\n    returnPromise: true\n}\nflow.set(\"lastId\",id);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 315,
+        "y": 329,
+        "wires": [
+            [
+                "b54f6ce8.3b1a4",
+                "b075d2ac.a69f3"
+            ]
+        ],
+        "info": "# addRow([row],onTop)\n\n`onTop=false`\n\nadds a new Row on top of the table"
+    },
+    {
+        "id": "deeff963.289f08",
+        "type": "function",
+        "z": "21ec44b368b9d9c6",
+        "name": "updateOrAddData (update)",
+        "func": "var id=flow.get(\"lastId\") || 0;\nif (id<2) {\n    node.error(\"use only if minimum of 2 Lines existing!\")\n    return;\n}\n\nid=Math.floor(id/2); //\nmsg.payload={\n    command:\"updateOrAddData\",\n    arguments: [\n        [\n            {\n            \"id\":id,\n            \"timestamp\":msg.payload,\n            \"text\":\"updateOrAddData (update) (#\"+id+\")\"\n            }\n        ]\n    ],\n    returnPromise: true\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 355,
+        "y": 499,
+        "wires": [
+            [
+                "570e922d.1d465c",
+                "b075d2ac.a69f3"
+            ]
+        ],
+        "info": "# updateOrAddData([row])\n\nupdates a the row with an id in the middle from 1 to lastId, hope it exists!\nIf not a row will be added"
+    },
+    {
+        "id": "557e109d.f9d7e",
+        "type": "comment",
+        "z": "21ec44b368b9d9c6",
+        "name": "update ui-table by passing the complete tableData as array",
+        "info": "",
+        "x": 207,
+        "y": 23,
+        "wires": []
+    },
+    {
+        "id": "6a095f36.8f13a",
+        "type": "comment",
+        "z": "21ec44b368b9d9c6",
+        "name": "update ui-table by using commands",
+        "info": "",
+        "x": 137,
+        "y": 193,
+        "wires": []
+    },
+    {
+        "id": "f08308d6.c66f68",
+        "type": "inject",
+        "z": "21ec44b368b9d9c6",
+        "name": "update",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 64,
+        "y": 533,
+        "wires": [
+            [
+                "deeff963.289f08"
+            ]
+        ]
+    },
+    {
+        "id": "77b4d006.543ed",
+        "type": "function",
+        "z": "21ec44b368b9d9c6",
+        "name": "deleteRow",
+        "func": "var id=flow.get(\"lastId\") || 0;\nif (id<2) {\n    node.error(\"use only if minimum of 2 Lines existing!\")\n    return;\n}\n\nid=Math.floor(id/2); //\nmsg.payload={\n    command:\"deleteRow\",\n    arguments: [id],\n    returnPromise: true\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 305,
+        "y": 652,
+        "wires": [
+            [
+                "e34a75a3.9f0188",
+                "b075d2ac.a69f3"
+            ]
+        ],
+        "info": "# deleteRow(row / [rows])\n\n`row=singleId`\n\nor\n\n`row=[array of IDs]` // seems there is a bug/issue in tabulator\n\ndelete a single the row with an id in the middle from 1 to lastId, hope it exists.\n\nWill fail on the second hit if you inject this two times because the id wad deleteted on the first"
+    },
+    {
+        "id": "936c8219.458bc",
+        "type": "inject",
+        "z": "21ec44b368b9d9c6",
+        "name": "delete",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 64,
+        "y": 686,
+        "wires": [
+            [
+                "77b4d006.543ed"
+            ]
+        ]
+    },
+    {
+        "id": "e34a75a3.9f0188",
+        "type": "debug",
+        "z": "21ec44b368b9d9c6",
+        "name": "deleteRow",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 305,
+        "y": 771,
+        "wires": []
+    },
+    {
+        "id": "fafa24f8.577d28",
+        "type": "comment",
+        "z": "21ec44b368b9d9c6",
+        "name": "deleteRow will punch holes in table!",
+        "info": "",
+        "x": 137,
+        "y": 601,
+        "wires": []
+    },
+    {
+        "id": "f9bfd98.abe1a28",
+        "type": "debug",
+        "z": "21ec44b368b9d9c6",
+        "name": "addRow",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 295,
+        "y": 125,
+        "wires": []
+    },
+    {
+        "id": "76c4495f.da70f8",
+        "type": "function",
+        "z": "21ec44b368b9d9c6",
+        "name": "table recorder",
+        "func": "var status = {fill:\"red\",shape:\"ring\",text:\"an error occured\"};\nvar success = (msg.topic && msg.topic===\"success\") || false;\nvar tableData = flow.get(\"tableData\");\nif (tableData === undefined) {\n    tableData = [];\n    flow.set(\"tableData\",tableData);\n}\n\n// find the index for a row in tableData for a given index (id)\nfunction checkIndex(id) {\n    let matchRow=-1\n    tableData.forEach(function (row,index){\n        if (row.id === id){\n            matchRow=index;\n            return matchRow;\n        }\n    })\n    return matchRow;\n}\n\n// flat merge one row \nfunction mergeRow(dest,source) {\n    Object.keys(source).forEach(function(key) {\n        dest[key]=source[key];\n    })\n}\n\n//merge or add one or many rows into tableData \nfunction mergeData(newData,toTop) {\n    newData.forEach(function (item,index) {\n        node.warn([\"findIndex\",item]);\n        let row=checkIndex(item.id);\n        if (row<0) { // row do not existst in tableData\n            if (toTop) {\n                tableData.push(item);\n                status.text+=\"newRow @ top\";\n            } else {\n                tableData.unshift(item);\n                status.text+=\"newRow @ bottom\";\n            }\n            return;\n        } else { // row exists so update\n            mergeRow(tableData[row],item);\n            status.text+=\"row updated\";\n            return;\n        }\n        if (status.text!==\"\") node.status(status);\n    });\n}\n\nswitch (typeof msg.payload){\n    case \"string\":\n        node.warn([\"[table recorder] \",(typeof msg.payload),msg.payload]);\n        switch (msg.payload){\n            case \"change\":\n                status={fill:\"green\",shape:\"dot\",text:\"table restored \"+tableData.length+\" rows\"};\n                msg.payload=tableData;\n                break;\n        }\n        break;\n    case \"object\":\n        node.warn([\"[table recorder] \",(typeof msg.payload),msg.payload]);\n        if (Array.isArray(msg.payload)) { // replace all tableData\n            status={fill:\"green\",shape:\"dot\",text:\"table replaced \"+msg.payload.length+\" rows\"};\n            tableData=RED.util.cloneMessage(msg.payload); \n        } else {\n            switch (msg.payload.command) { // clearData does not return a promise!\n                case \"clearData\":\n                    status={fill:\"green\",shape:\"dot\",text:\"clearData: done\"};\n                    tableData=[];\n                    flow.set(\"lastId\",0);\n                    break;                \n            }\n        }\n        break;\n    default: // likely a msg fom a ui-table command or callback\n        if (msg.hasOwnProperty(\"topic\")&&\n            msg.hasOwnProperty(\"ui_control\") && \n            msg.ui_control.hasOwnProperty(\"callback\") &&\n            msg.hasOwnProperty(\"return\")) { // message originates from a ui-table callback\n            if (success) {\n                switch(msg.return.command) {\n                    case \"addRow\":\n                        status.text=\"addRow: \";\n                        mergeData(msg.return.arguments[0],msg.return.arguments[1]);\n                        status.shape=\"dot\";\n                        break;\n                    case \"updateOrAddData\":\n                        status.text=\"updateOrAddData: \";\n                        mergeData(msg.return.arguments[0]);\n                        break;\n                    case \"deleteRow\":\n                        let row=checkIndex(msg.return.arguments[0]);\n                        tableData.splice(row,1);\n                        status.shape=\"dot\";\n                        status.text=\"deleteRow: \"+row+\" deleted\";\n                        break;\n                    default:\n                        status={fill:\"yellow\",shape:\"dot\",text:msg.return.command + \" unknown!\"};\n                        break;         \n                }\n            } else {\n                status.text=msg.topic+\" \"+msg.error;\n            }\n        }\n        break;\n}\nif (success) status.fill=\"green\";\nflow.set(\"tableData\",tableData);\nnode.status(status);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 995,
+        "y": 448,
+        "wires": [
+            [
+                "b075d2ac.a69f3"
+            ]
+        ],
+        "icon": "font-awesome/fa-database",
+        "info": "# simple ui-table handler\n## abstract\nUsing ui-table with commands offer the hole flexibilty of tabulator. The table can be manipulated down to cell level.\nAs the ui-table node only passes the commands to tabulator and receives promises back the node does not hold the table data. If the data should be available after refresh, tab change, new connections the flow is responsible to cache the data and all the manipulations.\nThis node takes care of most simple data manipulation commands and holds a copy of the data in `flow.context.tabledata`\n\n## details\n\n### row index (id)\n\nTo identify a [row a index](http://tabulator.info/docs/4.5/data#overview) column has to be defined. This colum defaults to `id` but can be changed by specifing a **field** by using `msg.ui_control`. In this example the row index is a simple counter adding up by one if a new line is added.\n\n### addRow command\n\n[details @ tabulator addRow docs](http://tabulator.info/docs/4.5/update#alter-add)\n\nYou can add a row by sending the `addRow` command. You can decide if the row adds on the top or at the bottom of table.\n\n### addOrUpdate command\n\n[details @ tabulator addOrUpdate docs](http://tabulator.info/docs/4.5/update#alter-update)\n\nTo update data the best way is to use the `addOrUpdate` command. If the row indetified by the index is not exeisting a new row will be added automatically\n\n### deleteRow command\n\n[details @ tabulator deleteRow docs](http://tabulator.info/docs/4.5/update#row)\n\nDelete one or more rows (passing an array always results in \"row not found error\"! I think there is an issue in tabulator)\n\n### clearData\n\n[details @ tabulator clearData docs](http://tabulator.info/docs/4.5/update#alter-empty)\n\nunfortunately this command (currently) do not send a promise back! So we have to pass it directly to the table handler"
+    },
+    {
+        "id": "7b1c27f4.36a718",
+        "type": "ui_ui_control",
+        "z": "21ec44b368b9d9c6",
+        "name": "",
+        "events": "all",
+        "x": 720,
+        "y": 448,
+        "wires": [
+            [
+                "76c4495f.da70f8"
+            ]
+        ]
+    },
+    {
+        "id": "8b79840b.aff7e8",
+        "type": "inject",
+        "z": "21ec44b368b9d9c6",
+        "d": true,
+        "name": "delete 1-5",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 74,
+        "y": 720,
+        "wires": [
+            [
+                "fee8b78d.068f98"
+            ]
+        ]
+    },
+    {
+        "id": "fee8b78d.068f98",
+        "type": "function",
+        "z": "21ec44b368b9d9c6",
+        "d": true,
+        "name": "delete Rows [2,4,6,8,10]",
+        "func": "var id=flow.get(\"lastId\") || 0;\nif (id<10) {\n    node.error(\"use only if minimum of 10 Lines existing!\")\n    return;\n}\n\nid=Math.floor(id/2); //\nmsg.payload={\n    command:\"deleteRow\",\n    arguments: [[2,4,6,8,10]],\n    returnPromise: true\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 345,
+        "y": 720,
+        "wires": [
+            [
+                "b075d2ac.a69f3",
+                "e34a75a3.9f0188"
+            ]
+        ],
+        "info": "# deleteRow(row / [rows])\n\n`row=singleId`\n\nor\n\n`row=[array of IDs]` // seems there is a bug/issue in tabulator\n\ndelete a single the row with an id in the middle from 1 to lastId, hope it exists.\n\nWill fail on the second hit if you inject this two times because the id wad deleteted on the first"
+    },
+    {
+        "id": "fe4ba122.df8fb",
+        "type": "function",
+        "z": "21ec44b368b9d9c6",
+        "name": "clearData",
+        "func": "\nmsg.payload={\n    command:\"clearData\",\n    arguments: [],\n    returnPromise: true\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 295,
+        "y": 890,
+        "wires": [
+            [
+                "6e49e266.f72b6c",
+                "b075d2ac.a69f3",
+                "76c4495f.da70f8"
+            ]
+        ],
+        "info": "# clear data\n\nunfortunately this command (currently) do not send a promise back! So we have to pass it directly to the table handler"
+    },
+    {
+        "id": "82194704.7ab2d8",
+        "type": "inject",
+        "z": "21ec44b368b9d9c6",
+        "name": "clear",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 64,
+        "y": 924,
+        "wires": [
+            [
+                "fe4ba122.df8fb"
+            ]
+        ]
+    },
+    {
+        "id": "df623146.8270a",
+        "type": "comment",
+        "z": "21ec44b368b9d9c6",
+        "name": "Erase all data by using clearData command",
+        "info": "",
+        "x": 167,
+        "y": 839,
+        "wires": []
+    },
+    {
+        "id": "6e49e266.f72b6c",
+        "type": "debug",
+        "z": "21ec44b368b9d9c6",
+        "name": "clearData",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 295,
+        "y": 941,
+        "wires": []
+    },
+    {
+        "id": "d404def3.39a63",
+        "type": "inject",
+        "z": "21ec44b368b9d9c6",
+        "name": "change",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "change",
+        "payloadType": "str",
+        "x": 710,
+        "y": 516,
+        "wires": [
+            [
+                "76c4495f.da70f8"
+            ]
+        ]
+    },
+    {
+        "id": "36be75f0.115c6a",
+        "type": "ui_button",
+        "z": "21ec44b368b9d9c6",
+        "name": "",
+        "group": "c91332c0.50c11",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Init 20 rows",
+        "tooltip": "init table by passing the hole table array (default way)",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "20",
+        "payloadType": "num",
+        "topic": "",
+        "x": 84,
+        "y": 74,
+        "wires": [
+            [
+                "d4dce9b4.1f2588"
+            ]
+        ]
+    },
+    {
+        "id": "b496aa6a.32f2d8",
+        "type": "ui_button",
+        "z": "21ec44b368b9d9c6",
+        "name": "",
+        "group": "c91332c0.50c11",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "add one row @ top",
+        "tooltip": "add a new row to the top",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "date",
+        "topic": "",
+        "x": 104,
+        "y": 244,
+        "wires": [
+            [
+                "eb577b4b.510388"
+            ]
+        ]
+    },
+    {
+        "id": "79d05aaa.e2c7d4",
+        "type": "ui_button",
+        "z": "21ec44b368b9d9c6",
+        "name": "",
+        "group": "c91332c0.50c11",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "add one row @ end",
+        "tooltip": "add a new row at the end ",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "date",
+        "topic": "",
+        "x": 104,
+        "y": 329,
+        "wires": [
+            [
+                "760fde70.028f"
+            ]
+        ]
+    },
+    {
+        "id": "d37bf3a8.373dd",
+        "type": "ui_button",
+        "z": "21ec44b368b9d9c6",
+        "name": "",
+        "group": "c91332c0.50c11",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "addOrUpdate (add)",
+        "tooltip": "add a new row by passing a new id",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "date",
+        "topic": "",
+        "x": 104,
+        "y": 431,
+        "wires": [
+            [
+                "8254f2d2.eeaa1"
+            ]
+        ]
+    },
+    {
+        "id": "d31c2ac7.05bed8",
+        "type": "ui_button",
+        "z": "21ec44b368b9d9c6",
+        "name": "",
+        "group": "c91332c0.50c11",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "addOrUpdate (update)",
+        "tooltip": "update the row in the middle (or add if a row with that id not exists)",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "date",
+        "topic": "",
+        "x": 114,
+        "y": 499,
+        "wires": [
+            [
+                "deeff963.289f08"
+            ]
+        ]
+    },
+    {
+        "id": "c637efb3.9c38c",
+        "type": "ui_button",
+        "z": "21ec44b368b9d9c6",
+        "name": "",
+        "group": "c91332c0.50c11",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "delete (middle)",
+        "tooltip": "delate the row with the id=maxId/2. Will result an error if not existing",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "date",
+        "topic": "",
+        "x": 94,
+        "y": 652,
+        "wires": [
+            [
+                "77b4d006.543ed"
+            ]
+        ]
+    },
+    {
+        "id": "5531f2d0.fb913c",
+        "type": "ui_button",
+        "z": "21ec44b368b9d9c6",
+        "name": "",
+        "group": "c91332c0.50c11",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "clear",
+        "tooltip": "clear all table data",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "date",
+        "topic": "",
+        "x": 64,
+        "y": 890,
+        "wires": [
+            [
+                "fe4ba122.df8fb"
+            ]
+        ]
+    },
+    {
+        "id": "858a6bc2.0384e8",
+        "type": "ui_text",
+        "z": "21ec44b368b9d9c6",
+        "group": "c91332c0.50c11",
+        "order": 9,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "status",
+        "format": "{{status.text}}",
+        "layout": "col-center",
+        "x": 880,
+        "y": 686,
+        "wires": []
+    },
+    {
+        "id": "213d641a.12a53c",
+        "type": "status",
+        "z": "21ec44b368b9d9c6",
+        "name": "",
+        "scope": [
+            "76c4495f.da70f8"
+        ],
+        "x": 719,
+        "y": 686,
+        "wires": [
+            [
+                "858a6bc2.0384e8"
+            ]
+        ]
+    },
+    {
+        "id": "e7d10007.d6e73",
+        "type": "ui_button",
+        "z": "21ec44b368b9d9c6",
+        "name": "",
+        "group": "c91332c0.50c11",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "refresh (change)",
+        "tooltip": "Same as ui-control sending a change message",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "change",
+        "payloadType": "str",
+        "topic": "",
+        "x": 740,
+        "y": 482,
+        "wires": [
+            [
+                "76c4495f.da70f8"
+            ]
+        ]
+    },
+    {
+        "id": "8386c3a7.41ead",
+        "type": "inject",
+        "z": "21ec44b368b9d9c6",
+        "name": "format table",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 84,
+        "y": 1077,
+        "wires": [
+            [
+                "8ae898e7.418068"
+            ]
+        ]
+    },
+    {
+        "id": "f59e9830.e23608",
+        "type": "comment",
+        "z": "21ec44b368b9d9c6",
+        "name": "Format Table using ui_control",
+        "info": "",
+        "x": 117,
+        "y": 992,
+        "wires": []
+    },
+    {
+        "id": "19e88f0.0c32071",
+        "type": "debug",
+        "z": "21ec44b368b9d9c6",
+        "name": "clearData",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 295,
+        "y": 1094,
+        "wires": []
+    },
+    {
+        "id": "ea064e3c.22437",
+        "type": "ui_button",
+        "z": "21ec44b368b9d9c6",
+        "name": "",
+        "group": "c91332c0.50c11",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "format table",
+        "tooltip": "Formats the table using msg.ui_control",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "date",
+        "topic": "",
+        "x": 84,
+        "y": 1043,
+        "wires": [
+            [
+                "8ae898e7.418068"
+            ]
+        ]
+    },
+    {
+        "id": "8ae898e7.418068",
+        "type": "change",
+        "z": "21ec44b368b9d9c6",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_control",
+                "pt": "msg",
+                "to": "{\"customHeight\":18,\"tabulator\":{\"layout\":\"fitColumns\",\"movableColumns\":false,\"index\":\"id\",\"columns\":[{\"title\":\"ID\",\"field\":\"id\",\"formatter\":\"text\",\"headerTooltip\":\"id number act as row index\"},{\"formatterParams\":{\"outputFormat\":\"HH:mm:ss.SSS\",\"inputFormat\":\"x\",\"invalidPlaceholder\":\"(unknown)\"},\"title\":\"Timestamp\",\"field\":\"timestamp\",\"formatter\":\"datetime\",\"headerTooltip\":\"timestamp of last change\"},{\"title\":\"Text\",\"field\":\"text\",\"headerTooltip\":\"last cause of reboot (provided by http json request)\"}]}}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 325,
+        "y": 1043,
+        "wires": [
+            [
+                "19e88f0.0c32071",
+                "b075d2ac.a69f3",
+                "6bd61b7.a6a56e4"
+            ]
+        ]
+    },
+    {
+        "id": "6bd61b7.a6a56e4",
+        "type": "change",
+        "z": "21ec44b368b9d9c6",
+        "name": "change",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "ui_control",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "change",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 533,
+        "y": 1043,
+        "wires": [
+            [
+                "76c4495f.da70f8"
+            ]
+        ]
+    },
+    {
+        "id": "b7580d346f09eda5",
+        "type": "serial in",
+        "z": "627403360cf4778e",
+        "name": "BMS UART",
+        "serial": "",
+        "x": 90,
+        "y": 140,
+        "wires": [
+            [
+                "653116d19f8420f9",
+                "5cb6ccbc6abab8c0"
+            ]
+        ]
+    },
+    {
+        "id": "653116d19f8420f9",
+        "type": "debug",
+        "z": "627403360cf4778e",
+        "name": "debug 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 280,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "02d82e0a5290ab29",
+        "type": "json",
+        "z": "627403360cf4778e",
+        "name": "Parse JSON",
+        "property": "payload.dieTemp",
+        "action": "",
+        "pretty": false,
+        "x": 450,
+        "y": 200,
+        "wires": [
+            [
+                "6ff0181e38544f17"
+            ]
+        ]
+    },
+    {
+        "id": "02819e7513dddacd",
+        "type": "ui_gauge",
+        "z": "627403360cf4778e",
+        "name": "die temp",
+        "group": "",
+        "order": 2,
+        "width": "6",
+        "height": "4",
+        "gtype": "gage",
+        "title": "IC die temperature",
+        "label": "ºC",
+        "format": "{{value}}",
+        "min": "10",
+        "max": "90",
+        "colors": [
+            "#00ff04",
+            "#fbff00",
+            "#ff0000"
+        ],
+        "seg1": "35",
+        "seg2": "70",
+        "diff": false,
+        "className": "",
+        "x": 840,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "6ff0181e38544f17",
+        "type": "change",
+        "z": "627403360cf4778e",
+        "name": ".pl.dieTemp -> .pl",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.dieTemp",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 650,
+        "y": 200,
+        "wires": [
+            [
+                "02819e7513dddacd",
+                "35480bb4417e6c58"
+            ]
+        ]
+    },
+    {
+        "id": "35480bb4417e6c58",
+        "type": "debug",
+        "z": "627403360cf4778e",
+        "name": "debug dieTemp",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "5cb6ccbc6abab8c0",
+        "type": "function",
+        "z": "627403360cf4778e",
+        "name": "strg to json",
+        "func": "// Example of received string (remove if coming from actual msg)\nlet str = msg.payload;  // This should be: \"\\\"{\\\"dieTemp\\\": 24.50, \\\"SegVoltage\\\": 37.47}\\\"\"\n\n// First, remove outer quotes if present (double encoding)\nif (typeof str === \"string\" && str.startsWith('\"') && str.endsWith('\"')) {\n    str = str.slice(1, -1);\n}\n\n// Now parse the string to a JSON object\ntry {\n    msg.payload = JSON.parse(str);\n} catch (e) {\n    node.error(\"Invalid JSON string: \" + str, msg);\n    return null;\n}\n\n// Now msg.payload is a proper object: { dieTemp: 24.50, SegVoltage: 37.47 }\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 130,
+        "y": 200,
+        "wires": [
+            [
+                "23780191b55e6d56",
+                "02d82e0a5290ab29",
+                "05200117bad63944",
+                "be8e6cb9923f217e"
+            ]
+        ]
+    },
+    {
+        "id": "23780191b55e6d56",
+        "type": "debug",
+        "z": "627403360cf4778e",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "05200117bad63944",
+        "type": "json",
+        "z": "627403360cf4778e",
+        "name": "Parse JSON",
+        "property": "payload.SegVoltage",
+        "action": "",
+        "pretty": false,
+        "x": 450,
+        "y": 300,
+        "wires": [
+            [
+                "c304a69f85b31c55"
+            ]
+        ]
+    },
+    {
+        "id": "bc2671fd8dcd2b45",
+        "type": "ui_text",
+        "z": "627403360cf4778e",
+        "group": "",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "V+ to V− measurement:",
+        "format": "{{msg.payload}} V",
+        "layout": "row-left",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 890,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "be8e6cb9923f217e",
+        "type": "json",
+        "z": "627403360cf4778e",
+        "name": "Parse JSON",
+        "property": "payload.rth_temps.ic",
+        "action": "",
+        "pretty": false,
+        "x": 450,
+        "y": 360,
+        "wires": [
+            [
+                "2df99edf422091d3"
+            ]
+        ]
+    },
+    {
+        "id": "2df99edf422091d3",
+        "type": "ui_text",
+        "z": "627403360cf4778e",
+        "group": "",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Slave:",
+        "format": "{{msg.payload}} ",
+        "layout": "row-left",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 830,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "c304a69f85b31c55",
+        "type": "change",
+        "z": "627403360cf4778e",
+        "name": ".pl.dieTemp -> .pl",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.SegVoltage",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 650,
+        "y": 300,
+        "wires": [
+            [
+                "bc2671fd8dcd2b45"
+            ]
+        ]
+    },
+    {
+        "id": "ef355093eb867afa",
+        "type": "inject",
+        "z": "627403360cf4778e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{   \"rth_temps\": [     {       \"ic\": 0,       \"temps\": [23.456, 24.123, 22.980, 25.000, 24.750]     },     {       \"ic\": 1,       \"temps\": [23.100, 23.800, 24.200, 25.100, 23.900]     }   ] }",
+        "payloadType": "str",
+        "x": 90,
+        "y": 260,
+        "wires": [
+            [
+                "5cb6ccbc6abab8c0"
+            ]
+        ]
+    },
+    {
+        "id": "c2f28793d24434f7",
+        "type": "inject",
+        "z": "627403360cf4778e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.5",
+        "topic": "",
+        "payload": "{     \"dieTemp\": 22.3,     \"SegVoltage\": 38.4 }",
+        "payloadType": "str",
+        "x": 90,
+        "y": 300,
+        "wires": [
+            [
+                "5cb6ccbc6abab8c0"
+            ]
+        ]
+    },
+    {
+        "id": "ba92cba0.ee4ad8",
+        "type": "inject",
+        "z": "735cd1324e469561",
+        "d": true,
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "[{\"id\":0,\"cfa_Tx\":{\"cth\":1,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":255,\"gpo9to10\":3,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfa_Rx\":{\"cth\":0,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":0,\"gpo9to10\":0,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfb_Tx\":{\"vuv0to7\":0,\"vuv8to11\":8,\"vov0to3\":15,\"vov4to11\":127,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"cfb_Rx\":{\"vuv0to7\":0,\"vuv8to11\":0,\"vov0to3\":0,\"vov4to11\":0,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"pwma\":{\"p1\":0,\"p2\":0,\"p3\":0,\"p4\":0,\"p5\":0,\"p6\":0,\"p7\":0,\"p8\":0,\"p9\":0,\"p10\":0,\"p11\":0,\"p12\":0},\"pwmb\":{\"p13\":0,\"p14\":0,\"p15\":0,\"p16\":0,\"rsv\":0},\"v_avgCell\":[3.4651,3.4773,3.4833,3.4835,3.4782,3.4724,3.4873,3.4831,3.467,3.4842,3.4757,3.4817],\"v_avgCell_sum\":41.7388,\"v_avgCell_avg\":3.4782,\"v_avgCell_min\":3.4651,\"v_avgCell_max\":3.4873,\"v_avgCell_delta\":0.0222,\"v_sCell\":[0,0,0,0,0,0,0,0,0,0,0,0],\"v_tempSens\":[1.45,1.51,1.45,1.45,1.51],\"temp_cell\":[25.19,25.2,25.43,25.36,25.57],\"v_segment\":35.99,\"temp_ic\":26.89},{\"id\":1,\"cfa_Tx\":{\"cth\":1,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":255,\"gpo9to10\":3,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfa_Rx\":{\"cth\":0,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":0,\"gpo9to10\":0,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfb_Tx\":{\"vuv0to7\":0,\"vuv8to11\":8,\"vov0to3\":15,\"vov4to11\":127,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"cfb_Rx\":{\"vuv0to7\":0,\"vuv8to11\":0,\"vov0to3\":0,\"vov4to11\":0,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"pwma\":{\"p1\":0,\"p2\":0,\"p3\":0,\"p4\":0,\"p5\":0,\"p6\":0,\"p7\":0,\"p8\":0,\"p9\":0,\"p10\":0,\"p11\":0,\"p12\":0},\"pwmb\":{\"p13\":0,\"p14\":0,\"p15\":0,\"p16\":0,\"rsv\":0},\"v_avgCell\":[3.4813,3.4852,3.4773,3.4865,3.4807,3.4701,3.467,3.4669,3.4653,3.4672,3.4673,3.4729],\"v_avgCell_sum\":41.6877,\"v_avgCell_avg\":3.474,\"v_avgCell_min\":3.4653,\"v_avgCell_max\":3.4865,\"v_avgCell_delta\":0.0212,\"v_sCell\":[0,0,0,0,0,0,0,0,0,0,0,0],\"v_tempSens\":[1.51,1.45,1.46,1.46,1.48],\"temp_cell\":[25.21,25.57,25.3,25.66,25.62],\"v_segment\":36.05,\"temp_ic\":26.68},{\"id\":2,\"cfa_Tx\":{\"cth\":1,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":255,\"gpo9to10\":3,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfa_Rx\":{\"cth\":0,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":0,\"gpo9to10\":0,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfb_Tx\":{\"vuv0to7\":0,\"vuv8to11\":8,\"vov0to3\":15,\"vov4to11\":127,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"cfb_Rx\":{\"vuv0to7\":0,\"vuv8to11\":0,\"vov0to3\":0,\"vov4to11\":0,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"pwma\":{\"p1\":0,\"p2\":0,\"p3\":0,\"p4\":0,\"p5\":0,\"p6\":0,\"p7\":0,\"p8\":0,\"p9\":0,\"p10\":0,\"p11\":0,\"p12\":0},\"pwmb\":{\"p13\":0,\"p14\":0,\"p15\":0,\"p16\":0,\"rsv\":0},\"v_avgCell\":[3.4834,3.4724,3.4839,3.489,3.4736,3.4679,3.4872,3.4782,3.4831,3.469,3.4705,3.4719],\"v_avgCell_sum\":41.7301,\"v_avgCell_avg\":3.4775,\"v_avgCell_min\":3.4679,\"v_avgCell_max\":3.489,\"v_avgCell_delta\":0.0211,\"v_sCell\":[0,0,0,0,0,0,0,0,0,0,0,0],\"v_tempSens\":[1.45,1.48,1.45,1.44,1.47],\"temp_cell\":[25.49,25.12,25.26,25.53,25.51],\"v_segment\":35.94,\"temp_ic\":26.74},{\"id\":3,\"cfa_Tx\":{\"cth\":1,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":255,\"gpo9to10\":3,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfa_Rx\":{\"cth\":0,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":0,\"gpo9to10\":0,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfb_Tx\":{\"vuv0to7\":0,\"vuv8to11\":8,\"vov0to3\":15,\"vov4to11\":127,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"cfb_Rx\":{\"vuv0to7\":0,\"vuv8to11\":0,\"vov0to3\":0,\"vov4to11\":0,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"pwma\":{\"p1\":0,\"p2\":0,\"p3\":0,\"p4\":0,\"p5\":0,\"p6\":0,\"p7\":0,\"p8\":0,\"p9\":0,\"p10\":0,\"p11\":0,\"p12\":0},\"pwmb\":{\"p13\":0,\"p14\":0,\"p15\":0,\"p16\":0,\"rsv\":0},\"v_avgCell\":[3.4706,3.4732,3.4825,3.4783,3.4692,3.4771,3.4702,3.4774,3.4691,3.4746,3.4703,3.4855],\"v_avgCell_sum\":41.698,\"v_avgCell_avg\":3.4748,\"v_avgCell_min\":3.4691,\"v_avgCell_max\":3.4855,\"v_avgCell_delta\":0.0164,\"v_sCell\":[0,0,0,0,0,0,0,0,0,0,0,0],\"v_tempSens\":[1.51,1.51,1.52,1.45,1.52],\"temp_cell\":[25.5,25.14,25.13,25.65,25.19],\"v_segment\":35.95,\"temp_ic\":26.78},{\"id\":4,\"cfa_Tx\":{\"cth\":1,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":255,\"gpo9to10\":3,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfa_Rx\":{\"cth\":0,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":0,\"gpo9to10\":0,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfb_Tx\":{\"vuv0to7\":0,\"vuv8to11\":8,\"vov0to3\":15,\"vov4to11\":127,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"cfb_Rx\":{\"vuv0to7\":0,\"vuv8to11\":0,\"vov0to3\":0,\"vov4to11\":0,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"pwma\":{\"p1\":0,\"p2\":0,\"p3\":0,\"p4\":0,\"p5\":0,\"p6\":0,\"p7\":0,\"p8\":0,\"p9\":0,\"p10\":0,\"p11\":0,\"p12\":0},\"pwmb\":{\"p13\":0,\"p14\":0,\"p15\":0,\"p16\":0,\"rsv\":0},\"v_avgCell\":[3.4768,3.4656,3.4765,3.4659,3.4874,3.4751,3.4703,3.4669,3.4688,3.4822,3.4707,3.472],\"v_avgCell_sum\":41.6782,\"v_avgCell_avg\":3.4732,\"v_avgCell_min\":3.4656,\"v_avgCell_max\":3.4874,\"v_avgCell_delta\":0.0218,\"v_sCell\":[0,0,0,0,0,0,0,0,0,0,0,0],\"v_tempSens\":[1.48,1.47,1.49,1.45,1.49],\"temp_cell\":[25.62,25.22,25.64,25.13,25.58],\"v_segment\":35.96,\"temp_ic\":26.89},{\"id\":5,\"cfa_Tx\":{\"cth\":1,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":255,\"gpo9to10\":3,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfa_Rx\":{\"cth\":0,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":0,\"gpo9to10\":0,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfb_Tx\":{\"vuv0to7\":0,\"vuv8to11\":8,\"vov0to3\":15,\"vov4to11\":127,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"cfb_Rx\":{\"vuv0to7\":0,\"vuv8to11\":0,\"vov0to3\":0,\"vov4to11\":0,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"pwma\":{\"p1\":0,\"p2\":0,\"p3\":0,\"p4\":0,\"p5\":0,\"p6\":0,\"p7\":0,\"p8\":0,\"p9\":0,\"p10\":0,\"p11\":0,\"p12\":0},\"pwmb\":{\"p13\":0,\"p14\":0,\"p15\":0,\"p16\":0,\"rsv\":0},\"v_avgCell\":[3.4739,3.4868,3.4847,3.4666,3.4782,3.4848,3.48,3.4762,3.4681,3.4673,3.4886,3.483],\"v_avgCell_sum\":41.7382,\"v_avgCell_avg\":3.4782,\"v_avgCell_min\":3.4666,\"v_avgCell_max\":3.4886,\"v_avgCell_delta\":0.022,\"v_sCell\":[0,0,0,0,0,0,0,0,0,0,0,0],\"v_tempSens\":[1.48,1.52,1.5,1.52,1.51],\"temp_cell\":[25.49,25.55,25.69,25.45,25.74],\"v_segment\":36.04,\"temp_ic\":26.95},{\"id\":6,\"cfa_Tx\":{\"cth\":1,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":255,\"gpo9to10\":3,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfa_Rx\":{\"cth\":0,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":0,\"gpo9to10\":0,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfb_Tx\":{\"vuv0to7\":0,\"vuv8to11\":8,\"vov0to3\":15,\"vov4to11\":127,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"cfb_Rx\":{\"vuv0to7\":0,\"vuv8to11\":0,\"vov0to3\":0,\"vov4to11\":0,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"pwma\":{\"p1\":0,\"p2\":0,\"p3\":0,\"p4\":0,\"p5\":0,\"p6\":0,\"p7\":0,\"p8\":0,\"p9\":0,\"p10\":0,\"p11\":0,\"p12\":0},\"pwmb\":{\"p13\":0,\"p14\":0,\"p15\":0,\"p16\":0,\"rsv\":0},\"v_avgCell\":[3.4668,3.4805,3.477,3.4657,3.4771,3.4852,3.4695,3.468,3.4719,3.4791,3.4813,3.4867],\"v_avgCell_sum\":41.7088,\"v_avgCell_avg\":3.4757,\"v_avgCell_min\":3.4657,\"v_avgCell_max\":3.4867,\"v_avgCell_delta\":0.021,\"v_sCell\":[0,0,0,0,0,0,0,0,0,0,0,0],\"v_tempSens\":[1.48,1.47,1.46,1.5,1.44],\"temp_cell\":[25.18,25.32,25.77,25.66,25.6],\"v_segment\":36.06,\"temp_ic\":26.62},{\"id\":7,\"cfa_Tx\":{\"cth\":1,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":255,\"gpo9to10\":3,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfa_Rx\":{\"cth\":0,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":0,\"gpo9to10\":0,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfb_Tx\":{\"vuv0to7\":0,\"vuv8to11\":8,\"vov0to3\":15,\"vov4to11\":127,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"cfb_Rx\":{\"vuv0to7\":0,\"vuv8to11\":0,\"vov0to3\":0,\"vov4to11\":0,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"pwma\":{\"p1\":0,\"p2\":0,\"p3\":0,\"p4\":0,\"p5\":0,\"p6\":0,\"p7\":0,\"p8\":0,\"p9\":0,\"p10\":0,\"p11\":0,\"p12\":0},\"pwmb\":{\"p13\":0,\"p14\":0,\"p15\":0,\"p16\":0,\"rsv\":0},\"v_avgCell\":[3.4731,3.4805,3.4874,3.4814,3.4696,3.4672,3.466,3.4757,3.4692,3.4712,3.4808,3.4691],\"v_avgCell_sum\":41.6912,\"v_avgCell_avg\":3.4743,\"v_avgCell_min\":3.466,\"v_avgCell_max\":3.4874,\"v_avgCell_delta\":0.0214,\"v_sCell\":[0,0,0,0,0,0,0,0,0,0,0,0],\"v_tempSens\":[1.46,1.48,1.45,1.45,1.48],\"temp_cell\":[25.13,25.76,25.78,25.6,25.32],\"v_segment\":35.92,\"temp_ic\":26.76},{\"id\":8,\"cfa_Tx\":{\"cth\":1,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":255,\"gpo9to10\":3,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfa_Rx\":{\"cth\":0,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":0,\"gpo9to10\":0,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfb_Tx\":{\"vuv0to7\":0,\"vuv8to11\":8,\"vov0to3\":15,\"vov4to11\":127,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"cfb_Rx\":{\"vuv0to7\":0,\"vuv8to11\":0,\"vov0to3\":0,\"vov4to11\":0,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"pwma\":{\"p1\":0,\"p2\":0,\"p3\":0,\"p4\":0,\"p5\":0,\"p6\":0,\"p7\":0,\"p8\":0,\"p9\":0,\"p10\":0,\"p11\":0,\"p12\":0},\"pwmb\":{\"p13\":0,\"p14\":0,\"p15\":0,\"p16\":0,\"rsv\":0},\"v_avgCell\":[3.4683,3.4671,3.4876,3.482,3.4765,3.4884,3.482,3.4764,3.4773,3.4691,3.4831,3.4823],\"v_avgCell_sum\":41.7401,\"v_avgCell_avg\":3.4783,\"v_avgCell_min\":3.4671,\"v_avgCell_max\":3.4884,\"v_avgCell_delta\":0.0213,\"v_sCell\":[0,0,0,0,0,0,0,0,0,0,0,0],\"v_tempSens\":[1.47,1.47,1.47,1.48,1.49],\"temp_cell\":[25.11,25.78,25.3,25.36,25.79],\"v_segment\":36,\"temp_ic\":26.87},{\"id\":9,\"cfa_Tx\":{\"cth\":1,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":255,\"gpo9to10\":3,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfa_Rx\":{\"cth\":0,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":0,\"gpo9to10\":0,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfb_Tx\":{\"vuv0to7\":0,\"vuv8to11\":8,\"vov0to3\":15,\"vov4to11\":127,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"cfb_Rx\":{\"vuv0to7\":0,\"vuv8to11\":0,\"vov0to3\":0,\"vov4to11\":0,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"pwma\":{\"p1\":0,\"p2\":0,\"p3\":0,\"p4\":0,\"p5\":0,\"p6\":0,\"p7\":0,\"p8\":0,\"p9\":0,\"p10\":0,\"p11\":0,\"p12\":0},\"pwmb\":{\"p13\":0,\"p14\":0,\"p15\":0,\"p16\":0,\"rsv\":0},\"v_avgCell\":[3.4774,3.4715,3.466,3.4726,3.4889,3.4728,3.4714,3.4741,3.4659,3.4694,3.4799,3.4775],\"v_avgCell_sum\":41.6874,\"v_avgCell_avg\":3.4739,\"v_avgCell_min\":3.4659,\"v_avgCell_max\":3.4889,\"v_avgCell_delta\":0.023,\"v_sCell\":[0,0,0,0,0,0,0,0,0,0,0,0],\"v_tempSens\":[1.52,1.47,1.48,1.5,1.45],\"temp_cell\":[25.75,25.62,25.57,25.26,25.55],\"v_segment\":36.04,\"temp_ic\":26.9},{\"id\":10,\"cfa_Tx\":{\"cth\":1,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":255,\"gpo9to10\":3,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfa_Rx\":{\"cth\":0,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":0,\"gpo9to10\":0,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfb_Tx\":{\"vuv0to7\":0,\"vuv8to11\":8,\"vov0to3\":15,\"vov4to11\":127,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"cfb_Rx\":{\"vuv0to7\":0,\"vuv8to11\":0,\"vov0to3\":0,\"vov4to11\":0,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"pwma\":{\"p1\":0,\"p2\":0,\"p3\":0,\"p4\":0,\"p5\":0,\"p6\":0,\"p7\":0,\"p8\":0,\"p9\":0,\"p10\":0,\"p11\":0,\"p12\":0},\"pwmb\":{\"p13\":0,\"p14\":0,\"p15\":0,\"p16\":0,\"rsv\":0},\"v_avgCell\":[3.4703,3.4828,3.4872,3.4885,3.4768,3.485,3.4772,3.4833,3.4685,3.4657,3.4747,3.4673],\"v_avgCell_sum\":41.7273,\"v_avgCell_avg\":3.4773,\"v_avgCell_min\":3.4657,\"v_avgCell_max\":3.4885,\"v_avgCell_delta\":0.0228,\"v_sCell\":[0,0,0,0,0,0,0,0,0,0,0,0],\"v_tempSens\":[1.45,1.5,1.46,1.5,1.44],\"temp_cell\":[25.22,25.64,25.11,25.28,25.48],\"v_segment\":36.01,\"temp_ic\":26.9},{\"id\":11,\"cfa_Tx\":{\"cth\":1,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":255,\"gpo9to10\":3,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfa_Rx\":{\"cth\":0,\"refon\":0,\"flag_d\":0,\"owa\":0,\"owrng\":0,\"soakon\":0,\"gpo1to8\":0,\"gpo9to10\":0,\"fc\":0,\"comm_bk\":0,\"mute_st\":0,\"snap_st\":0},\"cfb_Tx\":{\"vuv0to7\":0,\"vuv8to11\":8,\"vov0to3\":15,\"vov4to11\":127,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"cfb_Rx\":{\"vuv0to7\":0,\"vuv8to11\":0,\"vov0to3\":0,\"vov4to11\":0,\"dcto\":0,\"dtrng\":0,\"dtmen\":0,\"dcc\":0},\"pwma\":{\"p1\":0,\"p2\":0,\"p3\":0,\"p4\":0,\"p5\":0,\"p6\":0,\"p7\":0,\"p8\":0,\"p9\":0,\"p10\":0,\"p11\":0,\"p12\":0},\"pwmb\":{\"p13\":0,\"p14\":0,\"p15\":0,\"p16\":0,\"rsv\":0},\"v_avgCell\":[3.4764,3.4827,3.4657,3.4706,3.4835,3.4762,3.4686,3.481,3.4737,3.4657,3.4841,3.477],\"v_avgCell_sum\":41.7052,\"v_avgCell_avg\":3.4754,\"v_avgCell_min\":3.4657,\"v_avgCell_max\":3.4841,\"v_avgCell_delta\":0.0184,\"v_sCell\":[0,0,0,0,0,0,0,0,0,0,0,0],\"v_tempSens\":[1.47,1.47,1.44,1.44,1.5],\"temp_cell\":[25.58,25.67,25.66,25.12,25.67],\"v_segment\":35.94,\"temp_ic\":26.67}]",
+        "payloadType": "json",
+        "x": 90,
+        "y": 280,
+        "wires": [
+            [
+                "8115c722.5d91d8",
+                "6c2d34b3fa916d8f",
+                "fb74055931d6bf40",
+                "200e3c95adde6602",
+                "538410398bb99306",
+                "54e4a18f5c3d2d2c",
+                "7a718d3bec6360cd",
+                "90be7a6e8aa20782",
+                "37ecc2ccda942a82",
+                "6bc949aad09d5103",
+                "2374976c423ee85e",
+                "8ac3b4e4d354c0ac",
+                "8860a0b7e8433ea1",
+                "a6d1aa04308655e4"
+            ]
+        ]
+    },
+    {
+        "id": "8115c722.5d91d8",
+        "type": "change",
+        "z": "735cd1324e469561",
+        "name": "ui_control",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_control",
+                "pt": "msg",
+                "to": "{\"tabulator\":{\"columnResized\":\"function(column){     var newColumn = {         field: column._column.field,         visible: column._column.visible,         width: column._column.width,         widthFixed: column._column.widthFixed,         widthStyled: column._column.widthStyled     }; this.send({topic:this.config.topic,ui_control:{callback:'columnResized',columnWidths:newColumn}}); }\",\"columnMoved\":\"function(column, columns){     var newColumns=[];     columns.forEach(function (column) {         newColumns.push({'field': column._column.field});     });     this.send({topic:this.config.topic,ui_control:{callback:'columnMoved',columns:newColumns}}); }\",\"groupHeader\":\"function (value, count, data, group) {return value + \\\"<span style='color:#d00; margin-left:10px;'>(\\\" + count + \\\" Termostat\\\"+((count>1) ? \\\"e\\\" : \\\"\\\") + \\\")</span>\\\";}\",\"columns\":[{\"formatterParams\":{\"target\":\"_blank\"},\"title\":\"Slave\",\"field\":\"id\",\"width\":70,\"frozen\":true},{\"formatterParams\":{\"target\":\"_blank\",\"legendAlign\":\"center\"},\"title\":\"IC temp\",\"field\":\"temp_ic\",\"formatter\":\"function(cell, formatterParams, onRendered){return cell.getValue()+'°C';}\",\"width\":100},{\"title\":\"Temp 01\",\"field\":\"temp_01\",\"formatter\":\"function(cell) { var arr = cell.getData().temp_cell; var value = Array.isArray(arr) ? arr[0] : null; if (value == null) return ''; var percent = ((value - 15) / 25) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 20 ? 'blue' : value > 35 ? 'red' : 'green'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(2) + '°C</div></div>'; }\",\"width\":100},{\"title\":\"Temp 02\",\"field\":\"temp_02\",\"formatter\":\"function(cell) { var arr = cell.getData().temp_cell; var value = Array.isArray(arr) ? arr[1] : null; if (value == null) return ''; var percent = ((value - 15) / 25) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 20 ? 'blue' : value > 35 ? 'red' : 'green'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(2) + '°C</div></div>'; }\",\"width\":100},{\"title\":\"Temp 03\",\"field\":\"temp_03\",\"formatter\":\"function(cell) { var arr = cell.getData().temp_cell; var value = Array.isArray(arr) ? arr[2] : null; if (value == null) return ''; var percent = ((value - 15) / 25) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 20 ? 'blue' : value > 35 ? 'red' : 'green'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(2) + '°C</div></div>'; }\",\"width\":100},{\"title\":\"Temp 04\",\"field\":\"temp_04\",\"formatter\":\"function(cell) { var arr = cell.getData().temp_cell; var value = Array.isArray(arr) ? arr[3] : null; if (value == null) return ''; var percent = ((value - 15) / 25) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 20 ? 'blue' : value > 35 ? 'red' : 'green'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(2) + '°C</div></div>'; }\",\"width\":100},{\"title\":\"Temp 05\",\"field\":\"temp_05\",\"formatter\":\"function(cell) { var arr = cell.getData().temp_cell; var value = Array.isArray(arr) ? arr[4] : null; if (value == null) return ''; var percent = ((value - 15) / 25) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 20 ? 'blue' : value > 35 ? 'red' : 'green'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(2) + '°C</div></div>'; }\",\"width\":100},{\"formatterParams\":{\"target\":\"_blank\",\"min\":30,\"max\":40,\"color\":[\"red\",\"orange\",\"green\"],\"legend\":\"function (value) {return value+' V';}\",\"legendColor\":\"#101010\",\"legendAlign\":\"center\"},\"title\":\"V+ to V-\",\"field\":\"v_segment\",\"formatter\":\"progress\",\"width\":100},{\"formatterParams\":{\"target\":\"_blank\",\"min\":39,\"max\":52,\"color\":[\"red\",\"orange\",\"green\"],\"legend\":\"function (value) {return value+' V';}\",\"legendColor\":\"#101010\",\"legendAlign\":\"center\"},\"title\":\"Module Voltage\",\"field\":\"v_avgCell_sum\",\"formatter\":\"progress\",\"width\":140},{\"formatterParams\":{\"target\":\"_blank\"},\"title\":\"Balancing\",\"field\":\"its_balancing\",\"formatter\":\"tick\",\"width\":100,\"align\":\"center\"},{\"formatterParams\":{\"target\":\"_blank\"},\"title\":\"Open Wîre\",\"field\":\"open_wire_check\",\"formatter\":\"tick\",\"width\":120,\"align\":\"center\"}],\"layout\":\"fitColumns\",\"movableColumns\":true,\"groupBy\":\"\"},\"customHeight\":20}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 640,
+        "y": 60,
+        "wires": [
+            [
+                "4b960bb2.f61934"
+            ]
+        ]
+    },
+    {
+        "id": "5d38f5fa.6541bc",
+        "type": "debug",
+        "z": "735cd1324e469561",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "4b960bb2.f61934",
+        "type": "ui_table",
+        "z": "735cd1324e469561",
+        "group": "bdd7616a7bd6485d",
+        "name": "Sys Overview",
+        "order": 1,
+        "width": "22",
+        "height": "14",
+        "columns": [],
+        "outputs": 1,
+        "cts": true,
+        "x": 813,
+        "y": 60,
+        "wires": [
+            [
+                "5d38f5fa.6541bc"
+            ]
+        ]
+    },
+    {
+        "id": "a41915c92c81c74e",
+        "type": "inject",
+        "z": "735cd1324e469561",
+        "d": true,
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"rth_temps\":[{\"ic\":0,\"temps\":[23.456,24.123,22.98,25,24.75]},{\"ic\":1,\"temps\":[23.1,23.8,24.2,25.1,23.9]}]}",
+        "payloadType": "json",
+        "x": 90,
+        "y": 320,
+        "wires": [
+            [
+                "8115c722.5d91d8"
+            ]
+        ]
+    },
+    {
+        "id": "6c2d34b3fa916d8f",
+        "type": "change",
+        "z": "735cd1324e469561",
+        "name": "ui_control",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ui_control",
+                "pt": "msg",
+                "to": "{\"tabulator\":{\"columnResized\":\"function(column){     var newColumn = {         field: column._column.field,         visible: column._column.visible,         width: column._column.width,         widthFixed: column._column.widthFixed,         widthStyled: column._column.widthStyled     }; this.send({topic:this.config.topic,ui_control:{callback:'columnResized',columnWidths:newColumn}}); }\",\"columnMoved\":\"function(column, columns){     var newColumns=[];     columns.forEach(function (column) {         newColumns.push({'field': column._column.field});     });     this.send({topic:this.config.topic,ui_control:{callback:'columnMoved',columns:newColumns}}); }\",\"groupHeader\":\"function (value, count, data, group) {return value + \\\"<span style='color:#d00; margin-left:10px;'>(\\\" + count + \\\" Termostat\\\"+((count>1) ? \\\"e\\\" : \\\"\\\") + \\\")</span>\\\";}\",\"columns\":[{\"formatterParams\":{\"target\":\"_blank\"},\"title\":\"Slave\",\"field\":\"id\",\"width\":70,\"frozen\":true},{\"title\":\"Cell 1\",\"field\":\"c1v\",\"formatter\":\"function(cell) { var arr = cell.getData().v_avgCell; var value = Array.isArray(arr) ? arr[0] : null; if (value == null) return ''; var percent = ((value - 3.2) / 1.0) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 3.4 ? 'red' : value > 4.0 ? 'green' : 'orange'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(4) + ' V</div></div>'; }\",\"width\":100},{\"title\":\"Cell 2\",\"field\":\"c2v\",\"formatter\":\"function(cell) { var arr = cell.getData().v_avgCell; var value = Array.isArray(arr) ? arr[1] : null; if (value == null) return ''; var percent = ((value - 3.2) / 1.0) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 3.4 ? 'red' : value > 4.0 ? 'green' : 'orange'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(4) + ' V</div></div>'; }\",\"width\":100},{\"title\":\"Cell 3\",\"field\":\"c3v\",\"formatter\":\"function(cell) { var arr = cell.getData().v_avgCell; var value = Array.isArray(arr) ? arr[2] : null; if (value == null) return ''; var percent = ((value - 3.2) / 1.0) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 3.4 ? 'red' : value > 4.0 ? 'green' : 'orange'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(4) + ' V</div></div>'; }\",\"width\":100},{\"title\":\"Cell 4\",\"field\":\"c4v\",\"formatter\":\"function(cell) { var arr = cell.getData().v_avgCell; var value = Array.isArray(arr) ? arr[3] : null; if (value == null) return ''; var percent = ((value - 3.2) / 1.0) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 3.4 ? 'red' : value > 4.0 ? 'green' : 'orange'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(4) + ' V</div></div>'; }\",\"width\":100},{\"title\":\"Cell 5\",\"field\":\"c5v\",\"formatter\":\"function(cell) { var arr = cell.getData().v_avgCell; var value = Array.isArray(arr) ? arr[4] : null; if (value == null) return ''; var percent = ((value - 3.2) / 1.0) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 3.4 ? 'red' : value > 4.0 ? 'green' : 'orange'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(4) + ' V</div></div>'; }\",\"width\":100},{\"title\":\"Cell 6\",\"field\":\"c6v\",\"formatter\":\"function(cell) { var arr = cell.getData().v_avgCell; var value = Array.isArray(arr) ? arr[5] : null; if (value == null) return ''; var percent = ((value - 3.2) / 1.0) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 3.4 ? 'red' : value > 4.0 ? 'green' : 'orange'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(4) + ' V</div></div>'; }\",\"width\":100},{\"title\":\"Cell 7\",\"field\":\"c7v\",\"formatter\":\"function(cell) { var arr = cell.getData().v_avgCell; var value = Array.isArray(arr) ? arr[6] : null; if (value == null) return ''; var percent = ((value - 3.2) / 1.0) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 3.4 ? 'red' : value > 4.0 ? 'green' : 'orange'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(4) + ' V</div></div>'; }\",\"width\":100},{\"title\":\"Cell 8\",\"field\":\"c8v\",\"formatter\":\"function(cell) { var arr = cell.getData().v_avgCell; var value = Array.isArray(arr) ? arr[7] : null; if (value == null) return ''; var percent = ((value - 3.2) / 1.0) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 3.4 ? 'red' : value > 4.0 ? 'green' : 'orange'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(4) + ' V</div></div>'; }\",\"width\":100},{\"title\":\"Cell 9\",\"field\":\"c9v\",\"formatter\":\"function(cell) { var arr = cell.getData().v_avgCell; var value = Array.isArray(arr) ? arr[8] : null; if (value == null) return ''; var percent = ((value - 3.2) / 1.0) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 3.4 ? 'red' : value > 4.0 ? 'green' : 'orange'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(4) + ' V</div></div>'; }\",\"width\":100},{\"title\":\"Cell 10\",\"field\":\"c10v\",\"formatter\":\"function(cell) { var arr = cell.getData().v_avgCell; var value = Array.isArray(arr) ? arr[9] : null; if (value == null) return ''; var percent = ((value - 3.2) / 1.0) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 3.4 ? 'red' : value > 4.0 ? 'green' : 'orange'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(4) + ' V</div></div>'; }\",\"width\":100},{\"title\":\"Cell 11\",\"field\":\"c11v\",\"formatter\":\"function(cell) { var arr = cell.getData().v_avgCell; var value = Array.isArray(arr) ? arr[10] : null; if (value == null) return ''; var percent = ((value - 3.2) / 1.0) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 3.4 ? 'red' : value > 4.0 ? 'green' : 'orange'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(4) + ' V</div></div>'; }\",\"width\":100},{\"title\":\"Cell 12\",\"field\":\"c12v\",\"formatter\":\"function(cell) { var arr = cell.getData().v_avgCell; var value = Array.isArray(arr) ? arr[11] : null; if (value == null) return ''; var percent = ((value - 3.2) / 1.0) * 100; percent = Math.max(0, Math.min(100, percent)); var color = value < 3.4 ? 'red' : value > 4.0 ? 'green' : 'orange'; return '<div style=\\\\'position:relative;width:100%;height:23px;background:#eee;\\\\'><div style=\\\\'width:' + percent + '%;height:100%;background:' + color + ';\\\\'></div><div style=\\\\'position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;\\\\'>' + value.toFixed(4) + ' V</div></div>'; }\",\"width\":100}],\"layout\":\"fitColumns\",\"movableColumns\":true,\"groupBy\":\"\"},\"customHeight\":20}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 640,
+        "y": 100,
+        "wires": [
+            [
+                "e1c585f7d5c7e33f"
+            ]
+        ]
+    },
+    {
+        "id": "d11897479cef704f",
+        "type": "debug",
+        "z": "735cd1324e469561",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "e1c585f7d5c7e33f",
+        "type": "ui_table",
+        "z": "735cd1324e469561",
+        "group": "35e189928bbdc4e3",
+        "name": "Cell Voltages",
+        "order": 2,
+        "width": "24",
+        "height": 8,
+        "columns": [],
+        "outputs": 1,
+        "cts": true,
+        "x": 803,
+        "y": 100,
+        "wires": [
+            [
+                "d11897479cef704f"
+            ]
+        ]
+    },
+    {
+        "id": "5ba3c7b33684f213",
+        "type": "serial in",
+        "z": "735cd1324e469561",
+        "name": "BMS UART",
+        "serial": "43a109332d73803c",
+        "x": 90,
+        "y": 360,
+        "wires": [
+            [
+                "db710cfec890f7cf",
+                "f6316eff174b55b9"
+            ]
+        ]
+    },
+    {
+        "id": "db710cfec890f7cf",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "strg to json - only slaves",
+        "func": "let str = msg.payload;\n\n// Step 1: Remove outer quotes if double-encoded\nif (typeof str === \"string\" && str.startsWith('\"') && str.endsWith('\"')) {\n    str = str.slice(1, -1);\n}\n\n// Step 2: Parse JSON\nlet parsed;\ntry {\n    parsed = JSON.parse(str);\n} catch (e) {\n    node.error(\"Invalid JSON string: \" + str, msg);\n    return null;\n}\n\n// Step 3: Filter only objects where the first key is \"id\"\nif (Array.isArray(parsed)) {\n    const filtered = parsed.filter(obj => {\n        if (typeof obj !== \"object\" || obj === null) return false;\n        const keys = Object.keys(obj);\n        return keys.length > 0 && keys[0] === \"id\";\n    });\n\n    // Step 4: Only send if at least one object found\n    if (filtered.length > 0) {\n        msg.payload = filtered;\n        return msg;\n    } else {\n        return null; // Do not send anything\n    }\n} else {\n    node.error(\"Expected array but got: \" + typeof parsed, msg);\n    return null;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 150,
+        "y": 420,
+        "wires": [
+            [
+                "eb7d53db1c061e19",
+                "8115c722.5d91d8",
+                "6c2d34b3fa916d8f",
+                "fb74055931d6bf40",
+                "200e3c95adde6602",
+                "538410398bb99306",
+                "54e4a18f5c3d2d2c",
+                "7a718d3bec6360cd",
+                "90be7a6e8aa20782",
+                "37ecc2ccda942a82",
+                "6bc949aad09d5103",
+                "2374976c423ee85e",
+                "8ac3b4e4d354c0ac",
+                "a6d1aa04308655e4",
+                "8860a0b7e8433ea1"
+            ]
+        ]
+    },
+    {
+        "id": "eb7d53db1c061e19",
+        "type": "debug",
+        "z": "735cd1324e469561",
+        "name": "debug slaves json",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 430,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "3586579889c81d26",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "ae2c1662b5240ce4",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Salve 0 - Graph",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1000,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fb74055931d6bf40",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "push cell voltages, slave 0",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with id\nconst data = dataArray.find(d => d.id === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Validate the v_avgCell array\nif (!Array.isArray(data.v_avgCell)) {\n    node.warn(\"v_avgCell is not an array.\");\n    return null;\n}\n\nif (data.v_avgCell.length !== 12) {\n    node.warn(\"v_avgCell does not have 12 entries.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nfor (let i = 0; i < 12; i++) {\n    messages.push({\n        topic: `c${i + 1}v`,\n        payload: data.v_avgCell[i]\n    });\n}\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 180,
+        "wires": [
+            [
+                "3586579889c81d26"
+            ]
+        ]
+    },
+    {
+        "id": "cfe3386eeac0023d",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "0f83b582153685dd",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Salve 1 - Graph",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1000,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "200e3c95adde6602",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "push cell voltages, slave 1",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with id\nconst data = dataArray.find(d => d.id === 1);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Validate the v_avgCell array\nif (!Array.isArray(data.v_avgCell)) {\n    node.warn(\"v_avgCell is not an array.\");\n    return null;\n}\n\nif (data.v_avgCell.length !== 12) {\n    node.warn(\"v_avgCell does not have 12 entries.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nfor (let i = 0; i < 12; i++) {\n    messages.push({\n        topic: `c${i + 1}v`,\n        payload: data.v_avgCell[i]\n    });\n}\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 220,
+        "wires": [
+            [
+                "cfe3386eeac0023d"
+            ]
+        ]
+    },
+    {
+        "id": "53ce7abb8800eeee",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "40ac40c8ab84a7e6",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Salve 2 - Graph",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1000,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "538410398bb99306",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "push cell voltages, slave 2",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with id\nconst data = dataArray.find(d => d.id === 2);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Validate the v_avgCell array\nif (!Array.isArray(data.v_avgCell)) {\n    node.warn(\"v_avgCell is not an array.\");\n    return null;\n}\n\nif (data.v_avgCell.length !== 12) {\n    node.warn(\"v_avgCell does not have 12 entries.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nfor (let i = 0; i < 12; i++) {\n    messages.push({\n        topic: `c${i + 1}v`,\n        payload: data.v_avgCell[i]\n    });\n}\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 260,
+        "wires": [
+            [
+                "53ce7abb8800eeee"
+            ]
+        ]
+    },
+    {
+        "id": "1f827eda083c47f9",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "ae2c1662b5240ce4",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Salve 3 - Graph",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1000,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "54e4a18f5c3d2d2c",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "push cell voltages, slave 3",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with id\nconst data = dataArray.find(d => d.id === 3);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Validate the v_avgCell array\nif (!Array.isArray(data.v_avgCell)) {\n    node.warn(\"v_avgCell is not an array.\");\n    return null;\n}\n\nif (data.v_avgCell.length !== 12) {\n    node.warn(\"v_avgCell does not have 12 entries.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nfor (let i = 0; i < 12; i++) {\n    messages.push({\n        topic: `c${i + 1}v`,\n        payload: data.v_avgCell[i]\n    });\n}\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 300,
+        "wires": [
+            [
+                "1f827eda083c47f9"
+            ]
+        ]
+    },
+    {
+        "id": "2045c65d026a7c0f",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "0f83b582153685dd",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Salve 4 - Graph",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1000,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7a718d3bec6360cd",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "push cell voltages, slave 4",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with id\nconst data = dataArray.find(d => d.id === 4);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Validate the v_avgCell array\nif (!Array.isArray(data.v_avgCell)) {\n    node.warn(\"v_avgCell is not an array.\");\n    return null;\n}\n\nif (data.v_avgCell.length !== 12) {\n    node.warn(\"v_avgCell does not have 12 entries.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nfor (let i = 0; i < 12; i++) {\n    messages.push({\n        topic: `c${i + 1}v`,\n        payload: data.v_avgCell[i]\n    });\n}\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 340,
+        "wires": [
+            [
+                "2045c65d026a7c0f"
+            ]
+        ]
+    },
+    {
+        "id": "63273fba81120303",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "40ac40c8ab84a7e6",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Salve 5 - Graph",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1000,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "90be7a6e8aa20782",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "push cell voltages, slave 5",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with id\nconst data = dataArray.find(d => d.id === 5);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Validate the v_avgCell array\nif (!Array.isArray(data.v_avgCell)) {\n    node.warn(\"v_avgCell is not an array.\");\n    return null;\n}\n\nif (data.v_avgCell.length !== 12) {\n    node.warn(\"v_avgCell does not have 12 entries.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nfor (let i = 0; i < 12; i++) {\n    messages.push({\n        topic: `c${i + 1}v`,\n        payload: data.v_avgCell[i]\n    });\n}\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 380,
+        "wires": [
+            [
+                "63273fba81120303"
+            ]
+        ]
+    },
+    {
+        "id": "6562933090e451aa",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "ae2c1662b5240ce4",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Salve 6 - Graph",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1000,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "37ecc2ccda942a82",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "push cell voltages, slave 6",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with id\nconst data = dataArray.find(d => d.id === 6);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Validate the v_avgCell array\nif (!Array.isArray(data.v_avgCell)) {\n    node.warn(\"v_avgCell is not an array.\");\n    return null;\n}\n\nif (data.v_avgCell.length !== 12) {\n    node.warn(\"v_avgCell does not have 12 entries.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nfor (let i = 0; i < 12; i++) {\n    messages.push({\n        topic: `c${i + 1}v`,\n        payload: data.v_avgCell[i]\n    });\n}\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 420,
+        "wires": [
+            [
+                "6562933090e451aa"
+            ]
+        ]
+    },
+    {
+        "id": "29c8a33db53bb52f",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "0f83b582153685dd",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Salve 7 - Graph",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1000,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6bc949aad09d5103",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "push cell voltages, slave 7",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with id\nconst data = dataArray.find(d => d.id === 7);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Validate the v_avgCell array\nif (!Array.isArray(data.v_avgCell)) {\n    node.warn(\"v_avgCell is not an array.\");\n    return null;\n}\n\nif (data.v_avgCell.length !== 12) {\n    node.warn(\"v_avgCell does not have 12 entries.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nfor (let i = 0; i < 12; i++) {\n    messages.push({\n        topic: `c${i + 1}v`,\n        payload: data.v_avgCell[i]\n    });\n}\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 460,
+        "wires": [
+            [
+                "29c8a33db53bb52f"
+            ]
+        ]
+    },
+    {
+        "id": "8f350f483d74a53c",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "40ac40c8ab84a7e6",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Salve 8 - Graph",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1000,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2374976c423ee85e",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "push cell voltages, slave 8",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with id\nconst data = dataArray.find(d => d.id === 8);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Validate the v_avgCell array\nif (!Array.isArray(data.v_avgCell)) {\n    node.warn(\"v_avgCell is not an array.\");\n    return null;\n}\n\nif (data.v_avgCell.length !== 12) {\n    node.warn(\"v_avgCell does not have 12 entries.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nfor (let i = 0; i < 12; i++) {\n    messages.push({\n        topic: `c${i + 1}v`,\n        payload: data.v_avgCell[i]\n    });\n}\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 500,
+        "wires": [
+            [
+                "8f350f483d74a53c"
+            ]
+        ]
+    },
+    {
+        "id": "9576a2af24ac4d4e",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "ae2c1662b5240ce4",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Salve 9 - Graph",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1000,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8ac3b4e4d354c0ac",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "push cell voltages, slave 9",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with id\nconst data = dataArray.find(d => d.id === 9);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Validate the v_avgCell array\nif (!Array.isArray(data.v_avgCell)) {\n    node.warn(\"v_avgCell is not an array.\");\n    return null;\n}\n\nif (data.v_avgCell.length !== 12) {\n    node.warn(\"v_avgCell does not have 12 entries.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nfor (let i = 0; i < 12; i++) {\n    messages.push({\n        topic: `c${i + 1}v`,\n        payload: data.v_avgCell[i]\n    });\n}\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 540,
+        "wires": [
+            [
+                "9576a2af24ac4d4e"
+            ]
+        ]
+    },
+    {
+        "id": "4f06de76fd8c9bc6",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "0f83b582153685dd",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Salve 10 - Graph",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1010,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8860a0b7e8433ea1",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "push cell voltages, slave 10",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with id\nconst data = dataArray.find(d => d.id === 10);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Validate the v_avgCell array\nif (!Array.isArray(data.v_avgCell)) {\n    node.warn(\"v_avgCell is not an array.\");\n    return null;\n}\n\nif (data.v_avgCell.length !== 12) {\n    node.warn(\"v_avgCell does not have 12 entries.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nfor (let i = 0; i < 12; i++) {\n    messages.push({\n        topic: `c${i + 1}v`,\n        payload: data.v_avgCell[i]\n    });\n}\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 580,
+        "wires": [
+            [
+                "4f06de76fd8c9bc6"
+            ]
+        ]
+    },
+    {
+        "id": "fecb1b00337725b2",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "40ac40c8ab84a7e6",
+        "order": 1,
+        "width": "8",
+        "height": "6",
+        "label": "Salve 11 - Graph",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "10",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1010,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a6d1aa04308655e4",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "push cell voltages, slave 11",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with id\nconst data = dataArray.find(d => d.id === 11);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Validate the v_avgCell array\nif (!Array.isArray(data.v_avgCell)) {\n    node.warn(\"v_avgCell is not an array.\");\n    return null;\n}\n\nif (data.v_avgCell.length !== 12) {\n    node.warn(\"v_avgCell does not have 12 entries.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nfor (let i = 0; i < 12; i++) {\n    messages.push({\n        topic: `c${i + 1}v`,\n        payload: data.v_avgCell[i]\n    });\n}\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 620,
+        "wires": [
+            [
+                "fecb1b00337725b2"
+            ]
+        ]
+    },
+    {
+        "id": "402534cd759fb33b",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "feee56445f470f84",
+        "order": 2,
+        "width": "4",
+        "height": "1",
+        "name": "",
+        "label": "Temperature maximum",
+        "format": "{{msg.payload}} ºC",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1020,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "fd8d4897c980f3ee",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "e8fa0ea368ed17ed",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Power Draw",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "5",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 990,
+        "y": 1600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "17b621ccdb6e4ac0",
+        "type": "ui_gauge",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "3eec74d228193152",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Power",
+        "label": "kW",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "80",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 970,
+        "y": 1780,
+        "wires": []
+    },
+    {
+        "id": "341316da03298692",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "feee56445f470f84",
+        "order": 3,
+        "width": "4",
+        "height": "1",
+        "name": "",
+        "label": "Temperature minimum",
+        "format": "{{msg.payload}} ºC",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1020,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "1d56db6809e4c111",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "feee56445f470f84",
+        "order": 4,
+        "width": "4",
+        "height": "1",
+        "name": "",
+        "label": "Current maximum",
+        "format": "{{msg.payload}} A",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1010,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "d480703b7b173024",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "feee56445f470f84",
+        "order": 5,
+        "width": "4",
+        "height": "1",
+        "name": "",
+        "label": "Current minimum",
+        "format": "{{msg.payload}} A",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1010,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "abf4a17be9758438",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "feee56445f470f84",
+        "order": 6,
+        "width": "4",
+        "height": "1",
+        "name": "",
+        "label": "U1 maximum",
+        "format": "{{msg.payload}} V",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 990,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "44fd03184e529516",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "feee56445f470f84",
+        "order": 7,
+        "width": "4",
+        "height": "1",
+        "name": "",
+        "label": "U1 minimum",
+        "format": "{{msg.payload}} V",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 990,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "d2dfaede7fea54fc",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "feee56445f470f84",
+        "order": 8,
+        "width": "4",
+        "height": "1",
+        "name": "",
+        "label": "U2 maximum",
+        "format": "{{msg.payload}} V",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 990,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "b68c726da1eb627d",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "feee56445f470f84",
+        "order": 9,
+        "width": "4",
+        "height": "1",
+        "name": "",
+        "label": "U2 minimum",
+        "format": "{{msg.payload}} V",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 990,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "bfcb4aa5f708ad5c",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "feee56445f470f84",
+        "order": 10,
+        "width": "4",
+        "height": "1",
+        "name": "",
+        "label": "U3 maximum",
+        "format": "{{msg.payload}} V",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 990,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "37b69263123999ab",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "feee56445f470f84",
+        "order": 11,
+        "width": "4",
+        "height": "1",
+        "name": "",
+        "label": "U3 minimum",
+        "format": "{{msg.payload}} V",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 990,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "b738347a0cd92290",
+        "type": "inject",
+        "z": "735cd1324e469561",
+        "d": true,
+        "name": "test0",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "v": "true",
+                "vt": "bool"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "50",
+        "payloadType": "num",
+        "x": 90,
+        "y": 2080,
+        "wires": [
+            [
+                "402534cd759fb33b",
+                "341316da03298692",
+                "1d56db6809e4c111",
+                "d480703b7b173024",
+                "abf4a17be9758438",
+                "44fd03184e529516",
+                "d2dfaede7fea54fc",
+                "b68c726da1eb627d",
+                "bfcb4aa5f708ad5c",
+                "37b69263123999ab",
+                "17b621ccdb6e4ac0",
+                "5b184d07d442b694",
+                "0ceaf139b8ee8cea",
+                "fd8d4897c980f3ee",
+                "c4eb03c742c21552",
+                "4006be138e094f70",
+                "9483a5d39a171169",
+                "f8ed1d946bf7803e",
+                "d76847438eaab13d"
+            ]
+        ]
+    },
+    {
+        "id": "e403c6513392d2eb",
+        "type": "ui_led",
+        "z": "735cd1324e469561",
+        "order": 1,
+        "group": "cee958afbc772faa",
+        "width": "4",
+        "height": "1",
+        "label": "CAN",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "true",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "false",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "CAN fault",
+        "x": 980,
+        "y": 1140,
+        "wires": []
+    },
+    {
+        "id": "f8ed1d946bf7803e",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "3eec74d228193152",
+        "order": 4,
+        "width": "8",
+        "height": "1",
+        "name": "",
+        "label": "SOC",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 970,
+        "y": 1840,
+        "wires": []
+    },
+    {
+        "id": "d76847438eaab13d",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "3eec74d228193152",
+        "order": 5,
+        "width": "8",
+        "height": "1",
+        "name": "",
+        "label": "SOH",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 970,
+        "y": 1900,
+        "wires": []
+    },
+    {
+        "id": "0ceaf139b8ee8cea",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "e8fa0ea368ed17ed",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "SOC",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "5",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 970,
+        "y": 1660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5b184d07d442b694",
+        "type": "ui_chart",
+        "z": "735cd1324e469561",
+        "name": "",
+        "group": "e8fa0ea368ed17ed",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "SOH",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "5",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 970,
+        "y": 1720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e6a241b51adf91e0",
+        "type": "inject",
+        "z": "735cd1324e469561",
+        "d": true,
+        "name": "test0.1",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 90,
+        "y": 1560,
+        "wires": [
+            [
+                "e403c6513392d2eb",
+                "9269e89c3b9d6be2",
+                "3a7764e9b60b366b",
+                "eb54a5264046f67f",
+                "b02c0758b2144c5a",
+                "3c259776481b9aaf",
+                "44c0b00a7184a7e2",
+                "fccf341ed7347925",
+                "715fd1c92f029254",
+                "7c14353b9c488507"
+            ]
+        ]
+    },
+    {
+        "id": "9269e89c3b9d6be2",
+        "type": "ui_led",
+        "z": "735cd1324e469561",
+        "order": 1,
+        "group": "cee958afbc772faa",
+        "width": "4",
+        "height": "1",
+        "label": "Power failure",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "true",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "false",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "Power failure fault",
+        "x": 1010,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "eb54a5264046f67f",
+        "type": "ui_led",
+        "z": "735cd1324e469561",
+        "order": 1,
+        "group": "cee958afbc772faa",
+        "width": "4",
+        "height": "1",
+        "label": "Current",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "true",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "false",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "Current fault",
+        "x": 990,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "3a7764e9b60b366b",
+        "type": "ui_led",
+        "z": "735cd1324e469561",
+        "order": 1,
+        "group": "cee958afbc772faa",
+        "width": "4",
+        "height": "1",
+        "label": "vRef",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "true",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "false",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "Vref fault",
+        "x": 980,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "fccf341ed7347925",
+        "type": "ui_led",
+        "z": "735cd1324e469561",
+        "order": 1,
+        "group": "cee958afbc772faa",
+        "width": "4",
+        "height": "1",
+        "label": "U3 open circuit",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "true",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "false",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "U3 open circuit fault",
+        "x": 1020,
+        "y": 1420,
+        "wires": []
+    },
+    {
+        "id": "44c0b00a7184a7e2",
+        "type": "ui_led",
+        "z": "735cd1324e469561",
+        "order": 1,
+        "group": "cee958afbc772faa",
+        "width": "4",
+        "height": "1",
+        "label": "U2 open circuit",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "true",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "false",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "U2 open circuit fault",
+        "x": 1020,
+        "y": 1380,
+        "wires": []
+    },
+    {
+        "id": "3c259776481b9aaf",
+        "type": "ui_led",
+        "z": "735cd1324e469561",
+        "order": 1,
+        "group": "cee958afbc772faa",
+        "width": "4",
+        "height": "1",
+        "label": "U1 open circuit",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "true",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "false",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "U1 open circuit fault",
+        "x": 1020,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "b02c0758b2144c5a",
+        "type": "ui_led",
+        "z": "735cd1324e469561",
+        "order": 1,
+        "group": "cee958afbc772faa",
+        "width": "4",
+        "height": "1",
+        "label": "I1 open circuit",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "true",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "false",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "I1 open circuit fault",
+        "x": 1010,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "7c14353b9c488507",
+        "type": "ui_led",
+        "z": "735cd1324e469561",
+        "order": 1,
+        "group": "cee958afbc772faa",
+        "width": "4",
+        "height": "1",
+        "label": "ntc-l open circuit",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "true",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "false",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "ntc-l open circuit fault",
+        "x": 1020,
+        "y": 1500,
+        "wires": []
+    },
+    {
+        "id": "715fd1c92f029254",
+        "type": "ui_led",
+        "z": "735cd1324e469561",
+        "order": 1,
+        "group": "cee958afbc772faa",
+        "width": "4",
+        "height": "1",
+        "label": "ntc-h open circuit",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "true",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "false",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "ntc-h open circuit fault",
+        "x": 1020,
+        "y": 1460,
+        "wires": []
+    },
+    {
+        "id": "9483a5d39a171169",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "feee56445f470f84",
+        "order": 1,
+        "width": "4",
+        "height": "1",
+        "name": "",
+        "label": "CAN bitrare",
+        "format": "{{msg.payload}} Mb/s",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 990,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "c4eb03c742c21552",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "3eec74d228193152",
+        "order": 3,
+        "width": "8",
+        "height": "1",
+        "name": "",
+        "label": "vBatt",
+        "format": "{{msg.payload}} V",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 970,
+        "y": 1960,
+        "wires": []
+    },
+    {
+        "id": "4006be138e094f70",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "3eec74d228193152",
+        "order": 2,
+        "width": "8",
+        "height": "1",
+        "name": "",
+        "label": "iBatt",
+        "format": "{{msg.payload}} A",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 970,
+        "y": 2020,
+        "wires": []
+    },
+    {
+        "id": "f6316eff174b55b9",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "strg to json - only ivt",
+        "func": "let str = msg.payload;\n\n// Step 1: Remove double quotes if double-encoded\nif (typeof str === \"string\" && str.startsWith('\"') && str.endsWith('\"')) {\n    str = str.slice(1, -1);\n}\n\n// Step 2: Parse JSON\nlet parsed;\ntry {\n    parsed = JSON.parse(str);\n} catch (e) {\n    node.error(\"Invalid JSON string: \" + str, msg);\n    return null;\n}\n\n// Step 3: Filter only objects where the first key is \"ivt\"\nif (Array.isArray(parsed)) {\n    const filtered = parsed.filter(obj => {\n        if (typeof obj !== \"object\" || obj === null) return false;\n        const keys = Object.keys(obj);\n        return keys.length > 0 && keys[0] === \"ivt\";\n    });\n\n    // Step 4: Only send if at least one ivt object is found\n    if (filtered.length > 0) {\n        msg.payload = filtered;\n        return msg;\n    } else {\n        return null;  // Do not send anything\n    }\n} else {\n    node.error(\"Expected array but got: \" + typeof parsed, msg);\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 140,
+        "y": 1120,
+        "wires": [
+            [
+                "6c350871cf8e1615",
+                "48d1bdac069b60bd",
+                "81e816130377dc09",
+                "386dee6749745c9c",
+                "d5d4f52a9e91573d",
+                "9a1abc34eef21249",
+                "be6060e3b273f813",
+                "c38b8a3eff69dcb3",
+                "6188dd816e426cb4",
+                "e4ce0b2076748557",
+                "032bf2bf22580292",
+                "39700a5fb01925c4",
+                "ade9d5395d394db8",
+                "05271432e5f22396",
+                "915b16397e66d40a",
+                "df0775df5d17e413",
+                "b1abe9e9006002cf",
+                "f9177ee52bd1391d",
+                "d5cd4ceef7727068",
+                "62ef37dca5927b6b",
+                "f4bece44e05eeaa3",
+                "8ca97f738ef027c0",
+                "2543624c3c609108",
+                "8cebc2af134da93d",
+                "77073a99c24db942",
+                "c7bf7cf52cc9a075",
+                "acd40b5945cb4480",
+                "9f050fdb3eabdbf7"
+            ]
+        ]
+    },
+    {
+        "id": "6c350871cf8e1615",
+        "type": "debug",
+        "z": "735cd1324e469561",
+        "name": "debug ivt json",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 120,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "9164a87c9e3fcf71",
+        "type": "debug",
+        "z": "735cd1324e469561",
+        "name": "0000",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1150,
+        "y": 1660,
+        "wires": []
+    },
+    {
+        "id": "48d1bdac069b60bd",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse fault power",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"fault\", payload: data.faults?.power });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 1180,
+        "wires": [
+            [
+                "9269e89c3b9d6be2"
+            ]
+        ]
+    },
+    {
+        "id": "386dee6749745c9c",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse fault vRef",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"fault\", payload: data.faults?.vRef });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 1220,
+        "wires": [
+            [
+                "3a7764e9b60b366b"
+            ]
+        ]
+    },
+    {
+        "id": "81e816130377dc09",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse fault CAN",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"fault\", payload: data.faults?.CAN });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 1140,
+        "wires": [
+            [
+                "e403c6513392d2eb"
+            ]
+        ]
+    },
+    {
+        "id": "d5d4f52a9e91573d",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse fault current",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"fault\", payload: data.faults?.current });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 1260,
+        "wires": [
+            [
+                "eb54a5264046f67f"
+            ]
+        ]
+    },
+    {
+        "id": "9a1abc34eef21249",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse fault current_oc",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"fault\", payload: data.faults?.current_oc });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 1300,
+        "wires": [
+            [
+                "b02c0758b2144c5a"
+            ]
+        ]
+    },
+    {
+        "id": "be6060e3b273f813",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse fault U1_oc",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"fault\", payload: data.faults?.U1_oc });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 1340,
+        "wires": [
+            [
+                "3c259776481b9aaf"
+            ]
+        ]
+    },
+    {
+        "id": "c38b8a3eff69dcb3",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse fault U2_oc",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"fault\", payload: data.faults?.U2_oc });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 1380,
+        "wires": [
+            [
+                "44c0b00a7184a7e2"
+            ]
+        ]
+    },
+    {
+        "id": "6188dd816e426cb4",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse fault U3_oc",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"fault\", payload: data.faults?.U3_oc });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 1420,
+        "wires": [
+            [
+                "fccf341ed7347925"
+            ]
+        ]
+    },
+    {
+        "id": "e4ce0b2076748557",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse fault ntc_l_oc",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"fault\", payload: data.faults?.ntc_l_oc });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 1500,
+        "wires": [
+            [
+                "7c14353b9c488507"
+            ]
+        ]
+    },
+    {
+        "id": "df0775df5d17e413",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse fault ntc_h_oc",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"fault\", payload: data.faults?.ntc_h_oc });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 1460,
+        "wires": [
+            [
+                "715fd1c92f029254"
+            ]
+        ]
+    },
+    {
+        "id": "915b16397e66d40a",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse fault adc",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"fault\", payload: data.faults?.adc });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 1540,
+        "wires": [
+            [
+                "3ced374ee401b5fe"
+            ]
+        ]
+    },
+    {
+        "id": "3ced374ee401b5fe",
+        "type": "ui_led",
+        "z": "735cd1324e469561",
+        "order": 1,
+        "group": "cee958afbc772faa",
+        "width": "4",
+        "height": "1",
+        "label": "adc",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "true",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "false",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "adc fault",
+        "x": 980,
+        "y": 1540,
+        "wires": []
+    },
+    {
+        "id": "032bf2bf22580292",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse power",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"power\", payload: (data.power*0.001) });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 1600,
+        "wires": [
+            [
+                "fd8d4897c980f3ee"
+            ]
+        ]
+    },
+    {
+        "id": "39700a5fb01925c4",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse power",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"power\", payload: (data.power*0.001) });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 1780,
+        "wires": [
+            [
+                "17b621ccdb6e4ac0"
+            ]
+        ]
+    },
+    {
+        "id": "ade9d5395d394db8",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse vBatt",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\n//messages.push({ topic: \"power\", payload: (data.vBatt*0.001) });\nmessages.push({ topic: \"vBatt\", payload: (data.vBatt * 0.001).toFixed(3) });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 1960,
+        "wires": [
+            [
+                "c4eb03c742c21552"
+            ]
+        ]
+    },
+    {
+        "id": "05271432e5f22396",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse iBatt",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\n//messages.push({ topic: \"iBatt\", payload: (data.iBatt*0.001) });\nmessages.push({ topic: \"iBatt\", payload: (data.iBatt * 0.001).toFixed(3) });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 2020,
+        "wires": [
+            [
+                "4006be138e094f70"
+            ]
+        ]
+    },
+    {
+        "id": "bcd0c7d945a6abec",
+        "type": "ui_text",
+        "z": "735cd1324e469561",
+        "group": "3eec74d228193152",
+        "order": 2,
+        "width": "8",
+        "height": "1",
+        "name": "",
+        "label": "Temperature",
+        "format": "{{msg.payload}} ºC",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 990,
+        "y": 2080,
+        "wires": []
+    },
+    {
+        "id": "b1abe9e9006002cf",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse temp",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"temp\", payload: (data.temp*0.1) });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 2080,
+        "wires": [
+            [
+                "bcd0c7d945a6abec"
+            ]
+        ]
+    },
+    {
+        "id": "f9177ee52bd1391d",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse conf_CANbit",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"conf_CANbit\", payload: data.conf_CANbit });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 1080,
+        "wires": [
+            [
+                "9483a5d39a171169"
+            ]
+        ]
+    },
+    {
+        "id": "d5cd4ceef7727068",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse conf_minU3",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"conf_minU3\", payload: data.conf_minU3 });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 1040,
+        "wires": [
+            [
+                "37b69263123999ab"
+            ]
+        ]
+    },
+    {
+        "id": "62ef37dca5927b6b",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse conf_maxU3",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"conf_maxU3\", payload: data.conf_maxU3 });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 1000,
+        "wires": [
+            [
+                "bfcb4aa5f708ad5c"
+            ]
+        ]
+    },
+    {
+        "id": "f4bece44e05eeaa3",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse conf_minU2",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"conf_minU2\", payload: data.conf_minU2 });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 960,
+        "wires": [
+            [
+                "b68c726da1eb627d"
+            ]
+        ]
+    },
+    {
+        "id": "8ca97f738ef027c0",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse conf_maxU2",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"conf_maxU2\", payload: data.conf_maxU2 });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 920,
+        "wires": [
+            [
+                "d2dfaede7fea54fc"
+            ]
+        ]
+    },
+    {
+        "id": "2543624c3c609108",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse conf_minU1",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"conf_minU1\", payload: data.conf_minU1 });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 880,
+        "wires": [
+            [
+                "44fd03184e529516"
+            ]
+        ]
+    },
+    {
+        "id": "8cebc2af134da93d",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse conf_maxU1",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"conf_maxU1\", payload: data.conf_maxU1 });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 840,
+        "wires": [
+            [
+                "abf4a17be9758438"
+            ]
+        ]
+    },
+    {
+        "id": "77073a99c24db942",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse conf_minCurrent",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"conf_minCurrent\", payload: data.conf_minCurrent });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 800,
+        "wires": [
+            [
+                "d480703b7b173024"
+            ]
+        ]
+    },
+    {
+        "id": "c7bf7cf52cc9a075",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse conf_maxCurrent",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"conf_maxCurrent\", payload: data.conf_maxCurrent });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 760,
+        "wires": [
+            [
+                "1d56db6809e4c111"
+            ]
+        ]
+    },
+    {
+        "id": "acd40b5945cb4480",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse conf_minTemp",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"conf_minTemp\", payload: data.conf_minTemp });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 720,
+        "wires": [
+            [
+                "341316da03298692"
+            ]
+        ]
+    },
+    {
+        "id": "9f050fdb3eabdbf7",
+        "type": "function",
+        "z": "735cd1324e469561",
+        "name": "parse conf_maxTemp",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with ivt\nconst data = dataArray.find(d => d.ivt   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"conf_maxTemp\", payload: data.conf_maxTemp });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 680,
+        "wires": [
+            [
+                "402534cd759fb33b"
+            ]
+        ]
+    },
+    {
+        "id": "json",
+        "type": "json",
+        "z": "345c92b9b509ab4e",
+        "d": true,
+        "name": "Parse JSON body",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 410,
+        "y": 240,
+        "wires": [
+            [
+                "map"
+            ]
+        ]
+    },
+    {
+        "id": "map",
+        "type": "function",
+        "z": "345c92b9b509ab4e",
+        "d": true,
+        "name": "extract text",
+        "func": "// Expecting {\"console\": \"text to print\"}\n// but accept a few fallbacks too\nlet text = msg.payload?.console ?? msg.console ?? msg.payload;\nif (typeof text === 'object') text = JSON.stringify(text);\nmsg.console = String(text ?? '');\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 240,
+        "wires": [
+            [
+                "ui"
+            ]
+        ]
+    },
+    {
+        "id": "ui",
+        "type": "ui_template",
+        "z": "345c92b9b509ab4e",
+        "d": true,
+        "group": "a4a84291856ab1c5",
+        "name": "Console",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<div id=\"term\" style=\"height:60vh;width:100%\"></div>\n\n<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.css\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/lib/addon-fit.js\"></script>\n\n<script>\n(function(scope) {\n  const term = new window.Terminal({\n    disableStdin: true, // print-only\n    cursorBlink: false,\n    fontFamily: 'monospace',\n    fontSize: 14\n  });\n  const fitAddon = new window.FitAddon.FitAddon();\n  term.loadAddon(fitAddon);\n  term.open(document.getElementById('term'));\n  fitAddon.fit();\n  window.addEventListener('resize', () => fitAddon.fit());\n\n  // helpers\n  function printLine(text) {\n    if (text === undefined || text === null) return;\n    term.writeln(String(text).replace(/\\r?\\n/g, '\\r\\n'));\n    term.scrollToBottom();\n  }\n\n  // support simple commands in JSON too\n  function handleMsg(msg) {\n    if (!msg) return;\n    const cmd = msg.command || msg.payload?.command;\n    if (cmd === 'clear') { term.clear(); return; }\n\n    let txt = msg.console ?? msg.payload?.console ?? msg.payload;\n    if (typeof txt === 'object') txt = JSON.stringify(txt);\n    printLine(txt);\n  }\n\n  // ui_template: get every message sent to this widget\n  scope.$watch('msg', handleMsg);\n})();\n</script>",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 860,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "241c0afe2cf9ed2d",
+        "type": "inject",
+        "z": "345c92b9b509ab4e",
+        "d": true,
+        "name": "inject comnsole",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "{\"console\":\"Print this in the terminal\"}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 240,
+        "wires": [
+            [
+                "json"
+            ]
+        ]
+    },
+    {
+        "id": "f_parse_json",
+        "type": "json",
+        "z": "345c92b9b509ab4e",
+        "name": "Parse JSON if needed",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 560,
+        "y": 380,
+        "wires": [
+            [
+                "f_to_console"
+            ]
+        ]
+    },
+    {
+        "id": "f_to_console",
+        "type": "function",
+        "z": "345c92b9b509ab4e",
+        "name": "to console text",
+        "func": "// Print-only console normalizer with robust \"clear\" handling\n\n// 1) clear command passthrough (object path)\nconst cmd = msg.command ?? msg.payload?.command;\nif (cmd === 'clear') {\n  return { command: 'clear' };\n}\n\n// 2) pull text from console or payload\nlet text = msg.console ?? msg.payload?.console ?? msg.payload;\n\n// 3) if it's a JSON string, try to parse it\nif (typeof text === 'string') {\n  try {\n    const parsed = JSON.parse(text);\n\n    // >>> CHANGED: handle {\"command\":\"clear\"} that arrives as a string\n    if (parsed && typeof parsed === 'object' && parsed.command === 'clear') {\n      return { command: 'clear' };\n    }\n\n    // prefer explicit console field if present\n    text = (parsed && typeof parsed === 'object' && 'console' in parsed)\n      ? parsed.console\n      : parsed;\n  } catch {\n    // not JSON, keep as-is\n  }\n}\n\n// 4) if it’s still an object, stringify ONLY its console field if present\nif (text && typeof text === 'object') {\n  if ('command' in text && text.command === 'clear') {\n    // safety: if an object slipped through with clear, clear instead of printing\n    return { command: 'clear' };\n  }\n  text = ('console' in text) ? text.console : JSON.stringify(text);\n}\n\n// 5) output as plain string in payload (and also in msg.console if you like)\nmsg.payload = String(text ?? '');\nmsg.console = msg.payload; // optional\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 380,
+        "wires": [
+            [
+                "ui_console"
+            ]
+        ]
+    },
+    {
+        "id": "ui_console",
+        "type": "ui_template",
+        "z": "345c92b9b509ab4e",
+        "group": "a4a84291856ab1c5",
+        "name": "Console (xterm)",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "format": "<div id=\"term\" style=\"height:60vh;width:100%\"></div>\n\n<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.css\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/xterm/5.5.0/xterm.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/lib/addon-fit.js\"></script>\n\n<script>\n(function(scope){\n  const term = new window.Terminal({\n    disableStdin: true,\n    cursorBlink: false,\n    fontFamily: 'monospace',\n    fontSize: 14\n  });\n  const fitAddon = new window.FitAddon.FitAddon();\n  term.loadAddon(fitAddon);\n  term.open(document.getElementById('term'));\n  fitAddon.fit();\n  window.addEventListener('resize', () => fitAddon.fit());\n\n  function printLine(txt){\n    if (txt === undefined || txt === null) return;\n    // normalize newlines for xterm\n    const s = String(txt).replace(/\\r?\\n/g, '\\r\\n');\n    term.writeln(s);\n    term.scrollToBottom();\n  }\n\n  function handleMsg(msg){\n    if (!msg) return;\n    // simple command support\n    const cmd = msg.command || msg.payload?.command;\n    if (cmd === 'clear'){ term.clear(); return; }\n\n    // accept msg.console or msg.payload\n    let txt = msg.console ?? msg.payload?.console ?? msg.payload;\n    if (typeof txt === 'object') { try { txt = JSON.stringify(txt); } catch(e){} }\n    printLine(txt);\n  }\n\n  // ui_template receives every upstream msg here\n  scope.$watch('msg', handleMsg);\n})(scope);\n</script>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 1020,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "inject_test",
+        "type": "inject",
+        "z": "345c92b9b509ab4e",
+        "name": "Test: {\"console\":\"Hello UART\"}",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"console\":\"Print this in the terminal\"}",
+        "payloadType": "json",
+        "x": 230,
+        "y": 380,
+        "wires": [
+            [
+                "f_parse_json",
+                "48b6f87867eb8353"
+            ]
+        ]
+    },
+    {
+        "id": "inject_clear",
+        "type": "inject",
+        "z": "345c92b9b509ab4e",
+        "name": "Test: clear",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"command\":\"clear\"}",
+        "payloadType": "json",
+        "x": 300,
+        "y": 440,
+        "wires": [
+            [
+                "f_parse_json",
+                "48b6f87867eb8353"
+            ]
+        ]
+    },
+    {
+        "id": "48b6f87867eb8353",
+        "type": "function",
+        "z": "345c92b9b509ab4e",
+        "d": true,
+        "name": "parse CONSOLE",
+        "func": "const dataArray = msg.payload;\n\n// Sanity check\nif (!Array.isArray(dataArray)) {\n    node.warn(\"Payload is not an array.\");\n    return null;\n}\n\n// Find the object with console\nconst data = dataArray.find(d => d.console   === 0);\n\nif (!data) {\n    node.warn(\"No entry with id in question found.\");\n    return null;\n}\n\n// Build array of output messages\nconst messages = [];\n\nmessages.push({ topic: \"console\", payload: data.console });\n\n// Send all messages from one output\nreturn [messages];\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 420,
+        "wires": [
+            [
+                "f_to_console"
+            ]
+        ]
+    },
+    {
+        "id": "c75b923da07e3421",
+        "type": "ui_button",
+        "z": "345c92b9b509ab4e",
+        "name": "",
+        "group": "a4a84291856ab1c5",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Clear",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-terminal",
+        "payload": "{\"command\":\"clear\"}",
+        "payloadType": "json",
+        "topic": "payload",
+        "topicType": "msg",
+        "x": 610,
+        "y": 460,
+        "wires": [
+            [
+                "f_to_console"
+            ]
+        ]
+    }
+]
