@@ -35,7 +35,8 @@ Core/Src/eeprom_utils.o: ../Core/Src/eeprom_utils.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/ee24.h ../Core/Inc/NimaLTD.I-CUBE-EE24_conf.h
+ ../Core/Inc/ee24.h ../Core/Inc/NimaLTD.I-CUBE-EE24_conf.h \
+ ../Core/Inc/uartDMA.h
 ../Core/Inc/eeprom_utils.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -75,3 +76,4 @@ Core/Src/eeprom_utils.o: ../Core/Src/eeprom_utils.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/ee24.h:
 ../Core/Inc/NimaLTD.I-CUBE-EE24_conf.h:
+../Core/Inc/uartDMA.h:

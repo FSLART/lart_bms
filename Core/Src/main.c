@@ -34,6 +34,8 @@
 #include "eeprom_utils.h"
 
 #include "uartDMA.h"
+
+#include "version.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -180,8 +182,9 @@ int main(void)
 	uint32_t timeStart;
 	uint32_t timeCmmd;
 
-	printfDma("Start Program \n\r");
-	printfDma("Start Program \n\n");
+	//printfDma("bad \r");
+	printConsole("Start Program \n\r");
+	startUI();
 
 	/*if (Write_EEPROM(&eeprom_comms, STEERING_MAX, 2334, true)) {
 		//printfDma("good \n");
@@ -207,12 +210,12 @@ int main(void)
 	//HAL_TIM_Base_Start_IT(&htim17);
 	//IVT_SET_BITRATE();
 
-	bms_stopDischarge();
+	//bms_stopDischarge();
 	HAL_Delay(200);         // Initialisation delay
 
-	bms_wakeupChain();
-	bms_init();             // Initialise BMS configs and send them
-	bms_readSid();
+	//bms_wakeupChain();
+	//bms_init();             // Initialise BMS configs and send them
+	//bms_readSid();
 
 	//bms_openWireCheck();
 	/*bms_startTimer();
@@ -229,7 +232,7 @@ int main(void)
 
 	while (1) {
 
-		bmsCurrState = bmsState;        // Copy value to ensure value is not changed throughout the loop
+		/*bmsCurrState = bmsState;        // Copy value to ensure value is not changed throughout the loop
 
 		//if (bmsPrevState != bmsCurrState) {
 		bms_wakeupChain();

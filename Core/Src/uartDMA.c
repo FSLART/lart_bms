@@ -135,7 +135,7 @@ void printConsole(const char *format, ...)
     printfDma("{\"console\":\"");
     jsonSendEscaped(tmp);
     printfDma("\"}");
-    printfDma("]\n");
+    printfDma("]\n\r");
 }
 
 

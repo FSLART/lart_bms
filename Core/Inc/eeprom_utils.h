@@ -13,6 +13,7 @@ extern "C" {
 
 #include "main.h"
 #include "ee24.h"
+#include "uartDMA.h"
 
 typedef struct {
     I2C_HandleTypeDef *hi2c;
