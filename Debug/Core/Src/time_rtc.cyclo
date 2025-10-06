@@ -1,0 +1,2 @@
+../Core/Src/time_rtc.c:14:6:RTC_Time_Get	3
+../Core/Src/time_rtc.c:29:6:RTC_Time_GetRaw	3

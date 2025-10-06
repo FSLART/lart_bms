@@ -33,6 +33,10 @@
 
 #include "eeprom_utils.h"
 
+#include "isa_ivt-s.h"
+
+#include "time_rtc.h"
+
 #include "uartDMA.h"
 
 #include "version.h"
@@ -70,6 +74,8 @@ CAN_HandleTypeDef hcan2;
 
 I2C_HandleTypeDef hi2c1;
 
+RTC_HandleTypeDef hrtc;
+
 SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim2;
@@ -100,6 +106,7 @@ static void MX_I2C1_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_CAN2_Init(void);
 static void MX_CAN1_Init(void);
+static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
 
@@ -157,6 +164,7 @@ int main(void)
   MX_ADC1_Init();
   MX_CAN2_Init();
   MX_CAN1_Init();
+  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -165,9 +173,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
 	// Set CS2 Pin to HIGH to disable second SPI on 6822 + MSTR should be high by default
-	//HAL_GPIO_WritePin(BMS_CS2_GPIO_Port, BMS_CS2_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(BMS_MSTR_GPIO_Port, BMS_MSTR_Pin, GPIO_PIN_SET);
-	//HAL_GPIO_WritePin(BMS_MSTR2_GPIO_Port, BMS_MSTR2_Pin, GPIO_PIN_SET);
+
 
 	// Start Timers
 	HAL_TIM_Base_Start_IT(&htim8);
@@ -185,6 +192,10 @@ int main(void)
 	//printfDma("bad \r");
 	printConsole("Start Program \n\r");
 	startUI();
+
+	char ts[20];
+	RTC_Time_Get(ts, sizeof(ts));
+	printConsole("%s\r\n", ts);
 
 	/*if (Write_EEPROM(&eeprom_comms, STEERING_MAX, 2334, true)) {
 		//printfDma("good \n");
@@ -211,7 +222,7 @@ int main(void)
 	//IVT_SET_BITRATE();
 
 	//bms_stopDischarge();
-	HAL_Delay(200);         // Initialisation delay
+	//HAL_Delay(200);         // Initialisation delay
 
 	//bms_wakeupChain();
 	//bms_init();             // Initialise BMS configs and send them
@@ -357,8 +368,10 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 4;
@@ -543,6 +556,41 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief RTC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RTC_Init(void)
+{
+
+  /* USER CODE BEGIN RTC_Init 0 */
+
+  /* USER CODE END RTC_Init 0 */
+
+  /* USER CODE BEGIN RTC_Init 1 */
+
+  /* USER CODE END RTC_Init 1 */
+
+  /** Initialize RTC Only
+  */
+  hrtc.Instance = RTC;
+  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+  hrtc.Init.AsynchPrediv = 127;
+  hrtc.Init.SynchPrediv = 255;
+  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  if (HAL_RTC_Init(&hrtc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RTC_Init 2 */
+
+  /* USER CODE END RTC_Init 2 */
 
 }
 

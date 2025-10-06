@@ -39,13 +39,38 @@ extern "C"
 
 #include <stdbool.h>
 #include "main.h"
-#include "NimaLTD.I-CUBE-EE24_conf.h"
 
 /************************************************************************************************************
 **************    Public Definitions
 ************************************************************************************************************/
 
 #define EE24_ADDRESS_DEFAULT 0xA0
+
+#define EE24_1KBIT                            1
+#define EE24_2KBIT                            2
+#define EE24_4KBIT                            4
+#define EE24_8KBIT                            8
+#define EE24_16KBIT                           16
+#define EE24_32KBIT                           32
+#define EE24_64KBIT                           64
+#define EE24_128KBIT                          128
+#define EE24_256KBIT                          256
+#define EE24_512KBIT                          512
+
+#define EE24_RTOS_DISABLE                     0
+#define EE24_RTOS_CMSIS_V1                    1
+#define EE24_RTOS_CMSIS_V2                    2
+#define EE24_RTOS_THREADX                     3
+
+
+/*---------- EE24_SIZE  -----------*/
+#define EE24_SIZE      EE24_8KBIT
+
+/*---------- EE24_RTOS  -----------*/
+#define EE24_RTOS      EE24_RTOS_DISABLE
+
+/*---------- EE24_USE_WP_PIN  -----------*/
+#define EE24_USE_WP_PIN      false
 
 /************************************************************************************************************
 **************    Public struct/enum

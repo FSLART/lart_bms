@@ -57,6 +57,7 @@ extern I2C_HandleTypeDef hi2c1;
 extern UART_HandleTypeDef huart1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim5;
+extern RTC_HandleTypeDef hrtc;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/

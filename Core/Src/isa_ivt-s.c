@@ -1,5 +1,5 @@
+#include <isa_ivt-s.h>
 #include "main.h"
-#include "IVT_CAN.h"
 #include "uartDMA.h"
 
 /* Variables -------------------------------------------------------------------*/
@@ -546,19 +546,19 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 void IVT_FAULT_CHECK(void) {
 
 // ez can error check
-if ((HAL_GetTick() - lastTime) > 1000) {
-	commsCheck = false;
-} else {
-	commsCheck = true;
-}
+	if ((HAL_GetTick() - lastTime) > 1000) {
+		commsCheck = false;
+	} else {
+		commsCheck = true;
+	}
 
-if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_SYSERROR_CMD) != HAL_OK) {
-	printf("Error sending SYSERROR_CMD\r\n");
-}
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_SYSERROR_CMD) != HAL_OK) {
+		printf("Error sending SYSERROR_CMD\r\n");
+	}
 
-/*if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_MEASURERROR_CMD) != HAL_OK) {
- printf("Error sending IVT_MEASURERROR_CMD\r\n");
- }*/
+	/*if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_MEASURERROR_CMD) != HAL_OK) {
+	 printf("Error sending IVT_MEASURERROR_CMD\r\n");
+	 }*/
 }
 
 /**
@@ -567,67 +567,67 @@ if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_SYSERROR_CMD) != HAL_O
  *                 RxData[1] == 0x00 indicates the bitmask sub-index.
  */
 void IVT_PROCESS_SYSERRORS(uint8_t *RxData) {
-if (RxData[1] != 0x00) {
-	printf("Error getting SYSERRORS\r\n");
-	return;  // not the bitmask response
-}
+	if (RxData[1] != 0x00) {
+		printf("Error getting SYSERRORS\r\n");
+		return;  // not the bitmask response
+	}
 
-uint8_t low = RxData[2];  // bits 0–7
-uint8_t high = RxData[3];  // bits 8–15
+	uint8_t low = RxData[2];  // bits 0–7
+	uint8_t high = RxData[3];  // bits 8–15
 
-printf("		SYSERRORS low:  ");
-for (int i = 7; i >= 0; i--) {
-	// Test bit i and print '1' or '0'
-	printf("%c", (low & (1 << i)) ? '1' : '0');
-}
-printf("\r\n");
+	printf("		SYSERRORS low:  ");
+	for (int i = 7; i >= 0; i--) {
+		// Test bit i and print '1' or '0'
+		printf("%c", (low & (1 << i)) ? '1' : '0');
+	}
+	printf("\r\n");
 
-printf("		SYSERRORS high: ");
-for (int i = 7; i >= 0; i--) {
-	// Test bit i and print '1' or '0'
-	printf("%c", (high & (1 << i)) ? '1' : '0');
-}
-printf("\r\n");
+	printf("		SYSERRORS high: ");
+	for (int i = 7; i >= 0; i--) {
+		// Test bit i and print '1' or '0'
+		printf("%c", (high & (1 << i)) ? '1' : '0');
+	}
+	printf("\r\n");
 
 // Clear all system-error flags before updating
-ivt.faults.CAN = false;
-ivt.faults.power = false;
-ivt.faults.current = false;
-ivt.faults.vRef = false;
-ivt.faults.temp = false;
+	ivt.faults.CAN = false;
+	ivt.faults.power = false;
+	ivt.faults.current = false;
+	ivt.faults.vRef = false;
+	ivt.faults.temp = false;
 
 // Map bits 0..3 → CAN errors
-if (low & (1 << 0))
-	//ivt.faults.CAN = true;  // Error Code CRC
-	if (low & (1 << 1))
-		//ivt.faults.CAN = true;  // Error Parameter CRC
-		if (low & (1 << 2))
-			//ivt.faults.CAN = true;  // Error CAN Rx Data
-			if (low & (1 << 3))
-				ivt.faults.CAN = true;  // Error CAN Tx Data
-if (!commsCheck)
-	ivt.faults.CAN = true;  // Error CAN innitial comms
+	if (low & (1 << 0))
+		//ivt.faults.CAN = true;  // Error Code CRC
+		if (low & (1 << 1))
+			//ivt.faults.CAN = true;  // Error Parameter CRC
+			if (low & (1 << 2))
+				//ivt.faults.CAN = true;  // Error CAN Rx Data
+				if (low & (1 << 3))
+					ivt.faults.CAN = true;  // Error CAN Tx Data
+	if (!commsCheck)
+		ivt.faults.CAN = true;  // Error CAN innitial comms
 
 // bit 4 - overtemp
-if (low & (1 << 4))
-	ivt.faults.temp = true;
+	if (low & (1 << 4))
+		ivt.faults.temp = true;
 
 // bit 5 - undertemp
-if (low & (1 << 5))
-	ivt.faults.temp = true;
+	if (low & (1 << 5))
+		ivt.faults.temp = true;
 
 // bit 6 - power failure
-if (low & (1 << 6))
-	ivt.faults.power = true;
+	if (low & (1 << 6))
+		ivt.faults.power = true;
 
 // bits 8..15: other system flags – map these as you see fit
 // bit 8 = system init error - treat as a CAN fault
 //if (high & (1 << 0)) ivt.faults.CAN = true;   // Error System Init
 
 // Finally, ask for measurement errors if desired:
-if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_MEASURERROR_CMD) != HAL_OK) {
-	printf("Error sending IVT_MEASURERROR_CMD\r\n");
-}
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_MEASURERROR_CMD) != HAL_OK) {
+		printf("Error sending IVT_MEASURERROR_CMD\r\n");
+	}
 }
 
 /**
@@ -636,94 +636,94 @@ if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_MEASURERROR_CMD) != HA
  *                 RxData[1] == 0x00 indicates the bitmask sub-index.
  */
 void IVT_PROCESS_MEASURERRORS(uint8_t *RxData) {
-if (RxData[1] != 0x00) {
-	printf("Error getting MEASURERRORS\r\n");
-	return;
-}
+	if (RxData[1] != 0x00) {
+		printf("Error getting MEASURERRORS\r\n");
+		return;
+	}
 
-uint8_t low = RxData[2];  // bits 0–7
-uint8_t high = RxData[3];  // bits 8–15
+	uint8_t low = RxData[2];  // bits 0–7
+	uint8_t high = RxData[3];  // bits 8–15
 
-printf("		MEASURERRORS low:  ");
-for (int i = 7; i >= 0; i--) {
-	// Test bit i and print '1' or '0'
-	printf("%c", (low & (1 << i)) ? '1' : '0');
-}
-printf("\r\n");
+	printf("		MEASURERRORS low:  ");
+	for (int i = 7; i >= 0; i--) {
+		// Test bit i and print '1' or '0'
+		printf("%c", (low & (1 << i)) ? '1' : '0');
+	}
+	printf("\r\n");
 
-printf("		MEASURERRORS high: ");
-for (int i = 7; i >= 0; i--) {
-	// Test bit i and print '1' or '0'
-	printf("%c", (high & (1 << i)) ? '1' : '0');
-}
-printf("\r\n");
+	printf("		MEASURERRORS high: ");
+	for (int i = 7; i >= 0; i--) {
+		// Test bit i and print '1' or '0'
+		printf("%c", (high & (1 << i)) ? '1' : '0');
+	}
+	printf("\r\n");
 
 // Clear all measurement-error flags before updating
-ivt.faults.U1_oc = false;
-ivt.faults.U2_oc = false;
-ivt.faults.U3_oc = false;
-ivt.faults.current_oc = false;
-ivt.faults.ntc_l_oc = false;
-ivt.faults.ntc_h_oc = false;
-ivt.faults.adc = false;
+	ivt.faults.U1_oc = false;
+	ivt.faults.U2_oc = false;
+	ivt.faults.U3_oc = false;
+	ivt.faults.current_oc = false;
+	ivt.faults.ntc_l_oc = false;
+	ivt.faults.ntc_h_oc = false;
+	ivt.faults.adc = false;
 
 // bits 0..3 → ADC errors
 // (you can choose which struct flag to assign; here's an example)
-if (low & (1 << 0))
-	ivt.faults.adc = true;   // ADC interrupt → mark a generic current fault
-if (low & (1 << 1))
-	ivt.faults.adc = true;   // Overflow ADC ch1
-if (low & (1 << 2))
-	ivt.faults.adc = true;   // Underflow ADC ch1
-if (low & (1 << 3))
-	ivt.faults.adc = true;   // Overflow ADC ch2/U1–U3
-if (low & (1 << 4))
-	ivt.faults.adc = true;   // Underflow ADC ch2/U1–U3
-if (low & (1 << 5))
-	ivt.faults.vRef = true;      // Vref implausibility
-if (low & (1 << 6))
-	ivt.faults.current = true;   // I1–I2 delta
+	if (low & (1 << 0))
+		ivt.faults.adc = true;   // ADC interrupt → mark a generic current fault
+	if (low & (1 << 1))
+		ivt.faults.adc = true;   // Overflow ADC ch1
+	if (low & (1 << 2))
+		ivt.faults.adc = true;   // Underflow ADC ch1
+	if (low & (1 << 3))
+		ivt.faults.adc = true;   // Overflow ADC ch2/U1–U3
+	if (low & (1 << 4))
+		ivt.faults.adc = true;   // Underflow ADC ch2/U1–U3
+	if (low & (1 << 5))
+		ivt.faults.vRef = true;      // Vref implausibility
+	if (low & (1 << 6))
+		ivt.faults.current = true;   // I1–I2 delta
 
 // bits 8..15 → open-circuit & calibration
-if (high & (1 << 0))
-	ivt.faults.current_oc = true;  // I1 open circuit
-if (high & (1 << 1))
-	ivt.faults.U1_oc = true;
-if (high & (1 << 2))
-	ivt.faults.U2_oc = true;
-if (high & (1 << 3))
-	ivt.faults.U3_oc = true;
-if (high & (1 << 4))
-	ivt.faults.ntc_h_oc = true;
-if (high & (1 << 5))
-	ivt.faults.ntc_l_oc = true;
+	if (high & (1 << 0))
+		ivt.faults.current_oc = true;  // I1 open circuit
+	if (high & (1 << 1))
+		ivt.faults.U1_oc = true;
+	if (high & (1 << 2))
+		ivt.faults.U2_oc = true;
+	if (high & (1 << 3))
+		ivt.faults.U3_oc = true;
+	if (high & (1 << 4))
+		ivt.faults.ntc_h_oc = true;
+	if (high & (1 << 5))
+		ivt.faults.ntc_l_oc = true;
 }
 
 void IVT_SET_BITRATE(void) {
-uint32_t startTime;
+	uint32_t startTime;
 
 // Configure IVT. Take response delays into account, if response time is too long --> raise CAN error
-if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STOP_CMD) == HAL_OK) { // Stop measurement to configure results
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STOP_CMD) == HAL_OK) { // Stop measurement to configure results
 
-	printf("Command sent\r\n");
-}
-startTime = HAL_GetTick();
-while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
-
-	if ((HAL_GetTick() - startTime) > 1000) {
-		commsCheck = false; // send UI Can error
-		printf("Fudeu CAN - stop\n\n");
-		IVT_SET_BITRATE();
-		return;
+		printf("Command sent\r\n");
 	}
-}
-IVT_commandReceivedFlag = 0; // Reset flag
+	startTime = HAL_GetTick();
+	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
-if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_CANRATE_CMD) == HAL_OK) { // Configure current result command
+		if ((HAL_GetTick() - startTime) > 1000) {
+			commsCheck = false; // send UI Can error
+			printf("Fudeu CAN - stop\n\n");
+			IVT_SET_BITRATE();
+			return;
+		}
+	}
+	IVT_commandReceivedFlag = 0; // Reset flag
 
-	printf("Command sent\r\n");
-}
-IVT_commandReceivedFlag = 0; // Reset flag
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_CANRATE_CMD) == HAL_OK) { // Configure current result command
+
+		printf("Command sent\r\n");
+	}
+	IVT_commandReceivedFlag = 0; // Reset flag
 
 }
 
@@ -733,53 +733,53 @@ IVT_commandReceivedFlag = 0; // Reset flag
  */
 void send_ivt_ui(void) {
 // Start JSON array with one object
-printf("[");
+	printf("[");
 
 // Start the ivt object with index = 0
-printf("{\"ivt\":0,");
+	printf("{\"ivt\":0,");
 
 // --- Real-time values ---
-printf("\"vBatt\":%ld,", ivt.vBatt);
-printf("\"iBatt\":%ld,", ivt.iBatt);
-printf("\"power\":%ld,", ivt.power);
-printf("\"temp\":%ld,", ivt.temp);
-printf("\"SOH\":%ld,", ivt.SOH);
-printf("\"SOC\":%ld,", ivt.SOC);
+	printf("\"vBatt\":%ld,", ivt.vBatt);
+	printf("\"iBatt\":%ld,", ivt.iBatt);
+	printf("\"power\":%ld,", ivt.power);
+	printf("\"temp\":%ld,", ivt.temp);
+	printf("\"SOH\":%ld,", ivt.SOH);
+	printf("\"SOC\":%ld,", ivt.SOC);
 
 // --- Configuration parameters ---
-printf("\"conf_CANbit\":%.0f,", ivt.conf_CANbit);
-printf("\"conf_maxTemp\":%.2f,", ivt.conf_maxTemp);
-printf("\"conf_minTemp\":%.2f,", ivt.conf_minTemp);
-printf("\"conf_minCurrent\":%.2f,", ivt.conf_minCurrent);
-printf("\"conf_maxCurrent\":%.2f,", ivt.conf_maxCurrent);
-printf("\"conf_maxU1\":%.2f,", ivt.conf_maxU1);
-printf("\"conf_minU1\":%.2f,", ivt.conf_minU1);
-printf("\"conf_maxU2\":%.2f,", ivt.conf_maxU2);
-printf("\"conf_minU2\":%.2f,", ivt.conf_minU2);
-printf("\"conf_maxU3\":%.2f,", ivt.conf_maxU3);
-printf("\"conf_minU3\":%.2f,", ivt.conf_minU3);
+	printf("\"conf_CANbit\":%.0f,", ivt.conf_CANbit);
+	printf("\"conf_maxTemp\":%.2f,", ivt.conf_maxTemp);
+	printf("\"conf_minTemp\":%.2f,", ivt.conf_minTemp);
+	printf("\"conf_minCurrent\":%.2f,", ivt.conf_minCurrent);
+	printf("\"conf_maxCurrent\":%.2f,", ivt.conf_maxCurrent);
+	printf("\"conf_maxU1\":%.2f,", ivt.conf_maxU1);
+	printf("\"conf_minU1\":%.2f,", ivt.conf_minU1);
+	printf("\"conf_maxU2\":%.2f,", ivt.conf_maxU2);
+	printf("\"conf_minU2\":%.2f,", ivt.conf_minU2);
+	printf("\"conf_maxU3\":%.2f,", ivt.conf_maxU3);
+	printf("\"conf_minU3\":%.2f,", ivt.conf_minU3);
 
 // --- Fault flags ---
-printf("\"faults\":{");
-printf("\"CAN\":%s,", ivt.faults.CAN ? "true" : "false");
-printf("\"power\":%s,", ivt.faults.power ? "true" : "false");
-printf("\"current\":%s,", ivt.faults.current ? "true" : "false");
-printf("\"vRef\":%s,", ivt.faults.vRef ? "true" : "false");
-printf("\"U3_oc\":%s,", ivt.faults.U3_oc ? "true" : "false");
-printf("\"U2_oc\":%s,", ivt.faults.U2_oc ? "true" : "false");
-printf("\"U1_oc\":%s,", ivt.faults.U1_oc ? "true" : "false");
-printf("\"current_oc\":%s,", ivt.faults.current_oc ? "true" : "false");
-printf("\"ntc_l_oc\":%s,", ivt.faults.ntc_l_oc ? "true" : "false");
-printf("\"ntc_h_oc\":%s,", ivt.faults.ntc_h_oc ? "true" : "false");
-printf("\"adc\":%s,", ivt.faults.adc ? "true" : "false");
-printf("\"temp\":%s", ivt.faults.temp ? "true" : "false");
-printf("}");
+	printf("\"faults\":{");
+	printf("\"CAN\":%s,", ivt.faults.CAN ? "true" : "false");
+	printf("\"power\":%s,", ivt.faults.power ? "true" : "false");
+	printf("\"current\":%s,", ivt.faults.current ? "true" : "false");
+	printf("\"vRef\":%s,", ivt.faults.vRef ? "true" : "false");
+	printf("\"U3_oc\":%s,", ivt.faults.U3_oc ? "true" : "false");
+	printf("\"U2_oc\":%s,", ivt.faults.U2_oc ? "true" : "false");
+	printf("\"U1_oc\":%s,", ivt.faults.U1_oc ? "true" : "false");
+	printf("\"current_oc\":%s,", ivt.faults.current_oc ? "true" : "false");
+	printf("\"ntc_l_oc\":%s,", ivt.faults.ntc_l_oc ? "true" : "false");
+	printf("\"ntc_h_oc\":%s,", ivt.faults.ntc_h_oc ? "true" : "false");
+	printf("\"adc\":%s,", ivt.faults.adc ? "true" : "false");
+	printf("\"temp\":%s", ivt.faults.temp ? "true" : "false");
+	printf("}");
 
 // Close the ivt object
-printf("}");
+	printf("}");
 
 // End JSON array
-printf("]\n");  // End of JSON array
+	printf("]\n");  // End of JSON array
 }
 
 /*void send_ivt_ui(void) {
