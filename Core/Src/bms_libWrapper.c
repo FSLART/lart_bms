@@ -483,7 +483,7 @@ void bms_getAuxVoltage(uint8_t muxIndex) {
 	}
 }
 
-void bms_openWireCheck(void) {
+/*void bms_openWireCheck(void) {
 	ADSV.CONT = 1;      // Continuous
 	ADSV.DCP = 0;      // Discharge permitted
 
@@ -508,7 +508,7 @@ void bms_openWireCheck(void) {
 	bms_readSVoltage();
 	//bms_printVoltage(ic_ad68[0].v_sCell);
 	uint32_t time2 = bms_getTimCount();
-	bms_wakeupChain();
+	bms_readSVoltage();
 	ADSV.OW = 0b01;   // Open wire on C-ADCS and S-ADCs
 	bms_transmitPoll((uint8_t*) &ADSV);
 //    bms_transmitPoll(PLSADC);
@@ -521,6 +521,40 @@ void bms_openWireCheck(void) {
 	printfDma("ow time: %ld us\n", time);
 	printfDma("ow time 1: %ld us\n", time1);
 	printfDma("ow time 2: %ld us\n", time2);
+}*/
+
+void bms_openWireCheck(void) {
+	bms_startTimer();
+
+	//bms_wakeupChain();
+
+
+	// Open Wire EVEN Check
+	ADSV.CONT = 1;      // Continuous
+	ADSV.OW = 0b01;   // Open wire on C-ADCS and S-ADCs
+	bms_transmitCmd((uint8_t*) &ADSV);
+	bms_delayMsActive(8);
+	bms_readSVoltage();
+
+
+	// Open Wire ODD Check
+	ADSV.CONT = 1;      // Continuous
+	ADSV.OW = 0b10;   // Open wire on C-ADCS and S-ADCs
+	bms_transmitCmd((uint8_t*) &ADSV);
+	bms_delayMsActive(8);
+	bms_readSVoltage();
+
+
+	// Turn off Open Wire Check
+	ADSV.CONT = 0;      // Continuous
+	ADSV.OW = 0b00;   // Open wire on C-ADCS and S-ADCs
+	bms_transmitCmd((uint8_t*) &ADSV);
+
+
+	uint32_t time = bms_getTimCount();
+	bms_stopTimer();
+	printfDma("ow time: %ld us\n", time);
+
 }
 
 float convertCellTemp(float cellVoltage) {
