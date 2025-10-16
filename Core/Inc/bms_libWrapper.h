@@ -1,15 +1,18 @@
-/*
- * bms_libWrapper.h
- *
- *  Created on: Nov 24, 2024
- *      Author: amrlxyz
- */
-
 #pragma once
 
+#include <stdbool.h>
 #include "bms_datatypes.h"
 #include "main.h"
 
+typedef enum {
+    OW_START = 0,
+    OW_WAIT,
+    OW_CONTINUE,
+    OW_END
+} bms_ow_state_t;
+
+extern volatile bool            bms_ow_timer_done;
+extern volatile bms_ow_state_t  bms_ow_next_state;
 
 void bms_init(void);
 
@@ -30,7 +33,7 @@ void bms_readAvgCellVoltage(void);
 
 void bms_readSVoltage(void);
 
-void bms_openWireCheck(void);
+//void bms_openWireCheck(void);
 
 void bms_getAuxMeasurement(void);
 
@@ -52,3 +55,8 @@ void send_ad68_ui(void);
 
 void bms_balancingMeasureVoltage(void);
 
+void ad68_dump_csv_bt(void);
+
+void OW_StartWaitMs(uint32_t ms, bms_ow_state_t next);
+
+void bms_openWireCheck(bms_ow_state_t *ow_state);

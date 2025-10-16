@@ -37,7 +37,8 @@ Core/Src/bms_utility.o: ../Core/Src/bms_utility.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/bms_mcuWrapper.h ../Core/Inc/main.h
+ ../Core/Inc/bms_mcuWrapper.h ../Core/Inc/bms_libWrapper.h \
+ ../Core/Inc/bms_datatypes.h ../Core/Inc/main.h
 ../Core/Inc/bms_utility.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -78,4 +79,6 @@ Core/Src/bms_utility.o: ../Core/Src/bms_utility.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/bms_mcuWrapper.h:
+../Core/Inc/bms_libWrapper.h:
+../Core/Inc/bms_datatypes.h:
 ../Core/Inc/main.h:

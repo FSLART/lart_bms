@@ -51,17 +51,18 @@
 
 #include "uartDMA.h"
 
+#include "time_rtc.h"
+
+//Delay times for timers
+#define WAIT_8MS   8U
+#define WAIT_12MS  12U
+#define WAIT_100MS  100U
+
+
 uint8_t txData[TOTAL_IC][DATA_LEN];
 uint8_t rxData[TOTAL_IC][DATA_LEN];
 uint16_t rxPec[TOTAL_IC];
 uint8_t rxCc[TOTAL_IC];
-
-/*typedef struct {
-	ad29_cfa_t cfa_Tx;
-	ad29_cfa_t cfa_Rx;
-	ad29_cfb_t cfb_Tx;
-	ad29_cfb_t cfb_Rx;
-} ic_ad29_t;*/
 
 typedef struct {
 	ad68_cfa_t cfa_Tx;
@@ -177,14 +178,14 @@ void bms68_setGpo45(uint8_t twoBitIndex) {
 
 void bms_printRawData(uint8_t data[TOTAL_IC][DATA_LEN], uint8_t cc[TOTAL_IC]) {
 	for (int ic = 0; ic < TOTAL_IC; ic++) {
-		printfDma("IC%d: ", ic + 1);
+		//printConsole("IC%d: ", ic + 1);
 		for (int j = 0; j < 6; j++)             // For every byte recieved (6 bytes)
 				{
-			printfDma("0x%02X, ", data[ic][j]);    // Print each of the bytes
+			//printConsole("0x%02X, ", data[ic][j]);    // Print each of the bytes
 		}
-		printfDma("CC: %d |   ", cc[ic]);
+		//printConsole("CC: %d |   ", cc[ic]);
 	}
-	printfDma("\n\n");
+	//printConsole("\n\n");
 }
 
 bool bms_checkRxFault(uint8_t data[TOTAL_IC][DATA_LEN], uint16_t pec[TOTAL_IC], uint8_t cc[TOTAL_IC]) {
@@ -192,13 +193,13 @@ bool bms_checkRxFault(uint8_t data[TOTAL_IC][DATA_LEN], uint16_t pec[TOTAL_IC], 
 	bool errorIndex[TOTAL_IC];
 
 	if (!bms_checkRxPec(data, pec, cc, errorIndex)) {
-		printfDma("WARNING! PEC ERROR - IC:");
+		printConsole("WARNING! PEC ERROR - IC:");
 		for (int ic = 0; ic < TOTAL_IC; ic++) {
 			if (!errorIndex[ic]) {
-				printfDma(" %d,", ic + 1);
+				//printConsole(" %d,", ic + 1);
 			}
 		}
-		printfDma("\n");
+		//printConsole("\n");
 		faultDetected = true;
 	}
 
@@ -211,21 +212,21 @@ bool bms_checkRxFault(uint8_t data[TOTAL_IC][DATA_LEN], uint16_t pec[TOTAL_IC], 
 // used mostly for debugging purposes
 void bms_readSid(void) {
 	bms_receiveData(RDSID, rxData, rxPec, rxCc);
-	printfDma("SID: \n");
+	printConsole("SID: \n");
 	bms_checkRxFault(rxData, rxPec, rxCc);
 	bms_printRawData(rxData, rxCc);
 }
 
 void bms_readConfigA(void) {
 	bms_receiveData(RDCFGA, rxData, rxPec, rxCc);
-	printfDma("CFGA: \n");
+	//printConsole("CFGA: \n");
 	bms_checkRxFault(rxData, rxPec, rxCc);
 	bms_printRawData(rxData, rxCc);
 }
 
 void bms_readConfigB(void) {
 	bms_receiveData(RDCFGB, rxData, rxPec, rxCc);
-	printfDma("CFGB: \n");
+	//printConsole("CFGB: \n");
 	bms_checkRxFault(rxData, rxPec, rxCc);
 	bms_printRawData(rxData, rxCc);
 }
@@ -437,7 +438,7 @@ void bms_readAvgCellVoltage(void) {
 //    }
 
 	bms_calculateStats();
-	bms_printVoltage(ic_ad68[0].v_avgCell);
+	//bms_printVoltage(ic_ad68[0].v_avgCell);
 }
 
 /*void bms_readSVoltage(void) {
@@ -523,7 +524,7 @@ void bms_getAuxVoltage(uint8_t muxIndex) {
 	printfDma("ow time 2: %ld us\n", time2);
 }*/
 
-void bms_openWireCheck(void) {
+/*void bms_openWireCheck(void) {
 	bms_startTimer();
 
 	//bms_wakeupChain();
@@ -555,7 +556,7 @@ void bms_openWireCheck(void) {
 	bms_stopTimer();
 	printfDma("ow time: %ld us\n", time);
 
-}
+}*/
 
 float convertCellTemp(float cellVoltage) {
 	static float VREF2 = 3.0; //IC VREF2 ~ 3.0V
@@ -1032,6 +1033,112 @@ void bms_startBalancing(float deltaThreshold)
     if (dischargeThreshold > 0)
     {
         bms_startDischarge(dischargeThreshold);
+    }
+}
+
+void ad68_dump_csv_bt(void)
+{
+    static int header_printed = 0;
+    int first;
+
+    #define PRINT_COMMA do { if (first) first = 0; else printfDmaBT(","); } while (0)
+
+    // --- header (once) ---
+    if (!header_printed) {
+        first = 1;
+        PRINT_COMMA; printfDmaBT("Num. Slave");
+        PRINT_COMMA; printfDmaBT("Primeira Tensao");
+        PRINT_COMMA; printfDmaBT("Segunda Tensao");
+        PRINT_COMMA; printfDmaBT("Terceira Tensao");
+        PRINT_COMMA; printfDmaBT("Temepratura 1");
+        PRINT_COMMA; printfDmaBT("Temepratura 2");
+        PRINT_COMMA; printfDmaBT("Temepratura 3");
+        PRINT_COMMA; printfDmaBT("Temepratura 4");
+        PRINT_COMMA; printfDmaBT("Temepratura 5");
+        PRINT_COMMA; printfDmaBT("Tempo em ms");
+        printfDmaBT("\r\n");
+        header_printed = 1;
+    }
+
+    // --- rows ---
+    for (int m = 0; m < TOTAL_AD68; ++m) {
+        first = 1;
+
+        // module index
+        PRINT_COMMA; printfDmaBT("%d", m);
+
+        // v_avgCell[0..2] (guard in case TOTAL_CELL < 3)
+        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].v_avgCell[0]);
+        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].v_avgCell[1 < TOTAL_CELL ? 1 : 0]);
+        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].v_avgCell[2 < TOTAL_CELL ? 2 : 0]);
+
+        // temp_cell[0..4] (guard in case RTH_PER_MODULE < 5)
+        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].temp_cell[0]);
+        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].temp_cell[1 < RTH_PER_MODULE ? 1 : 0]);
+        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].temp_cell[2 < RTH_PER_MODULE ? 2 : 0]);
+        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].temp_cell[3 < RTH_PER_MODULE ? 3 : 0]);
+        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].temp_cell[4 < RTH_PER_MODULE ? 4 : 0]);
+
+        // timestamp in milliseconds (HAL_GetTick already returns ms)
+        uint32_t ts = HAL_GetTick();
+        PRINT_COMMA; printfDmaBT("%lu", (unsigned long)ts);
+
+        printfDmaBT("\r\n");
+    }
+
+    #undef PRINT_COMMA
+}
+
+
+
+void bms_openWireCheck(bms_ow_state_t *ow_state)
+{
+    switch (*ow_state) {
+
+    case OW_START:
+        // --- Open Wire EVEN Check ---
+        ADSV.CONT = 1;      // Continuous
+        ADSV.OW   = 0b01;   // Open wire on C-ADCS and S-ADCs
+        bms_transmitCmd((uint8_t*)&ADSV);
+
+        OW_StartWaitMs(WAIT_8MS, OW_CONTINUE);   // after 8 ms -> OW_CONTINUE
+        *ow_state = OW_WAIT;                     // enter wait state
+        break;
+
+    case OW_WAIT:
+        // Timer advances us to the next state
+        if (bms_ow_timer_done) {
+            *ow_state = bms_ow_next_state;
+        }
+        break;
+
+    case OW_CONTINUE:
+        // Read EVEN result
+        bms_readSVoltage();
+
+        // --- Open Wire ODD Check ---
+        ADSV.CONT = 1;
+        ADSV.OW   = 0b10;
+        bms_transmitCmd((uint8_t*)&ADSV);
+
+        OW_StartWaitMs(WAIT_8MS, OW_END);        // after 8 ms -> OW_END
+        *ow_state = OW_WAIT;					// enter wait state
+        break;
+
+    case OW_END:
+        // Read ODD result
+        bms_readSVoltage();
+
+        // Turn off Open Wire Check
+        ADSV.CONT = 0;
+        ADSV.OW   = 0b00;
+        bms_transmitCmd((uint8_t*)&ADSV);
+
+
+        // Periodic open wire check
+        OW_StartWaitMs(WAIT_100MS, OW_START);   // after 100 ms -> restart
+        *ow_state = OW_WAIT;
+        break;
     }
 }
 

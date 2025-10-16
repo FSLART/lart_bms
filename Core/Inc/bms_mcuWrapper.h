@@ -8,6 +8,7 @@
 #pragma once
 
 #include "stdint.h"
+#include "bms_libWrapper.h"
 
 // Chip select
 void bms_csLow(void);

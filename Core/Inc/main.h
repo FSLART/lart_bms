@@ -55,8 +55,10 @@ typedef enum {
 extern SPI_HandleTypeDef hspi1;
 extern I2C_HandleTypeDef hi2c1;
 extern UART_HandleTypeDef huart1;
+extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim5;
+extern TIM_HandleTypeDef htim6;
 extern RTC_HandleTypeDef hrtc;
 /* USER CODE END EC */
 
@@ -89,12 +91,14 @@ void Error_Handler(void);
 #define BT_USART2_RX_GPIO_Port GPIOA
 #define BMS_CS_Pin GPIO_PIN_4
 #define BMS_CS_GPIO_Port GPIOA
+#define CONTACT_DSCH_Pin GPIO_PIN_4
+#define CONTACT_DSCH_GPIO_Port GPIOC
 #define CONTACT_PRE_Pin GPIO_PIN_5
 #define CONTACT_PRE_GPIO_Port GPIOC
-#define CONTACT_AIR__Pin GPIO_PIN_0
-#define CONTACT_AIR__GPIO_Port GPIOB
-#define CONTACT_AIR_B1_Pin GPIO_PIN_1
-#define CONTACT_AIR_B1_GPIO_Port GPIOB
+#define CONTACT_AIR_positivo_Pin GPIO_PIN_0
+#define CONTACT_AIR_positivo_GPIO_Port GPIOB
+#define CONTACT_AIR_negativo_Pin GPIO_PIN_1
+#define CONTACT_AIR_negativo_GPIO_Port GPIOB
 #define LED_BLUE_Pin GPIO_PIN_2
 #define LED_BLUE_GPIO_Port GPIOB
 #define LED_RED_Pin GPIO_PIN_10
