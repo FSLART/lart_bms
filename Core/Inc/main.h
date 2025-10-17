@@ -60,6 +60,7 @@ extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim6;
 extern RTC_HandleTypeDef hrtc;
+extern ADC_HandleTypeDef hadc1;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -71,6 +72,11 @@ extern RTC_HandleTypeDef hrtc;
 #define TOTAL_AD68      1
 
 #define RTH_PER_MODULE 5
+
+#define OW_RATIO_MIN      0.85f   // intact lower bound (S-ADC OW path)
+#define OW_RATIO_MAX      0.95f   // intact upper bound (S-ADC OW path)
+#define OW_UV_IGNORE_THRESH  0.10f   // Vref below this -> treat as invalid for OW ratio (V)
+#define OW_OPEN_EDGE         0.80f   // clearly open if below this
 
 /* USER CODE END EM */
 
@@ -107,6 +113,10 @@ void Error_Handler(void);
 #define CHARGER_CAN_RX_GPIO_Port GPIOB
 #define CHARGER_CAN_TX_Pin GPIO_PIN_13
 #define CHARGER_CAN_TX_GPIO_Port GPIOB
+#define AUX_SENS_SDA_Pin GPIO_PIN_9
+#define AUX_SENS_SDA_GPIO_Port GPIOC
+#define AUX_SENS_SCL_Pin GPIO_PIN_8
+#define AUX_SENS_SCL_GPIO_Port GPIOA
 #define BMS_CAN_RX_Pin GPIO_PIN_11
 #define BMS_CAN_RX_GPIO_Port GPIOA
 #define BMS_CAN_TX_Pin GPIO_PIN_12

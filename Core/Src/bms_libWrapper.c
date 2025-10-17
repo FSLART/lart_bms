@@ -58,7 +58,6 @@
 #define WAIT_12MS  12U
 #define WAIT_100MS  100U
 
-
 uint8_t txData[TOTAL_IC][DATA_LEN];
 uint8_t rxData[TOTAL_IC][DATA_LEN];
 uint16_t rxPec[TOTAL_IC];
@@ -442,6 +441,18 @@ void bms_readAvgCellVoltage(void) {
 }
 
 /*void bms_readSVoltage(void) {
+ uint8_t *cmdList[] = { RDSVA, RDSVB, RDSVC, RDSVD, RDSVE, RDSVF };
+
+ for (int i = 0; i < 6; i++) {
+ bms_receiveData(cmdList[i], rxData, rxPec, rxCc);
+ if (bms_checkRxFault(rxData, rxPec, rxCc)) {
+ return;
+ }
+ bms_parseVoltage(rxData, ic_ad68[0].v_sCell, i);
+ }
+ }*/
+
+void bms_readSVoltage(void) {
 	uint8_t *cmdList[] = { RDSVA, RDSVB, RDSVC, RDSVD, RDSVE, RDSVF };
 
 	for (int i = 0; i < 6; i++) {
@@ -451,23 +462,8 @@ void bms_readAvgCellVoltage(void) {
 		}
 		bms_parseVoltage(rxData, ic_ad68[0].v_sCell, i);
 	}
-}*/
 
-void bms_readSVoltage(void)
-{
-    uint8_t* cmdList[] = {RDSVA, RDSVB, RDSVC, RDSVD, RDSVE, RDSVF};
-
-    for (int i = 0; i < 6; i++)
-    {
-        bms_receiveData(cmdList[i], rxData, rxPec, rxCc);
-        if (bms_checkRxFault(rxData, rxPec, rxCc))
-        {
-            return;
-        }
-        bms_parseVoltage(rxData, ic_ad68[0].v_sCell, i);
-    }
-
-    //bms_printVoltage(ic_ad68[0].v_sCell);
+	//bms_printVoltage(ic_ad68[0].v_sCell);
 }
 
 void bms_getAuxVoltage(uint8_t muxIndex) {
@@ -485,78 +481,78 @@ void bms_getAuxVoltage(uint8_t muxIndex) {
 }
 
 /*void bms_openWireCheck(void) {
-	ADSV.CONT = 1;      // Continuous
-	ADSV.DCP = 0;      // Discharge permitted
+ ADSV.CONT = 1;      // Continuous
+ ADSV.DCP = 0;      // Discharge permitted
 
-	bms_startTimer();
+ bms_startTimer();
 
-	ADSV.OW = 0b00;   // Open wire on C-ADCS and S-ADCs
-	bms_transmitCmd((uint8_t*) &ADSV);
-//    bms_transmitPoll(PLSADC);
-	bms_delayMsActive(12);
-	bms_readSVoltage();
-	//bms_printVoltage(ic_ad68[0].v_sCell);
-	uint32_t time1 = bms_getTimCount();
-	// S and C is compared
+ ADSV.OW = 0b00;   // Open wire on C-ADCS and S-ADCs
+ bms_transmitCmd((uint8_t*) &ADSV);
+ //    bms_transmitPoll(PLSADC);
+ bms_delayMsActive(12);
+ bms_readSVoltage();
+ //bms_printVoltage(ic_ad68[0].v_sCell);
+ uint32_t time1 = bms_getTimCount();
+ // S and C is compared
 
-	ADSV.CONT = 0;      // Continuous
-	ADSV.DCP = 0;      // Discharge permitted
+ ADSV.CONT = 0;      // Continuous
+ ADSV.DCP = 0;      // Discharge permitted
 
-	bms_wakeupChain();
-	ADSV.OW = 0b10;   // Open wire on C-ADCS and S-ADCs
-	bms_transmitPoll((uint8_t*) &ADSV);
-//    bms_transmitPoll(PLSADC);
-	bms_readSVoltage();
-	//bms_printVoltage(ic_ad68[0].v_sCell);
-	uint32_t time2 = bms_getTimCount();
-	bms_readSVoltage();
-	ADSV.OW = 0b01;   // Open wire on C-ADCS and S-ADCs
-	bms_transmitPoll((uint8_t*) &ADSV);
-//    bms_transmitPoll(PLSADC);
-	bms_readSVoltage();
-	//bms_printVoltage(ic_ad68[0].v_sCell);
+ bms_wakeupChain();
+ ADSV.OW = 0b10;   // Open wire on C-ADCS and S-ADCs
+ bms_transmitPoll((uint8_t*) &ADSV);
+ //    bms_transmitPoll(PLSADC);
+ bms_readSVoltage();
+ //bms_printVoltage(ic_ad68[0].v_sCell);
+ uint32_t time2 = bms_getTimCount();
+ bms_readSVoltage();
+ ADSV.OW = 0b01;   // Open wire on C-ADCS and S-ADCs
+ bms_transmitPoll((uint8_t*) &ADSV);
+ //    bms_transmitPoll(PLSADC);
+ bms_readSVoltage();
+ //bms_printVoltage(ic_ad68[0].v_sCell);
 
-	uint32_t time = bms_getTimCount();
-	bms_stopTimer();
+ uint32_t time = bms_getTimCount();
+ bms_stopTimer();
 
-	printfDma("ow time: %ld us\n", time);
-	printfDma("ow time 1: %ld us\n", time1);
-	printfDma("ow time 2: %ld us\n", time2);
-}*/
+ printfDma("ow time: %ld us\n", time);
+ printfDma("ow time 1: %ld us\n", time1);
+ printfDma("ow time 2: %ld us\n", time2);
+ }*/
 
 /*void bms_openWireCheck(void) {
-	bms_startTimer();
+ bms_startTimer();
 
-	//bms_wakeupChain();
-
-
-	// Open Wire EVEN Check
-	ADSV.CONT = 1;      // Continuous
-	ADSV.OW = 0b01;   // Open wire on C-ADCS and S-ADCs
-	bms_transmitCmd((uint8_t*) &ADSV);
-	bms_delayMsActive(8);
-	bms_readSVoltage();
+ //bms_wakeupChain();
 
 
-	// Open Wire ODD Check
-	ADSV.CONT = 1;      // Continuous
-	ADSV.OW = 0b10;   // Open wire on C-ADCS and S-ADCs
-	bms_transmitCmd((uint8_t*) &ADSV);
-	bms_delayMsActive(8);
-	bms_readSVoltage();
+ // Open Wire EVEN Check
+ ADSV.CONT = 1;      // Continuous
+ ADSV.OW = 0b01;   // Open wire on C-ADCS and S-ADCs
+ bms_transmitCmd((uint8_t*) &ADSV);
+ bms_delayMsActive(8);
+ bms_readSVoltage();
 
 
-	// Turn off Open Wire Check
-	ADSV.CONT = 0;      // Continuous
-	ADSV.OW = 0b00;   // Open wire on C-ADCS and S-ADCs
-	bms_transmitCmd((uint8_t*) &ADSV);
+ // Open Wire ODD Check
+ ADSV.CONT = 1;      // Continuous
+ ADSV.OW = 0b10;   // Open wire on C-ADCS and S-ADCs
+ bms_transmitCmd((uint8_t*) &ADSV);
+ bms_delayMsActive(8);
+ bms_readSVoltage();
 
 
-	uint32_t time = bms_getTimCount();
-	bms_stopTimer();
-	printfDma("ow time: %ld us\n", time);
+ // Turn off Open Wire Check
+ ADSV.CONT = 0;      // Continuous
+ ADSV.OW = 0b00;   // Open wire on C-ADCS and S-ADCs
+ bms_transmitCmd((uint8_t*) &ADSV);
 
-}*/
+
+ uint32_t time = bms_getTimCount();
+ bms_stopTimer();
+ printfDma("ow time: %ld us\n", time);
+
+ }*/
 
 float convertCellTemp(float cellVoltage) {
 	static float VREF2 = 3.0; //IC VREF2 ~ 3.0V
@@ -654,7 +650,66 @@ void bms_getAuxMeasurement(void) {
 }
 
 /*void bms_setPwm(ic_ad68_t *ic, uint8_t cell) {
-	const uint8_t dutyCycle = 0b0111;
+ const uint8_t dutyCycle = 0b0111;
+ cell++;                                 // Change from 0 indexing to 1 indexing
+
+ switch (cell) {
+ case 1:
+ ic->pwma.pwm1 = dutyCycle;
+ break;
+ case 2:
+ ic->pwma.pwm2 = dutyCycle;
+ break;
+ case 3:
+ ic->pwma.pwm3 = dutyCycle;
+ break;
+ case 4:
+ ic->pwma.pwm4 = dutyCycle;
+ break;
+ case 5:
+ ic->pwma.pwm5 = dutyCycle;
+ break;
+ case 6:
+ ic->pwma.pwm6 = dutyCycle;
+ break;
+ case 7:
+ ic->pwma.pwm7 = dutyCycle;
+ break;
+ case 8:
+ ic->pwma.pwm8 = dutyCycle;
+ break;
+ case 9:
+ ic->pwma.pwm9 = dutyCycle;
+ break;
+ case 10:
+ ic->pwma.pwm10 = dutyCycle;
+ break;
+ case 11:
+ ic->pwma.pwm11 = dutyCycle;
+ break;
+ case 12:
+ ic->pwma.pwm12 = dutyCycle;
+ break;
+ case 13:
+ ic->pwmb.pwm13 = dutyCycle;
+ break;
+ case 14:
+ ic->pwmb.pwm14 = dutyCycle;
+ break;
+ case 15:
+ ic->pwmb.pwm15 = dutyCycle;
+ break;
+ case 16:
+ ic->pwmb.pwm16 = dutyCycle;
+ break;
+ default:
+ // Handle invalid cases
+ break;
+ }
+ }*/
+
+void bms_setPwm(ic_ad68_t *ic, uint8_t cell, uint8_t dutyCycle) {
+//    const uint8_t dutyCycle = 0b0111;
 	cell++;                                 // Change from 0 indexing to 1 indexing
 
 	switch (cell) {
@@ -710,66 +765,6 @@ void bms_getAuxMeasurement(void) {
 		// Handle invalid cases
 		break;
 	}
-}*/
-
-void bms_setPwm(ic_ad68_t *ic, uint8_t cell, uint8_t dutyCycle)
-{
-//    const uint8_t dutyCycle = 0b0111;
-    cell++;                                 // Change from 0 indexing to 1 indexing
-
-    switch (cell) {
-        case 1:
-            ic->pwma.pwm1 = dutyCycle;
-            break;
-        case 2:
-            ic->pwma.pwm2 = dutyCycle;
-            break;
-        case 3:
-            ic->pwma.pwm3 = dutyCycle;
-            break;
-        case 4:
-            ic->pwma.pwm4 = dutyCycle;
-            break;
-        case 5:
-            ic->pwma.pwm5 = dutyCycle;
-            break;
-        case 6:
-            ic->pwma.pwm6 = dutyCycle;
-            break;
-        case 7:
-            ic->pwma.pwm7 = dutyCycle;
-            break;
-        case 8:
-            ic->pwma.pwm8 = dutyCycle;
-            break;
-        case 9:
-            ic->pwma.pwm9 = dutyCycle;
-            break;
-        case 10:
-            ic->pwma.pwm10 = dutyCycle;
-            break;
-        case 11:
-            ic->pwma.pwm11 = dutyCycle;
-            break;
-        case 12:
-            ic->pwma.pwm12 = dutyCycle;
-            break;
-        case 13:
-            ic->pwmb.pwm13 = dutyCycle;
-            break;
-        case 14:
-            ic->pwmb.pwm14 = dutyCycle;
-            break;
-        case 15:
-            ic->pwmb.pwm15 = dutyCycle;
-            break;
-        case 16:
-            ic->pwmb.pwm16 = dutyCycle;
-            break;
-        default:
-            // Handle invalid cases
-            break;
-    }
 }
 
 float bms_calculateBalancing(float delta_threshold) {
@@ -793,20 +788,54 @@ float bms_calculateBalancing(float delta_threshold) {
 }
 
 /*void bms_startDischarge(float threshold) {
+ memset(&ic_ad68[0].pwma, 0, sizeof(ad68_pwma_t));
+ memset(&ic_ad68[0].pwmb, 0, sizeof(ad68_pwmb_t));
+
+ //    threshold = 1.5;          // Volts
+
+ for (int ic = 0; ic < TOTAL_AD68; ic++) {
+ for (int c = 0; c < TOTAL_CELL; c++) {
+ if (ic_ad68[ic].v_avgCell[c] > threshold) {
+ bms_setPwm(&ic_ad68[ic], c);
+ }
+ }
+ }
+
+ ic_ad68[0].pwma.pwm1 = 0b0111;  // 4 bit pwm at 937 ms (for testing -> enables discharge for cell 1)
+
+ // The PWM discharge functionality is possible in the standby, REF-UP, extended balancing and in the measure states
+ // AND while the discharge timeout has not expired (DCTO ≠ 0)
+
+ ic_ad68[0].cfb_Tx.dcto = 1;     // DC Timer in minutes (DTRNG = 0)
+ ic_ad68[0].cfb_Tx.dtmen = 0;    // Disables Discharge Timer Monitor (DTM)
+ //    ic_ad68[0].cfb_Tx.dcc = 0b1; // --- High priority discharge (bypasses PWM)
+
+ bms_writeConfigB();             // Send the DCTO Timer config
+ bms_writePwmA();                // Send the PWM configs
+ bms_writePwmB();                // Send the PWM configs
+ }*/
+
+void bms_startDischarge(float threshold) {
+	threshold = 5;  // Overwrite the discharge aim voltage (for testing)
+	const uint8_t dutyCycle = 0b1111;   // 4 bit pwm at 937 ms
+
 	memset(&ic_ad68[0].pwma, 0, sizeof(ad68_pwma_t));
 	memset(&ic_ad68[0].pwmb, 0, sizeof(ad68_pwmb_t));
-
-//    threshold = 1.5;          // Volts
 
 	for (int ic = 0; ic < TOTAL_AD68; ic++) {
 		for (int c = 0; c < TOTAL_CELL; c++) {
 			if (ic_ad68[ic].v_avgCell[c] > threshold) {
-				bms_setPwm(&ic_ad68[ic], c);
+				printfDma("DISCHARGE: IC %d, CELL %d \n", ic + 1, c + 1);
+				bms_setPwm(&ic_ad68[ic], c, dutyCycle);
+			} else {
+				bms_setPwm(&ic_ad68[ic], c, 0b0000);    // Turn off PWM discharge for that cell
 			}
 		}
 	}
 
-	ic_ad68[0].pwma.pwm1 = 0b0111;  // 4 bit pwm at 937 ms (for testing -> enables discharge for cell 1)
+	// for testing -> enables discharge for cell 1
+	printfDma("DISCHARGE: IC 1, CELL 1 \n");
+	ic_ad68[0].pwma.pwm1 = 0b1111;
 
 	// The PWM discharge functionality is possible in the standby, REF-UP, extended balancing and in the measure states
 	// AND while the discharge timeout has not expired (DCTO ≠ 0)
@@ -818,47 +847,6 @@ float bms_calculateBalancing(float delta_threshold) {
 	bms_writeConfigB();             // Send the DCTO Timer config
 	bms_writePwmA();                // Send the PWM configs
 	bms_writePwmB();                // Send the PWM configs
-}*/
-
-void bms_startDischarge(float threshold)
-{
-    threshold = 5;  // Overwrite the discharge aim voltage (for testing)
-    const uint8_t dutyCycle = 0b1111;   // 4 bit pwm at 937 ms
-
-    memset(&ic_ad68[0].pwma, 0, sizeof(ad68_pwma_t));
-    memset(&ic_ad68[0].pwmb, 0, sizeof(ad68_pwmb_t));
-
-    for (int ic = 0; ic < TOTAL_AD68; ic++)
-    {
-        for (int c = 0; c < TOTAL_CELL; c++)
-        {
-            if (ic_ad68[ic].v_avgCell[c] > threshold)
-            {
-                printfDma("DISCHARGE: IC %d, CELL %d \n", ic+1, c+1);
-                bms_setPwm(&ic_ad68[ic], c, dutyCycle);
-            }
-            else
-            {
-                bms_setPwm(&ic_ad68[ic], c, 0b0000);    // Turn off PWM discharge for that cell
-            }
-        }
-    }
-
-    // for testing -> enables discharge for cell 1
-    printfDma("DISCHARGE: IC 1, CELL 1 \n");
-    ic_ad68[0].pwma.pwm1 = 0b1111;
-
-
-    // The PWM discharge functionality is possible in the standby, REF-UP, extended balancing and in the measure states
-    // AND while the discharge timeout has not expired (DCTO ≠ 0)
-
-    ic_ad68[0].cfb_Tx.dcto = 1;     // DC Timer in minutes (DTRNG = 0)
-    ic_ad68[0].cfb_Tx.dtmen = 0;    // Disables Discharge Timer Monitor (DTM)
-//    ic_ad68[0].cfb_Tx.dcc = 0b1; // --- High priority discharge (bypasses PWM)
-
-    bms_writeConfigB();             // Send the DCTO Timer config
-    bms_writePwmA();                // Send the PWM configs
-    bms_writePwmB();                // Send the PWM configs
 }
 
 void bms_stopDischarge(void) {
@@ -868,13 +856,13 @@ void bms_stopDischarge(void) {
 }
 
 /*void bms29_setGpo(void) {
-	ic_ad29.cfa_Tx.gpo1c = 1;      // State control
-	ic_ad29.cfa_Tx.gpo1od = 0;      // 1 = Open drain, 0 = push-pull
-	ic_ad29.cfa_Tx.gpo2c = 1;      // State control
-	ic_ad29.cfa_Tx.gpo2od = 0;      // 1 = Open drain, 0 = push-pull
+ ic_ad29.cfa_Tx.gpo1c = 1;      // State control
+ ic_ad29.cfa_Tx.gpo1od = 0;      // 1 = Open drain, 0 = push-pull
+ ic_ad29.cfa_Tx.gpo2c = 1;      // State control
+ ic_ad29.cfa_Tx.gpo2od = 0;      // 1 = Open drain, 0 = push-pull
 
-	bms_writeConfigA();
-}*/
+ bms_writeConfigA();
+ }*/
 
 void bms_readVB(void) {
 	bms_receiveData(RDVB, rxData, rxPec, rxCc);
@@ -1007,138 +995,228 @@ void send_ad68_ui(void) {
 	printfDma("]\n");  // End of JSON array
 }
 
-void bms_balancingMeasureVoltage(void)
-{
-    // 6830
-    // ADSV For triggering single shot S conversion (stops PWM) while C in unaffected
-    // So this stops PWM and wait for S to finish
-    // Then read the S voltage
-    // Potential improvement: S vs C ADC comparison
+void bms_balancingMeasureVoltage(void) {
+	// 6830
+	// ADSV For triggering single shot S conversion (stops PWM) while C in unaffected
+	// So this stops PWM and wait for S to finish
+	// Then read the S voltage
+	// Potential improvement: S vs C ADC comparison
 
-    ADSV.CONT = 0;      // Continuous
-    ADSV.DCP  = 0;      // Discharge permitted
-    ADSV.OW   = 0b00;   // Open wire on C-ADCS and S-ADCs
+	ADSV.CONT = 0;      // Continuous
+	ADSV.DCP = 0;      // Discharge permitted
+	ADSV.OW = 0b00;   // Open wire on C-ADCS and S-ADCs
 
-    bms_transmitCmd((uint8_t *)&ADSV);
+	bms_transmitCmd((uint8_t*) &ADSV);
 
-    bms_transmitPoll(PLSADC);
-    bms_readSVoltage();
+	bms_transmitPoll(PLSADC);
+	bms_readSVoltage();
 }
 
+void bms_startBalancing(float deltaThreshold) {
+	float dischargeThreshold = bms_calculateBalancing(deltaThreshold);
 
-void bms_startBalancing(float deltaThreshold)
-{
-    float dischargeThreshold = bms_calculateBalancing(deltaThreshold);
-
-    if (dischargeThreshold > 0)
-    {
-        bms_startDischarge(dischargeThreshold);
-    }
+	if (dischargeThreshold > 0) {
+		bms_startDischarge(dischargeThreshold);
+	}
 }
 
-void ad68_dump_csv_bt(void)
-{
-    static int header_printed = 0;
-    int first;
+void ad68_dump_csv_bt(void) {
+	static int header_printed = 0;
+	int first;
 
-    #define PRINT_COMMA do { if (first) first = 0; else printfDmaBT(","); } while (0)
+#define PRINT_COMMA do { if (first) first = 0; else printfDmaBT(","); } while (0)
 
-    // --- header (once) ---
-    if (!header_printed) {
-        first = 1;
-        PRINT_COMMA; printfDmaBT("Num. Slave");
-        PRINT_COMMA; printfDmaBT("Primeira Tensao");
-        PRINT_COMMA; printfDmaBT("Segunda Tensao");
-        PRINT_COMMA; printfDmaBT("Terceira Tensao");
-        PRINT_COMMA; printfDmaBT("Temepratura 1");
-        PRINT_COMMA; printfDmaBT("Temepratura 2");
-        PRINT_COMMA; printfDmaBT("Temepratura 3");
-        PRINT_COMMA; printfDmaBT("Temepratura 4");
-        PRINT_COMMA; printfDmaBT("Temepratura 5");
-        PRINT_COMMA; printfDmaBT("Tempo em ms");
-        printfDmaBT("\r\n");
-        header_printed = 1;
-    }
+	// --- header (once) ---
+	if (!header_printed) {
+		first = 1;
+		PRINT_COMMA;
+		printfDmaBT("Num. Slave");
+		PRINT_COMMA;
+		printfDmaBT("Primeira Tensao");
+		PRINT_COMMA;
+		printfDmaBT("Segunda Tensao");
+		PRINT_COMMA;
+		printfDmaBT("Terceira Tensao");
+		PRINT_COMMA;
+		printfDmaBT("Temepratura 1");
+		PRINT_COMMA;
+		printfDmaBT("Temepratura 2");
+		PRINT_COMMA;
+		printfDmaBT("Temepratura 3");
+		PRINT_COMMA;
+		printfDmaBT("Temepratura 4");
+		PRINT_COMMA;
+		printfDmaBT("Temepratura 5");
+		PRINT_COMMA;
+		printfDmaBT("Tempo em ms");
+		printfDmaBT("\r\n");
+		header_printed = 1;
+	}
 
-    // --- rows ---
-    for (int m = 0; m < TOTAL_AD68; ++m) {
-        first = 1;
+	// --- rows ---
+	for (int m = 0; m < TOTAL_AD68; ++m) {
+		first = 1;
 
-        // module index
-        PRINT_COMMA; printfDmaBT("%d", m);
+		// module index
+		PRINT_COMMA;
+		printfDmaBT("%d", m);
 
-        // v_avgCell[0..2] (guard in case TOTAL_CELL < 3)
-        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].v_avgCell[0]);
-        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].v_avgCell[1 < TOTAL_CELL ? 1 : 0]);
-        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].v_avgCell[2 < TOTAL_CELL ? 2 : 0]);
+		// v_avgCell[0..2] (guard in case TOTAL_CELL < 3)
+		PRINT_COMMA;
+		printfDmaBT("%g", (double) ic_ad68[m].v_avgCell[0]);
+		PRINT_COMMA;
+		printfDmaBT("%g", (double) ic_ad68[m].v_avgCell[1 < TOTAL_CELL ? 1 : 0]);
+		PRINT_COMMA;
+		printfDmaBT("%g", (double) ic_ad68[m].v_avgCell[2 < TOTAL_CELL ? 2 : 0]);
 
-        // temp_cell[0..4] (guard in case RTH_PER_MODULE < 5)
-        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].temp_cell[0]);
-        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].temp_cell[1 < RTH_PER_MODULE ? 1 : 0]);
-        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].temp_cell[2 < RTH_PER_MODULE ? 2 : 0]);
-        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].temp_cell[3 < RTH_PER_MODULE ? 3 : 0]);
-        PRINT_COMMA; printfDmaBT("%g", (double)ic_ad68[m].temp_cell[4 < RTH_PER_MODULE ? 4 : 0]);
+		// temp_cell[0..4] (guard in case RTH_PER_MODULE < 5)
+		PRINT_COMMA;
+		printfDmaBT("%g", (double) ic_ad68[m].temp_cell[0]);
+		PRINT_COMMA;
+		printfDmaBT("%g", (double) ic_ad68[m].temp_cell[1 < RTH_PER_MODULE ? 1 : 0]);
+		PRINT_COMMA;
+		printfDmaBT("%g", (double) ic_ad68[m].temp_cell[2 < RTH_PER_MODULE ? 2 : 0]);
+		PRINT_COMMA;
+		printfDmaBT("%g", (double) ic_ad68[m].temp_cell[3 < RTH_PER_MODULE ? 3 : 0]);
+		PRINT_COMMA;
+		printfDmaBT("%g", (double) ic_ad68[m].temp_cell[4 < RTH_PER_MODULE ? 4 : 0]);
 
-        // timestamp in milliseconds (HAL_GetTick already returns ms)
-        uint32_t ts = HAL_GetTick();
-        PRINT_COMMA; printfDmaBT("%lu", (unsigned long)ts);
+		// timestamp in milliseconds (HAL_GetTick already returns ms)
+		uint32_t ts = HAL_GetTick();
+		PRINT_COMMA;
+		printfDmaBT("%lu", (unsigned long) ts);
 
-        printfDmaBT("\r\n");
-    }
+		printfDmaBT("\r\n");
+	}
 
-    #undef PRINT_COMMA
+#undef PRINT_COMMA
 }
 
+void bms_openWireCheck(bms_ow_state_t *ow_state, bms_ow_status_t *ow_status[TOTAL_AD68][TOTAL_CELL]) {
 
+	float cellReference[TOTAL_AD68][TOTAL_CELL];
+	float cellVoltage_OW[TOTAL_AD68][TOTAL_CELL];
 
-void bms_openWireCheck(bms_ow_state_t *ow_state)
-{
-    switch (*ow_state) {
+	switch (*ow_state) {
 
-    case OW_START:
-        // --- Open Wire EVEN Check ---
-        ADSV.CONT = 1;      // Continuous
-        ADSV.OW   = 0b01;   // Open wire on C-ADCS and S-ADCs
-        bms_transmitCmd((uint8_t*)&ADSV);
+	case OW_START:
 
-        OW_StartWaitMs(WAIT_8MS, OW_CONTINUE);   // after 8 ms -> OW_CONTINUE
-        *ow_state = OW_WAIT;                     // enter wait state
-        break;
+		//Inital measurment as reference, no open wire check
+		for (int ic = 0; ic < TOTAL_AD68; ic++) {
+			for (int cell = 0; cell < TOTAL_CELL; cell++) {
+				cellReference[ic][cell] = ic_ad68[ic].v_sCell[cell];
+			}
+		}
 
-    case OW_WAIT:
-        // Timer advances us to the next state
-        if (bms_ow_timer_done) {
-            *ow_state = bms_ow_next_state;
-        }
-        break;
+		// --- Open Wire EVEN Check ---
+		ADSV.CONT = 1;      // Continuous
+		ADSV.OW = 0b01;   // Open wire on C-ADCS and S-ADCs
 
-    case OW_CONTINUE:
-        // Read EVEN result
-        bms_readSVoltage();
+		for (int ic = 0; ic < TOTAL_AD68; ic++) {
+			bms_transmitCmd((uint8_t*) &ADSV);
+		}
 
-        // --- Open Wire ODD Check ---
-        ADSV.CONT = 1;
-        ADSV.OW   = 0b10;
-        bms_transmitCmd((uint8_t*)&ADSV);
+		OW_StartWaitMs(WAIT_8MS, OW_CONTINUE);   // after 8 ms -> OW_CONTINUE
+		*ow_state = OW_WAIT;                     // enter wait state
+		break;
 
-        OW_StartWaitMs(WAIT_8MS, OW_END);        // after 8 ms -> OW_END
-        *ow_state = OW_WAIT;					// enter wait state
-        break;
+	case OW_WAIT:
+		// Timer advances us to the next state
+		if (bms_ow_timer_done) {
+			*ow_state = bms_ow_next_state;
+		}
+		break;
 
-    case OW_END:
-        // Read ODD result
-        bms_readSVoltage();
+	case OW_CONTINUE:
+		// Read EVEN result
+		bms_readSVoltage();
+		for (int ic = 0; ic < TOTAL_AD68; ic++) {
+			for (int cell = 0; cell < TOTAL_CELL; cell++) {
+				cellVoltage_OW[ic][cell] = ic_ad68[ic].v_sCell[cell];
+			}
+		}
 
-        // Turn off Open Wire Check
-        ADSV.CONT = 0;
-        ADSV.OW   = 0b00;
-        bms_transmitCmd((uint8_t*)&ADSV);
+		//COMPARE HERE VOLTAGES
+		for (int ic = 0; ic < TOTAL_AD68; ic++) {
+			for (int cell = 0; cell < TOTAL_CELL; cell++) {
 
+				if (((cell + 1) % 2) != 0)
+					continue;  // skip odd cells here, idk if this works as expected
 
-        // Periodic open wire check
-        OW_StartWaitMs(WAIT_100MS, OW_START);   // after 100 ms -> restart
-        *ow_state = OW_WAIT;
-        break;
-    }
+				float Vref = cellReference[ic][cell];
+				float Vow = cellVoltage_OW[ic][cell];
+
+				if (Vref < OW_UV_IGNORE_THRESH) {       // too low to decide by ratio
+					*ow_status[ic][cell] = OW_INVALID_LOWV;
+					continue;
+				}
+
+				float cellRatio = Vow / Vref;
+				if (cellRatio >= OW_RATIO_MIN && cellRatio <= OW_RATIO_MAX) {
+					*ow_status[ic][cell] = OW_INTACT;
+				} else if (cellRatio < OW_OPEN_EDGE) {
+					*ow_status[ic][cell] = OW_OPEN;
+				} else {
+					*ow_status[ic][cell] = OW_SUSPECT;
+				}
+			}
+		}
+
+		// --- Open Wire ODD Check ---
+		ADSV.CONT = 1;
+		ADSV.OW = 0b10;
+		for (int ic = 0; ic < TOTAL_AD68; ic++) {
+			bms_transmitCmd((uint8_t*) &ADSV);
+		}
+
+		OW_StartWaitMs(WAIT_8MS, OW_END);        // after 8 ms -> OW_END
+		*ow_state = OW_WAIT;					// enter wait state
+		break;
+
+	case OW_END:
+		// Read ODD result
+		bms_readSVoltage();
+		for (int ic = 0; ic < TOTAL_AD68; ic++) {
+			for (int cell = 0; cell < TOTAL_CELL; cell++) {
+				cellVoltage_OW[ic][cell] = ic_ad68[ic].v_sCell[cell];
+			}
+		}
+
+		//COMPARE VOLTAGES HEre
+		for (int ic = 0; ic < TOTAL_AD68; ic++) {
+			for (int cell = 0; cell < TOTAL_CELL; cell++) {
+
+				if (((cell + 1) % 2) == 0)
+					continue;  // skip even cells here, idk if this works as expected
+
+				float Vref = cellReference[ic][cell];
+				float Vow = cellVoltage_OW[ic][cell];
+
+				if (Vref < OW_UV_IGNORE_THRESH) {       // too low to decide by ratio
+					*ow_status[ic][cell] = OW_INVALID_LOWV;
+					continue;
+				}
+
+				float cellRatio = Vow / Vref;
+				if (cellRatio >= OW_RATIO_MIN && cellRatio <= OW_RATIO_MAX) {
+					*ow_status[ic][cell] = OW_INTACT;
+				} else if (cellRatio < OW_OPEN_EDGE) {
+					*ow_status[ic][cell] = OW_OPEN;
+				} else {
+					*ow_status[ic][cell] = OW_SUSPECT;
+				}
+			}
+		}
+
+		// Turn off Open Wire Check
+		ADSV.CONT = 0;
+		ADSV.OW = 0b00;
+		bms_transmitCmd((uint8_t*) &ADSV);
+
+		// Periodic open wire check
+		OW_StartWaitMs(WAIT_100MS, OW_START);   // after 100 ms -> restart
+		*ow_state = OW_WAIT;
+		break;
+	}
 }
 

@@ -11,6 +11,13 @@ typedef enum {
     OW_END
 } bms_ow_state_t;
 
+typedef enum {
+    OW_INTACT = 0,
+    OW_OPEN,
+    OW_SUSPECT,
+    OW_INVALID_LOWV
+} bms_ow_status_t;
+
 extern volatile bool            bms_ow_timer_done;
 extern volatile bms_ow_state_t  bms_ow_next_state;
 
@@ -59,4 +66,4 @@ void ad68_dump_csv_bt(void);
 
 void OW_StartWaitMs(uint32_t ms, bms_ow_state_t next);
 
-void bms_openWireCheck(bms_ow_state_t *ow_state);
+void bms_openWireCheck(bms_ow_state_t *ow_state, bms_ow_status_t *ow_status[TOTAL_AD68][TOTAL_CELL]);

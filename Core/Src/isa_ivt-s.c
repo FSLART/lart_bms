@@ -105,27 +105,30 @@ void IVT_CAN_Setup_AllMessages(CAN_HandleTypeDef *hcan) {
  * @param  hfdcan  Pointer to the initialized FDCAN handle (e.g., &hcan1).
  * @retval None
  */
-void IVT_CAN_Setup(CAN_HandleTypeDef *hfdcan) {
+void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
 
-	// Filter for IVT-S U1 voltage
 	CAN_FilterTypeDef sFilterConfig = { 0 };
 
-	sFilterConfig.FilterBank = 0;                              // choose an unused filter bank
-	sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;         // mask mode (use mask for exact match)
-	sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;        // 32-bit scale
-	sFilterConfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;    // route to FIFO0
-	sFilterConfig.FilterActivation = ENABLE;
+	sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;          // mask mode
+	sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;         // 32-bit filters
+	sFilterConfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;     // to FIFO0
+	sFilterConfig.FilterActivation = CAN_FILTER_ENABLE;        // enable (use CAN_FILTER_ENABLE, not ENABLE)
+	sFilterConfig.SlaveStartFilterBank = 18;                   // <<< ALL banks to CAN1 on F412
 
-	// Put the 11-bit standard ID into the high half-word (shift left by 5)
+	// Exact 11-bit StdId match mask: compare bits 15:5 (StdId<<5)
+	// (0x07FF << 5) = 0xFFE0
+	sFilterConfig.FilterMaskIdHigh = (uint16_t) ((0x07FFU << 5) & 0xFFFF);
+	sFilterConfig.FilterMaskIdLow = 0x0000;
+	sFilterConfig.FilterBank = 0;
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESULTU1_CANID << 5) & 0xFFFF);
 	sFilterConfig.FilterIdLow = 0x0000;
 
-	// Mask: set the 11 ID bits to 1 so we require an exact StdId match
-	// (0x07FF << 5) == 0xFFE0
-	sFilterConfig.FilterMaskIdHigh = (uint16_t) ((0x07FFU << 5) & 0xFFFF);
-	sFilterConfig.FilterMaskIdLow = 0x0000;
+	// Filter for IVT-S U1 voltage
+	sFilterConfig.FilterBank = 0;
+	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESULTU1_CANID << 5) & 0xFFFF);
+	sFilterConfig.FilterIdLow = 0x0000;
 
-	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK) {
+	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
 		printConsole("Error configuring CAN filter for U1 (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
@@ -133,7 +136,7 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hfdcan) {
 	sFilterConfig.FilterBank = 1;                          // use filter bank 1
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESULTU2_CANID << 5) & 0xFFFF);
 
-	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK) {
+	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
 		printConsole("Error configuring CAN filter for U2 (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
@@ -141,7 +144,7 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hfdcan) {
 	sFilterConfig.FilterBank = 2;                          // use filter bank 2
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESULTU3_CANID << 5) & 0xFFFF); // IVT-S U3 voltage CAN ID
 
-	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK) {
+	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
 		printConsole("Error configuring CAN filter for U3 (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
@@ -149,7 +152,7 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hfdcan) {
 	sFilterConfig.FilterBank = 3;
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESULTI_CANID << 5) & 0xFFFF); // IVT-S U3 voltage CAN ID
 
-	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK) {
+	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
 		printConsole("Error configuring CAN filter for I (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
@@ -157,7 +160,7 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hfdcan) {
 	sFilterConfig.FilterBank = 4;
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESULTT_CANID << 5) & 0xFFFF); // IVT-S U3 voltage CAN ID
 
-	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK) {
+	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
 		printConsole("Error configuring CAN filter for T (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
@@ -165,7 +168,7 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hfdcan) {
 	sFilterConfig.FilterBank = 5;
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESULTW_CANID << 5) & 0xFFFF); // IVT-S U3 voltage CAN ID
 
-	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK) {
+	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
 		printConsole("Error configuring CAN filter for W (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
@@ -173,19 +176,19 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hfdcan) {
 	sFilterConfig.FilterBank = 6;
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESPONSE_CANID << 5) & 0xFFFF); // IVT-S U3 voltage CAN ID
 
-	if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK) {
+	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
 		printConsole("Error configuring CAN filter for ACK (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
 	/* Enable "message pending" notification for RX FIFO 0 */
-	if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
-		printConsole("Error activating CAN RX FIFO0 notification\r\n");
-	}
+	if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
+	 printConsole("Error activating CAN RX FIFO0 notification\r\n");
+	 }
 
 	/* Start CAN peripheral */
-	if (HAL_CAN_Start(&hcan1) != HAL_OK) {
-		printConsole("Error starting CAN peripheral\r\n");
-	}
+	/*if (HAL_CAN_Start(&hcan1) != HAL_OK) {
+	 printConsole("Error starting CAN peripheral\r\n");
+	 }*/
 
 }
 
@@ -229,7 +232,7 @@ void IVT_CAN_Config(void) {
 	uint32_t startTime;
 
 	// Configure IVT. Take response delays into account, if response time is too long --> raise CAN error
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, ~8, IVT_STOP_CMD) == HAL_OK) { // Stop measurement to configure results
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STOP_CMD) == HAL_OK) { // Stop measurement to configure results
 
 		printConsole("Command sent\r\n");
 	}
@@ -357,7 +360,7 @@ void IVT_CAN_Config(void) {
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
-		if ((HAL_GetTick() - startTime) > 4000) {
+		if ((HAL_GetTick() - startTime) > 5000) {
 
 			printConsole("Fudeu CAN - IVT_RESET_SYSERROR_CMD\n\n");
 			return;

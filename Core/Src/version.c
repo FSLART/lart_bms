@@ -15,14 +15,13 @@
 
 void startUI(void) {
 
-	static const char info_json[] =
-	  "[{\"startui\":{"
-	    "\"software\":{\"codename\":\"" STR(SOFTWARE_CODENAME) "\","
-	                   "\"version\":\""  STR(SOFTWARE_VERSION)  "\"},"
-	    "\"hardware\":{\"version\":\""  HARDWARE_VERSION       "\","
-	                   "\"codename\":\"" STR(HARDWARE_CODENAME) "\"},"
-	    "\"project_link\":\""           PROJECT_LINK           "\""
-	  "}}]";
+	static const char info_json[] = "[{\"startui\":{"
+			"\"software\":{\"codename\":\"" STR(SOFTWARE_CODENAME) "\","
+	"\"version\":\"" STR(SOFTWARE_VERSION) "\"},"
+	"\"hardware\":{\"version\":\"" HARDWARE_VERSION "\","
+	"\"codename\":\"" STR(HARDWARE_CODENAME) "\"},"
+	"\"project_link\":\"" PROJECT_LINK "\""
+	"}}]";
 
 	printfDma("%s", info_json);
 	printfDma("\r\n");
