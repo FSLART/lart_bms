@@ -2,6 +2,7 @@
 "./Core/Src/bms_libWrapper.o"
 "./Core/Src/bms_mcuWrapper.o"
 "./Core/Src/bms_utility.o"
+"./Core/Src/brain.o"
 "./Core/Src/contactors.o"
 "./Core/Src/ee24.o"
 "./Core/Src/eeprom_utils.o"

@@ -7,6 +7,7 @@
 
 #include "bms_mcuWrapper.h"
 #include "main.h"
+#include "brain.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -14,14 +15,12 @@
 
 static TIM_HandleTypeDef *htim         = &htim2;       /* MCU TIM handler */
 static TIM_HandleTypeDef *htim_delay         = &htim5;       /* MCU TIM handler */
-static TIM_HandleTypeDef *htim_ow        = &htim6;       /* MCU TIM handler */
+//static TIM_HandleTypeDef *htim_ow        = &htim6;       /* MCU TIM handler */
 
 #define GPIO_PORT   BMS_CS_GPIO_Port
 #define CS_PIN      BMS_CS_Pin
 
 volatile bool            bms_ow_timer_done = true;
-volatile bms_ow_state_t  bms_ow_next_state = OW_START;
-
 
 void bms_csLow(void)
 {
@@ -107,7 +106,7 @@ void bms_delayMsActive(uint32_t ms)
 }
 
 /* Start a one-shot wait of `ms`, then switch to `next` when elapsed */
-void OW_StartWaitMs(uint32_t ms, bms_ow_state_t next)
+/*void OW_StartWaitMs(uint32_t ms, bms_ow_state_t next)
 {
     if (ms == 0U) { bms_ow_timer_done = true; bms_ow_next_state = next; return; }
 
@@ -121,7 +120,7 @@ void OW_StartWaitMs(uint32_t ms, bms_ow_state_t next)
     __HAL_TIM_CLEAR_FLAG(htim_ow, TIM_FLAG_UPDATE);
     __HAL_TIM_ENABLE_IT(htim_ow, TIM_IT_UPDATE);
     HAL_TIM_Base_Start(htim_ow);
-}
+}*/
 
 
 

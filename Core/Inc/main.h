@@ -41,11 +41,13 @@ typedef enum {
 	ERROR_NONE              = 0x00,
 	ERROR_SDC_TRIGGERED     = 0x01,  // Bit 0
 	ERROR_IMD_TRIGGERED     = 0x02,  // Bit 1
-	ERROR_CONTACT_MISMATCH  = 0x04,  // Bit 2
+	ERROR_CONTACTORS_MISMATCH  = 0x04,  // Bit 2
 	ERROR_TIMER_FAILURE     = 0x08,  // Bit 3
-	ERROR_FDCAN_FAILED      = 0x10,  // Bit 4
+	ERROR_CAN_FAILED      = 0x10,  // Bit 4
 	ERROR_OVERVOLTAGE       = 0x20,   // Bit 5
-	ERROR_BMS_FAIL			= 0x40   // Bit 6
+	ERROR_OVERCURRENT       = 0x30,   // Bit 5
+	ERROR_BMS_OW			= 0x40,   // Bit 6
+	ERROR_BMS_FAIL			= 0x50   // Bit 6
 } ErrorCode_t;
 
 /* USER CODE END ET */
@@ -54,13 +56,19 @@ typedef enum {
 /* USER CODE BEGIN EC */
 extern SPI_HandleTypeDef hspi1;
 extern I2C_HandleTypeDef hi2c1;
+extern I2C_HandleTypeDef hi2c3;
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim5;
-extern TIM_HandleTypeDef htim6;
+//extern TIM_HandleTypeDef htim6;
+extern TIM_HandleTypeDef htim8;
+extern TIM_HandleTypeDef htim10;
+extern TIM_HandleTypeDef htim11;
 extern RTC_HandleTypeDef hrtc;
 extern ADC_HandleTypeDef hadc1;
+extern CAN_HandleTypeDef hcan1;
+extern CAN_HandleTypeDef hcan2;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/

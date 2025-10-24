@@ -48,6 +48,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "main.h"
+#include "brain.h"
 
 #include "uartDMA.h"
 
@@ -1092,131 +1093,113 @@ void ad68_dump_csv_bt(void) {
 #undef PRINT_COMMA
 }
 
-void bms_openWireCheck(bms_ow_state_t *ow_state, bms_ow_status_t *ow_status[TOTAL_AD68][TOTAL_CELL]) {
+void bms_openWireCheck(bms_ow_status_t *ow_status[TOTAL_AD68][TOTAL_CELL]) {
 
 	float cellReference[TOTAL_AD68][TOTAL_CELL];
 	float cellVoltage_OW[TOTAL_AD68][TOTAL_CELL];
 
-	switch (*ow_state) {
-
-	case OW_START:
-
-		//Inital measurment as reference, no open wire check
-		for (int ic = 0; ic < TOTAL_AD68; ic++) {
-			for (int cell = 0; cell < TOTAL_CELL; cell++) {
-				cellReference[ic][cell] = ic_ad68[ic].v_sCell[cell];
-			}
+	//Inital measurment as reference, no open wire check
+	for (int ic = 0; ic < TOTAL_AD68; ic++) {
+		for (int cell = 0; cell < TOTAL_CELL; cell++) {
+			cellReference[ic][cell] = ic_ad68[ic].v_sCell[cell];
 		}
-
-		// --- Open Wire EVEN Check ---
-		ADSV.CONT = 1;      // Continuous
-		ADSV.OW = 0b01;   // Open wire on C-ADCS and S-ADCs
-
-		for (int ic = 0; ic < TOTAL_AD68; ic++) {
-			bms_transmitCmd((uint8_t*) &ADSV);
-		}
-
-		OW_StartWaitMs(WAIT_8MS, OW_CONTINUE);   // after 8 ms -> OW_CONTINUE
-		*ow_state = OW_WAIT;                     // enter wait state
-		break;
-
-	case OW_WAIT:
-		// Timer advances us to the next state
-		if (bms_ow_timer_done) {
-			*ow_state = bms_ow_next_state;
-		}
-		break;
-
-	case OW_CONTINUE:
-		// Read EVEN result
-		bms_readSVoltage();
-		for (int ic = 0; ic < TOTAL_AD68; ic++) {
-			for (int cell = 0; cell < TOTAL_CELL; cell++) {
-				cellVoltage_OW[ic][cell] = ic_ad68[ic].v_sCell[cell];
-			}
-		}
-
-		//COMPARE HERE VOLTAGES
-		for (int ic = 0; ic < TOTAL_AD68; ic++) {
-			for (int cell = 0; cell < TOTAL_CELL; cell++) {
-
-				if (((cell + 1) % 2) != 0)
-					continue;  // skip odd cells here, idk if this works as expected
-
-				float Vref = cellReference[ic][cell];
-				float Vow = cellVoltage_OW[ic][cell];
-
-				if (Vref < OW_UV_IGNORE_THRESH) {       // too low to decide by ratio
-					*ow_status[ic][cell] = OW_INVALID_LOWV;
-					continue;
-				}
-
-				float cellRatio = Vow / Vref;
-				if (cellRatio >= OW_RATIO_MIN && cellRatio <= OW_RATIO_MAX) {
-					*ow_status[ic][cell] = OW_INTACT;
-				} else if (cellRatio < OW_OPEN_EDGE) {
-					*ow_status[ic][cell] = OW_OPEN;
-				} else {
-					*ow_status[ic][cell] = OW_SUSPECT;
-				}
-			}
-		}
-
-		// --- Open Wire ODD Check ---
-		ADSV.CONT = 1;
-		ADSV.OW = 0b10;
-		for (int ic = 0; ic < TOTAL_AD68; ic++) {
-			bms_transmitCmd((uint8_t*) &ADSV);
-		}
-
-		OW_StartWaitMs(WAIT_8MS, OW_END);        // after 8 ms -> OW_END
-		*ow_state = OW_WAIT;					// enter wait state
-		break;
-
-	case OW_END:
-		// Read ODD result
-		bms_readSVoltage();
-		for (int ic = 0; ic < TOTAL_AD68; ic++) {
-			for (int cell = 0; cell < TOTAL_CELL; cell++) {
-				cellVoltage_OW[ic][cell] = ic_ad68[ic].v_sCell[cell];
-			}
-		}
-
-		//COMPARE VOLTAGES HEre
-		for (int ic = 0; ic < TOTAL_AD68; ic++) {
-			for (int cell = 0; cell < TOTAL_CELL; cell++) {
-
-				if (((cell + 1) % 2) == 0)
-					continue;  // skip even cells here, idk if this works as expected
-
-				float Vref = cellReference[ic][cell];
-				float Vow = cellVoltage_OW[ic][cell];
-
-				if (Vref < OW_UV_IGNORE_THRESH) {       // too low to decide by ratio
-					*ow_status[ic][cell] = OW_INVALID_LOWV;
-					continue;
-				}
-
-				float cellRatio = Vow / Vref;
-				if (cellRatio >= OW_RATIO_MIN && cellRatio <= OW_RATIO_MAX) {
-					*ow_status[ic][cell] = OW_INTACT;
-				} else if (cellRatio < OW_OPEN_EDGE) {
-					*ow_status[ic][cell] = OW_OPEN;
-				} else {
-					*ow_status[ic][cell] = OW_SUSPECT;
-				}
-			}
-		}
-
-		// Turn off Open Wire Check
-		ADSV.CONT = 0;
-		ADSV.OW = 0b00;
-		bms_transmitCmd((uint8_t*) &ADSV);
-
-		// Periodic open wire check
-		OW_StartWaitMs(WAIT_100MS, OW_START);   // after 100 ms -> restart
-		*ow_state = OW_WAIT;
-		break;
 	}
+
+	// --- Open Wire EVEN Check ---
+	ADSV.CONT = 1;      // Continuous
+	ADSV.OW = 0b01;   // Open wire on C-ADCS and S-ADCs
+
+	for (int ic = 0; ic < TOTAL_AD68; ic++) {
+		bms_transmitCmd((uint8_t*) &ADSV);
+	}
+
+	HAL_Delay(8);
+
+	// Read EVEN result
+	bms_readSVoltage();
+	for (int ic = 0; ic < TOTAL_AD68; ic++) {
+		for (int cell = 0; cell < TOTAL_CELL; cell++) {
+			cellVoltage_OW[ic][cell] = ic_ad68[ic].v_sCell[cell];
+		}
+	}
+
+	//COMPARE HERE VOLTAGES
+	for (int ic = 0; ic < TOTAL_AD68; ic++) {
+		for (int cell = 0; cell < TOTAL_CELL; cell++) {
+
+			if (((cell + 1) % 2) != 0)
+				continue;  // skip odd cells here, idk if this works as expected
+
+			float Vref = cellReference[ic][cell];
+			float Vow = cellVoltage_OW[ic][cell];
+
+			if (Vref < OW_UV_IGNORE_THRESH) {       // too low to decide by ratio
+				*ow_status[ic][cell] = OW_INVALID_LOWV;
+				continue;
+			}
+
+			float cellRatio = Vow / Vref;
+			if (cellRatio >= OW_RATIO_MIN && cellRatio <= OW_RATIO_MAX) {
+				*ow_status[ic][cell] = OW_INTACT;
+			} else if (cellRatio < OW_OPEN_EDGE) {
+				*ow_status[ic][cell] = OW_OPEN;
+			} else {
+				*ow_status[ic][cell] = OW_SUSPECT;
+			}
+		}
+	}
+
+	// --- Open Wire ODD Check ---
+	ADSV.CONT = 1;
+	ADSV.OW = 0b10;
+	for (int ic = 0; ic < TOTAL_AD68; ic++) {
+		bms_transmitCmd((uint8_t*) &ADSV);
+	}
+
+	HAL_Delay(8);
+
+	// Read ODD result
+	bms_readSVoltage();
+	for (int ic = 0; ic < TOTAL_AD68; ic++) {
+		for (int cell = 0; cell < TOTAL_CELL; cell++) {
+			cellVoltage_OW[ic][cell] = ic_ad68[ic].v_sCell[cell];
+		}
+	}
+
+	//COMPARE VOLTAGES HEre
+	for (int ic = 0; ic < TOTAL_AD68; ic++) {
+		for (int cell = 0; cell < TOTAL_CELL; cell++) {
+
+			if (((cell + 1) % 2) == 0)
+				continue;  // skip even cells here, idk if this works as expected
+
+			float Vref = cellReference[ic][cell];
+			float Vow = cellVoltage_OW[ic][cell];
+
+			if (Vref < OW_UV_IGNORE_THRESH) {       // too low to decide by ratio
+				*ow_status[ic][cell] = OW_INVALID_LOWV;
+				continue;
+			}
+
+			float cellRatio = Vow / Vref;
+			if (cellRatio >= OW_RATIO_MIN && cellRatio <= OW_RATIO_MAX) {
+				*ow_status[ic][cell] = OW_INTACT;
+			} else if (cellRatio < OW_OPEN_EDGE) {
+				*ow_status[ic][cell] = OW_OPEN;
+			} else {
+				*ow_status[ic][cell] = OW_SUSPECT;
+			}
+		}
+	}
+
+	// Turn off Open Wire Check
+	ADSV.CONT = 0;
+	ADSV.OW = 0b00;
+	bms_transmitCmd((uint8_t*) &ADSV);
+
+	// Periodic open wire check
+	/*OW_StartWaitMs(WAIT_100MS, OW_START);   // after 100 ms -> restart
+	 *ow_state = OW_WAIT;*/
+
 }
 

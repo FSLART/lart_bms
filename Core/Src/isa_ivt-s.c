@@ -1,5 +1,6 @@
 #include <isa_ivt-s.h>
 #include "main.h"
+#include "brain.h"
 #include "uartDMA.h"
 
 /* Variables -------------------------------------------------------------------*/

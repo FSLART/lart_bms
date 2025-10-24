@@ -5,6 +5,7 @@
 #include "stdint.h"
 #include "string.h"
 #include "main.h"
+#include "brain.h"
 
 #define uartHandle huart1
 #define uart2Handle huart2

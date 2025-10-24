@@ -21,66 +21,29 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "math.h"
-#include "stdio.h"
-#include <stdbool.h>
-
-#include "bms_cmdlist.h"
-#include "bms_datatypes.h"
-#include "bms_utility.h"
-#include "bms_mcuWrapper.h"
-#include "bms_libWrapper.h"
-
-#include "eeprom_utils.h"
-
+#include "brain.h"
 #include "isa_ivt-s.h"
 
-#include "time_rtc.h"
-
-#include "contactors.h"
-
-#include "uartDMA.h"
-
-#include "version.h"
-
-#include "temperatures.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-const float deltaThreshold = 0.010; // In volts
-
-typedef enum {
-	BALANCING, CHARGING, IDLE, ONMISSION, STARTUP, INACTIVE
-} BmsStates;
-
-volatile BmsStates bmsState;         // Controlled by ISR
-volatile BmsStates bmsCurrState;
-volatile BmsStates bmsPrevState;
-
-//Open Wire check states
-/*typedef enum {
- OW_START = 0,
- OW_WAIT,
- OW_CONTINUE,
- OW_END
- } bms_ow_state_t;*/
 
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define STEERING_MAX 0xA1
 
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-EEPROM_Comms eeprom_comms = { .hi2c = &hi2c1, .huart = &huart1 };
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
+DMA_HandleTypeDef hdma_adc1;
 
 CAN_HandleTypeDef hcan1;
 CAN_HandleTypeDef hcan2;
@@ -94,7 +57,6 @@ SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim5;
-TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim8;
 TIM_HandleTypeDef htim10;
 TIM_HandleTypeDef htim11;
@@ -125,23 +87,14 @@ static void MX_CAN2_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_RTC_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_TIM6_Init(void);
 static void MX_I2C3_Init(void);
 /* USER CODE BEGIN PFP */
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-
-uint32_t getRuntimeMs(void);
-uint32_t getRuntimeMsDiff(uint32_t startTime);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-volatile uint32_t runtime_sec = 0;
-
-// booleans for timer flags
-volatile bool faultCheck = false;
-volatile bool updateUI = false;
 
 /* USER CODE END 0 */
 
@@ -188,198 +141,19 @@ int main(void)
   MX_CAN1_Init();
   MX_RTC_Init();
   MX_USART2_UART_Init();
-  MX_TIM6_Init();
   MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
+
+	brain_start();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-	// Set CS2 Pin to HIGH to disable second SPI on 6822 + MSTR should be high by default
-	HAL_GPIO_WritePin(BMS_MSTR_GPIO_Port, BMS_MSTR_Pin, GPIO_PIN_SET);
-
-	// Start Timers
-	HAL_TIM_Base_Start_IT(&htim8);
-	HAL_TIM_Base_Start_IT(&htim10);
-	HAL_TIM_Base_Start_IT(&htim11);
-	HAL_TIM_Base_Start_IT(&htim11);
-
-	// Initialise BMS configs (No commands sent)
-	//bms_init();
-
-	uint32_t timeDiff = 0;
-	uint32_t timeStart;
-	uint32_t timeCmmd;
-
-	//printfDma("bad \r");
-	printConsole("Start Program \n\r");
-	OpenAllContactors();
-	startUI();
-
-	bms_ow_state_t ow_state = OW_START; // Initialize open wire check
-	bms_ow_status_t ow_status[TOTAL_AD68][TOTAL_CELL];
-
-	//char ts[20];
-	//RTC_Time_Get(ts, sizeof(ts));
-	//printConsole("%s\r\n", ts);
-
-	//printfDmaBT("hello");
-
-	/*if (Write_EEPROM(&eeprom_comms, STEERING_MAX, 2334, true)) {
-	 //printfDma("good \n");
-	 } else {
-	 printfDma("bad \n");
-	 }
-
-	 if (Read_EEPROM(&eeprom_comms, STEERING_MAX, true) > -1) {
-	 printfDma("good \n");
-	 } else {
-	 printfDma("bad2 \n");
-	 }*/
-
-	//IVT_CAN_Setup_AllMessages(&hcan1);
-	//IVT_CAN_Config();
-	HAL_Delay(1000);
-
-	// Start Timer17 for falut check
-	//IVT_FAULT_CHECK();
-	//HAL_Delay(1000);
-	//TIM17->SR &= ~TIM_SR_UIF;
-	//HAL_TIM_Base_Start_IT(&htim17);
-	//IVT_SET_BITRATE();
-
-	//bms_stopDischarge();
-	//HAL_Delay(200);         // Initialisation delay
-
-	//bms_wakeupChain();
-	//bms_init();             // Initialise BMS configs and send them
-	//bms_readSid();
-
-	//bms_openWireCheck();
-	/*bms_startTimer();
-	 HAL_Delay(200);
-
-	 uint32_t time = bms_getTimCount();
-	 bms_stopTimer();
-
-	 printfDma("gay: %ld us\n", time);*/
-
-	//bmsState = ONMISSION;
-	bmsState = IDLE;
-	bmsPrevState = IDLE;
-	bmsCurrState = IDLE;
-
 	while (1) {
 
-		bmsCurrState = bmsState;        // Copy value to ensure value is not changed throughout the loop
-
-		//if (bmsPrevState != bmsCurrState) {
-		bms_wakeupChain();
-
-		switch (bmsCurrState) {
-		case BALANCING:
-
-			//if it has been minimum balancing time, can check again on balancing
-			if ((getRuntimeMsDiff(timeCmmd) > 60000) || (bmsPrevState != bmsCurrState)) {
-				printConsole("	ACTIVE %d \n\n", getRuntimeMsDiff(timeCmmd));
-
-				timeCmmd = getRuntimeMs();
-
-				printConsole("Measuring Cell Voltage: \n");
-				bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
-				bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-				bms_delayMsActive(12);
-				bms_readAvgCellVoltage();
-
-				printConsole("Temp Measurements: \n");
-				bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
-				bms_getAuxMeasurement();
-
-				// Calculate the discharge threshold
-				float discharge_threshold = bms_calculateBalancing(deltaThreshold);
-
-				// Check if need to balance the cells
-				if (discharge_threshold > 0) {
-					printConsole("Start Discharge: sqn kk\n");
-					bms_wakeupChain();
-					//bms_startDischarge(discharge_threshold);
-
-					bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
-					bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-					bms_delayMsActive(12);
-				}
-
-				timeDiff = getRuntimeMsDiff(timeCmmd);
-				printConsole("Runtime: %ld ms, CommandTime: %ld ms \n\n", getRuntimeMs(), timeDiff);
-
-			} else if (getRuntimeMsDiff(timeStart) > 200) {
-
-				bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
-				bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-				bms_delayMsActive(12);
-				bms_readAvgCellVoltage();
-			}
-
-			break;
-
-		case INACTIVE:
-			printConsole("	INACTIVE \n\n");
-
-			bms_stopDischarge();
-			bmsState = IDLE;
-			break;
-
-		case IDLE:
-
-			if ((getRuntimeMsDiff(timeStart) > 800) || (bmsPrevState != bmsCurrState)) {
-				//printfDma("	IDLE \n\n");
-				timeStart = getRuntimeMs();
-
-				//bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
-				bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-				bms_delayMsActive(12);
-				bms_readAvgCellVoltage();
-				bms_getAuxMeasurement();
-				ad68_dump_csv_bt();
-			}
-
-			break;
-
-		default:
-			break;
-
-		}
-
-		bmsPrevState = bmsCurrState;
-
-		//bms_getAuxMeasurement();
-		//bms_delayMsActive(20);
-		//bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-		//bms_delayMsActive(12);
-		//bms_readAvgCellVoltage();
-		//bms_delayMsActive(200);
-		// send_ad68_ui();
-		// bms_delayMsActive(200);
-		// bms_delayMsActive(2000);
-		// send_ivt_ui();
-
-		if (faultCheck) {
-			//bms_openWireCheck(&ow_state, &ow_status);
-			//IVT_FAULT_CHECK();
-			faultCheck = false;
-			ClosePreCarga();
-			read_mcu_temp();
-
-		}
-
-		if (updateUI) {
-			//send_ivt_ui();
-			//send_ad68_ui();
-			updateUI = false;
-			OpenPreCarga();
-		}
+		brain_loop();
 
     /* USER CODE END WHILE */
 
@@ -457,10 +231,10 @@ static void MX_ADC1_Init(void)
   /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
   */
   hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
-  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc1.Init.ScanConvMode = DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV8;
+  hadc1.Init.Resolution = ADC_RESOLUTION_10B;
+  hadc1.Init.ScanConvMode = ENABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
@@ -477,7 +251,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
   sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -529,7 +303,7 @@ static void MX_CAN1_Init(void)
 
 	HAL_StatusTypeDef st = HAL_CAN_Start(&hcan1);
 	if (st != HAL_OK) {
-		printfDma("CAN start failed: %ld\r\n", (long) st);
+		//printfDma("CAN start failed: %ld\r\n", (long) st);
 	}
 
 	/*if (HAL_CAN_Start(&hcan1) != HAL_OK)
@@ -810,44 +584,6 @@ static void MX_TIM5_Init(void)
 }
 
 /**
-  * @brief TIM6 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM6_Init(void)
-{
-
-  /* USER CODE BEGIN TIM6_Init 0 */
-
-  /* USER CODE END TIM6_Init 0 */
-
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-
-  /* USER CODE BEGIN TIM6_Init 1 */
-
-  /* USER CODE END TIM6_Init 1 */
-  htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 64000-1;
-  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 10000-1;
-  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM6_Init 2 */
-
-  /* USER CODE END TIM6_Init 2 */
-
-}
-
-/**
   * @brief TIM8 Initialization Function
   * @param None
   * @retval None
@@ -881,7 +617,7 @@ static void MX_TIM8_Init(void)
   {
     Error_Handler();
   }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim8, &sMasterConfig) != HAL_OK)
   {
@@ -1035,6 +771,9 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
+  /* DMA2_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
   /* DMA2_Stream7_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
@@ -1122,79 +861,6 @@ PUTCHAR_PROTOTYPE {
 	}
 	HAL_UART_Transmit(&huart1, (uint8_t*) &ch, 1, HAL_MAX_DELAY);
 	return ch;
-}
-
-/// Timer interrupt callback
-// Callback: timer has rolled over
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	// Check which version of the timer triggered this callback and toggle LED
-	if (htim == &htim10) {
-		runtime_sec += 1;
-		//printfDma("	gay 1000ms\n");
-	}
-
-	//Timer to check on errors - 100ms
-	if (htim->Instance == TIM11) {
-		faultCheck = true;
-		//printfDma("	gay 100ms\n");
-	}
-
-	//Timer to update ui - 800ms
-	if (htim->Instance == TIM8) {
-		updateUI = true;
-		//printfDma("	gay 800ms\n");
-
-	}
-
-	//Timer for the ADC filling up delays in OPEN WIRE CHECK
-	if (htim->Instance == TIM6) {
-
-		HAL_TIM_Base_Stop(htim);
-		__HAL_TIM_DISABLE_IT(htim, TIM_IT_UPDATE);
-		bms_ow_timer_done = true;
-	}
-
-}
-
-// Called each SysTick interrupt for HEARTBEAT LED
-void HAL_SYSTICK_Callback(void) {
-
-	/* HEARTBEAT*/
-	static uint16_t ticks = 0;
-	static uint16_t beat_ticks = 0;
-
-	if (++ticks >= 800) {
-
-		ticks = 0;
-		beat_ticks = 1;
-		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-
-	} else if (beat_ticks == 1 && ticks >= 50) {
-
-		//ticks = 0;
-		beat_ticks = 0;
-		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-	}
-
-}
-
-uint32_t getRuntimeMs(void) {
-	return HAL_GetTick();
-}
-
-uint32_t getRuntimeMsDiff(uint32_t startTime) {
-	return HAL_GetTick() - startTime;
-}
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-
-	if (GPIO_Pin == B1_Pin) {
-		if (bmsState == ONMISSION) {
-			bmsState = IDLE;
-		} else {
-			bmsState = ONMISSION;
-		}
-	}
 }
 
 /* USER CODE END 4 */

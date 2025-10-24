@@ -8,6 +8,7 @@
 #include "bms_utility.h"
 #include "bms_mcuWrapper.h"
 #include "main.h"
+#include "brain.h"
 #include "string.h"
 
 

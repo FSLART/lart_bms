@@ -1,4 +1,5 @@
 #include "main.h"
+#include "brain.h"
 #include "uartDMA.h"
 
 #define SOFTWARE_CODENAME bms_lart
