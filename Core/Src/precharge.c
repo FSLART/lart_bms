@@ -6,11 +6,19 @@
  */
 #include "precharge.h"
 
+#include <stdbool.h>
+
+#include "contactors.h"
+
 #define PRECHARGE_DELAY_MS   200u  // tempo de chekagewm da atracagem do contactor
 
 //Internal variables
-PrechargeState_t g_state = START;
+PrechargeState_t state = START;
 uint32_t timer;
+uint32_t delayStart = 0;
+
+//BYPASS
+bool bypassChecks = true;
 
 //Inicilaização
 void Precharge_Init(void)
@@ -27,7 +35,7 @@ PrechargeState_t Precharge_GetState(void)
 
 void Precharge_Update(void)
 {
-    uint32_t now = GetTimeMs();
+    uint32_t now = HAL_GetTick();
 
     switch (state)
     {
@@ -36,12 +44,12 @@ void Precharge_Update(void)
             break;
 
         case OPEN_ALL:
-            OpenAllRelays();
+        	OpenAllContactors();
             state = SWITCH_HVNEG;
             break;
 
         case SWITCH_HVNEG:
-            CloseHVNEG();
+        	CloseAIR_negativo();
             delayStart = now;
             state = DELAY1;
             break;
@@ -52,46 +60,46 @@ void Precharge_Update(void)
             break;
 
         case VERIFY1:
-            if (VerifyHVNEG_HVPOS_States())
+            if (VerifyHVNEG_HVPOS_States() || bypassChecks)
                 state = SWITCH_PRECHARGE;
             else
-                state = ERROR;
+                state = WRONG;
             break;
 
         case SWITCH_PRECHARGE:
-            ClosePrecharge();
+        	ClosePreCarga();
             delayStart = now;
             state = DELAY2;
             break;
 
         case DELAY2:
-            if (now - delayStart >= PRECHARGE_DELAY_MS)
+            if (now - delayStart >= 3000)
                 state = VERIFY2;
             break;
 
         case VERIFY2:
-            if (VerifyHVNEG_HVPOS_States())
+            if (VerifyHVNEG_HVPOS_States() || bypassChecks)
                 state = VERIFY_CURRENT;
             else
-                state = ERROR;
+                state = WRONG;
             break;
 
         case VERIFY_CURRENT:
-            if (IsCurrentOK())
+            if (IsCurrentOK() || bypassChecks)
                 state = VERIFY_BUS_VOLT;
             else
-                state = ERROR;
+                state = WRONG;
             break;
 
         case VERIFY_BUS_VOLT:
-            if (IsBusVoltageOK())
+            if (IsBusVoltageOK() || bypassChecks)
                 state = SWITCH_HVPOS;
             else
-                state = ERROR;
+                state = WRONG;
             break;
 
         case SWITCH_HVPOS:
-            CloseHVPOS();
+        	CloseAIR_positivo();
             delayStart = now;
             state = DELAY3;
             break;
@@ -102,31 +110,46 @@ void Precharge_Update(void)
             break;
 
         case VERIFY3:
-            if (VerifyHVNEG_HVPOS_States())
+            if (VerifyHVNEG_HVPOS_States() || bypassChecks)
                 state = TURN_OFF_PRECHARGE;
             else
-                state = ERROR;
+                state = WRONG;
             break;
 
         case TURN_OFF_PRECHARGE:
-            OpenPrecharge();
+        	OpenPreCarga();
             state = VERIFY4;
             break;
 
         case VERIFY4:
-            if (VerifyHVNEG_HVPOS_States())
+            if (VerifyHVNEG_HVPOS_States() || bypassChecks)
                 state = END;
             else
-                state = ERROR;
+                state = WRONG;
             break;
 
         case END:
-            OnPrechargeComplete();
+            //OnPrechargeComplete();
             break;
 
-        case ERROR:
+        case WRONG:
+        	Precharge_Init();
+        	break;
         default:
-            OnPrechargeError();
+           //OnPrechargeError();
+        	Precharge_Init();
             break;
     }
+}
+
+bool VerifyHVNEG_HVPOS_States(void){
+	return false;
+}
+
+bool IsBusVoltageOK(void){
+	return false;
+}
+
+bool IsCurrentOK(void){
+	return false;
 }

@@ -8,6 +8,9 @@
 #ifndef INC_PRECHARGE_H_
 #define INC_PRECHARGE_H_
 
+#include "main.h"
+#include <stdbool.h>
+
 typedef enum
 {
     START = 0,
@@ -15,7 +18,7 @@ typedef enum
     SWITCH_HVNEG,
     DELAY1,
     VERIFY1,
-    WITCH_PRECHARGE,
+    SWITCH_PRECHARGE,
     DELAY2,
     VERIFY2,
     VERIFY_CURRENT,
@@ -26,7 +29,16 @@ typedef enum
     TURN_OFF_PRECHARGE,
     VERIFY4,
     END,
-    ERROR
+    WRONG
 } PrechargeState_t;
+
+void Precharge_Init(void);
+PrechargeState_t Precharge_GetState(void);
+void Precharge_Update(void);
+
+bool VerifyHVNEG_HVPOS_States(void);
+bool IsBusVoltageOK(void);
+bool IsCurrentOK(void);
+
 
 #endif /* INC_PRECHARGE_H_ */

@@ -32,6 +32,8 @@
 
 #include "temperatures.h"
 
+#include "precharge.h"
+
 /* ================== LOCAL DEFINES / TYPES ================== */
 
 #define STEERING_MAX 0xA1
@@ -97,24 +99,21 @@ void brain_start(void) {
 	 }*/
 
 	/*bms_stopDischarge();
-	HAL_Delay(200);         // Initialisation delay
-	bms_wakeupChain();
-	bms_init();             // Initialise BMS configs and send them
-	bms_readSid();
+	 HAL_Delay(200);         // Initialisation delay
+	 bms_wakeupChain();
+	 bms_init();             // Initialise BMS configs and send them
+	 bms_readSid();
 
-	bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-	bms_delayMsActive(12);
-	bms_readAvgCellVoltage();
-	bms_getAuxMeasurement();
-	bms_delayMsActive(12);
-	bms_readSVoltage();*/
-
+	 bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
+	 bms_delayMsActive(12);
+	 bms_readAvgCellVoltage();
+	 bms_getAuxMeasurement();
+	 bms_delayMsActive(12);
+	 bms_readSVoltage();*/
 
 	//IVT_CAN_Setup_AllMessages(&hcan1);
 	//IVT_CAN_Config();
-
 	//IVT_SET_BITRATE();
-
 	/*bms_startTimer();
 	 HAL_Delay(200);
 
@@ -186,10 +185,10 @@ void brain_loop(void) {
 		break;
 
 	case INACTIVE:
-		printConsole("	INACTIVE \n\n");
+		//printConsole("	INACTIVE \n\n");
 
-		bms_stopDischarge();
-		bmsState = IDLE;
+		//bms_stopDischarge();
+		//bmsState = IDLE;
 		break;
 
 	case IDLE:
@@ -208,18 +207,30 @@ void brain_loop(void) {
 
 		break;
 	case STARTUP:
-		OpenAllContactors();
-		HAL_Delay(2000);
-		CloseAIR_negativo();
-		HAL_Delay(200);
-		ClosePreCarga();
-		HAL_Delay(2500);
-		CloseAIR_positivo();
-		HAL_Delay(500);
-		OpenPreCarga();
-		HAL_Delay(3000);
-		CloseDescarga();
-		HAL_Delay(1000);
+		/*OpenAllContactors();
+		 HAL_Delay(2000);
+		 CloseAIR_negativo();
+		 HAL_Delay(200);
+		 ClosePreCarga();
+		 HAL_Delay(2500);
+		 CloseAIR_positivo();
+		 HAL_Delay(500);
+		 OpenPreCarga();
+		 HAL_Delay(3000);
+		 CloseDescarga();
+		 HAL_Delay(1000);*/
+
+		while (Precharge_GetState() != END) {
+			if (Precharge_GetState() == START) {
+				Precharge_Init();
+				Precharge_Update();
+			} else {
+				Precharge_Update();
+			}
+		}
+
+		bmsState = IDLE;
+		break;
 
 	default:
 		break;
