@@ -178,14 +178,14 @@ void bms68_setGpo45(uint8_t twoBitIndex) {
 
 void bms_printRawData(uint8_t data[TOTAL_IC][DATA_LEN], uint8_t cc[TOTAL_IC]) {
 	for (int ic = 0; ic < TOTAL_IC; ic++) {
-		//printConsole("IC%d: ", ic + 1);
+		printConsole("IC%d: ", ic + 1);
 		for (int j = 0; j < 6; j++)             // For every byte recieved (6 bytes)
 				{
-			//printConsole("0x%02X, ", data[ic][j]);    // Print each of the bytes
+			printConsole("0x%02X, ", data[ic][j]);    // Print each of the bytes
 		}
-		//printConsole("CC: %d |   ", cc[ic]);
+		printConsole("CC: %d |   ", cc[ic]);
 	}
-	//printConsole("\n\n");
+	printConsole("\n\n");
 }
 
 bool bms_checkRxFault(uint8_t data[TOTAL_IC][DATA_LEN], uint16_t pec[TOTAL_IC], uint8_t cc[TOTAL_IC]) {
@@ -196,10 +196,10 @@ bool bms_checkRxFault(uint8_t data[TOTAL_IC][DATA_LEN], uint16_t pec[TOTAL_IC], 
 		printConsole("WARNING! PEC ERROR - IC:");
 		for (int ic = 0; ic < TOTAL_IC; ic++) {
 			if (!errorIndex[ic]) {
-				//printConsole(" %d,", ic + 1);
+				printConsole(" %d,", ic + 1);
 			}
 		}
-		//printConsole("\n");
+		printConsole("\n");
 		faultDetected = true;
 	}
 
@@ -384,20 +384,20 @@ void bms_calculateStats(void) {
 }
 
 void bms_printVoltage(float vArr[TOTAL_CELL]) {
-	printfDma("| IC |");
+	printfDmaBT("| IC |");
 	for (int i = 0; i < TOTAL_CELL; i++) {
-		printfDma("   %2d   |", i + 1);
+		printfDmaBT("   %2d   |", i + 1);
 	}
-	printfDma("  Sum   |  Delta |\n");
+	printfDmaBT("  Sum   |  Delta |\n");
 
 	for (int ic = 0; ic < TOTAL_AD68; ic++) {
-		printfDma("| %2d |", ic);
+		printfDmaBT("| %2d |", ic);
 		for (int c = 0; c < TOTAL_CELL; c++) {
-			printfDma("%8.5f|", *((float*) ((uint8_t*) vArr + ic * sizeof(ic_ad68_t)) + c));
+			printfDmaBT("%8.5f|", *((float*) ((uint8_t*) vArr + ic * sizeof(ic_ad68_t)) + c));
 		}
 
-		printfDma("%8.5f|", ic_ad68[ic].v_avgCell_sum);
-		printfDma("%8.5f|", ic_ad68[ic].v_avgCell_delta);
+		printfDmaBT("%8.5f|", ic_ad68[ic].v_avgCell_sum);
+		printfDmaBT("%8.5f|", ic_ad68[ic].v_avgCell_delta);
 		printfDma("\n");
 	}
 }
@@ -1095,6 +1095,10 @@ void ad68_dump_csv_bt(void) {
 
 void bms_openWireCheck(bms_ow_status_t *ow_status[TOTAL_AD68][TOTAL_CELL]) {
 
+	//backup to then skip the OW readings
+	ic_ad68_t ic_ad68_backup[TOTAL_AD68];
+	memcpy(ic_ad68_backup, ic_ad68, sizeof(ic_ad68_backup));
+
 	float cellReference[TOTAL_AD68][TOTAL_CELL];
 	float cellVoltage_OW[TOTAL_AD68][TOTAL_CELL];
 
@@ -1107,16 +1111,20 @@ void bms_openWireCheck(bms_ow_status_t *ow_status[TOTAL_AD68][TOTAL_CELL]) {
 
 	// --- Open Wire EVEN Check ---
 	ADSV.CONT = 1;      // Continuous
+	ADSV.DCP = 0;      // Discharge permitted
 	ADSV.OW = 0b01;   // Open wire on C-ADCS and S-ADCs
 
+	bms_wakeupChain(); //before sending commmands
 	for (int ic = 0; ic < TOTAL_AD68; ic++) {
 		bms_transmitCmd((uint8_t*) &ADSV);
+		//printConsole("	g");
 	}
 
-	HAL_Delay(8);
+	bms_delayMsActive(12);
 
 	// Read EVEN result
 	bms_readSVoltage();
+	bms_printVoltage(ic_ad68[0].v_sCell);
 	for (int ic = 0; ic < TOTAL_AD68; ic++) {
 		for (int cell = 0; cell < TOTAL_CELL; cell++) {
 			cellVoltage_OW[ic][cell] = ic_ad68[ic].v_sCell[cell];
@@ -1134,17 +1142,20 @@ void bms_openWireCheck(bms_ow_status_t *ow_status[TOTAL_AD68][TOTAL_CELL]) {
 			float Vow = cellVoltage_OW[ic][cell];
 
 			if (Vref < OW_UV_IGNORE_THRESH) {       // too low to decide by ratio
-				*ow_status[ic][cell] = OW_INVALID_LOWV;
+				//*ow_status[ic][cell] = OW_INVALID_LOWV;
+				printConsole("cell %d in ic %d is INVALID_LOWV\n", cell + 1, ic + 1);
 				continue;
 			}
 
 			float cellRatio = Vow / Vref;
 			if (cellRatio >= OW_RATIO_MIN && cellRatio <= OW_RATIO_MAX) {
-				*ow_status[ic][cell] = OW_INTACT;
+				//*ow_status[ic][cell] = OW_INTACT;
 			} else if (cellRatio < OW_OPEN_EDGE) {
-				*ow_status[ic][cell] = OW_OPEN;
+				//*ow_status[ic][cell] = OW_OPEN;
+				printConsole("cell %d in ic %d is OPEN\n", cell + 1, ic + 1);
 			} else {
-				*ow_status[ic][cell] = OW_SUSPECT;
+				//*ow_status[ic][cell] = OW_SUSPECT;
+				printConsole("cell %d in ic %d is SUSPECT\n", cell + 1, ic + 1);
 			}
 		}
 	}
@@ -1152,14 +1163,16 @@ void bms_openWireCheck(bms_ow_status_t *ow_status[TOTAL_AD68][TOTAL_CELL]) {
 	// --- Open Wire ODD Check ---
 	ADSV.CONT = 1;
 	ADSV.OW = 0b10;
+	bms_wakeupChain(); //before sending commmands
 	for (int ic = 0; ic < TOTAL_AD68; ic++) {
 		bms_transmitCmd((uint8_t*) &ADSV);
 	}
 
-	HAL_Delay(8);
+	bms_delayMsActive(12);
 
 	// Read ODD result
 	bms_readSVoltage();
+	bms_printVoltage(ic_ad68[0].v_sCell);
 	for (int ic = 0; ic < TOTAL_AD68; ic++) {
 		for (int cell = 0; cell < TOTAL_CELL; cell++) {
 			cellVoltage_OW[ic][cell] = ic_ad68[ic].v_sCell[cell];
@@ -1177,29 +1190,32 @@ void bms_openWireCheck(bms_ow_status_t *ow_status[TOTAL_AD68][TOTAL_CELL]) {
 			float Vow = cellVoltage_OW[ic][cell];
 
 			if (Vref < OW_UV_IGNORE_THRESH) {       // too low to decide by ratio
-				*ow_status[ic][cell] = OW_INVALID_LOWV;
+				//*ow_status[ic][cell] = OW_INVALID_LOWV;
+				printConsole("cell %d in ic %d is INVALID_LOWV\n", cell + 1, ic + 1);
 				continue;
 			}
 
 			float cellRatio = Vow / Vref;
 			if (cellRatio >= OW_RATIO_MIN && cellRatio <= OW_RATIO_MAX) {
-				*ow_status[ic][cell] = OW_INTACT;
+				//*ow_status[ic][cell] = OW_INTACT;
 			} else if (cellRatio < OW_OPEN_EDGE) {
-				*ow_status[ic][cell] = OW_OPEN;
+				//*ow_status[ic][cell] = OW_OPEN;
+				printConsole("cell %d in ic %d is OPEN\n", cell + 1, ic + 1);
 			} else {
-				*ow_status[ic][cell] = OW_SUSPECT;
+				//*ow_status[ic][cell] = OW_SUSPECT;
+				printConsole("cell %d in ic %d is SUSPECT\n", cell + 1, ic + 1);
 			}
 		}
 	}
 
+	//skip OW readings by restoring the initial matrix, before executing OW commands
+	memcpy(ic_ad68, ic_ad68_backup, sizeof(ic_ad68_backup));
+
+	bms_wakeupChain(); //before sending commmands
 	// Turn off Open Wire Check
 	ADSV.CONT = 0;
 	ADSV.OW = 0b00;
 	bms_transmitCmd((uint8_t*) &ADSV);
-
-	// Periodic open wire check
-	/*OW_StartWaitMs(WAIT_100MS, OW_START);   // after 100 ms -> restart
-	 *ow_state = OW_WAIT;*/
 
 }
 

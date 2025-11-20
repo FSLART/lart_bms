@@ -33,5 +33,5 @@ void read_mcu_temp(void) {
 
 	float vsense = (raw / ADC_MAX_12BIT) * VDDA_ASSUMED;   // Volts
 	float temp_c = ((vsense - TEMP_V25) / TEMP_AVG_SLOPE) + 25.0f;
-	printConsole("MCU Temp: %f C \n\n", temp_c);
+	//printConsole("MCU Temp: %f C \n\n", temp_c);
 }

@@ -32,4 +32,4 @@
 ../Core/Src/bms_libWrapper.c:999:6:bms_balancingMeasureVoltage	8	static
 ../Core/Src/bms_libWrapper.c:1016:6:bms_startBalancing	24	static
 ../Core/Src/bms_libWrapper.c:1024:6:ad68_dump_csv_bt	24	static
-../Core/Src/bms_libWrapper.c:1096:6:bms_openWireCheck	184	static
+../Core/Src/bms_libWrapper.c:1096:6:bms_openWireCheck	392	static

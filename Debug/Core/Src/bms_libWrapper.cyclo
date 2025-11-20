@@ -6,7 +6,7 @@
 ../Core/Src/bms_libWrapper.c:156:6:bms_writePwmB	2
 ../Core/Src/bms_libWrapper.c:169:6:bms68_setGpo45	2
 ../Core/Src/bms_libWrapper.c:179:6:bms_printRawData	3
-../Core/Src/bms_libWrapper.c:191:6:bms_checkRxFault	3
+../Core/Src/bms_libWrapper.c:191:6:bms_checkRxFault	4
 ../Core/Src/bms_libWrapper.c:213:6:bms_readSid	1
 ../Core/Src/bms_libWrapper.c:220:6:bms_readConfigA	1
 ../Core/Src/bms_libWrapper.c:227:6:bms_readConfigB	1

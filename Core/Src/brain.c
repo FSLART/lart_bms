@@ -42,7 +42,6 @@ bms_ow_status_t ow_status[TOTAL_AD68][TOTAL_CELL];
 
 /* EEPROM comms instance */
 //static EEPROM_Comms eeprom_comms = { .hi2c = &hi2c1, .huart = &huart1 };
-
 /* ================== MODULE STATE ================== */
 volatile BmsStates bmsState = IDLE;
 volatile BmsStates bmsCurrState = IDLE;
@@ -61,33 +60,31 @@ static uint32_t timeCmmd = 0;
 void brain_start(void) {
 
 	// Set CS2 Pin to HIGH to disable second SPI on 6822 + MSTR should be high by default
-	 HAL_GPIO_WritePin(BMS_MSTR_GPIO_Port, BMS_MSTR_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(BMS_MSTR_GPIO_Port, BMS_MSTR_Pin, GPIO_PIN_SET);
 
-	 // Start Timers
-	 HAL_TIM_Base_Start_IT(&htim8);
-	 HAL_TIM_Base_Start_IT(&htim10);
-	 HAL_TIM_Base_Start_IT(&htim11);
-	 HAL_TIM_Base_Start_IT(&htim11);
+	// Start Timers
+	HAL_TIM_Base_Start_IT(&htim8);
+	HAL_TIM_Base_Start_IT(&htim10);
 
-	 // Initialise BMS configs (No commands sent)
-	 //bms_init();
+	// Initialise BMS configs (No commands sent)
+	//bms_init();
 
-	 uint32_t timeDiff = 0;
-	 uint32_t timeStart;
-	 uint32_t timeCmmd;
+	//uint32_t timeDiff = 0;
+	//uint32_t timeStart;
+	//uint32_t timeCmmd;
 
-	 //printfDma("bad \r");
-	 printConsole("Start Program \n\r");
-	 //OpenAllContactors();
-	 startUI();
+	//printfDma("bad \r");
+	printConsole("Start Program \n\r");
+	//OpenAllContactors();
+	startUI();
 
-	 //char ts[20];
-	 //RTC_Time_Get(ts, sizeof(ts));
-	 //printConsole("%s\r\n", ts);
+	//char ts[20];
+	//RTC_Time_Get(ts, sizeof(ts));
+	//printConsole("%s\r\n", ts);
 
-	 //printfDmaBT("hello");
+	//printfDmaBT("hello");
 
-	 /*if (Write_EEPROM(&eeprom_comms, STEERING_MAX, 2334, true)) {
+	/*if (Write_EEPROM(&eeprom_comms, STEERING_MAX, 2334, true)) {
 	 //printfDma("good \n");
 	 } else {
 	 printfDma("bad \n");
@@ -99,26 +96,26 @@ void brain_start(void) {
 	 printfDma("bad2 \n");
 	 }*/
 
-	/*IVT_CAN_Setup_AllMessages(&hcan1);
-	 IVT_CAN_Config();
-	 HAL_Delay(1000);
+	/*bms_stopDischarge();
+	HAL_Delay(200);         // Initialisation delay
+	bms_wakeupChain();
+	bms_init();             // Initialise BMS configs and send them
+	bms_readSid();
 
-	 // Start Timer17 for falut check
-	 //IVT_FAULT_CHECK();
-	 //HAL_Delay(1000);
-	 //TIM17->SR &= ~TIM_SR_UIF;
-	 //HAL_TIM_Base_Start_IT(&htim17);
-	 //IVT_SET_BITRATE();
+	bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
+	bms_delayMsActive(12);
+	bms_readAvgCellVoltage();
+	bms_getAuxMeasurement();
+	bms_delayMsActive(12);
+	bms_readSVoltage();*/
 
-	 //bms_stopDischarge();
-	 //HAL_Delay(200);         // Initialisation delay
 
-	 //bms_wakeupChain();
-	 //bms_init();             // Initialise BMS configs and send them
-	 //bms_readSid();
+	//IVT_CAN_Setup_AllMessages(&hcan1);
+	//IVT_CAN_Config();
 
-	 //bms_openWireCheck();
-	 /*bms_startTimer();
+	//IVT_SET_BITRATE();
+
+	/*bms_startTimer();
 	 HAL_Delay(200);
 
 	 uint32_t time = bms_getTimCount();
@@ -126,8 +123,11 @@ void brain_start(void) {
 
 	 printfDma("gay: %ld us\n", time);*/
 
-	//bmsState = ONMISSION;
-	bmsState = IDLE;
+	// Start Timer11 for falut check
+	HAL_TIM_Base_Start_IT(&htim11);
+
+	bmsState = STARTUP;
+	//bmsState = IDLE;
 	bmsPrevState = IDLE;
 	bmsCurrState = IDLE;
 }
@@ -203,10 +203,23 @@ void brain_loop(void) {
 			bms_delayMsActive(12);
 			bms_readAvgCellVoltage();
 			bms_getAuxMeasurement();
-			ad68_dump_csv_bt();
+			//ad68_dump_csv_bt();
 		}
 
 		break;
+	case STARTUP:
+		OpenAllContactors();
+		HAL_Delay(2000);
+		CloseAIR_negativo();
+		HAL_Delay(200);
+		ClosePreCarga();
+		HAL_Delay(2500);
+		CloseAIR_positivo();
+		HAL_Delay(500);
+		OpenPreCarga();
+		HAL_Delay(3000);
+		CloseDescarga();
+		HAL_Delay(1000);
 
 	default:
 		break;
@@ -236,8 +249,8 @@ void brain_loop(void) {
 	}
 
 	if (updateUI) {
-		//send_ivt_ui();
-		//send_ad68_ui();
+		send_ivt_ui();
+		send_ad68_ui();
 		updateUI = false;
 		//OpenPreCarga();
 	}
@@ -251,7 +264,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		//printfDma("	gay 1000ms\n");
 	}
 
-	//Timer to check on errors - 100ms
+	//Timer to check on errors - 300ms
 	if (htim->Instance == TIM11) {
 		faultCheck = true;
 		//printfDma("	gay 100ms\n");
@@ -300,4 +313,15 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			bmsState = ONMISSION;
 		}
 	}
+}
+
+void RaiseError(ErrorCode_t errorcode) {
+
+	/*switch(errorcode)
+	 {
+	 case ERROR_SDC_TRIGGERED:
+	 errorStatus.errorSDC = true;
+	 break;
+
+	 }*/
 }

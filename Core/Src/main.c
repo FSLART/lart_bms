@@ -301,10 +301,10 @@ static void MX_CAN1_Init(void)
 	 HAL_CAN_ActivateNotification(&hcan1,
 	 CAN_IT_TX_MAILBOX_EMPTY | CAN_IT_ERROR | CAN_IT_BUSOFF);*/
 
-	HAL_StatusTypeDef st = HAL_CAN_Start(&hcan1);
-	if (st != HAL_OK) {
+	//HAL_StatusTypeDef st = HAL_CAN_Start(&hcan1);
+	/*if (st != HAL_OK) {
 		//printfDma("CAN start failed: %ld\r\n", (long) st);
-	}
+	}*/
 
 	/*if (HAL_CAN_Start(&hcan1) != HAL_OK)
 	 {
@@ -678,7 +678,7 @@ static void MX_TIM11_Init(void)
   htim11.Instance = TIM11;
   htim11.Init.Prescaler = 6400-1;
   htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim11.Init.Period = 1000-1;
+  htim11.Init.Period = 3000-1;
   htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim11.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim11) != HAL_OK)
@@ -824,14 +824,19 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pins : CONTACT_DSCH_Pin CONTACT_PRE_Pin */
   GPIO_InitStruct.Pin = CONTACT_DSCH_Pin|CONTACT_PRE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : CONTACT_AIR_positivo_Pin CONTACT_AIR_negativo_Pin LED_BLUE_Pin LED_RED_Pin
-                           BMS_MSTR_Pin */
-  GPIO_InitStruct.Pin = CONTACT_AIR_positivo_Pin|CONTACT_AIR_negativo_Pin|LED_BLUE_Pin|LED_RED_Pin
-                          |BMS_MSTR_Pin;
+  /*Configure GPIO pins : CONTACT_AIR_positivo_Pin CONTACT_AIR_negativo_Pin */
+  GPIO_InitStruct.Pin = CONTACT_AIR_positivo_Pin|CONTACT_AIR_negativo_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LED_BLUE_Pin LED_RED_Pin BMS_MSTR_Pin */
+  GPIO_InitStruct.Pin = LED_BLUE_Pin|LED_RED_Pin|BMS_MSTR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

@@ -83,17 +83,20 @@ void IVT_CAN_Setup_AllMessages(CAN_HandleTypeDef *hcan) {
 	sFilterConfig.SlaveStartFilterBank = 14; // if dual CAN, adjust; otherwise leave default
 
 	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
-		printf("Error setting wildcard filter\n");
+		printConsole("Error setting wildcard filter\n");
 	}
 
 	/* --- 3) Activate the RX FIFO0 “new message” interrupt --- */
 	if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
-		printf("Error activating RX notification\n");
+		printConsole("Error activating RX notification\n");
 	}
 
 	/* --- 4) Start the FDCAN controller --- */
-	if (HAL_CAN_Start(hcan) != HAL_OK) {
-		printConsole("Error starting CAN\n");
+	HAL_StatusTypeDef st = HAL_CAN_Start(&hcan1);
+	if (st != HAL_OK) {
+		printConsole("CAN start failed: %ld\r\n", (long) st);
+	}else{
+		printConsole("CAN has started\r\n");
 	}
 }
 
@@ -233,9 +236,9 @@ void IVT_CAN_Config(void) {
 	uint32_t startTime;
 
 	// Configure IVT. Take response delays into account, if response time is too long --> raise CAN error
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STOP_CMD) == HAL_OK) { // Stop measurement to configure results
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STOP_CMD) != HAL_OK) { // Stop measurement to configure results
 
-		printConsole("Command sent\r\n");
+		printConsole("Fudeu CAN - IVT_STOP_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
@@ -250,9 +253,9 @@ void IVT_CAN_Config(void) {
 	IVT_commandReceivedFlag = 0; // Reset flag
 	commsCheck = true; // clear UI Can error
 
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_CURRENT_CMD) == HAL_OK) { // Configure current result command
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_CURRENT_CMD) != HAL_OK) { // Configure current result command
 
-		printConsole("Command sent\r\n");
+		printConsole("Fudeu CAN - IVT_CONFIG_CURRENT_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
@@ -264,24 +267,9 @@ void IVT_CAN_Config(void) {
 	}
 	IVT_commandReceivedFlag = 0; // Reset flag
 
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_U1_CMD) == HAL_OK) { // Configure voltage U1 command
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_U1_CMD) != HAL_OK) { // Configure voltage U1 command
 
-		printConsole("Command sent\r\n");
-	}
-	startTime = HAL_GetTick();
-	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
-
-		if ((HAL_GetTick() - startTime) > 1000) {
-
-			printConsole("Fudeu CAN \n\n");
-			return;
-		}
-	}
-	IVT_commandReceivedFlag = 0; // Reset flag
-
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_U2_CMD) == HAL_OK) { // Configure voltage U2 command
-
-		printConsole("Command sent\r\n");
+		printConsole("Fudeu CAN - IVT_CONFIG_U1_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
@@ -294,9 +282,9 @@ void IVT_CAN_Config(void) {
 	}
 	IVT_commandReceivedFlag = 0; // Reset flag
 
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_U3_CMD) == HAL_OK) { // Configure voltage U3 command
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_U2_CMD) != HAL_OK) { // Configure voltage U2 command
 
-		printConsole("Command sent\r\n");
+		printConsole("Fudeu CAN - IVT_CONFIG_U2_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
@@ -309,9 +297,24 @@ void IVT_CAN_Config(void) {
 	}
 	IVT_commandReceivedFlag = 0; // Reset flag
 
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_T_CMD) == HAL_OK) { // Configure voltage U3 command
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_U3_CMD) != HAL_OK) { // Configure voltage U3 command
 
-		printConsole("Command sent\r\n");
+		printConsole("Fudeu CAN - IVT_CONFIG_U3_CMD\n\n");
+	}
+	startTime = HAL_GetTick();
+	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
+
+		if ((HAL_GetTick() - startTime) > 1000) {
+
+			printConsole("Fudeu CAN \n\n");
+			return;
+		}
+	}
+	IVT_commandReceivedFlag = 0; // Reset flag
+
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_T_CMD) != HAL_OK) { // Configure voltage U3 command
+
+		printConsole("Fudeu CAN - IVT_CONFIG_T_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
@@ -324,9 +327,9 @@ void IVT_CAN_Config(void) {
 	}
 	IVT_commandReceivedFlag = 0; // Reset flag
 
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_W_CMD) == HAL_OK) { // Configure voltage U3 command
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_W_CMD) != HAL_OK) { // Configure voltage U3 command
 
-		printConsole("Command sent\r\n");
+		printConsole("Fudeu CAN - IVT_CONFIG_W_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
@@ -339,9 +342,9 @@ void IVT_CAN_Config(void) {
 	}
 	IVT_commandReceivedFlag = 0; // Reset flag
 
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STORE_CMD) == HAL_OK) { // Store config results command
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STORE_CMD) != HAL_OK) { // Store config results command
 
-		printConsole("Command sent\r\n");
+		printConsole("Fudeu CAN - IVT_STORE_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
@@ -354,12 +357,12 @@ void IVT_CAN_Config(void) {
 	}
 	IVT_commandReceivedFlag = 0; // Reset flag
 
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_RESET_SYSERROR_CMD) == HAL_OK) { // Store config results command
+	/*if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_RESET_SYSERROR_CMD) == HAL_OK) { // Store config results command
 
 		printConsole("Command sent\r\n");
 	}
 	startTime = HAL_GetTick();
-	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
+	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 10))) {
 
 		if ((HAL_GetTick() - startTime) > 5000) {
 
@@ -382,11 +385,11 @@ void IVT_CAN_Config(void) {
 			return;
 		}
 	}
-	IVT_commandReceivedFlag = 0; // Reset flag
+	IVT_commandReceivedFlag = 0; // Reset flag*/
 
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_START_CMD) == HAL_OK) { // Start command
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_START_CMD) != HAL_OK) { // Start command
 
-		printConsole("Command sent\r\n");
+		printConsole("Fudeu CAN - IVT_START_CMD\n\n");
 	}
 	IVT_commandReceivedFlag = 0;
 
@@ -707,9 +710,9 @@ void IVT_SET_BITRATE(void) {
 	uint32_t startTime;
 
 // Configure IVT. Take response delays into account, if response time is too long --> raise CAN error
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STOP_CMD) == HAL_OK) { // Stop measurement to configure results
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STOP_CMD) != HAL_OK) { // Stop measurement to configure results
 
-		printConsole("Command sent\r\n");
+		printConsole("Fudeu CAN - IVT_STOP_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
@@ -723,9 +726,9 @@ void IVT_SET_BITRATE(void) {
 	}
 	IVT_commandReceivedFlag = 0; // Reset flag
 
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_CANRATE_CMD) == HAL_OK) { // Configure current result command
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_CANRATE_CMD) != HAL_OK) { // Configure current result command
 
-		printConsole("Command sent\r\n");
+		printConsole("Fudeu CAN - IVT_CONFIG_CANRATE_CMD\n\n");
 	}
 	IVT_commandReceivedFlag = 0; // Reset flag
 
