@@ -36,7 +36,8 @@ Core/Src/isa_ivt-s.o: ../Core/Src/isa_ivt-s.c ../Core/Inc/isa_ivt-s.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/main.h ../Core/Inc/brain.h ../Core/Inc/uartDMA.h
+ ../Core/Inc/main.h ../Core/Inc/brain.h ../Core/Inc/uartDMA.h \
+ ../Core/Inc/can.h
 ../Core/Inc/isa_ivt-s.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -79,3 +80,4 @@ Core/Src/isa_ivt-s.o: ../Core/Src/isa_ivt-s.c ../Core/Inc/isa_ivt-s.h \
 ../Core/Inc/main.h:
 ../Core/Inc/brain.h:
 ../Core/Inc/uartDMA.h:
+../Core/Inc/can.h:

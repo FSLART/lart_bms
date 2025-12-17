@@ -57,3 +57,23 @@ void ad68_dump_csv_bt(void);
 
 
 void bms_openWireCheck(bms_ow_status_t *ow_status[TOTAL_AD68][TOTAL_CELL]);
+
+
+HAL_StatusTypeDef Slaves_CAN_SendMessage(CAN_HandleTypeDef *hcan, uint32_t canID, uint32_t dataLength, const uint8_t *TxData);
+
+void CAN_Send_AD68_All(CAN_HandleTypeDef *hcan);
+
+HAL_StatusTypeDef CAN_Send_AD68_Temperatures_Module(CAN_HandleTypeDef *hcan, uint8_t module);
+
+uint16_t conv_temp(float t);
+
+HAL_StatusTypeDef CAN_Send_AD68_Voltages_Module(CAN_HandleTypeDef *hcan, uint8_t module);
+
+uint16_t conv_voltage(float v);
+
+
+
+
+
+
+

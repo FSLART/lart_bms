@@ -2,6 +2,7 @@
 #include "main.h"
 #include "brain.h"
 #include "uartDMA.h"
+#include "can.h"
 
 /* Variables -------------------------------------------------------------------*/
 extern CAN_HandleTypeDef hcan1;	// CAN module for PT bus
@@ -110,6 +111,9 @@ void IVT_CAN_Setup_AllMessages(CAN_HandleTypeDef *hcan) {
  * @retval None
  */
 void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
+
+    // register IVT listener for all CAN messages
+    CAN_RegisterRxCallback(IVT_CAN_OnMessage);
 
 	CAN_FilterTypeDef sFilterConfig = { 0 };
 
@@ -409,139 +413,73 @@ void IVT_CAN_Config(void) {
 
 }
 
-/**
- * @brief  Rx FIFO 0 callback for the IVT CAN Bus.
- * @param  hfdcan pointer to an FDCAN_HandleTypeDef structure that contains
- *         the configuration information for the specified FDCAN.
- * @param  RxFifo0ITs indicates which Rx FIFO 0 interrupts are signaled.
- *         This parameter can be any combination of @arg FDCAN_Rx_Fifo0_Interrupts.
- */
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
-	CAN_RxHeaderTypeDef RxHeader;
-	uint8_t RxData[8];
 
-	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK) {
-		Error_Handler();
-	}
+void IVT_CAN_OnMessage(const CAN_RxHeaderTypeDef *pRxHeader, const uint8_t *RxData)
+{
+    lastTime = HAL_GetTick();
 
-	lastTime = HAL_GetTick();
+    uint32_t id  = pRxHeader->StdId;
+    uint32_t dlc = pRxHeader->DLC;
 
-	// Convert RxH + RxBuf into your existing logic:
-	uint32_t id = RxHeader.StdId;      // if standard ID
-	uint32_t dlc = RxHeader.DLC;
+    switch (id) {
+    case IVT_RESPONSE_CANID:
+        if (RxData[0] == 0xB4) {
+            if (RxData[1] == 0x01 && RxData[2] == 0x01) { // Start
+                IVT_commandReceivedFlag = 1;
+            }
+            if (RxData[1] == 0x00 && RxData[2] == 0x01) { // Stop
+                IVT_commandReceivedFlag = 1;
+            }
+        }
+        if ((RxData[0] == 0xA0) || (RxData[0] == 0xA1) || (RxData[0] == 0xB2) ||
+            (RxData[0] == 0xA2) || (RxData[0] == 0xA3) || (RxData[0] == 0xA4) ||
+            (RxData[0] == 0xA5) || (RxData[0] == 0xB0)) {
+            IVT_commandReceivedFlag = 1;
+        }
 
-	// Process data based on CAN ID
-	switch (id) {
-	case IVT_RESPONSE_CANID:
-		if (RxData[0] == 0xB4) // Check if command is acknowledged
-				{
-			if (RxData[1] == 0x01 && RxData[2] == 0x01) // Start command
-					{
-				IVT_commandReceivedFlag = 1;
-			}
-			if (RxData[1] == 0x00 && RxData[2] == 0x01) // Stop command
-					{
-				IVT_commandReceivedFlag = 1;
-			}
-		}
+        if (RxData[0] == 0x81) {
+            IVT_PROCESS_SYSERRORS((uint8_t *)RxData);
+        }
+        if (RxData[0] == 0x80) {
+            IVT_PROCESS_MEASURERRORS((uint8_t *)RxData);
+        }
+        break;
 
-		// Commands for configs
-		if ((RxData[0] == 0xA0) || (RxData[0] == 0xA1) || (RxData[0] == 0xB2) || (RxData[0] == 0xA2) || (RxData[0] == 0xA3) || (RxData[0] == 0xA4) || (RxData[0] == 0xA5) || (RxData[0] == 0xB0)) {
-			IVT_commandReceivedFlag = 1;
-		}
+    case IVT_RESULTI_CANID:
+        IVT_Current = ((RxData[2] << 24) | (RxData[3] << 16) |
+                       (RxData[4] << 8)  |  RxData[5]);
+        ivt.iBatt = IVT_Current;
+        break;
 
-		// Commands for SYSTEM error feedback
-		if (RxData[0] == 0x81) {
-			IVT_PROCESS_SYSERRORS(RxData);
-		}
+    case IVT_RESULTU1_CANID:
+        vBatt = ((RxData[2] << 24) | (RxData[3] << 16) |
+                 (RxData[4] << 8)  |  RxData[5]);
+        ivt.vBatt = vBatt;
+        break;
 
-		// Commands for Measurment error feedback
-		if (RxData[0] == 0x80) {
-			IVT_PROCESS_MEASURERRORS(RxData);
-		}
-		break;
+    case IVT_RESULTT_CANID:
+        tempIVT = ((RxData[2] << 24) | (RxData[3] << 16) |
+                   (RxData[4] << 8)  |  RxData[5]);
+        ivt.temp = tempIVT;
+        break;
 
-	case IVT_RESULTI_CANID:
-		// IVT-S Current data: Data Byte 0 (DB0) = 0x00
-		// Current data is stored in bytes 2-5
-		IVT_Current = ((RxData[2] << 24) | (RxData[3] << 16) | (RxData[4] << 8) | RxData[5]);
-		ivt.iBatt = IVT_Current;
+    case IVT_RESULTW_CANID:
+        IVT_Power = ((RxData[2] << 24) | (RxData[3] << 16) |
+                     (RxData[4] << 8)  |  RxData[5]);
+        ivt.power = IVT_Power;
+        break;
 
-		//printConsole("IVT-S Current Data: %ld mA\r\n", IVT_Current);
-		break;
-
-	case IVT_RESULTU1_CANID:
-		// IVT-S Voltage data (U1): Data Byte 0 (DB0) = 0x01
-		// Voltage U1 data is stored in bytes 2-5
-		vBatt = 0;
-		vBatt = ((RxData[2] << 24) | (RxData[3] << 16) | (RxData[4] << 8) | RxData[5]);
-		ivt.vBatt = vBatt;
-
-		//printConsole("IVT-S Voltage Data (U1): %ld mV\r\n", vDCLink);
-		break;
-
-	case IVT_RESULTU2_CANID:
-		// IVT-S Voltage data (U2): Data Byte 0 (DB0) = 0x02
-		// Voltage U2 data is stored in bytes 2-5
-		//vBatt = (RxData[2] << 24) | (RxData[3] << 16) | (RxData[4] << 8) | RxData[5];
-//
-//			  // If the state is Precharge,
-//			  if ( currentState == PreCharge_State
-//				   && (prechargeTriggerOK < 5))
-//			  {
-//				  prechargeTriggerOK++;
-//			  }
-		//printConsole("IVT-S Voltage Data (U2): %ld mV\r\n", vBatt);
-		break;
-
-	case IVT_RESULTU3_CANID:
-		// IVT-S Voltage data (U3): Data Byte 0 (DB0) = 0x03
-		// Voltage U3 data is stored in bytes 2-5
-		//voltageU3_mV = (RxData[2] << 24) | (RxData[3] << 16) | (RxData[4] << 8) | RxData[5];
-		//printConsole("IVT-S Voltage Data (U3): %ld mV\r\n", voltageU3_mV);
-		//vBatt = (RxData[2] << 24) | (RxData[3] << 16) | (RxData[4] << 8) | RxData[5];
-
-		// If the state is Precharge,
-		//if (currentState == PreCharge_State && (prechargeTriggerOK < 5)) {
-		// prechargeTriggerOK++;
-		//}
-		//break;*/
-
-	case IVT_RESULTT_CANID:
-		// IVT-S Temperature data: Data Byte 0 (DB0) = 0x01
-		// Temperature data is stored in bytes 2-5
-		//tempIVT = ((RxData[2] << 24) | (RxData[3] << 16) | (RxData[4] << 8) | RxData[5]) - 273.15;
-		tempIVT = ((RxData[2] << 24) | (RxData[3] << 16) | (RxData[4] << 8) | RxData[5]);
-		ivt.temp = tempIVT;
-		//printConsole("IVT-S Temperature Data: %ld .C\r\n", tempIVT);
-		break;
-
-	case IVT_RESULTW_CANID:
-		// IVT-S Power data: Data Byte 0 (DB0) = 0x01
-		// Power data is stored in bytes 2-5
-		IVT_Power = ((RxData[2] << 24) | (RxData[3] << 16) | (RxData[4] << 8) | RxData[5]);
-		ivt.power = IVT_Power;
-		//printConsole("IVT-S Power Data: %ld W\r\n", IVT_Power);
-		break;
-
-	default:
-		// Unexpected CAN IDs get ignored
-
-		// Print unknown ID and DLC
-		//uint32_t id = RxHeader.Identifier;
-		//uint32_t dlc = RxHeader.DataLength;  // for classical CAN, 0…8 = number of bytes
-		printConsole("Unknown CAN ID 0x%03lX, DLC=%lu, Data:", id, dlc);
-
-		// Dump each byte in hex
-		for (uint32_t i = 0; i < dlc; i++) {
-			printConsole(" %02X", RxData[i]);
-		}
-		printConsole("\r\n");
-
-		break;
-	}
-//	      printConsole("\r\n");
+    default:
+        /*printConsole("Unknown CAN ID 0x%03lX, DLC=%lu, Data:", id, dlc);
+        for (uint32_t i = 0; i < dlc; i++) {
+            printConsole(" %02X", RxData[i]);
+        }
+        printConsole("\r\n");*/
+        break;
+    }
 }
+
+
 
 /**
  * @brief  Initiates a fault check by requesting system error status from the IVT-S sensor.

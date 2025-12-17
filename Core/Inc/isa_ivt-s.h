@@ -68,5 +68,8 @@ void IVT_PROCESS_MEASURERRORS(uint8_t *RxData);
 void send_ivt_ui(void);
 void IVT_SET_BITRATE(void);
 
+void IVT_CAN_OnMessage(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data);
+void IVT_Init(void);  // optional init to register the callback
+
 
 #endif /* INC_PTC_FDCAN_H_ */

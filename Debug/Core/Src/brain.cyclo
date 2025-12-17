@@ -1,8 +1,8 @@
-../Core/Src/brain.c:62:6:brain_start	1
-../Core/Src/brain.c:134:6:brain_loop	14
-../Core/Src/brain.c:271:6:HAL_TIM_PeriodElapsedCallback	4
-../Core/Src/brain.c:292:6:HAL_SYSTICK_Callback	4
-../Core/Src/brain.c:311:10:getRuntimeMs	1
-../Core/Src/brain.c:315:10:getRuntimeMsDiff	1
-../Core/Src/brain.c:319:6:HAL_GPIO_EXTI_Callback	3
-../Core/Src/brain.c:329:6:RaiseError	1
+../Core/Src/brain.c:66:6:brain_start	1
+../Core/Src/brain.c:146:6:brain_loop	16
+../Core/Src/brain.c:294:6:HAL_TIM_PeriodElapsedCallback	4
+../Core/Src/brain.c:313:6:HAL_SYSTICK_Callback	4
+../Core/Src/brain.c:332:10:getRuntimeMs	1
+../Core/Src/brain.c:336:10:getRuntimeMsDiff	1
+../Core/Src/brain.c:340:6:HAL_GPIO_EXTI_Callback	3
+../Core/Src/brain.c:350:6:RaiseError	1

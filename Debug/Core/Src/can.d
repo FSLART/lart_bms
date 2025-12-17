@@ -1,6 +1,5 @@
-Core/Src/bms_libWrapper.o: ../Core/Src/bms_libWrapper.c \
- ../Core/Inc/bms_libWrapper.h ../Core/Inc/bms_datatypes.h \
- ../Core/Inc/main.h ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+Core/Src/can.o: ../Core/Src/can.c ../Core/Inc/can.h ../Core/Inc/main.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -37,12 +36,8 @@ Core/Src/bms_libWrapper.o: ../Core/Src/bms_libWrapper.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/bms_utility.h ../Core/Inc/bms_mcuWrapper.h \
- ../Core/Inc/bms_cmdlist.h ../Core/Inc/main.h ../Core/Inc/brain.h \
- ../Core/Inc/uartDMA.h ../Core/Inc/time_rtc.h ../Core/Inc/can.h \
- ../Core/Inc/dbc/ams.h
-../Core/Inc/bms_libWrapper.h:
-../Core/Inc/bms_datatypes.h:
+ ../Core/Inc/brain.h
+../Core/Inc/can.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -81,12 +76,4 @@ Core/Src/bms_libWrapper.o: ../Core/Src/bms_libWrapper.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
-../Core/Inc/bms_utility.h:
-../Core/Inc/bms_mcuWrapper.h:
-../Core/Inc/bms_cmdlist.h:
-../Core/Inc/main.h:
 ../Core/Inc/brain.h:
-../Core/Inc/uartDMA.h:
-../Core/Inc/time_rtc.h:
-../Core/Inc/can.h:
-../Core/Inc/dbc/ams.h:
