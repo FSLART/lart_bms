@@ -1,0 +1,166 @@
+.TH "Core/Inc/bms_utility.h" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Core/Inc/bms_utility.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'main\&.h'\fP
+.br
+\fC#include <stdbool\&.h>\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBDATA_LEN\fP   (6)"
+.br
+.ti -1c
+.RI "#define \fBDATAPKT_LEN\fP   (6 + 2)"
+.br
+.ti -1c
+.RI "#define \fBCMD_LEN\fP   (2)"
+.br
+.ti -1c
+.RI "#define \fBCMDPKT_LEN\fP   (2 + 2)"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "uint16_t \fBbms_calcPec15\fP (uint8_t *data, uint8_t len)"
+.br
+.ti -1c
+.RI "uint16_t \fBbms_calcPec10\fP (uint8_t *pDataBuf, int nLength, uint8_t *commandCounter)"
+.br
+.ti -1c
+.RI "void \fBbms_spiTransmitCmd\fP (uint8_t cmd[\fBCMD_LEN\fP])"
+.br
+.ti -1c
+.RI "void \fBbms_spiTransmitData\fP (uint8_t data[\fBTOTAL_IC\fP][\fBDATA_LEN\fP])"
+.br
+.ti -1c
+.RI "void \fBbms_spiReceiveData\fP (uint8_t \fBrxData\fP[\fBTOTAL_IC\fP][\fBDATA_LEN\fP], uint16_t \fBrxPec\fP[\fBTOTAL_IC\fP], uint8_t \fBrxCc\fP[\fBTOTAL_IC\fP])"
+.br
+.ti -1c
+.RI "bool \fBbms_checkRxPec\fP (uint8_t \fBrxData\fP[\fBTOTAL_IC\fP][\fBDATA_LEN\fP], uint16_t \fBrxPec\fP[\fBTOTAL_IC\fP], uint8_t \fBrxCc\fP[\fBTOTAL_IC\fP], bool errorIndex[\fBTOTAL_IC\fP])"
+.br
+.ti -1c
+.RI "void \fBbms_transmitCmd\fP (uint8_t cmd[\fBCMD_LEN\fP])"
+.br
+.ti -1c
+.RI "void \fBbms_transmitPoll\fP (uint8_t cmd[\fBCMD_LEN\fP])"
+.br
+.ti -1c
+.RI "void \fBbms_transmitData\fP (uint8_t cmd[\fBCMD_LEN\fP], uint8_t txBuffer[\fBTOTAL_IC\fP][\fBDATA_LEN\fP])"
+.br
+.ti -1c
+.RI "void \fBbms_receiveData\fP (uint8_t cmd[\fBCMD_LEN\fP], uint8_t rxBuffer[\fBTOTAL_IC\fP][\fBDATA_LEN\fP], uint16_t \fBrxPec\fP[\fBTOTAL_IC\fP], uint8_t \fBrxCc\fP[\fBTOTAL_IC\fP])"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define CMD_LEN   (2)"
+
+.PP
+Definition at line 15 of file bms_utility\&.h\&.
+.SS "#define CMDPKT_LEN   (2 + 2)"
+
+.PP
+Definition at line 16 of file bms_utility\&.h\&.
+.SS "#define DATA_LEN   (6)"
+
+.PP
+Definition at line 13 of file bms_utility\&.h\&.
+.SS "#define DATAPKT_LEN   (6 + 2)"
+
+.PP
+Definition at line 14 of file bms_utility\&.h\&.
+.SH "Function Documentation"
+.PP 
+.SS "uint16_t bms_calcPec10 (uint8_t * pDataBuf, int nLength, uint8_t * commandCounter)"
+
+.PP
+Definition at line 80 of file bms_utility\&.c\&.
+.PP
+References crc10Table\&.
+.PP
+Referenced by bms_checkRxPec(), and bms_spiTransmitData()\&.
+.SS "uint16_t bms_calcPec15 (uint8_t * data, uint8_t len)"
+
+.PP
+Definition at line 67 of file bms_utility\&.c\&.
+.PP
+References Crc15Table\&.
+.PP
+Referenced by bms_spiTransmitCmd()\&.
+.SS "bool bms_checkRxPec (uint8_t rxData[TOTAL_IC][DATA_LEN], uint16_t rxPec[TOTAL_IC], uint8_t rxCc[TOTAL_IC], bool errorIndex[TOTAL_IC])"
+
+.PP
+Definition at line 179 of file bms_utility\&.c\&.
+.PP
+References bms_calcPec10(), DATA_LEN, rxCc, rxData, rxPec, and TOTAL_IC\&.
+.PP
+Referenced by bms_checkRxFault()\&.
+.SS "void bms_receiveData (uint8_t cmd[CMD_LEN], uint8_t rxBuffer[TOTAL_IC][DATA_LEN], uint16_t rxPec[TOTAL_IC], uint8_t rxCc[TOTAL_IC])"
+
+.PP
+Definition at line 231 of file bms_utility\&.c\&.
+.PP
+References bms_csHigh(), bms_csLow(), bms_spiReceiveData(), bms_spiTransmitCmd(), rxCc, and rxPec\&.
+.PP
+Referenced by bms_getAuxVoltage(), bms_readAvgCellVoltage(), bms_readConfigA(), bms_readConfigB(), bms_readSid(), bms_readSVoltage(), and bms_readVB()\&.
+.SS "void bms_spiReceiveData (uint8_t rxData[TOTAL_IC][DATA_LEN], uint16_t rxPec[TOTAL_IC], uint8_t rxCc[TOTAL_IC])"
+
+.PP
+Definition at line 158 of file bms_utility\&.c\&.
+.PP
+References DATA_LEN, DATAPKT_LEN, hspi, rxCc, rxData, rxPec, and TOTAL_IC\&.
+.PP
+Referenced by bms_receiveData()\&.
+.SS "void bms_spiTransmitCmd (uint8_t cmd[CMD_LEN])"
+
+.PP
+Definition at line 117 of file bms_utility\&.c\&.
+.PP
+References bms_calcPec15(), CMD_LEN, CMDPKT_LEN, and hspi\&.
+.PP
+Referenced by bms_receiveData(), bms_transmitCmd(), bms_transmitData(), and bms_transmitPoll()\&.
+.SS "void bms_spiTransmitData (uint8_t data[TOTAL_IC][DATA_LEN])"
+
+.PP
+Definition at line 135 of file bms_utility\&.c\&.
+.PP
+References bms_calcPec10(), DATA_LEN, DATAPKT_LEN, hspi, and TOTAL_IC\&.
+.PP
+Referenced by bms_transmitData()\&.
+.SS "void bms_transmitCmd (uint8_t cmd[CMD_LEN])"
+
+.PP
+Definition at line 198 of file bms_utility\&.c\&.
+.PP
+References bms_csHigh(), bms_csLow(), and bms_spiTransmitCmd()\&.
+.PP
+Referenced by bms_balancingMeasureVoltage(), bms_getAuxMeasurement(), bms_openWireCheck(), bms_startAdcvCont(), and bms_stopDischarge()\&.
+.SS "void bms_transmitData (uint8_t cmd[CMD_LEN], uint8_t txBuffer[TOTAL_IC][DATA_LEN])"
+
+.PP
+Definition at line 222 of file bms_utility\&.c\&.
+.PP
+References bms_csHigh(), bms_csLow(), bms_spiTransmitCmd(), and bms_spiTransmitData()\&.
+.PP
+Referenced by bms_writeConfigA(), bms_writeConfigB(), bms_writePwmA(), and bms_writePwmB()\&.
+.SS "void bms_transmitPoll (uint8_t cmd[CMD_LEN])"
+
+.PP
+Definition at line 206 of file bms_utility\&.c\&.
+.PP
+References bms_csHigh(), bms_csLow(), bms_spiTransmitCmd(), and hspi\&.
+.PP
+Referenced by bms_balancingMeasureVoltage(), and bms_getAuxMeasurement()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

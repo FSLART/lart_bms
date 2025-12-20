@@ -1,0 +1,246 @@
+\hypertarget{precharge_8c}{}\doxysection{Core/\+Src/precharge.c File Reference}
+\label{precharge_8c}\index{Core/Src/precharge.c@{Core/Src/precharge.c}}
+{\ttfamily \#include \char`\"{}precharge.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}contactors.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}can.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}dbc/ams.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}uart\+D\+M\+A.\+h\char`\"{}}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{precharge_8c_a229260aae590b435cb368d320f60892d}{P\+R\+E\+C\+H\+A\+R\+G\+E\+\_\+\+D\+E\+L\+A\+Y\+\_\+\+MS}}~200u
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{precharge_8c_ac83fa94b88161f9f94b643045acb1b28}{Precharge\+\_\+\+Init}} (void)
+\item 
+void \mbox{\hyperlink{precharge_8c_af89a658cc71c271b27b13bfae17fcd96}{Precharge\+\_\+\+C\+A\+N\+\_\+\+Init}} (void)
+\item 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51c}{Precharge\+State\+\_\+t}} \mbox{\hyperlink{precharge_8c_ac1c32798077caa680409f6276d995b4a}{Precharge\+\_\+\+Get\+State}} (void)
+\item 
+void \mbox{\hyperlink{precharge_8c_a1352c0bfce84891188f28ae6ee510ca0}{Precharge\+\_\+\+Update}} (void)
+\item 
+bool \mbox{\hyperlink{precharge_8c_a3b330526aea1fdaebc5b9d913a505955}{Verify\+H\+V\+N\+E\+G\+\_\+\+H\+V\+P\+O\+S\+\_\+\+States}} (void)
+\item 
+bool \mbox{\hyperlink{precharge_8c_a8e25354dd4f5ae50c7cc204b5e0bfe34}{Is\+Bus\+Voltage\+OK}} (void)
+\item 
+bool \mbox{\hyperlink{precharge_8c_aeceb2509c0d77c99c9f8ed16756a360c}{Is\+Current\+OK}} (void)
+\item 
+void \mbox{\hyperlink{precharge_8c_a00020a513d7c2fbd8c5bd5420280189a}{Pre\+Charge\+\_\+\+C\+A\+N\+\_\+\+Rx}} (const C\+A\+N\+\_\+\+Rx\+Header\+Type\+Def $\ast$hdr, const uint8\+\_\+t $\ast$data)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51c}{Precharge\+State\+\_\+t}} \mbox{\hyperlink{precharge_8c_aea75957d7eb8c74a46873927c6c7feca}{state}} = \mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51cae50e47256d3583f0f0cbf9c30c360594}{W\+R\+O\+NG}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{precharge_8c_a0d88807102c8d96e37cb4751f0d5a7d3}{timer}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{precharge_8c_aefb2d1d8dbaf8ec8004bd6d06f9fbcb9}{delay\+Start}} = 0
+\item 
+bool \mbox{\hyperlink{precharge_8c_ab58c129720cf235ddfa01981316118ad}{bypass\+Checks}} = true
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{precharge_8c_a229260aae590b435cb368d320f60892d}\label{precharge_8c_a229260aae590b435cb368d320f60892d}} 
+\index{precharge.c@{precharge.c}!PRECHARGE\_DELAY\_MS@{PRECHARGE\_DELAY\_MS}}
+\index{PRECHARGE\_DELAY\_MS@{PRECHARGE\_DELAY\_MS}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{PRECHARGE\_DELAY\_MS}{PRECHARGE\_DELAY\_MS}}
+{\footnotesize\ttfamily \#define P\+R\+E\+C\+H\+A\+R\+G\+E\+\_\+\+D\+E\+L\+A\+Y\+\_\+\+MS~200u}
+
+
+
+Definition at line 19 of file precharge.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{precharge_8c_a8e25354dd4f5ae50c7cc204b5e0bfe34}\label{precharge_8c_a8e25354dd4f5ae50c7cc204b5e0bfe34}} 
+\index{precharge.c@{precharge.c}!IsBusVoltageOK@{IsBusVoltageOK}}
+\index{IsBusVoltageOK@{IsBusVoltageOK}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{IsBusVoltageOK()}{IsBusVoltageOK()}}
+{\footnotesize\ttfamily bool Is\+Bus\+Voltage\+OK (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 159 of file precharge.\+c.
+
+
+
+Referenced by Precharge\+\_\+\+Update().
+
+\mbox{\Hypertarget{precharge_8c_aeceb2509c0d77c99c9f8ed16756a360c}\label{precharge_8c_aeceb2509c0d77c99c9f8ed16756a360c}} 
+\index{precharge.c@{precharge.c}!IsCurrentOK@{IsCurrentOK}}
+\index{IsCurrentOK@{IsCurrentOK}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{IsCurrentOK()}{IsCurrentOK()}}
+{\footnotesize\ttfamily bool Is\+Current\+OK (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 163 of file precharge.\+c.
+
+
+
+Referenced by Precharge\+\_\+\+Update().
+
+\mbox{\Hypertarget{precharge_8c_af89a658cc71c271b27b13bfae17fcd96}\label{precharge_8c_af89a658cc71c271b27b13bfae17fcd96}} 
+\index{precharge.c@{precharge.c}!Precharge\_CAN\_Init@{Precharge\_CAN\_Init}}
+\index{Precharge\_CAN\_Init@{Precharge\_CAN\_Init}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{Precharge\_CAN\_Init()}{Precharge\_CAN\_Init()}}
+{\footnotesize\ttfamily void Precharge\+\_\+\+C\+A\+N\+\_\+\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 35 of file precharge.\+c.
+
+
+
+References C\+A\+N\+\_\+\+Register\+Rx\+Callback(), and Pre\+Charge\+\_\+\+C\+A\+N\+\_\+\+Rx().
+
+
+
+Referenced by brain\+\_\+start().
+
+\mbox{\Hypertarget{precharge_8c_a00020a513d7c2fbd8c5bd5420280189a}\label{precharge_8c_a00020a513d7c2fbd8c5bd5420280189a}} 
+\index{precharge.c@{precharge.c}!PreCharge\_CAN\_Rx@{PreCharge\_CAN\_Rx}}
+\index{PreCharge\_CAN\_Rx@{PreCharge\_CAN\_Rx}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{PreCharge\_CAN\_Rx()}{PreCharge\_CAN\_Rx()}}
+{\footnotesize\ttfamily void Pre\+Charge\+\_\+\+C\+A\+N\+\_\+\+Rx (\begin{DoxyParamCaption}\item[{const C\+A\+N\+\_\+\+Rx\+Header\+Type\+Def $\ast$}]{hdr,  }\item[{const uint8\+\_\+t $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+Definition at line 167 of file precharge.\+c.
+
+
+
+References A\+M\+S\+\_\+\+S\+T\+A\+R\+T\+\_\+\+P\+R\+E\+\_\+\+C\+H\+A\+R\+G\+E\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+start\+\_\+pre\+\_\+charge\+\_\+unpack(), K\+I\+LL, ams\+\_\+start\+\_\+pre\+\_\+charge\+\_\+t\+::precharge\+\_\+request, Precharge\+\_\+\+Update(), R\+X\+\_\+\+C\+AN, and state.
+
+
+
+Referenced by Precharge\+\_\+\+C\+A\+N\+\_\+\+Init().
+
+\mbox{\Hypertarget{precharge_8c_ac1c32798077caa680409f6276d995b4a}\label{precharge_8c_ac1c32798077caa680409f6276d995b4a}} 
+\index{precharge.c@{precharge.c}!Precharge\_GetState@{Precharge\_GetState}}
+\index{Precharge\_GetState@{Precharge\_GetState}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{Precharge\_GetState()}{Precharge\_GetState()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51c}{Precharge\+State\+\_\+t}} Precharge\+\_\+\+Get\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 40 of file precharge.\+c.
+
+
+
+References state.
+
+
+
+Referenced by brain\+\_\+loop().
+
+\mbox{\Hypertarget{precharge_8c_ac83fa94b88161f9f94b643045acb1b28}\label{precharge_8c_ac83fa94b88161f9f94b643045acb1b28}} 
+\index{precharge.c@{precharge.c}!Precharge\_Init@{Precharge\_Init}}
+\index{Precharge\_Init@{Precharge\_Init}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{Precharge\_Init()}{Precharge\_Init()}}
+{\footnotesize\ttfamily void Precharge\+\_\+\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 30 of file precharge.\+c.
+
+
+
+References delay\+Start, S\+T\+A\+RT, and state.
+
+
+
+Referenced by brain\+\_\+loop(), and Precharge\+\_\+\+Update().
+
+\mbox{\Hypertarget{precharge_8c_a1352c0bfce84891188f28ae6ee510ca0}\label{precharge_8c_a1352c0bfce84891188f28ae6ee510ca0}} 
+\index{precharge.c@{precharge.c}!Precharge\_Update@{Precharge\_Update}}
+\index{Precharge\_Update@{Precharge\_Update}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{Precharge\_Update()}{Precharge\_Update()}}
+{\footnotesize\ttfamily void Precharge\+\_\+\+Update (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 44 of file precharge.\+c.
+
+
+
+References bypass\+Checks, Close\+A\+I\+R\+\_\+negativo(), Close\+A\+I\+R\+\_\+positivo(), Close\+Pre\+Carga(), D\+E\+L\+A\+Y1, D\+E\+L\+A\+Y2, D\+E\+L\+A\+Y3, delay\+Start, E\+ND, Is\+Bus\+Voltage\+O\+K(), Is\+Current\+O\+K(), K\+I\+LL, O\+P\+E\+N\+\_\+\+A\+LL, Open\+All\+Contactors(), Open\+Pre\+Carga(), P\+R\+E\+C\+H\+A\+R\+G\+E\+\_\+\+D\+E\+L\+A\+Y\+\_\+\+MS, Precharge\+\_\+\+Init(), S\+T\+A\+RT, state, S\+W\+I\+T\+C\+H\+\_\+\+H\+V\+N\+EG, S\+W\+I\+T\+C\+H\+\_\+\+H\+V\+P\+OS, S\+W\+I\+T\+C\+H\+\_\+\+P\+R\+E\+C\+H\+A\+R\+GE, T\+U\+R\+N\+\_\+\+O\+F\+F\+\_\+\+P\+R\+E\+C\+H\+A\+R\+GE, V\+E\+R\+I\+F\+Y1, V\+E\+R\+I\+F\+Y2, V\+E\+R\+I\+F\+Y3, V\+E\+R\+I\+F\+Y4, V\+E\+R\+I\+F\+Y\+\_\+\+B\+U\+S\+\_\+\+V\+O\+LT, V\+E\+R\+I\+F\+Y\+\_\+\+C\+U\+R\+R\+E\+NT, Verify\+H\+V\+N\+E\+G\+\_\+\+H\+V\+P\+O\+S\+\_\+\+States(), and W\+R\+O\+NG.
+
+
+
+Referenced by brain\+\_\+loop(), and Pre\+Charge\+\_\+\+C\+A\+N\+\_\+\+Rx().
+
+\mbox{\Hypertarget{precharge_8c_a3b330526aea1fdaebc5b9d913a505955}\label{precharge_8c_a3b330526aea1fdaebc5b9d913a505955}} 
+\index{precharge.c@{precharge.c}!VerifyHVNEG\_HVPOS\_States@{VerifyHVNEG\_HVPOS\_States}}
+\index{VerifyHVNEG\_HVPOS\_States@{VerifyHVNEG\_HVPOS\_States}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{VerifyHVNEG\_HVPOS\_States()}{VerifyHVNEG\_HVPOS\_States()}}
+{\footnotesize\ttfamily bool Verify\+H\+V\+N\+E\+G\+\_\+\+H\+V\+P\+O\+S\+\_\+\+States (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 155 of file precharge.\+c.
+
+
+
+Referenced by Precharge\+\_\+\+Update().
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{precharge_8c_ab58c129720cf235ddfa01981316118ad}\label{precharge_8c_ab58c129720cf235ddfa01981316118ad}} 
+\index{precharge.c@{precharge.c}!bypassChecks@{bypassChecks}}
+\index{bypassChecks@{bypassChecks}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{bypassChecks}{bypassChecks}}
+{\footnotesize\ttfamily bool bypass\+Checks = true}
+
+
+
+Definition at line 27 of file precharge.\+c.
+
+
+
+Referenced by Precharge\+\_\+\+Update().
+
+\mbox{\Hypertarget{precharge_8c_aefb2d1d8dbaf8ec8004bd6d06f9fbcb9}\label{precharge_8c_aefb2d1d8dbaf8ec8004bd6d06f9fbcb9}} 
+\index{precharge.c@{precharge.c}!delayStart@{delayStart}}
+\index{delayStart@{delayStart}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{delayStart}{delayStart}}
+{\footnotesize\ttfamily uint32\+\_\+t delay\+Start = 0}
+
+
+
+Definition at line 24 of file precharge.\+c.
+
+
+
+Referenced by Precharge\+\_\+\+Init(), and Precharge\+\_\+\+Update().
+
+\mbox{\Hypertarget{precharge_8c_aea75957d7eb8c74a46873927c6c7feca}\label{precharge_8c_aea75957d7eb8c74a46873927c6c7feca}} 
+\index{precharge.c@{precharge.c}!state@{state}}
+\index{state@{state}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily \mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51c}{Precharge\+State\+\_\+t}} state = \mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51cae50e47256d3583f0f0cbf9c30c360594}{W\+R\+O\+NG}}}
+
+
+
+Definition at line 22 of file precharge.\+c.
+
+
+
+Referenced by Pre\+Charge\+\_\+\+C\+A\+N\+\_\+\+Rx(), Precharge\+\_\+\+Get\+State(), Precharge\+\_\+\+Init(), and Precharge\+\_\+\+Update().
+
+\mbox{\Hypertarget{precharge_8c_a0d88807102c8d96e37cb4751f0d5a7d3}\label{precharge_8c_a0d88807102c8d96e37cb4751f0d5a7d3}} 
+\index{precharge.c@{precharge.c}!timer@{timer}}
+\index{timer@{timer}!precharge.c@{precharge.c}}
+\doxysubsubsection{\texorpdfstring{timer}{timer}}
+{\footnotesize\ttfamily uint32\+\_\+t timer}
+
+
+
+Definition at line 23 of file precharge.\+c.
+

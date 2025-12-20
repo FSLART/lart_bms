@@ -1,0 +1,424 @@
+\hypertarget{uart_d_m_a_8c}{}\doxysection{Core/\+Src/uart\+D\+MA.c File Reference}
+\label{uart_d_m_a_8c}\index{Core/Src/uartDMA.c@{Core/Src/uartDMA.c}}
+{\ttfamily \#include \char`\"{}uart\+D\+M\+A.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdio.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdarg.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdbool.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdint.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}string.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}main.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}brain.\+h\char`\"{}}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{uart_d_m_a_8c_a35eb99c4f68e34a4066ca71dc27cf8fd}{uart\+Handle}}~\mbox{\hyperlink{stm32f4xx__it_8c_a2cf715bef37f7e8ef385a30974a5f0d5}{huart1}}
+\item 
+\#define \mbox{\hyperlink{uart_d_m_a_8c_ae1757b1855a1ce8dc5187fdc4678841b}{uart2\+Handle}}~\mbox{\hyperlink{stm32f4xx__it_8c_aa9479c261d65eecedd3d9582f7f0f89c}{huart2}}
+\item 
+\#define \mbox{\hyperlink{uart_d_m_a_8c_a6b20d41d6252e9871430c242cb1a56e7}{B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}}~10000
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{uart_d_m_a_8c_a010301ec5dff6e752e9bb556d0a7c537}{json\+Send\+Escaped}} (const char $\ast$s)
+\item 
+int \mbox{\hyperlink{uart_d_m_a_8c_ae0b8d69aea90b6acce4c1739c592cb7b}{get\+Data\+Len}} (void)
+\item 
+int \mbox{\hyperlink{uart_d_m_a_8c_ac050644da863e8acb8d6e3692017076c}{get\+Data\+Len2}} (void)
+\item 
+void \mbox{\hyperlink{uart_d_m_a_8c_a31752ac7538bcab7d3923888facd6c0d}{start\+Uart\+Dma\+Tx}} (void)
+\item 
+void \mbox{\hyperlink{uart_d_m_a_8c_adebb8a8d1bd7784ed35db72d322ca275}{start\+Uart2\+Dma\+Tx}} (void)
+\item 
+void \mbox{\hyperlink{uart_d_m_a_8c_abcdf9b59049eccbc87d54042f9235b1a}{H\+A\+L\+\_\+\+U\+A\+R\+T\+\_\+\+Tx\+Cplt\+Callback}} (U\+A\+R\+T\+\_\+\+Handle\+Type\+Def $\ast$huart)
+\item 
+int \mbox{\hyperlink{uart_d_m_a_8c_a6c025583134abb6fd5a230a31a0fc45a}{printf\+Dma}} (const char $\ast$format,...)
+\item 
+int \mbox{\hyperlink{uart_d_m_a_8c_a83c4d6cbe2681bcf0d003ff0e2bbc3b7}{printf\+Dma\+BT}} (const char $\ast$format,...)
+\item 
+void \mbox{\hyperlink{uart_d_m_a_8c_a5ab2e8dbcef49f2161ca922889f7ff63}{print\+Console}} (const char $\ast$format,...)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+char \mbox{\hyperlink{uart_d_m_a_8c_af00b615ca097c43dbb02ae3a00ea3a62}{buffer}} \mbox{[}\mbox{\hyperlink{uart_d_m_a_8c_a6b20d41d6252e9871430c242cb1a56e7}{B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}}\mbox{]} = \{ 0 \}
+\item 
+volatile int \mbox{\hyperlink{uart_d_m_a_8c_aecf8bcfb19c55c90d1a1a80d52b8e133}{head}} = 0
+\item 
+volatile int \mbox{\hyperlink{uart_d_m_a_8c_a1366e1fcd97ae453d54d510f8451c8a4}{tail}} = 0
+\item 
+char \mbox{\hyperlink{uart_d_m_a_8c_af34255009d298f7ce252fb46c7a912a3}{buffer2}} \mbox{[}\mbox{\hyperlink{uart_d_m_a_8c_a6b20d41d6252e9871430c242cb1a56e7}{B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}}\mbox{]} = \{ 0 \}
+\item 
+volatile int \mbox{\hyperlink{uart_d_m_a_8c_a5d91e780e8a2e6fc1fc737a961f518cf}{head2}} = 0
+\item 
+volatile int \mbox{\hyperlink{uart_d_m_a_8c_a2283e97dc1fdb6dc6367b58a11af20ae}{tail2}} = 0
+\item 
+bool \mbox{\hyperlink{uart_d_m_a_8c_a87e4e596388235ab6947b17d1f90cef4}{is\+Full}} = false
+\item 
+bool \mbox{\hyperlink{uart_d_m_a_8c_a3317f99ea42391f8145d35e8e6b87306}{is\+Wrapped}} = false
+\item 
+bool \mbox{\hyperlink{uart_d_m_a_8c_ad5f4195ae32c4409870fd15a6a791218}{is\+Full2}} = false
+\item 
+bool \mbox{\hyperlink{uart_d_m_a_8c_a0275decefa8528953bd1c5fae6b0772c}{is\+Wrapped2}} = false
+\item 
+int \mbox{\hyperlink{uart_d_m_a_8c_a5ca8508a06c347a9ec25cfdc7f3c0ab2}{tail\+Dma}} = 0
+\item 
+int \mbox{\hyperlink{uart_d_m_a_8c_a3cf56e21935cf5158538d9bd624de554}{tail\+Dma2}} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{uart_d_m_a_8c_a6b20d41d6252e9871430c242cb1a56e7}\label{uart_d_m_a_8c_a6b20d41d6252e9871430c242cb1a56e7}} 
+\index{uartDMA.c@{uartDMA.c}!BUFFER\_SIZE@{BUFFER\_SIZE}}
+\index{BUFFER\_SIZE@{BUFFER\_SIZE}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{BUFFER\_SIZE}{BUFFER\_SIZE}}
+{\footnotesize\ttfamily \#define B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE~10000}
+
+
+
+Definition at line 12 of file uart\+D\+M\+A.\+c.
+
+\mbox{\Hypertarget{uart_d_m_a_8c_ae1757b1855a1ce8dc5187fdc4678841b}\label{uart_d_m_a_8c_ae1757b1855a1ce8dc5187fdc4678841b}} 
+\index{uartDMA.c@{uartDMA.c}!uart2Handle@{uart2Handle}}
+\index{uart2Handle@{uart2Handle}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{uart2Handle}{uart2Handle}}
+{\footnotesize\ttfamily \#define uart2\+Handle~\mbox{\hyperlink{stm32f4xx__it_8c_aa9479c261d65eecedd3d9582f7f0f89c}{huart2}}}
+
+
+
+Definition at line 11 of file uart\+D\+M\+A.\+c.
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a35eb99c4f68e34a4066ca71dc27cf8fd}\label{uart_d_m_a_8c_a35eb99c4f68e34a4066ca71dc27cf8fd}} 
+\index{uartDMA.c@{uartDMA.c}!uartHandle@{uartHandle}}
+\index{uartHandle@{uartHandle}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{uartHandle}{uartHandle}}
+{\footnotesize\ttfamily \#define uart\+Handle~\mbox{\hyperlink{stm32f4xx__it_8c_a2cf715bef37f7e8ef385a30974a5f0d5}{huart1}}}
+
+
+
+Definition at line 10 of file uart\+D\+M\+A.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{uart_d_m_a_8c_ae0b8d69aea90b6acce4c1739c592cb7b}\label{uart_d_m_a_8c_ae0b8d69aea90b6acce4c1739c592cb7b}} 
+\index{uartDMA.c@{uartDMA.c}!getDataLen@{getDataLen}}
+\index{getDataLen@{getDataLen}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{getDataLen()}{getDataLen()}}
+{\footnotesize\ttfamily int get\+Data\+Len (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 33 of file uart\+D\+M\+A.\+c.
+
+
+
+References B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE, head, and tail.
+
+
+
+Referenced by printf\+Dma().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_ac050644da863e8acb8d6e3692017076c}\label{uart_d_m_a_8c_ac050644da863e8acb8d6e3692017076c}} 
+\index{uartDMA.c@{uartDMA.c}!getDataLen2@{getDataLen2}}
+\index{getDataLen2@{getDataLen2}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{getDataLen2()}{getDataLen2()}}
+{\footnotesize\ttfamily int get\+Data\+Len2 (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 43 of file uart\+D\+M\+A.\+c.
+
+
+
+References B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE, head2, and tail2.
+
+
+
+Referenced by printf\+Dma\+B\+T().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_abcdf9b59049eccbc87d54042f9235b1a}\label{uart_d_m_a_8c_abcdf9b59049eccbc87d54042f9235b1a}} 
+\index{uartDMA.c@{uartDMA.c}!HAL\_UART\_TxCpltCallback@{HAL\_UART\_TxCpltCallback}}
+\index{HAL\_UART\_TxCpltCallback@{HAL\_UART\_TxCpltCallback}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{HAL\_UART\_TxCpltCallback()}{HAL\_UART\_TxCpltCallback()}}
+{\footnotesize\ttfamily void H\+A\+L\+\_\+\+U\+A\+R\+T\+\_\+\+Tx\+Cplt\+Callback (\begin{DoxyParamCaption}\item[{U\+A\+R\+T\+\_\+\+Handle\+Type\+Def $\ast$}]{huart }\end{DoxyParamCaption})}
+
+
+
+Definition at line 83 of file uart\+D\+M\+A.\+c.
+
+
+
+References B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE, head, head2, is\+Wrapped, is\+Wrapped2, start\+Uart2\+Dma\+Tx(), start\+Uart\+Dma\+Tx(), tail, tail2, tail\+Dma, tail\+Dma2, uart2\+Handle, and uart\+Handle.
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a010301ec5dff6e752e9bb556d0a7c537}\label{uart_d_m_a_8c_a010301ec5dff6e752e9bb556d0a7c537}} 
+\index{uartDMA.c@{uartDMA.c}!jsonSendEscaped@{jsonSendEscaped}}
+\index{jsonSendEscaped@{jsonSendEscaped}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{jsonSendEscaped()}{jsonSendEscaped()}}
+{\footnotesize\ttfamily static void json\+Send\+Escaped (\begin{DoxyParamCaption}\item[{const char $\ast$}]{s }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 243 of file uart\+D\+M\+A.\+c.
+
+
+
+References printf\+Dma().
+
+
+
+Referenced by print\+Console().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a5ab2e8dbcef49f2161ca922889f7ff63}\label{uart_d_m_a_8c_a5ab2e8dbcef49f2161ca922889f7ff63}} 
+\index{uartDMA.c@{uartDMA.c}!printConsole@{printConsole}}
+\index{printConsole@{printConsole}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{printConsole()}{printConsole()}}
+{\footnotesize\ttfamily void print\+Console (\begin{DoxyParamCaption}\item[{const char $\ast$}]{format,  }\item[{}]{... }\end{DoxyParamCaption})}
+
+
+
+Definition at line 215 of file uart\+D\+M\+A.\+c.
+
+
+
+References json\+Send\+Escaped(), and printf\+Dma().
+
+
+
+Referenced by bms\+\_\+check\+Rx\+Fault(), bms\+\_\+open\+Wire\+Check(), bms\+\_\+print\+Raw\+Data(), bms\+\_\+read\+Sid(), brain\+\_\+loop(), brain\+\_\+start(), I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config(), I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Setup(), I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Setup\+\_\+\+All\+Messages(), I\+V\+T\+\_\+\+F\+A\+U\+L\+T\+\_\+\+C\+H\+E\+C\+K(), I\+V\+T\+\_\+\+P\+R\+O\+C\+E\+S\+S\+\_\+\+M\+E\+A\+S\+U\+R\+E\+R\+R\+O\+R\+S(), I\+V\+T\+\_\+\+P\+R\+O\+C\+E\+S\+S\+\_\+\+S\+Y\+S\+E\+R\+R\+O\+R\+S(), and I\+V\+T\+\_\+\+S\+E\+T\+\_\+\+B\+I\+T\+R\+A\+T\+E().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a6c025583134abb6fd5a230a31a0fc45a}\label{uart_d_m_a_8c_a6c025583134abb6fd5a230a31a0fc45a}} 
+\index{uartDMA.c@{uartDMA.c}!printfDma@{printfDma}}
+\index{printfDma@{printfDma}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{printfDma()}{printfDma()}}
+{\footnotesize\ttfamily int printf\+Dma (\begin{DoxyParamCaption}\item[{const char $\ast$}]{format,  }\item[{}]{... }\end{DoxyParamCaption})}
+
+
+
+Definition at line 116 of file uart\+D\+M\+A.\+c.
+
+
+
+References buffer, B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE, Error\+\_\+\+Handler(), get\+Data\+Len(), head, is\+Wrapped, L\+E\+D\+\_\+\+B\+L\+U\+E\+\_\+\+G\+P\+I\+O\+\_\+\+Port, L\+E\+D\+\_\+\+B\+L\+U\+E\+\_\+\+Pin, start\+Uart\+Dma\+Tx(), tail, and uart\+Handle.
+
+
+
+Referenced by bms\+\_\+print\+Rth\+Temps\+Json(), bms\+\_\+print\+Temps(), bms\+\_\+print\+Voltage(), bms\+\_\+read\+V\+B(), bms\+\_\+start\+Discharge(), bms\+\_\+stop\+Discharge(), json\+Send\+Escaped(), print\+Console(), Read\+\_\+\+E\+E\+P\+R\+O\+M(), send\+\_\+ad68\+\_\+ui(), send\+\_\+ivt\+\_\+ui(), start\+U\+I(), and Write\+\_\+\+E\+E\+P\+R\+O\+M().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a83c4d6cbe2681bcf0d003ff0e2bbc3b7}\label{uart_d_m_a_8c_a83c4d6cbe2681bcf0d003ff0e2bbc3b7}} 
+\index{uartDMA.c@{uartDMA.c}!printfDmaBT@{printfDmaBT}}
+\index{printfDmaBT@{printfDmaBT}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{printfDmaBT()}{printfDmaBT()}}
+{\footnotesize\ttfamily int printf\+Dma\+BT (\begin{DoxyParamCaption}\item[{const char $\ast$}]{format,  }\item[{}]{... }\end{DoxyParamCaption})}
+
+H\+A\+L\+\_\+\+G\+P\+I\+O\+\_\+\+Toggle\+Pin(\+L\+E\+D\+\_\+\+B\+L\+U\+E\+\_\+\+G\+P\+I\+O\+\_\+\+Port, L\+E\+D\+\_\+\+B\+L\+U\+E\+\_\+\+Pin);
+
+Definition at line 163 of file uart\+D\+M\+A.\+c.
+
+
+
+References buffer2, B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE, Error\+\_\+\+Handler(), get\+Data\+Len2(), head2, is\+Wrapped2, start\+Uart2\+Dma\+Tx(), tail2, and uart2\+Handle.
+
+
+
+Referenced by ad68\+\_\+dump\+\_\+csv\+\_\+bt(), bms\+\_\+print\+Voltage(), and brain\+\_\+start().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_adebb8a8d1bd7784ed35db72d322ca275}\label{uart_d_m_a_8c_adebb8a8d1bd7784ed35db72d322ca275}} 
+\index{uartDMA.c@{uartDMA.c}!startUart2DmaTx@{startUart2DmaTx}}
+\index{startUart2DmaTx@{startUart2DmaTx}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{startUart2DmaTx()}{startUart2DmaTx()}}
+{\footnotesize\ttfamily void start\+Uart2\+Dma\+Tx (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 68 of file uart\+D\+M\+A.\+c.
+
+
+
+References buffer2, B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE, head2, is\+Wrapped2, tail2, tail\+Dma2, and uart2\+Handle.
+
+
+
+Referenced by H\+A\+L\+\_\+\+U\+A\+R\+T\+\_\+\+Tx\+Cplt\+Callback(), and printf\+Dma\+B\+T().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a31752ac7538bcab7d3923888facd6c0d}\label{uart_d_m_a_8c_a31752ac7538bcab7d3923888facd6c0d}} 
+\index{uartDMA.c@{uartDMA.c}!startUartDmaTx@{startUartDmaTx}}
+\index{startUartDmaTx@{startUartDmaTx}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{startUartDmaTx()}{startUartDmaTx()}}
+{\footnotesize\ttfamily void start\+Uart\+Dma\+Tx (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 53 of file uart\+D\+M\+A.\+c.
+
+
+
+References buffer, B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE, head, is\+Wrapped, L\+E\+D\+\_\+\+B\+L\+U\+E\+\_\+\+G\+P\+I\+O\+\_\+\+Port, L\+E\+D\+\_\+\+B\+L\+U\+E\+\_\+\+Pin, tail, tail\+Dma, and uart\+Handle.
+
+
+
+Referenced by H\+A\+L\+\_\+\+U\+A\+R\+T\+\_\+\+Tx\+Cplt\+Callback(), and printf\+Dma().
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{uart_d_m_a_8c_af00b615ca097c43dbb02ae3a00ea3a62}\label{uart_d_m_a_8c_af00b615ca097c43dbb02ae3a00ea3a62}} 
+\index{uartDMA.c@{uartDMA.c}!buffer@{buffer}}
+\index{buffer@{buffer}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{buffer}{buffer}}
+{\footnotesize\ttfamily char buffer\mbox{[}\mbox{\hyperlink{uart_d_m_a_8c_a6b20d41d6252e9871430c242cb1a56e7}{B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}}\mbox{]} = \{ 0 \}}
+
+
+
+Definition at line 16 of file uart\+D\+M\+A.\+c.
+
+
+
+Referenced by printf\+Dma(), and start\+Uart\+Dma\+Tx().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_af34255009d298f7ce252fb46c7a912a3}\label{uart_d_m_a_8c_af34255009d298f7ce252fb46c7a912a3}} 
+\index{uartDMA.c@{uartDMA.c}!buffer2@{buffer2}}
+\index{buffer2@{buffer2}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{buffer2}{buffer2}}
+{\footnotesize\ttfamily char buffer2\mbox{[}\mbox{\hyperlink{uart_d_m_a_8c_a6b20d41d6252e9871430c242cb1a56e7}{B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}}\mbox{]} = \{ 0 \}}
+
+
+
+Definition at line 20 of file uart\+D\+M\+A.\+c.
+
+
+
+Referenced by printf\+Dma\+B\+T(), and start\+Uart2\+Dma\+Tx().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_aecf8bcfb19c55c90d1a1a80d52b8e133}\label{uart_d_m_a_8c_aecf8bcfb19c55c90d1a1a80d52b8e133}} 
+\index{uartDMA.c@{uartDMA.c}!head@{head}}
+\index{head@{head}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{head}{head}}
+{\footnotesize\ttfamily volatile int head = 0}
+
+
+
+Definition at line 17 of file uart\+D\+M\+A.\+c.
+
+
+
+Referenced by get\+Data\+Len(), H\+A\+L\+\_\+\+U\+A\+R\+T\+\_\+\+Tx\+Cplt\+Callback(), printf\+Dma(), and start\+Uart\+Dma\+Tx().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a5d91e780e8a2e6fc1fc737a961f518cf}\label{uart_d_m_a_8c_a5d91e780e8a2e6fc1fc737a961f518cf}} 
+\index{uartDMA.c@{uartDMA.c}!head2@{head2}}
+\index{head2@{head2}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{head2}{head2}}
+{\footnotesize\ttfamily volatile int head2 = 0}
+
+
+
+Definition at line 21 of file uart\+D\+M\+A.\+c.
+
+
+
+Referenced by get\+Data\+Len2(), H\+A\+L\+\_\+\+U\+A\+R\+T\+\_\+\+Tx\+Cplt\+Callback(), printf\+Dma\+B\+T(), and start\+Uart2\+Dma\+Tx().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a87e4e596388235ab6947b17d1f90cef4}\label{uart_d_m_a_8c_a87e4e596388235ab6947b17d1f90cef4}} 
+\index{uartDMA.c@{uartDMA.c}!isFull@{isFull}}
+\index{isFull@{isFull}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{isFull}{isFull}}
+{\footnotesize\ttfamily bool is\+Full = false}
+
+
+
+Definition at line 24 of file uart\+D\+M\+A.\+c.
+
+\mbox{\Hypertarget{uart_d_m_a_8c_ad5f4195ae32c4409870fd15a6a791218}\label{uart_d_m_a_8c_ad5f4195ae32c4409870fd15a6a791218}} 
+\index{uartDMA.c@{uartDMA.c}!isFull2@{isFull2}}
+\index{isFull2@{isFull2}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{isFull2}{isFull2}}
+{\footnotesize\ttfamily bool is\+Full2 = false}
+
+
+
+Definition at line 27 of file uart\+D\+M\+A.\+c.
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a3317f99ea42391f8145d35e8e6b87306}\label{uart_d_m_a_8c_a3317f99ea42391f8145d35e8e6b87306}} 
+\index{uartDMA.c@{uartDMA.c}!isWrapped@{isWrapped}}
+\index{isWrapped@{isWrapped}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{isWrapped}{isWrapped}}
+{\footnotesize\ttfamily bool is\+Wrapped = false}
+
+
+
+Definition at line 25 of file uart\+D\+M\+A.\+c.
+
+
+
+Referenced by H\+A\+L\+\_\+\+U\+A\+R\+T\+\_\+\+Tx\+Cplt\+Callback(), printf\+Dma(), and start\+Uart\+Dma\+Tx().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a0275decefa8528953bd1c5fae6b0772c}\label{uart_d_m_a_8c_a0275decefa8528953bd1c5fae6b0772c}} 
+\index{uartDMA.c@{uartDMA.c}!isWrapped2@{isWrapped2}}
+\index{isWrapped2@{isWrapped2}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{isWrapped2}{isWrapped2}}
+{\footnotesize\ttfamily bool is\+Wrapped2 = false}
+
+
+
+Definition at line 28 of file uart\+D\+M\+A.\+c.
+
+
+
+Referenced by H\+A\+L\+\_\+\+U\+A\+R\+T\+\_\+\+Tx\+Cplt\+Callback(), printf\+Dma\+B\+T(), and start\+Uart2\+Dma\+Tx().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a1366e1fcd97ae453d54d510f8451c8a4}\label{uart_d_m_a_8c_a1366e1fcd97ae453d54d510f8451c8a4}} 
+\index{uartDMA.c@{uartDMA.c}!tail@{tail}}
+\index{tail@{tail}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{tail}{tail}}
+{\footnotesize\ttfamily volatile int tail = 0}
+
+
+
+Definition at line 18 of file uart\+D\+M\+A.\+c.
+
+
+
+Referenced by get\+Data\+Len(), H\+A\+L\+\_\+\+U\+A\+R\+T\+\_\+\+Tx\+Cplt\+Callback(), printf\+Dma(), and start\+Uart\+Dma\+Tx().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a2283e97dc1fdb6dc6367b58a11af20ae}\label{uart_d_m_a_8c_a2283e97dc1fdb6dc6367b58a11af20ae}} 
+\index{uartDMA.c@{uartDMA.c}!tail2@{tail2}}
+\index{tail2@{tail2}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{tail2}{tail2}}
+{\footnotesize\ttfamily volatile int tail2 = 0}
+
+
+
+Definition at line 22 of file uart\+D\+M\+A.\+c.
+
+
+
+Referenced by get\+Data\+Len2(), H\+A\+L\+\_\+\+U\+A\+R\+T\+\_\+\+Tx\+Cplt\+Callback(), printf\+Dma\+B\+T(), and start\+Uart2\+Dma\+Tx().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a5ca8508a06c347a9ec25cfdc7f3c0ab2}\label{uart_d_m_a_8c_a5ca8508a06c347a9ec25cfdc7f3c0ab2}} 
+\index{uartDMA.c@{uartDMA.c}!tailDma@{tailDma}}
+\index{tailDma@{tailDma}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{tailDma}{tailDma}}
+{\footnotesize\ttfamily int tail\+Dma = 0}
+
+
+
+Definition at line 30 of file uart\+D\+M\+A.\+c.
+
+
+
+Referenced by H\+A\+L\+\_\+\+U\+A\+R\+T\+\_\+\+Tx\+Cplt\+Callback(), and start\+Uart\+Dma\+Tx().
+
+\mbox{\Hypertarget{uart_d_m_a_8c_a3cf56e21935cf5158538d9bd624de554}\label{uart_d_m_a_8c_a3cf56e21935cf5158538d9bd624de554}} 
+\index{uartDMA.c@{uartDMA.c}!tailDma2@{tailDma2}}
+\index{tailDma2@{tailDma2}!uartDMA.c@{uartDMA.c}}
+\doxysubsubsection{\texorpdfstring{tailDma2}{tailDma2}}
+{\footnotesize\ttfamily int tail\+Dma2 = 0}
+
+
+
+Definition at line 31 of file uart\+D\+M\+A.\+c.
+
+
+
+Referenced by H\+A\+L\+\_\+\+U\+A\+R\+T\+\_\+\+Tx\+Cplt\+Callback(), and start\+Uart2\+Dma\+Tx().
+

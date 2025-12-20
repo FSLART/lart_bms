@@ -1,0 +1,535 @@
+\hypertarget{bms__lib_wrapper_8h}{}\doxysection{Core/\+Inc/bms\+\_\+lib\+Wrapper.h File Reference}
+\label{bms__lib_wrapper_8h}\index{Core/Inc/bms\_libWrapper.h@{Core/Inc/bms\_libWrapper.h}}
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}bms\+\_\+datatypes.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}main.\+h\char`\"{}}\newline
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bf}{bms\+\_\+ow\+\_\+status\+\_\+t}} \{ \mbox{\hyperlink{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bfa59e25fcc41a1def2b29c6c580aabca01}{O\+W\+\_\+\+I\+N\+T\+A\+CT}} = 0, 
+\mbox{\hyperlink{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bfa3130e7fbe6951a5da57b662fde4729ad}{O\+W\+\_\+\+O\+P\+EN}}, 
+\mbox{\hyperlink{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bfa61197c0ca408629888ed21e9a2751652}{O\+W\+\_\+\+S\+U\+S\+P\+E\+CT}}, 
+\mbox{\hyperlink{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bfa351d28e425942c422109f5f8ab80e00b}{O\+W\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+L\+O\+WV}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_a48e686d2d4e8514ab894ce03ec6e2ce0}{bms\+\_\+init}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_a078de6e983383b9f50dc605f5c143b36}{bms\+\_\+read\+Sid}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_a4389b525b4bc9b8860f2c914cf3addaf}{bms\+\_\+read\+ConfigA}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_aec6b9951377c4cf2a202f96d2c57eb60}{bms\+\_\+read\+ConfigB}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_a55b7468bfac4514baaf81d48e326286e}{bms68\+\_\+set\+Gpo45}} (uint8\+\_\+t two\+Bit\+Index)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_a4ed5924e8f949131b5aa4fa28924c7a8}{bms\+\_\+start\+Adcv\+Cont}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_a7687f2569d376121bd28e71a7a0b08ef}{bms\+\_\+read\+Avg\+Cell\+Voltage}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_afddab7a4ce6db8d3cddff68d682bb843}{bms\+\_\+read\+S\+Voltage}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_afd92430a9adcca9661b610e0d3f9ef33}{bms\+\_\+get\+Aux\+Measurement}} (void)
+\item 
+float \mbox{\hyperlink{bms__lib_wrapper_8h_af03fdd55da2e6f84c75d74526be5db49}{bms\+\_\+calculate\+Balancing}} (float delta\+\_\+threshold)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_a62b4822e5c1c47cf074cceea751a0dba}{bms\+\_\+start\+Balancing}} (float \mbox{\hyperlink{brain_8c_aaebb8db66aeb78fb5448bb7493be4fc1}{delta\+Threshold}})
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_a490cbd2cf5b54442204c47a6ed098133}{bms\+\_\+start\+Discharge}} (float threshold)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_acf368dfb3f37902d9d93df9831028e8e}{bms\+\_\+stop\+Discharge}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_aee8982f7918fc8cc7670cc5367b58343}{bms29\+\_\+set\+Gpo}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_aef757b3419a6279009439bfcf3554999}{bms\+\_\+read\+VB}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_aae6845a3c5779defd99a4f9c955b36ec}{bms\+\_\+print\+Rth\+Temps\+Json}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_adb44c02fbab1be1661ae0abfd2ce5699}{send\+\_\+ad68\+\_\+ui}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_a606b1d83a3033ac0203055d543840a13}{bms\+\_\+balancing\+Measure\+Voltage}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_abe35f7f07f27b55c3ba76ccb8b121259}{ad68\+\_\+dump\+\_\+csv\+\_\+bt}} (void)
+\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_a5973fbf71d09ac6898971319bf85518e}{bms\+\_\+open\+Wire\+Check}} (\mbox{\hyperlink{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bf}{bms\+\_\+ow\+\_\+status\+\_\+t}} $\ast$\mbox{\hyperlink{brain_8c_add4b4d288b6fea2f90ad249301cbad33}{ow\+\_\+status}}\mbox{[}\mbox{\hyperlink{main_8h_a2d73aea5048e1c0d121e74ce2bde681c}{T\+O\+T\+A\+L\+\_\+\+A\+D68}}\mbox{]}\mbox{[}\mbox{\hyperlink{main_8h_a0b577b82c1c99fae4aae5229e6d6d072}{T\+O\+T\+A\+L\+\_\+\+C\+E\+LL}}\mbox{]})
+\item 
+H\+A\+L\+\_\+\+Status\+Type\+Def \mbox{\hyperlink{bms__lib_wrapper_8h_ad5100203f4131da227571d7f4f4cda2e}{Slaves\+\_\+\+C\+A\+N\+\_\+\+Send\+Message}} (C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$hcan, uint32\+\_\+t can\+ID, uint32\+\_\+t data\+Length, const uint8\+\_\+t $\ast$Tx\+Data)
+\begin{DoxyCompactList}\small\item\em Sends a C\+AN message via the C\+AN TX F\+I\+FO. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{bms__lib_wrapper_8h_ad6a1b5822dc003dae05499f0539c2624}{C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+All}} (C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$hcan)
+\item 
+H\+A\+L\+\_\+\+Status\+Type\+Def \mbox{\hyperlink{bms__lib_wrapper_8h_a8d2decbdf9fcb16ff19b2b3fdedd50ee}{C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+Temperatures\+\_\+\+Module}} (C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$hcan, uint8\+\_\+t module)
+\item 
+uint16\+\_\+t \mbox{\hyperlink{bms__lib_wrapper_8h_a9f26867c51000767eff4025c8106b205}{conv\+\_\+temp}} (float t)
+\item 
+H\+A\+L\+\_\+\+Status\+Type\+Def \mbox{\hyperlink{bms__lib_wrapper_8h_a2f9cec94f5a73df9a2224596c2462c32}{C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+Voltages\+\_\+\+Module}} (C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$hcan, uint8\+\_\+t module)
+\item 
+uint16\+\_\+t \mbox{\hyperlink{bms__lib_wrapper_8h_a2890c6e37e5be005831f1f767e241262}{conv\+\_\+voltage}} (float v)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bf}\label{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bf}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_ow\_status\_t@{bms\_ow\_status\_t}}
+\index{bms\_ow\_status\_t@{bms\_ow\_status\_t}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_ow\_status\_t}{bms\_ow\_status\_t}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bf}{bms\+\_\+ow\+\_\+status\+\_\+t}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OW\_INTACT@{OW\_INTACT}!bms\_libWrapper.h@{bms\_libWrapper.h}}\index{bms\_libWrapper.h@{bms\_libWrapper.h}!OW\_INTACT@{OW\_INTACT}}}\mbox{\Hypertarget{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bfa59e25fcc41a1def2b29c6c580aabca01}\label{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bfa59e25fcc41a1def2b29c6c580aabca01}} 
+O\+W\+\_\+\+I\+N\+T\+A\+CT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OW\_OPEN@{OW\_OPEN}!bms\_libWrapper.h@{bms\_libWrapper.h}}\index{bms\_libWrapper.h@{bms\_libWrapper.h}!OW\_OPEN@{OW\_OPEN}}}\mbox{\Hypertarget{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bfa3130e7fbe6951a5da57b662fde4729ad}\label{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bfa3130e7fbe6951a5da57b662fde4729ad}} 
+O\+W\+\_\+\+O\+P\+EN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OW\_SUSPECT@{OW\_SUSPECT}!bms\_libWrapper.h@{bms\_libWrapper.h}}\index{bms\_libWrapper.h@{bms\_libWrapper.h}!OW\_SUSPECT@{OW\_SUSPECT}}}\mbox{\Hypertarget{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bfa61197c0ca408629888ed21e9a2751652}\label{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bfa61197c0ca408629888ed21e9a2751652}} 
+O\+W\+\_\+\+S\+U\+S\+P\+E\+CT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OW\_INVALID\_LOWV@{OW\_INVALID\_LOWV}!bms\_libWrapper.h@{bms\_libWrapper.h}}\index{bms\_libWrapper.h@{bms\_libWrapper.h}!OW\_INVALID\_LOWV@{OW\_INVALID\_LOWV}}}\mbox{\Hypertarget{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bfa351d28e425942c422109f5f8ab80e00b}\label{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bfa351d28e425942c422109f5f8ab80e00b}} 
+O\+W\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+L\+O\+WV&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 7 of file bms\+\_\+lib\+Wrapper.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{bms__lib_wrapper_8h_abe35f7f07f27b55c3ba76ccb8b121259}\label{bms__lib_wrapper_8h_abe35f7f07f27b55c3ba76ccb8b121259}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!ad68\_dump\_csv\_bt@{ad68\_dump\_csv\_bt}}
+\index{ad68\_dump\_csv\_bt@{ad68\_dump\_csv\_bt}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{ad68\_dump\_csv\_bt()}{ad68\_dump\_csv\_bt()}}
+{\footnotesize\ttfamily void ad68\+\_\+dump\+\_\+csv\+\_\+bt (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1044 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References ic\+\_\+ad68, P\+R\+I\+N\+T\+\_\+\+C\+O\+M\+MA, printf\+Dma\+B\+T(), R\+T\+H\+\_\+\+P\+E\+R\+\_\+\+M\+O\+D\+U\+LE, T\+O\+T\+A\+L\+\_\+\+A\+D68, and T\+O\+T\+A\+L\+\_\+\+C\+E\+LL.
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_aee8982f7918fc8cc7670cc5367b58343}\label{bms__lib_wrapper_8h_aee8982f7918fc8cc7670cc5367b58343}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms29\_setGpo@{bms29\_setGpo}}
+\index{bms29\_setGpo@{bms29\_setGpo}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms29\_setGpo()}{bms29\_setGpo()}}
+{\footnotesize\ttfamily void bms29\+\_\+set\+Gpo (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a55b7468bfac4514baaf81d48e326286e}\label{bms__lib_wrapper_8h_a55b7468bfac4514baaf81d48e326286e}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms68\_setGpo45@{bms68\_setGpo45}}
+\index{bms68\_setGpo45@{bms68\_setGpo45}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms68\_setGpo45()}{bms68\_setGpo45()}}
+{\footnotesize\ttfamily void bms68\+\_\+set\+Gpo45 (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{two\+Bit\+Index }\end{DoxyParamCaption})}
+
+
+
+Definition at line 172 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References bms\+\_\+write\+Config\+A(), ic\+\_\+ad68\+\_\+t\+::cfa\+\_\+\+Tx, ad68\+\_\+cfa\+\_\+t\+::gpo1to8, ic\+\_\+ad68, and T\+O\+T\+A\+L\+\_\+\+A\+D68.
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a606b1d83a3033ac0203055d543840a13}\label{bms__lib_wrapper_8h_a606b1d83a3033ac0203055d543840a13}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_balancingMeasureVoltage@{bms\_balancingMeasureVoltage}}
+\index{bms\_balancingMeasureVoltage@{bms\_balancingMeasureVoltage}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_balancingMeasureVoltage()}{bms\_balancingMeasureVoltage()}}
+{\footnotesize\ttfamily void bms\+\_\+balancing\+Measure\+Voltage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1019 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References A\+D\+SV, bms\+\_\+read\+S\+Voltage(), bms\+\_\+transmit\+Cmd(), bms\+\_\+transmit\+Poll(), A\+D\+S\+V\+\_\+t\+::\+C\+O\+NT, A\+D\+S\+V\+\_\+t\+::\+D\+CP, A\+D\+S\+V\+\_\+t\+::\+OW, and P\+L\+S\+A\+DC.
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_af03fdd55da2e6f84c75d74526be5db49}\label{bms__lib_wrapper_8h_af03fdd55da2e6f84c75d74526be5db49}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_calculateBalancing@{bms\_calculateBalancing}}
+\index{bms\_calculateBalancing@{bms\_calculateBalancing}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_calculateBalancing()}{bms\_calculateBalancing()}}
+{\footnotesize\ttfamily float bms\+\_\+calculate\+Balancing (\begin{DoxyParamCaption}\item[{float}]{delta\+\_\+threshold }\end{DoxyParamCaption})}
+
+
+
+Definition at line 791 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References ic\+\_\+ad68, T\+O\+T\+A\+L\+\_\+\+A\+D68, ic\+\_\+ad68\+\_\+t\+::v\+\_\+avg\+Cell\+\_\+max, and ic\+\_\+ad68\+\_\+t\+::v\+\_\+avg\+Cell\+\_\+min.
+
+
+
+Referenced by bms\+\_\+start\+Balancing(), and brain\+\_\+loop().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_afd92430a9adcca9661b610e0d3f9ef33}\label{bms__lib_wrapper_8h_afd92430a9adcca9661b610e0d3f9ef33}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_getAuxMeasurement@{bms\_getAuxMeasurement}}
+\index{bms\_getAuxMeasurement@{bms\_getAuxMeasurement}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_getAuxMeasurement()}{bms\_getAuxMeasurement()}}
+{\footnotesize\ttfamily void bms\+\_\+get\+Aux\+Measurement (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 629 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References A\+D\+AX, bms\+\_\+get\+Aux\+Voltage(), bms\+\_\+parse\+Temps(), bms\+\_\+transmit\+Cmd(), bms\+\_\+transmit\+Poll(), bms\+\_\+wakeup\+Chain(), A\+D\+A\+X\+\_\+t\+::\+CH, A\+D\+A\+X\+\_\+t\+::\+C\+H4, A\+D\+A\+X\+\_\+t\+::\+OW, P\+L\+A\+U\+X1, and A\+D\+A\+X\+\_\+t\+::\+P\+UP.
+
+
+
+Referenced by brain\+\_\+loop(), and brain\+\_\+start().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a48e686d2d4e8514ab894ce03ec6e2ce0}\label{bms__lib_wrapper_8h_a48e686d2d4e8514ab894ce03ec6e2ce0}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_init@{bms\_init}}
+\index{bms\_init@{bms\_init}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_init()}{bms\_init()}}
+{\footnotesize\ttfamily void bms\+\_\+init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 116 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References bms\+\_\+reset\+Config().
+
+
+
+Referenced by brain\+\_\+start().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a5973fbf71d09ac6898971319bf85518e}\label{bms__lib_wrapper_8h_a5973fbf71d09ac6898971319bf85518e}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_openWireCheck@{bms\_openWireCheck}}
+\index{bms\_openWireCheck@{bms\_openWireCheck}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_openWireCheck()}{bms\_openWireCheck()}}
+{\footnotesize\ttfamily void bms\+\_\+open\+Wire\+Check (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bf}{bms\+\_\+ow\+\_\+status\+\_\+t}} $\ast$}]{ow\+\_\+status\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+A\+D68\mbox{]}\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+C\+E\+L\+L\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1116 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References A\+D\+SV, bms\+\_\+delay\+Ms\+Active(), bms\+\_\+print\+Voltage(), bms\+\_\+read\+S\+Voltage(), bms\+\_\+transmit\+Cmd(), bms\+\_\+wakeup\+Chain(), A\+D\+S\+V\+\_\+t\+::\+C\+O\+NT, A\+D\+S\+V\+\_\+t\+::\+D\+CP, ic\+\_\+ad68, A\+D\+S\+V\+\_\+t\+::\+OW, O\+W\+\_\+\+O\+P\+E\+N\+\_\+\+E\+D\+GE, O\+W\+\_\+\+R\+A\+T\+I\+O\+\_\+\+M\+AX, O\+W\+\_\+\+R\+A\+T\+I\+O\+\_\+\+M\+IN, O\+W\+\_\+\+U\+V\+\_\+\+I\+G\+N\+O\+R\+E\+\_\+\+T\+H\+R\+E\+SH, print\+Console(), T\+O\+T\+A\+L\+\_\+\+A\+D68, T\+O\+T\+A\+L\+\_\+\+C\+E\+LL, and ic\+\_\+ad68\+\_\+t\+::v\+\_\+s\+Cell.
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_aae6845a3c5779defd99a4f9c955b36ec}\label{bms__lib_wrapper_8h_aae6845a3c5779defd99a4f9c955b36ec}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_printRthTempsJson@{bms\_printRthTempsJson}}
+\index{bms\_printRthTempsJson@{bms\_printRthTempsJson}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_printRthTempsJson()}{bms\_printRthTempsJson()}}
+{\footnotesize\ttfamily void bms\+\_\+print\+Rth\+Temps\+Json (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 897 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References ic\+\_\+ad68, printf\+Dma(), R\+T\+H\+\_\+\+P\+E\+R\+\_\+\+M\+O\+D\+U\+LE, and T\+O\+T\+A\+L\+\_\+\+A\+D68.
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a7687f2569d376121bd28e71a7a0b08ef}\label{bms__lib_wrapper_8h_a7687f2569d376121bd28e71a7a0b08ef}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_readAvgCellVoltage@{bms\_readAvgCellVoltage}}
+\index{bms\_readAvgCellVoltage@{bms\_readAvgCellVoltage}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_readAvgCellVoltage()}{bms\_readAvgCellVoltage()}}
+{\footnotesize\ttfamily void bms\+\_\+read\+Avg\+Cell\+Voltage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 443 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References bms\+\_\+calculate\+Stats(), bms\+\_\+check\+Rx\+Fault(), bms\+\_\+parse\+Voltage(), bms\+\_\+receive\+Data(), ic\+\_\+ad68, R\+D\+A\+CA, R\+D\+A\+CB, R\+D\+A\+CC, R\+D\+A\+CD, R\+D\+A\+CE, R\+D\+A\+CF, rx\+Cc, rx\+Data, and rx\+Pec.
+
+
+
+Referenced by brain\+\_\+loop(), and brain\+\_\+start().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a4389b525b4bc9b8860f2c914cf3addaf}\label{bms__lib_wrapper_8h_a4389b525b4bc9b8860f2c914cf3addaf}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_readConfigA@{bms\_readConfigA}}
+\index{bms\_readConfigA@{bms\_readConfigA}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_readConfigA()}{bms\_readConfigA()}}
+{\footnotesize\ttfamily void bms\+\_\+read\+ConfigA (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 223 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References bms\+\_\+check\+Rx\+Fault(), bms\+\_\+print\+Raw\+Data(), bms\+\_\+receive\+Data(), R\+D\+C\+F\+GA, rx\+Cc, rx\+Data, and rx\+Pec.
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_aec6b9951377c4cf2a202f96d2c57eb60}\label{bms__lib_wrapper_8h_aec6b9951377c4cf2a202f96d2c57eb60}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_readConfigB@{bms\_readConfigB}}
+\index{bms\_readConfigB@{bms\_readConfigB}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_readConfigB()}{bms\_readConfigB()}}
+{\footnotesize\ttfamily void bms\+\_\+read\+ConfigB (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 230 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References bms\+\_\+check\+Rx\+Fault(), bms\+\_\+print\+Raw\+Data(), bms\+\_\+receive\+Data(), R\+D\+C\+F\+GB, rx\+Cc, rx\+Data, and rx\+Pec.
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a078de6e983383b9f50dc605f5c143b36}\label{bms__lib_wrapper_8h_a078de6e983383b9f50dc605f5c143b36}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_readSid@{bms\_readSid}}
+\index{bms\_readSid@{bms\_readSid}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_readSid()}{bms\_readSid()}}
+{\footnotesize\ttfamily void bms\+\_\+read\+Sid (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 216 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References bms\+\_\+check\+Rx\+Fault(), bms\+\_\+print\+Raw\+Data(), bms\+\_\+receive\+Data(), print\+Console(), R\+D\+S\+ID, rx\+Cc, rx\+Data, and rx\+Pec.
+
+
+
+Referenced by brain\+\_\+start().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_afddab7a4ce6db8d3cddff68d682bb843}\label{bms__lib_wrapper_8h_afddab7a4ce6db8d3cddff68d682bb843}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_readSVoltage@{bms\_readSVoltage}}
+\index{bms\_readSVoltage@{bms\_readSVoltage}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_readSVoltage()}{bms\_readSVoltage()}}
+{\footnotesize\ttfamily void bms\+\_\+read\+S\+Voltage (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 476 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References bms\+\_\+check\+Rx\+Fault(), bms\+\_\+parse\+Voltage(), bms\+\_\+receive\+Data(), ic\+\_\+ad68, R\+D\+S\+VA, R\+D\+S\+VB, R\+D\+S\+VC, R\+D\+S\+VD, R\+D\+S\+VE, R\+D\+S\+VF, rx\+Cc, rx\+Data, and rx\+Pec.
+
+
+
+Referenced by bms\+\_\+balancing\+Measure\+Voltage(), bms\+\_\+open\+Wire\+Check(), and brain\+\_\+start().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_aef757b3419a6279009439bfcf3554999}\label{bms__lib_wrapper_8h_aef757b3419a6279009439bfcf3554999}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_readVB@{bms\_readVB}}
+\index{bms\_readVB@{bms\_readVB}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_readVB()}{bms\_readVB()}}
+{\footnotesize\ttfamily void bms\+\_\+read\+VB (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 888 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References bms\+\_\+check\+Rx\+Fault(), bms\+\_\+print\+Raw\+Data(), bms\+\_\+receive\+Data(), printf\+Dma(), R\+D\+VB, rx\+Cc, rx\+Data, and rx\+Pec.
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a4ed5924e8f949131b5aa4fa28924c7a8}\label{bms__lib_wrapper_8h_a4ed5924e8f949131b5aa4fa28924c7a8}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_startAdcvCont@{bms\_startAdcvCont}}
+\index{bms\_startAdcvCont@{bms\_startAdcvCont}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_startAdcvCont()}{bms\_startAdcvCont()}}
+{\footnotesize\ttfamily void bms\+\_\+start\+Adcv\+Cont (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 237 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References A\+D\+CV, bms\+\_\+transmit\+Cmd(), A\+D\+C\+V\+\_\+t\+::\+C\+O\+NT, A\+D\+C\+V\+\_\+t\+::\+D\+CP, A\+D\+C\+V\+\_\+t\+::\+OW, A\+D\+C\+V\+\_\+t\+::\+RD, and A\+D\+C\+V\+\_\+t\+::\+R\+S\+TF.
+
+
+
+Referenced by brain\+\_\+loop(), and brain\+\_\+start().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a62b4822e5c1c47cf074cceea751a0dba}\label{bms__lib_wrapper_8h_a62b4822e5c1c47cf074cceea751a0dba}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_startBalancing@{bms\_startBalancing}}
+\index{bms\_startBalancing@{bms\_startBalancing}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_startBalancing()}{bms\_startBalancing()}}
+{\footnotesize\ttfamily void bms\+\_\+start\+Balancing (\begin{DoxyParamCaption}\item[{float}]{delta\+Threshold }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1036 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References bms\+\_\+calculate\+Balancing(), bms\+\_\+start\+Discharge(), and delta\+Threshold.
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a490cbd2cf5b54442204c47a6ed098133}\label{bms__lib_wrapper_8h_a490cbd2cf5b54442204c47a6ed098133}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_startDischarge@{bms\_startDischarge}}
+\index{bms\_startDischarge@{bms\_startDischarge}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_startDischarge()}{bms\_startDischarge()}}
+{\footnotesize\ttfamily void bms\+\_\+start\+Discharge (\begin{DoxyParamCaption}\item[{float}]{threshold }\end{DoxyParamCaption})}
+
+
+
+Definition at line 839 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References bms\+\_\+set\+Pwm(), bms\+\_\+write\+Config\+B(), bms\+\_\+write\+Pwm\+A(), bms\+\_\+write\+Pwm\+B(), ic\+\_\+ad68\+\_\+t\+::cfb\+\_\+\+Tx, ad68\+\_\+cfb\+\_\+t\+::dcto, ad68\+\_\+cfb\+\_\+t\+::dtmen, ic\+\_\+ad68, printf\+Dma(), ad68\+\_\+pwma\+\_\+t\+::pwm1, ic\+\_\+ad68\+\_\+t\+::pwma, T\+O\+T\+A\+L\+\_\+\+A\+D68, and T\+O\+T\+A\+L\+\_\+\+C\+E\+LL.
+
+
+
+Referenced by bms\+\_\+start\+Balancing().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_acf368dfb3f37902d9d93df9831028e8e}\label{bms__lib_wrapper_8h_acf368dfb3f37902d9d93df9831028e8e}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!bms\_stopDischarge@{bms\_stopDischarge}}
+\index{bms\_stopDischarge@{bms\_stopDischarge}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{bms\_stopDischarge()}{bms\_stopDischarge()}}
+{\footnotesize\ttfamily void bms\+\_\+stop\+Discharge (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 873 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References bms\+\_\+transmit\+Cmd(), bms\+\_\+wakeup\+Chain(), printf\+Dma(), and S\+R\+ST.
+
+
+
+Referenced by brain\+\_\+start().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_ad6a1b5822dc003dae05499f0539c2624}\label{bms__lib_wrapper_8h_ad6a1b5822dc003dae05499f0539c2624}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!CAN\_Send\_AD68\_All@{CAN\_Send\_AD68\_All}}
+\index{CAN\_Send\_AD68\_All@{CAN\_Send\_AD68\_All}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{CAN\_Send\_AD68\_All()}{CAN\_Send\_AD68\_All()}}
+{\footnotesize\ttfamily void C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+All (\begin{DoxyParamCaption}\item[{C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$}]{hcan }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2202 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+Temperatures\+\_\+\+Module(), C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+Voltages\+\_\+\+Module(), and T\+O\+T\+A\+L\+\_\+\+A\+D68.
+
+
+
+Referenced by brain\+\_\+loop().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a8d2decbdf9fcb16ff19b2b3fdedd50ee}\label{bms__lib_wrapper_8h_a8d2decbdf9fcb16ff19b2b3fdedd50ee}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!CAN\_Send\_AD68\_Temperatures\_Module@{CAN\_Send\_AD68\_Temperatures\_Module}}
+\index{CAN\_Send\_AD68\_Temperatures\_Module@{CAN\_Send\_AD68\_Temperatures\_Module}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{CAN\_Send\_AD68\_Temperatures\_Module()}{CAN\_Send\_AD68\_Temperatures\_Module()}}
+{\footnotesize\ttfamily H\+A\+L\+\_\+\+Status\+Type\+Def C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+Temperatures\+\_\+\+Module (\begin{DoxyParamCaption}\item[{C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$}]{hcan,  }\item[{uint8\+\_\+t}]{module }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1751 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+01\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+01\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+01\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+02\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+02\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+02\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+03\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+03\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+03\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+04\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+04\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+04\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+05\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+05\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+05\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+06\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+06\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+06\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+07\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+07\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+07\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+08\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+08\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+08\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+09\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+09\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+09\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+10\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+10\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+10\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+11\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+11\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+11\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+12\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+12\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+12\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+3\+\_\+pack(), conv\+\_\+temp(), ic\+\_\+ad68, Slaves\+\_\+\+C\+A\+N\+\_\+\+Send\+Message(), ic\+\_\+ad68\+\_\+t\+::temp\+\_\+cell, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+1, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+10, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+100, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+101, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+102, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+103, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+104, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+105, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+106, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+107, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+108, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+109, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+11, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+110, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+111, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+112, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+113, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+114, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+115, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+116, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+117, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+118, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+119, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+12, ams\+\_\+slave\+\_\+10\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+120, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+121, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+122, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+123, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+124, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+125, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+126, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+127, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+128, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+129, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+13, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+130, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+131, ams\+\_\+slave\+\_\+11\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+132, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+133, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+134, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+135, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+136, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+137, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+138, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+139, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+14, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+140, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+141, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+142, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+143, ams\+\_\+slave\+\_\+12\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+144, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+15, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+16, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+17, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+18, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+19, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+2, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+20, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+21, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+22, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+23, ams\+\_\+slave\+\_\+02\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+24, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+25, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+26, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+27, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+28, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+29, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+3, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+30, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+31, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+32, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+33, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+34, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+35, ams\+\_\+slave\+\_\+03\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+36, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+37, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+38, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+39, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+4, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+40, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+41, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+42, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+43, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+44, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+45, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+46, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+47, ams\+\_\+slave\+\_\+04\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+48, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+49, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+5, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+50, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+51, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+52, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+53, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+54, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+55, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+56, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+57, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+58, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+59, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+6, ams\+\_\+slave\+\_\+05\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+60, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+61, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+62, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+63, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+64, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+65, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+66, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+67, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+68, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+69, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+7, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+70, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+71, ams\+\_\+slave\+\_\+06\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+72, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+73, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+74, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+75, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+76, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+77, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+78, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+79, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+8, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+80, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+81, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+82, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+83, ams\+\_\+slave\+\_\+07\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+84, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+85, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+86, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+87, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+88, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+89, ams\+\_\+slave\+\_\+01\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+9, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+90, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+91, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+2\+\_\+t\+::temperature\+\_\+value\+\_\+92, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+93, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+94, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+95, ams\+\_\+slave\+\_\+08\+\_\+temperature\+\_\+id\+\_\+3\+\_\+t\+::temperature\+\_\+value\+\_\+96, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+97, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+98, ams\+\_\+slave\+\_\+09\+\_\+temperature\+\_\+id\+\_\+1\+\_\+t\+::temperature\+\_\+value\+\_\+99, and T\+O\+T\+A\+L\+\_\+\+A\+D68.
+
+
+
+Referenced by C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+All().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a2f9cec94f5a73df9a2224596c2462c32}\label{bms__lib_wrapper_8h_a2f9cec94f5a73df9a2224596c2462c32}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!CAN\_Send\_AD68\_Voltages\_Module@{CAN\_Send\_AD68\_Voltages\_Module}}
+\index{CAN\_Send\_AD68\_Voltages\_Module@{CAN\_Send\_AD68\_Voltages\_Module}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{CAN\_Send\_AD68\_Voltages\_Module()}{CAN\_Send\_AD68\_Voltages\_Module()}}
+{\footnotesize\ttfamily H\+A\+L\+\_\+\+Status\+Type\+Def C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+Voltages\+\_\+\+Module (\begin{DoxyParamCaption}\item[{C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$}]{hcan,  }\item[{uint8\+\_\+t}]{module }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1293 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+01\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+01\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+01\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+02\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+02\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+02\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+03\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+03\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+03\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+04\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+04\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+04\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+05\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+05\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+05\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+06\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+06\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+06\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+07\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+07\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+07\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+08\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+08\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+08\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+09\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+09\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+09\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+10\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+10\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+10\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+11\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+11\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+11\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+3\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+12\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+1\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+1\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+12\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+2\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+2\+\_\+pack(), A\+M\+S\+\_\+\+S\+L\+A\+V\+E\+\_\+12\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+D\+\_\+3\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+3\+\_\+pack(), ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+1, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+10, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+100, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+101, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+102, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+103, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+104, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+105, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+106, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+107, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+108, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+109, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+11, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+110, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+111, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+112, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+113, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+114, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+115, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+116, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+117, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+118, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+119, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+12, ams\+\_\+slave\+\_\+10\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+120, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+121, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+122, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+123, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+124, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+125, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+126, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+127, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+128, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+129, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+13, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+130, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+131, ams\+\_\+slave\+\_\+11\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+132, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+133, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+134, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+135, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+136, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+137, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+138, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+139, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+14, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+140, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+141, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+142, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+143, ams\+\_\+slave\+\_\+12\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+144, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+15, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+16, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+17, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+18, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+19, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+2, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+20, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+21, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+22, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+23, ams\+\_\+slave\+\_\+02\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+24, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+25, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+26, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+27, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+28, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+29, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+3, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+30, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+31, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+32, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+33, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+34, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+35, ams\+\_\+slave\+\_\+03\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+36, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+37, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+38, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+39, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+4, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+40, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+41, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+42, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+43, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+44, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+45, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+46, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+47, ams\+\_\+slave\+\_\+04\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+48, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+49, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+5, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+50, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+51, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+52, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+53, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+54, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+55, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+56, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+57, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+58, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+59, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+6, ams\+\_\+slave\+\_\+05\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+60, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+61, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+62, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+63, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+64, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+65, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+66, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+67, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+68, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+69, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+7, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+70, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+71, ams\+\_\+slave\+\_\+06\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+72, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+73, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+74, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+75, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+76, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+77, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+78, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+79, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+8, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+80, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+81, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+82, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+83, ams\+\_\+slave\+\_\+07\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+84, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+85, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+86, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+87, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+88, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+89, ams\+\_\+slave\+\_\+01\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+9, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+90, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+91, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+2\+\_\+t\+::cell\+\_\+voltage\+\_\+92, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+93, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+94, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+95, ams\+\_\+slave\+\_\+08\+\_\+voltage\+\_\+id\+\_\+3\+\_\+t\+::cell\+\_\+voltage\+\_\+96, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+97, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+98, ams\+\_\+slave\+\_\+09\+\_\+voltage\+\_\+id\+\_\+1\+\_\+t\+::cell\+\_\+voltage\+\_\+99, conv\+\_\+voltage(), ic\+\_\+ad68, Slaves\+\_\+\+C\+A\+N\+\_\+\+Send\+Message(), T\+O\+T\+A\+L\+\_\+\+A\+D68, and ic\+\_\+ad68\+\_\+t\+::v\+\_\+avg\+Cell.
+
+
+
+Referenced by C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+All().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a9f26867c51000767eff4025c8106b205}\label{bms__lib_wrapper_8h_a9f26867c51000767eff4025c8106b205}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!conv\_temp@{conv\_temp}}
+\index{conv\_temp@{conv\_temp}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{conv\_temp()}{conv\_temp()}}
+{\footnotesize\ttfamily uint16\+\_\+t conv\+\_\+temp (\begin{DoxyParamCaption}\item[{float}]{t }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1744 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+Referenced by C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+Temperatures\+\_\+\+Module().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_a2890c6e37e5be005831f1f767e241262}\label{bms__lib_wrapper_8h_a2890c6e37e5be005831f1f767e241262}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!conv\_voltage@{conv\_voltage}}
+\index{conv\_voltage@{conv\_voltage}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{conv\_voltage()}{conv\_voltage()}}
+{\footnotesize\ttfamily uint16\+\_\+t conv\+\_\+voltage (\begin{DoxyParamCaption}\item[{float}]{v }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1284 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+Referenced by C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+Voltages\+\_\+\+Module().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_adb44c02fbab1be1661ae0abfd2ce5699}\label{bms__lib_wrapper_8h_adb44c02fbab1be1661ae0abfd2ce5699}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!send\_ad68\_ui@{send\_ad68\_ui}}
+\index{send\_ad68\_ui@{send\_ad68\_ui}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{send\_ad68\_ui()}{send\_ad68\_ui()}}
+{\footnotesize\ttfamily void send\+\_\+ad68\+\_\+ui (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 915 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References ic\+\_\+ad68\+\_\+t\+::cfa\+\_\+\+Rx, ic\+\_\+ad68\+\_\+t\+::cfa\+\_\+\+Tx, ic\+\_\+ad68\+\_\+t\+::cfb\+\_\+\+Rx, ic\+\_\+ad68\+\_\+t\+::cfb\+\_\+\+Tx, ad68\+\_\+cfa\+\_\+t\+::comm\+\_\+bk, ad68\+\_\+cfa\+\_\+t\+::cth, ad68\+\_\+cfb\+\_\+t\+::dcc, ad68\+\_\+cfb\+\_\+t\+::dcto, ad68\+\_\+cfb\+\_\+t\+::dtmen, ad68\+\_\+cfb\+\_\+t\+::dtrng, ad68\+\_\+cfa\+\_\+t\+::fc, ad68\+\_\+cfa\+\_\+t\+::flag\+\_\+d, ad68\+\_\+cfa\+\_\+t\+::gpo1to8, ad68\+\_\+cfa\+\_\+t\+::gpo9to10, ic\+\_\+ad68, ad68\+\_\+cfa\+\_\+t\+::mute\+\_\+st, ad68\+\_\+cfa\+\_\+t\+::owa, ad68\+\_\+cfa\+\_\+t\+::owrng, printf\+Dma(), ad68\+\_\+pwma\+\_\+t\+::pwm1, ad68\+\_\+pwma\+\_\+t\+::pwm10, ad68\+\_\+pwma\+\_\+t\+::pwm11, ad68\+\_\+pwma\+\_\+t\+::pwm12, ad68\+\_\+pwmb\+\_\+t\+::pwm13, ad68\+\_\+pwmb\+\_\+t\+::pwm14, ad68\+\_\+pwmb\+\_\+t\+::pwm15, ad68\+\_\+pwmb\+\_\+t\+::pwm16, ad68\+\_\+pwma\+\_\+t\+::pwm2, ad68\+\_\+pwma\+\_\+t\+::pwm3, ad68\+\_\+pwma\+\_\+t\+::pwm4, ad68\+\_\+pwma\+\_\+t\+::pwm5, ad68\+\_\+pwma\+\_\+t\+::pwm6, ad68\+\_\+pwma\+\_\+t\+::pwm7, ad68\+\_\+pwma\+\_\+t\+::pwm8, ad68\+\_\+pwma\+\_\+t\+::pwm9, ic\+\_\+ad68\+\_\+t\+::pwma, ic\+\_\+ad68\+\_\+t\+::pwmb, ad68\+\_\+cfa\+\_\+t\+::refon, ad68\+\_\+pwmb\+\_\+t\+::rsv, R\+T\+H\+\_\+\+P\+E\+R\+\_\+\+M\+O\+D\+U\+LE, ad68\+\_\+cfa\+\_\+t\+::snap\+\_\+st, ad68\+\_\+cfa\+\_\+t\+::soakon, ic\+\_\+ad68\+\_\+t\+::temp\+\_\+cell, ic\+\_\+ad68\+\_\+t\+::temp\+\_\+ic, T\+O\+T\+A\+L\+\_\+\+A\+D68, T\+O\+T\+A\+L\+\_\+\+C\+E\+LL, ic\+\_\+ad68\+\_\+t\+::v\+\_\+avg\+Cell, ic\+\_\+ad68\+\_\+t\+::v\+\_\+avg\+Cell\+\_\+avg, ic\+\_\+ad68\+\_\+t\+::v\+\_\+avg\+Cell\+\_\+delta, ic\+\_\+ad68\+\_\+t\+::v\+\_\+avg\+Cell\+\_\+max, ic\+\_\+ad68\+\_\+t\+::v\+\_\+avg\+Cell\+\_\+min, ic\+\_\+ad68\+\_\+t\+::v\+\_\+avg\+Cell\+\_\+sum, ic\+\_\+ad68\+\_\+t\+::v\+\_\+s\+Cell, ic\+\_\+ad68\+\_\+t\+::v\+\_\+segment, ic\+\_\+ad68\+\_\+t\+::v\+\_\+temp\+Sens, ad68\+\_\+cfb\+\_\+t\+::vov0to3, ad68\+\_\+cfb\+\_\+t\+::vov4to11, ad68\+\_\+cfb\+\_\+t\+::vuv0to7, and ad68\+\_\+cfb\+\_\+t\+::vuv8to11.
+
+
+
+Referenced by brain\+\_\+loop().
+
+\mbox{\Hypertarget{bms__lib_wrapper_8h_ad5100203f4131da227571d7f4f4cda2e}\label{bms__lib_wrapper_8h_ad5100203f4131da227571d7f4f4cda2e}} 
+\index{bms\_libWrapper.h@{bms\_libWrapper.h}!Slaves\_CAN\_SendMessage@{Slaves\_CAN\_SendMessage}}
+\index{Slaves\_CAN\_SendMessage@{Slaves\_CAN\_SendMessage}!bms\_libWrapper.h@{bms\_libWrapper.h}}
+\doxysubsubsection{\texorpdfstring{Slaves\_CAN\_SendMessage()}{Slaves\_CAN\_SendMessage()}}
+{\footnotesize\ttfamily H\+A\+L\+\_\+\+Status\+Type\+Def Slaves\+\_\+\+C\+A\+N\+\_\+\+Send\+Message (\begin{DoxyParamCaption}\item[{C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$}]{hcan,  }\item[{uint32\+\_\+t}]{can\+ID,  }\item[{uint32\+\_\+t}]{data\+Length,  }\item[{const uint8\+\_\+t $\ast$}]{Tx\+Data }\end{DoxyParamCaption})}
+
+
+
+Sends a C\+AN message via the C\+AN TX F\+I\+FO. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em hcan} & Pointer to the C\+AN handle (e.\+g., \&hcan1). \\
+\hline
+{\em can\+ID} & C\+AN ID of the message (standard 11-\/bit). \\
+\hline
+{\em data\+Length} & Length of the message data in bytes (0 to 8 for Classic C\+AN). \\
+\hline
+{\em data} & Pointer to the message data array (up to 8 bytes for Classic C\+AN). \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em H\+A\+L\+\_\+\+Status\+Type\+Def} & Returns H\+A\+L\+\_\+\+OK if successful, otherwise H\+A\+L\+\_\+\+E\+R\+R\+OR. \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 1269 of file bms\+\_\+lib\+Wrapper.\+c.
+
+
+
+References C\+A\+N\+\_\+\+T\+X\+\_\+\+Add\+\_\+\+To\+\_\+\+Queue().
+
+
+
+Referenced by C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+Temperatures\+\_\+\+Module(), and C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+Voltages\+\_\+\+Module().
+

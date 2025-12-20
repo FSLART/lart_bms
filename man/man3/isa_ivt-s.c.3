@@ -1,0 +1,397 @@
+.TH "Core/Src/isa_ivt-s.c" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Core/Src/isa_ivt-s.c
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <isa_ivt\-s\&.h>\fP
+.br
+\fC#include 'main\&.h'\fP
+.br
+\fC#include 'brain\&.h'\fP
+.br
+\fC#include 'uartDMA\&.h'\fP
+.br
+\fC#include 'can\&.h'\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBivt_t\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBIVT_CAN_Setup_AllMessages\fP (CAN_HandleTypeDef *hcan)"
+.br
+.RI "Configures FDCAN to receive all CAN messages by setting wildcard filters\&. "
+.ti -1c
+.RI "void \fBIVT_CAN_Setup\fP (CAN_HandleTypeDef *hcan)"
+.br
+.RI "Configures FDCAN filters for IVT-S sensor data and starts the controller\&. "
+.ti -1c
+.RI "HAL_StatusTypeDef \fBIVT_CAN_SendMessage\fP (CAN_HandleTypeDef *hcan, uint32_t canID, uint32_t dataLength, const uint8_t *TxData)"
+.br
+.RI "Sends a CAN message via the FDCAN TX FIFO\&. "
+.ti -1c
+.RI "void \fBIVT_CAN_Config\fP (void)"
+.br
+.RI "Configures the IVT-S sensor by sending a sequence of CAN commands\&. Each command must be acknowledged within 2 ms or a retry/failure is triggered\&. "
+.ti -1c
+.RI "void \fBIVT_CAN_OnMessage\fP (const CAN_RxHeaderTypeDef *pRxHeader, const uint8_t *\fBRxData\fP)"
+.br
+.ti -1c
+.RI "void \fBIVT_FAULT_CHECK\fP (void)"
+.br
+.RI "Initiates a fault check by requesting system error status from the IVT-S sensor\&. "
+.ti -1c
+.RI "void \fBIVT_PROCESS_SYSERRORS\fP (uint8_t *\fBRxData\fP)"
+.br
+.RI "Processes the system-error bitmask and updates ivt\&.faults accordingly\&. "
+.ti -1c
+.RI "void \fBIVT_PROCESS_MEASURERRORS\fP (uint8_t *\fBRxData\fP)"
+.br
+.RI "Processes the measurement-error bitmask and updates ivt\&.faults accordingly\&. "
+.ti -1c
+.RI "void \fBIVT_SET_BITRATE\fP (void)"
+.br
+.ti -1c
+.RI "void \fBsend_ivt_ui\fP (void)"
+.br
+.RI "Serializes the global \fCivt\fP structure to JSON and sends it over UART\&. "
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "CAN_HandleTypeDef \fBhcan1\fP"
+.br
+.ti -1c
+.RI "CAN_FilterTypeDef \fBsFilterConfig\fP = { 0 }"
+.br
+.ti -1c
+.RI "CAN_RxHeaderTypeDef \fBRxHeader\fP"
+.br
+.ti -1c
+.RI "CAN_TxHeaderTypeDef \fBTxHeader\fP"
+.br
+.ti -1c
+.RI "uint8_t \fBIVT_commandReceivedFlag\fP = 0"
+.br
+.ti -1c
+.RI "uint8_t \fBIVT_configComplete\fP = 0"
+.br
+.ti -1c
+.RI "int32_t \fBIVT_Current\fP"
+.br
+.ti -1c
+.RI "int32_t \fBvDCLink\fP"
+.br
+.ti -1c
+.RI "int32_t \fBvBatt\fP"
+.br
+.ti -1c
+.RI "int32_t \fBvoltageU3_mV\fP"
+.br
+.ti -1c
+.RI "int32_t \fBtempIVT\fP"
+.br
+.ti -1c
+.RI "int32_t \fBIVT_Power\fP"
+.br
+.ti -1c
+.RI "int8_t \fBIVT_DC_Supply\fP"
+.br
+.ti -1c
+.RI "uint8_t \fBRxData\fP [8]"
+.br
+.ti -1c
+.RI "bool \fBcommsCheck\fP = false"
+.br
+.ti -1c
+.RI "uint32_t \fBlastTime\fP = 0"
+.br
+.ti -1c
+.RI "\fBivt_t\fP \fBivt\fP"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void IVT_CAN_Config (void)"
+
+.PP
+Configures the IVT-S sensor by sending a sequence of CAN commands\&. Each command must be acknowledged within 2 ms or a retry/failure is triggered\&. 
+.PP
+\fBNote\fP
+.RS 4
+This routine blocks while waiting for each command’s acknowledgment flag: IVT_commandReceivedFlag must be set before proceeding to the next step\&. 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+
+.PP
+Definition at line 238 of file isa_ivt\-s\&.c\&.
+.PP
+References commsCheck, ivt_t::conf_CANbit, ivt_t::conf_maxCurrent, ivt_t::conf_maxTemp, ivt_t::conf_maxU1, ivt_t::conf_maxU2, ivt_t::conf_maxU3, ivt_t::conf_minCurrent, ivt_t::conf_minTemp, ivt_t::conf_minU1, ivt_t::conf_minU2, ivt_t::conf_minU3, hcan1, ivt, IVT_CAN_SendMessage(), IVT_COMMAND_CANID, IVT_commandReceivedFlag, IVT_CONFIG_CURRENT_CMD, IVT_CONFIG_T_CMD, IVT_CONFIG_U1_CMD, IVT_CONFIG_U2_CMD, IVT_CONFIG_U3_CMD, IVT_CONFIG_W_CMD, IVT_START_CMD, IVT_STOP_CMD, IVT_STORE_CMD, and printConsole()\&.
+.PP
+Referenced by brain_start()\&.
+.SS "void IVT_CAN_OnMessage (const CAN_RxHeaderTypeDef * pRxHeader, const uint8_t * RxData)"
+
+.PP
+Definition at line 417 of file isa_ivt\-s\&.c\&.
+.PP
+References ivt_t::iBatt, ivt, IVT_commandReceivedFlag, IVT_Current, IVT_Power, IVT_PROCESS_MEASURERRORS(), IVT_PROCESS_SYSERRORS(), IVT_RESPONSE_CANID, IVT_RESULTI_CANID, IVT_RESULTT_CANID, IVT_RESULTU1_CANID, IVT_RESULTW_CANID, lastTime, ivt_t::power, RxData, ivt_t::temp, tempIVT, vBatt, and ivt_t::vBatt\&.
+.PP
+Referenced by IVT_CAN_Setup()\&.
+.SS "HAL_StatusTypeDef IVT_CAN_SendMessage (CAN_HandleTypeDef * hcan, uint32_t canID, uint32_t dataLength, const uint8_t * TxData)"
+
+.PP
+Sends a CAN message via the FDCAN TX FIFO\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhfdcan\fP Pointer to the FDCAN handle (e\&.g\&., &hcan1)\&. 
+.br
+\fIcanID\fP CAN ID of the message (standard 11-bit)\&. 
+.br
+\fIdataLength\fP Length of the message data in bytes (0 to 8 for Classic CAN)\&. 
+.br
+\fIdata\fP Pointer to the message data array (up to 8 bytes for Classic CAN)\&. 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fIHAL_StatusTypeDef\fP Returns HAL_OK if successful, otherwise HAL_ERROR\&. 
+.RE
+.PP
+
+.PP
+Definition at line 211 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), IVT_FAULT_CHECK(), IVT_PROCESS_SYSERRORS(), and IVT_SET_BITRATE()\&.
+.SS "void IVT_CAN_Setup (CAN_HandleTypeDef * hcan)"
+
+.PP
+Configures FDCAN filters for IVT-S sensor data and starts the controller\&. Sets up individual mask filters to accept only the specific IVT-S CAN IDs for voltage (U1, U2, U3), current, temperature, power, and command acknowledgments\&. Routes all accepted messages to RX FIFO0, enables the RX FIFO0 interrupt, and starts the FDCAN peripheral\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhfdcan\fP Pointer to the initialized FDCAN handle (e\&.g\&., &hcan1)\&. 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+
+.PP
+Definition at line 113 of file isa_ivt\-s\&.c\&.
+.PP
+References CAN_RegisterRxCallback(), IVT_CAN_OnMessage(), IVT_RESPONSE_CANID, IVT_RESULTI_CANID, IVT_RESULTT_CANID, IVT_RESULTU1_CANID, IVT_RESULTU2_CANID, IVT_RESULTU3_CANID, IVT_RESULTW_CANID, printConsole(), and sFilterConfig\&.
+.PP
+Referenced by MX_CAN1_Init()\&.
+.SS "void IVT_CAN_Setup_AllMessages (CAN_HandleTypeDef * hcan)"
+
+.PP
+Configures FDCAN to receive all CAN messages by setting wildcard filters\&. Installs two mask filters—one for standard IDs (0x000–0x7FF) and one for extended IDs (0x00000000–0x1FFFFFFF)—each with a zero mask so that all IDs pass through\&. Routes all messages into RX FIFO 0, enables the new-message interrupt, and starts the FDCAN peripheral\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhfdcan\fP Pointer to the initialized FDCAN handle (e\&.g\&., &hcan1)\&. 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+
+.PP
+Definition at line 70 of file isa_ivt\-s\&.c\&.
+.PP
+References hcan1, printConsole(), and sFilterConfig\&.
+.PP
+Referenced by brain_start()\&.
+.SS "void IVT_FAULT_CHECK (void)"
+
+.PP
+Initiates a fault check by requesting system error status from the IVT-S sensor\&. Sends the “Get system errors” command (0x41/0x00) over CAN\&. An optional measurement-error request (IVT_MEASURERROR_CMD) is commented out\&. 
+.PP
+\fBNote\fP
+.RS 4
+The response will be handled in HAL_FDCAN_RxFifo0Callback()\&. 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+
+.PP
+Definition at line 491 of file isa_ivt\-s\&.c\&.
+.PP
+References commsCheck, hcan1, IVT_CAN_SendMessage(), IVT_COMMAND_CANID, IVT_SYSERROR_CMD, lastTime, and printConsole()\&.
+.SS "void IVT_PROCESS_MEASURERRORS (uint8_t * RxData)"
+
+.PP
+Processes the measurement-error bitmask and updates ivt\&.faults accordingly\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIRxData\fP The 8-byte payload from the IVT_RESPONSE_CANID frame\&. RxData[1] == 0x00 indicates the bitmask sub-index\&. 
+.RE
+.PP
+
+.PP
+Definition at line 583 of file isa_ivt\-s\&.c\&.
+.PP
+References IVT_faults_t::adc, IVT_faults_t::current, IVT_faults_t::current_oc, ivt_t::faults, ivt, IVT_faults_t::ntc_h_oc, IVT_faults_t::ntc_l_oc, printConsole(), RxData, IVT_faults_t::U1_oc, IVT_faults_t::U2_oc, IVT_faults_t::U3_oc, and IVT_faults_t::vRef\&.
+.PP
+Referenced by IVT_CAN_OnMessage()\&.
+.SS "void IVT_PROCESS_SYSERRORS (uint8_t * RxData)"
+
+.PP
+Processes the system-error bitmask and updates ivt\&.faults accordingly\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIRxData\fP The 8-byte payload from the IVT_RESPONSE_CANID frame\&. RxData[1] == 0x00 indicates the bitmask sub-index\&. 
+.RE
+.PP
+
+.PP
+Definition at line 514 of file isa_ivt\-s\&.c\&.
+.PP
+References IVT_faults_t::CAN, commsCheck, IVT_faults_t::current, ivt_t::faults, hcan1, ivt, IVT_CAN_SendMessage(), IVT_COMMAND_CANID, IVT_MEASURERROR_CMD, IVT_faults_t::power, printConsole(), RxData, IVT_faults_t::temp, and IVT_faults_t::vRef\&.
+.PP
+Referenced by IVT_CAN_OnMessage()\&.
+.SS "void IVT_SET_BITRATE (void)"
+
+.PP
+Definition at line 647 of file isa_ivt\-s\&.c\&.
+.PP
+References commsCheck, hcan1, IVT_CAN_SendMessage(), IVT_COMMAND_CANID, IVT_commandReceivedFlag, IVT_CONFIG_CANRATE_CMD, IVT_STOP_CMD, and printConsole()\&.
+.PP
+Referenced by brain_start()\&.
+.SS "void send_ivt_ui (void)"
+
+.PP
+Serializes the global \fCivt\fP structure to JSON and sends it over UART\&. 
+.PP
+\fBNote\fP
+.RS 4
+Uses \fBprintfDma()\fP for all output\&. Produces a single JSON object\&. 
+.RE
+.PP
+
+.PP
+Definition at line 679 of file isa_ivt\-s\&.c\&.
+.PP
+References IVT_faults_t::adc, IVT_faults_t::CAN, ivt_t::conf_CANbit, ivt_t::conf_maxCurrent, ivt_t::conf_maxTemp, ivt_t::conf_maxU1, ivt_t::conf_maxU2, ivt_t::conf_maxU3, ivt_t::conf_minCurrent, ivt_t::conf_minTemp, ivt_t::conf_minU1, ivt_t::conf_minU2, ivt_t::conf_minU3, IVT_faults_t::current, IVT_faults_t::current_oc, ivt_t::faults, ivt_t::iBatt, ivt, IVT_faults_t::ntc_h_oc, IVT_faults_t::ntc_l_oc, ivt_t::power, IVT_faults_t::power, printfDma(), ivt_t::SOC, ivt_t::SOH, ivt_t::temp, IVT_faults_t::temp, IVT_faults_t::U1_oc, IVT_faults_t::U2_oc, IVT_faults_t::U3_oc, ivt_t::vBatt, and IVT_faults_t::vRef\&.
+.SH "Variable Documentation"
+.PP 
+.SS "bool commsCheck = false"
+
+.PP
+Definition at line 26 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), IVT_FAULT_CHECK(), IVT_PROCESS_SYSERRORS(), and IVT_SET_BITRATE()\&.
+.SS "CAN_HandleTypeDef hcan1"
+
+.PP
+Definition at line 48 of file main\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), IVT_CAN_Setup_AllMessages(), IVT_FAULT_CHECK(), IVT_PROCESS_SYSERRORS(), and IVT_SET_BITRATE()\&.
+.SS "\fBivt_t\fP ivt"
+
+.PP
+Definition at line 59 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), IVT_CAN_OnMessage(), IVT_PROCESS_MEASURERRORS(), IVT_PROCESS_SYSERRORS(), and send_ivt_ui()\&.
+.SS "uint8_t IVT_commandReceivedFlag = 0"
+
+.PP
+Definition at line 13 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), IVT_CAN_OnMessage(), and IVT_SET_BITRATE()\&.
+.SS "uint8_t IVT_configComplete = 0"
+
+.PP
+Definition at line 14 of file isa_ivt\-s\&.c\&.
+.SS "int32_t IVT_Current"
+
+.PP
+Definition at line 15 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_OnMessage()\&.
+.SS "int8_t IVT_DC_Supply"
+
+.PP
+Definition at line 21 of file isa_ivt\-s\&.c\&.
+.SS "int32_t IVT_Power"
+
+.PP
+Definition at line 20 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_OnMessage()\&.
+.SS "uint32_t lastTime = 0"
+
+.PP
+Definition at line 28 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_OnMessage(), and IVT_FAULT_CHECK()\&.
+.SS "uint8_t RxData[8]"
+
+.PP
+Definition at line 24 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_OnMessage(), IVT_PROCESS_MEASURERRORS(), and IVT_PROCESS_SYSERRORS()\&.
+.SS "CAN_RxHeaderTypeDef RxHeader"
+
+.PP
+Definition at line 10 of file isa_ivt\-s\&.c\&.
+.SS "CAN_FilterTypeDef sFilterConfig = { 0 }"
+
+.PP
+Definition at line 9 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Setup(), and IVT_CAN_Setup_AllMessages()\&.
+.SS "int32_t tempIVT"
+
+.PP
+Definition at line 19 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_OnMessage()\&.
+.SS "CAN_TxHeaderTypeDef TxHeader"
+
+.PP
+Definition at line 11 of file isa_ivt\-s\&.c\&.
+.SS "int32_t vBatt"
+
+.PP
+Definition at line 17 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_OnMessage()\&.
+.SS "int32_t vDCLink"
+
+.PP
+Definition at line 16 of file isa_ivt\-s\&.c\&.
+.SS "int32_t voltageU3_mV"
+
+.PP
+Definition at line 18 of file isa_ivt\-s\&.c\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

@@ -1,0 +1,1858 @@
+\hypertarget{bms__cmdlist_8c}{}\doxysection{Core/\+Src/bms\+\_\+cmdlist.c File Reference}
+\label{bms__cmdlist_8c}\index{Core/Src/bms\_cmdlist.c@{Core/Src/bms\_cmdlist.c}}
+{\ttfamily \#include \char`\"{}bms\+\_\+cmdlist.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdint.\+h\char`\"{}}\newline
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a7dad65a0c478796a854ab35b45ac34b9}{W\+R\+C\+F\+GA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x01 \}
+\begin{DoxyCompactList}\small\item\em -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/--- B\+O\+TH 2950 A\+ND 6830 -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/--- /// \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a282e16f5fd0a607d103507ed935539bf}{W\+R\+C\+F\+GB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x24 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a599b9d36ac2fc8f9709d43a820ffff15}{R\+D\+C\+F\+GA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x02 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a4d8eccc4c55ee65741cbd42d9a2f32dd}{R\+D\+C\+F\+GB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x26 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_aa7db1925b943ba7a24f2e0d9b58706fc}{R\+D\+S\+T\+A\+TA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x30 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a13710021ee021f09051406938edefaf8}{R\+D\+S\+T\+A\+TB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x31 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a5d8b84fbe28c329410008d03438e66cd}{R\+D\+S\+T\+A\+TC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x32 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ac792a281c7c3a2d1427fb1b8c1197c9a}{R\+D\+S\+T\+A\+T\+C\+E\+RR}} \mbox{[}2\mbox{]} = \{ 0x00, 0x72 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a786dcca6d6ab884cff60142d4285400a}{R\+D\+S\+T\+A\+TD}} \mbox{[}2\mbox{]} = \{ 0x00, 0x33 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a60a3d816167e94d1ad6b54bf54ae8bc2}{R\+D\+S\+T\+A\+TE}} \mbox{[}2\mbox{]} = \{ 0x00, 0x34 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a793eb0f1932765112d75e4b7734cfc2f}{R\+D\+A\+S\+A\+LL}} \mbox{[}2\mbox{]} = \{ 0x00, 0x35 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ae0ba30bc13258d71383d36a80109add0}{R\+D\+A\+U\+XC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x1B \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a4335e74f1bf46b5143e9fae456933b48}{R\+D\+A\+U\+XD}} \mbox{[}2\mbox{]} = \{ 0x00, 0x1F \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_af32eb6ba25479f8930745187014f9fa5}{R\+D\+R\+A\+XC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x1E \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a5f0e21a7418dbc5a7d05987a83a906f9}{R\+D\+R\+A\+XD}} \mbox{[}2\mbox{]} = \{ 0x00, 0x25 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a194036f88758fd14f12242d63d970f3e}{C\+L\+R\+F\+L\+AG}} \mbox{[}2\mbox{]} = \{ 0x07, 0x17 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a4c3ce80f655f724d3c43a2eb54576c72}{P\+L\+A\+DC}} \mbox{[}2\mbox{]} = \{ 0x07, 0x18 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ad576dfa7835126c3baaf18f90655b5db}{W\+R\+C\+O\+MM}} \mbox{[}2\mbox{]} = \{ 0x07, 0x21 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a1913b0f27c1ce47933a0a88ff3a46089}{R\+D\+C\+O\+MM}} \mbox{[}2\mbox{]} = \{ 0x07, 0x22 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_af41ee80bdc6615a6ebba404eee8afdff}{S\+T\+C\+O\+MM}} \mbox{[}13\mbox{]} = \{ 0x07, 0x23, 0x\+B9, 0x\+E4 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00\}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ab3b68c4722cdbdc1960dc3f1a15c8871}{R\+D\+S\+ID}} \mbox{[}2\mbox{]} = \{ 0x00, 0x2C \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a8e3837bfeb525d8bce7afe7894fb22c0}{R\+S\+T\+CC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x2E \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ae186b2f13c5a11480d7dfa57aef1272c}{S\+N\+AP}} \mbox{[}2\mbox{]} = \{ 0x00, 0x2D \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a6b0a44ba28b98a475a5c5c437005f3a5}{U\+N\+S\+N\+AP}} \mbox{[}2\mbox{]} = \{ 0x00, 0x2F \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a2f5563fb0aeefd438466f55654a2fcb5}{S\+R\+ST}} \mbox{[}2\mbox{]} = \{ 0x00, 0x27 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a80ca885b68e587cc65dfda6686ccde42}{R\+DI}} \mbox{[}2\mbox{]} = \{ 0x00, 0x04 \}
+\begin{DoxyCompactList}\small\item\em -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/--- 2950 O\+N\+LY -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/--- /// \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_aa50916116d8e48d6db9e7e319168b431}{R\+D\+VB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x06 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a6f422d8e54fde8e1bc7866eeadce46dc}{R\+D\+I\+V\+B1}} \mbox{[}2\mbox{]} = \{ 0x00, 0x08 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a8737f1f567f5da70b738c057e4ba8c3b}{R\+D\+I\+A\+CC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x44 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a4fcda61f121441e13c40101055927959}{R\+D\+V\+B\+A\+CC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x46 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a3d1bd1470f0142f6c34b982b26f135a4}{R\+D\+I\+V\+B1\+A\+CC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x48 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a50cf1ca6efd31c136fe83bc790516655}{R\+D\+OC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x0B \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a3f163da4315baf6c03a538c18a31a0da}{R\+D\+V1A}} \mbox{[}2\mbox{]} = \{ 0x00, 0x0A \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a16cd6f3056ed370425e98f282be45c7d}{R\+D\+V1B}} \mbox{[}2\mbox{]} = \{ 0x00, 0x09 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_af08a18bc95bbc6a863170a5b9ffa6625}{R\+D\+V1C}} \mbox{[}2\mbox{]} = \{ 0x00, 0x03 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a3f483c92da7ed19c526f2dd4852d52bc}{R\+D\+V1D}} \mbox{[}2\mbox{]} = \{ 0x00, 0x1B \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a1fbd318d67818f0c783e57d4c532b6e1}{R\+D\+V2A}} \mbox{[}2\mbox{]} = \{ 0x00, 0x07 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a5e4767bb59633d336486e7f5e4d0b3de}{R\+D\+V2B}} \mbox{[}2\mbox{]} = \{ 0x00, 0x0D \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a9ff426789cef935067d496562c652950}{R\+D\+V2C}} \mbox{[}2\mbox{]} = \{ 0x00, 0x05 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ac85035774650d29539937f63034afc8b}{R\+D\+V2D}} \mbox{[}2\mbox{]} = \{ 0x00, 0x1F \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a24403fa59666f668e487c34aa256d9d3}{R\+D\+V2E}} \mbox{[}2\mbox{]} = \{ 0x00, 0x25 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_afcdf004295bcd8f9f7e464c855de249c}{R\+D\+S\+T\+AT}} \mbox{[}2\mbox{]} = \{ 0x00, 0x34 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a81fdd4b0683376ff8c4e4299afead0f5}{R\+D\+F\+L\+AG}} \mbox{[}2\mbox{]} = \{ 0x00, 0x32 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_af9f830272fbe441ecf3e8c3b374dfa93}{R\+D\+F\+L\+A\+G\+E\+RR}} \mbox{[}2\mbox{]} = \{ 0x00, 0x72 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a1096909523b0ad78647c8145576e56a5}{R\+D\+XA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x30 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a7100086ed4bd4993d0a5a707ed475e3d}{R\+D\+XB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x31 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ad4babfab214ce440378113d7777a956a}{R\+D\+XC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x33 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_abc1e49a9ba7e81e2c1a035b109814077}{R\+D\+A\+L\+LI}} \mbox{[}2\mbox{]} = \{ 0x00, 0x0C \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ad25ddd70607437f8e4e7032c47ba7675}{R\+D\+A\+L\+LA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x4C \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ada091ecc774b8b5e05de26e3cced059a}{R\+D\+A\+L\+LC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x10 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a9094be9f542f7fe89c742a451201121c}{R\+D\+A\+L\+LV}} \mbox{[}2\mbox{]} = \{ 0x00, 0x35 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_adf13b0a287c68b04f01646dfeb78dd6f}{R\+D\+A\+L\+LR}} \mbox{[}2\mbox{]} = \{ 0x00, 0x11 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a133d62a87b1eb5fd0fb2e7e4255a66f4}{R\+D\+A\+L\+LX}} \mbox{[}2\mbox{]} = \{ 0x00, 0x51 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_acaf0dc4792d91bf73a848c824f26cdc8}{W\+R\+P\+W\+MA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x20 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ac553c5ae7442f9cb5a7893cb0f70e2e3}{R\+D\+P\+W\+MA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x22 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a9ecfffc9cc7f7dc3a72effee5a1b68da}{W\+R\+P\+W\+MB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x21 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a8864d9742092ec940d4418249856be69}{R\+D\+P\+W\+MB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x23 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a4bcc647de436934c1474963109655fe4}{C\+L\+RI}} \mbox{[}2\mbox{]} = \{ 0x07, 0x11 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a7bd2c060732664a0e1f7f13673cf0967}{C\+L\+RA}} \mbox{[}2\mbox{]} = \{ 0x07, 0x14 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a955847f3aaa199383d309e00442dbd05}{C\+L\+RO}} \mbox{[}2\mbox{]} = \{ 0x07, 0x13 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ae10c47f6c8569c67cd6f63b5cc1c5c37}{C\+L\+RC}} \mbox{[}2\mbox{]} = \{ 0x07, 0x16 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a6315479cbf7a071f5e8bffa9442f3fec}{C\+L\+R\+VX}} \mbox{[}2\mbox{]} = \{ 0x07, 0x12 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ab4d792cd41a4be3f5da350d3d8121014}{P\+L\+I1}} \mbox{[}2\mbox{]} = \{ 0x07, 0x1C \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a3adf0710f38c3edec0960ec35b0b2fd1}{P\+L\+I2}} \mbox{[}2\mbox{]} = \{ 0x07, 0x1D \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a2a6794132345860ca6730ada650e977a}{P\+LV}} \mbox{[}2\mbox{]} = \{ 0x07, 0x1E \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ad9cfdacf031db9d520569b839236ca78}{P\+LX}} \mbox{[}2\mbox{]} = \{ 0x07, 0x1F \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a4c2e3d410b4cc5318de0d1b1191b03ff}{s\+A\+D\+I1}} \mbox{[}2\mbox{]} = \{ 0x02, 0x60 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a08a0904b676fcb91e440cbf7cc89ba6b}{s\+A\+DX}} \mbox{[}2\mbox{]} = \{ 0x05, 0x30 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a159fcdb1cb6182154207dd7c55535f29}{R\+S\+T\+A\+TD}} \mbox{[}4\mbox{]} = \{0x00, 0x33, 0x4D, 0x4A\}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a2ab12d1453b09fdde6a23fe7140c31ca}{R\+F\+L\+AG}} \mbox{[}4\mbox{]} = \{0x00, 0x32, 0xc6, 0x78\}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a13ebfa3afd646a0180e2f4cba64971b2}{s\+R\+DI}} \mbox{[}4\mbox{]} = \{0x00, 0x04, 0x07, 0x\+C2\}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_abb6d8b7f0b7e5fceb99923559e83ea4f}{s\+C\+L\+R\+AB}} \mbox{[}4\mbox{]} = \{0x07,0x11,0x\+C9,0x\+C0\}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a401bfaf2556daf85edf15c77c1b8d713}{s\+R\+D\+VA}} \mbox{[}4\mbox{]} = \{ 0x00, 0x0A , 0x\+C3 , 0x04\}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a433b12df8b1d91bcebdb8e3812b3b351}{s\+R\+D\+VB}} \mbox{[}4\mbox{]} = \{ 0x00, 0x09 , 0x\+D5 , 0x60\}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ad88cebc6d25216bd6dc54fd1cf5a1374}{s\+R\+D\+VC}} \mbox{[}4\mbox{]} = \{ 0x00, 0x03 , 0x\+A0, 0x38\}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a3d5d568612f8546337680f146badd2c1}{s\+R\+D\+VD}} \mbox{[}4\mbox{]} = \{ 0x00, 0x05 , 0x8C, 0x\+F0\}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ab79411d346d7cd7da57c30cee1920c7b}{s\+R\+D\+I\+AV}} \mbox{[}4\mbox{]} = \{ 0x00, 0x44 , 0x\+E0, 0x48\}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_afe7cf89dec8d9a2f517068300d0972f8}{s\+R\+D\+V\+B\+AT}} \mbox{[}4\mbox{]} = \{ 0x00, 0x06 , 0x9A, 0x94\}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ad19da93c8ef1d7be162bc2b6e095779f}{T\+M\+\_\+48}} \mbox{[}2\mbox{]} = \{ 0x00, 0x0E \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_abab2e9360b789f36c7a470ded7ee4a9a}{R\+D\+C\+VA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x04 \}
+\begin{DoxyCompactList}\small\item\em -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/--- 6830 O\+N\+LY -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/--- /// \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a52fc0eaa7f63b96fcdf07220657cc30a}{R\+D\+C\+VB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x06 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a9376cd5e25a7cdf7aa8b39191e5317fd}{R\+D\+C\+VC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x08 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a1ccc73199b78997dadc0c68f24d25fb0}{R\+D\+C\+VD}} \mbox{[}2\mbox{]} = \{ 0x00, 0x0A \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a60043ae8daf2c5d22c6fff39fde78baf}{R\+D\+C\+VE}} \mbox{[}2\mbox{]} = \{ 0x00, 0x09 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_aaa8d1d27daed787b702f2c5a363e979a}{R\+D\+C\+VF}} \mbox{[}2\mbox{]} = \{ 0x00, 0x0B \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_afbaaef6ce9bb74fc6adb494689a6a273}{R\+D\+C\+V\+A\+LL}} \mbox{[}2\mbox{]} = \{ 0x00, 0x0C \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_abfeb34824f84c94c4868a19aeb7c79be}{R\+D\+A\+CA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x44 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ab34e88dd255e726ced943fdd810a77b7}{R\+D\+A\+CB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x46 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ab03274a18079454cc8357ce0903d6fac}{R\+D\+A\+CC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x48 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_acfc6e66ba687897dc6bf994936eff984}{R\+D\+A\+CD}} \mbox{[}2\mbox{]} = \{ 0x00, 0x4A \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ad670efc65fe17c8952b8ea27e173950c}{R\+D\+A\+CE}} \mbox{[}2\mbox{]} = \{ 0x00, 0x49 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a30957a7dfda27d594ab14d7328f9f0d4}{R\+D\+A\+CF}} \mbox{[}2\mbox{]} = \{ 0x00, 0x4B \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a11b6f55de4bf8e9fab518238aca1b7a5}{R\+D\+A\+C\+A\+LL}} \mbox{[}2\mbox{]} = \{ 0x00, 0x4C \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_acefa3301f5340bc950e8d184e877c7d7}{R\+D\+S\+VA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x03 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_af9119139cf2689f312324655e794ec75}{R\+D\+S\+VB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x05 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a7069142991c917150f35d55e3361c3a9}{R\+D\+S\+VC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x07 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_aad34889ad76237257111a05524bd1336}{R\+D\+S\+VD}} \mbox{[}2\mbox{]} = \{ 0x00, 0x0D \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_aeeaba54f08c52534e6be5aff192668af}{R\+D\+S\+VE}} \mbox{[}2\mbox{]} = \{ 0x00, 0x0E \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ad8af6ab068367b09aed66b3006cd0f41}{R\+D\+S\+VF}} \mbox{[}2\mbox{]} = \{ 0x00, 0x0F \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_aefa1cfa65a6f880763640f15d947444d}{R\+D\+S\+A\+LL}} \mbox{[}2\mbox{]} = \{ 0x00, 0x10 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ab1970083ca8a33813e2cd902b60d7800}{R\+D\+C\+S\+A\+LL}} \mbox{[}2\mbox{]} = \{ 0x00, 0x11 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a8273f055477e619458946e8483864924}{R\+D\+A\+C\+S\+A\+LL}} \mbox{[}2\mbox{]} = \{ 0x00, 0x51 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a5048493cb927e784cd67535e9d80d86e}{R\+D\+F\+CA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x12 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a36e0b5f29d3f188bee74183fd009a30f}{R\+D\+F\+CB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x13 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a443ce149412c55e2a2aa4fdd3c1f2e54}{R\+D\+F\+CC}} \mbox{[}2\mbox{]} = \{ 0x00, 0x14 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a4bb3128eb5fa4bcee7da37106229b478}{R\+D\+F\+CD}} \mbox{[}2\mbox{]} = \{ 0x00, 0x15 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a75a645efaebb83e930ef748cc10b8dbf}{R\+D\+F\+CE}} \mbox{[}2\mbox{]} = \{ 0x00, 0x16 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ab118737cac7ca0f072e7bee2bc7df5be}{R\+D\+F\+CF}} \mbox{[}2\mbox{]} = \{ 0x00, 0x17 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_acb775013e2d3b832370d68c11e7c7641}{R\+D\+F\+C\+A\+LL}} \mbox{[}2\mbox{]} = \{ 0x00, 0x18 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_af0d92c815359e589709e39a9ed65a402}{R\+D\+A\+U\+XA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x19 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a859207f0c4f1eaf022147bbb5e5d9b26}{R\+D\+A\+U\+XB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x1A \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a957a32659b7cd578c3259dc0780cf5ee}{R\+D\+R\+A\+XA}} \mbox{[}2\mbox{]} = \{ 0x00, 0x1C \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a0ef6da56f5a79b04d435ac4a4d55343e}{R\+D\+R\+A\+XB}} \mbox{[}2\mbox{]} = \{ 0x00, 0x1D \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a5f81c579a9e06377fd4348ee26252144}{W\+R\+P\+W\+M1}} \mbox{[}2\mbox{]} = \{ 0x00, 0x20 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a97fa86b7dc7702d93cefeb7a7493bd54}{R\+D\+P\+W\+M1}} \mbox{[}2\mbox{]} = \{ 0x00, 0x22 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a13cdc92c70c4b4e92061585a330add79}{W\+R\+P\+W\+M2}} \mbox{[}2\mbox{]} = \{ 0x00, 0x21 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a06a2c500f2f5a87528ba184598eb5c59}{R\+D\+P\+W\+M2}} \mbox{[}2\mbox{]} = \{ 0x00, 0x23 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_ae2656b9c0d6484d4f61d93fb2454b40b}{C\+L\+R\+C\+E\+LL}} \mbox{[}2\mbox{]} = \{ 0x07, 0x11 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a4cad6563603e724ea5ddab6d2cfd35d7}{C\+L\+R\+A\+UX}} \mbox{[}2\mbox{]} = \{ 0x07, 0x12 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_adcdac8a17d9b69756f1343d123d2d3f8}{C\+L\+R\+S\+P\+IN}} \mbox{[}2\mbox{]} = \{ 0x07, 0x16 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a872f88be8a0aceb77f0e49aa8eae9cef}{C\+L\+R\+FC}} \mbox{[}2\mbox{]} = \{ 0x07, 0x14 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a9808d74632a2e4cf344c8d140c70defe}{C\+L\+O\+V\+UV}} \mbox{[}2\mbox{]} = \{ 0x07, 0x15 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a97e0521d930f996a463a3829739a06b2}{P\+L\+A\+UT}} \mbox{[}2\mbox{]} = \{ 0x07, 0x19 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a5f1092b0965bdbf8f73f00fdac903f49}{P\+L\+C\+A\+DC}} \mbox{[}2\mbox{]} = \{ 0x07, 0x1C \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_abd8b3ea0f542035a8de89579b1641a69}{P\+L\+S\+A\+DC}} \mbox{[}2\mbox{]} = \{ 0x07, 0x1D \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a013af0f293cc7c020149b61000826956}{P\+L\+A\+U\+X1}} \mbox{[}2\mbox{]} = \{ 0x07, 0x1E \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a704f1560fd27e7bee4417ba3ba2bef89}{P\+L\+A\+U\+X2}} \mbox{[}2\mbox{]} = \{ 0x07, 0x1F \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_acb5c95131568a0530e41634ad92a1e9e}{D\+I\+A\+GN}} \mbox{[}2\mbox{]} = \{0x07 , 0x15\}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_af6d1655819cb0b860a7caa5ebbb556bb}{M\+U\+TE}} \mbox{[}2\mbox{]} = \{ 0x00, 0x28 \}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{bms__cmdlist_8c_a8c03bfab0e061fa0d215520dfe8a7e71}{U\+N\+M\+U\+TE}} \mbox{[}2\mbox{]} = \{ 0x00, 0x29 \}
+\item 
+const \mbox{\hyperlink{struct_a_d_c_v__t}{A\+D\+C\+V\+\_\+t}} \mbox{\hyperlink{bms__cmdlist_8c_aa27bd060dda25410183d0b417f7423ac}{A\+D\+C\+V\+\_\+default}}
+\item 
+\mbox{\hyperlink{struct_a_d_c_v__t}{A\+D\+C\+V\+\_\+t}} \mbox{\hyperlink{bms__cmdlist_8c_ac64d4f523a43deeb063de03aa79e114d}{A\+D\+CV}} = \mbox{\hyperlink{bms__cmdlist_8c_aa27bd060dda25410183d0b417f7423ac}{A\+D\+C\+V\+\_\+default}}
+\item 
+const \mbox{\hyperlink{struct_a_d_s_v__t}{A\+D\+S\+V\+\_\+t}} \mbox{\hyperlink{bms__cmdlist_8c_a4d367c748783cf013f08440e4aaf566b}{A\+D\+S\+V\+\_\+default}}
+\item 
+\mbox{\hyperlink{struct_a_d_s_v__t}{A\+D\+S\+V\+\_\+t}} \mbox{\hyperlink{bms__cmdlist_8c_af5feb4e1c61ed5528846d6c6a69de26e}{A\+D\+SV}} = \mbox{\hyperlink{bms__cmdlist_8c_a4d367c748783cf013f08440e4aaf566b}{A\+D\+S\+V\+\_\+default}}
+\item 
+const \mbox{\hyperlink{struct_a_d_a_x2__t}{A\+D\+A\+X2\+\_\+t}} \mbox{\hyperlink{bms__cmdlist_8c_a7ab345aed805a0993dec4d392a647060}{A\+D\+A\+X2\+\_\+default}}
+\item 
+\mbox{\hyperlink{struct_a_d_a_x2__t}{A\+D\+A\+X2\+\_\+t}} \mbox{\hyperlink{bms__cmdlist_8c_af4201e7fb8e9b6298d3fdc9fef046a73}{A\+D\+A\+X2}} = \mbox{\hyperlink{bms__cmdlist_8c_a7ab345aed805a0993dec4d392a647060}{A\+D\+A\+X2\+\_\+default}}
+\item 
+const \mbox{\hyperlink{struct_a_d_a_x__t}{A\+D\+A\+X\+\_\+t}} \mbox{\hyperlink{bms__cmdlist_8c_aa9e3bfdadc69c75b4dfd960c6d194af3}{A\+D\+A\+X\+\_\+default}}
+\item 
+\mbox{\hyperlink{struct_a_d_a_x__t}{A\+D\+A\+X\+\_\+t}} \mbox{\hyperlink{bms__cmdlist_8c_aed549541f885c8aeee7e671f248a8823}{A\+D\+AX}} = \mbox{\hyperlink{bms__cmdlist_8c_aa9e3bfdadc69c75b4dfd960c6d194af3}{A\+D\+A\+X\+\_\+default}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{bms__cmdlist_8c_aed549541f885c8aeee7e671f248a8823}\label{bms__cmdlist_8c_aed549541f885c8aeee7e671f248a8823}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!ADAX@{ADAX}}
+\index{ADAX@{ADAX}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{ADAX}{ADAX}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_a_d_a_x__t}{A\+D\+A\+X\+\_\+t}} A\+D\+AX = \mbox{\hyperlink{bms__cmdlist_8c_aa9e3bfdadc69c75b4dfd960c6d194af3}{A\+D\+A\+X\+\_\+default}}}
+
+
+
+Definition at line 310 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+get\+Aux\+Measurement().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_af4201e7fb8e9b6298d3fdc9fef046a73}\label{bms__cmdlist_8c_af4201e7fb8e9b6298d3fdc9fef046a73}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!ADAX2@{ADAX2}}
+\index{ADAX2@{ADAX2}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{ADAX2}{ADAX2}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_a_d_a_x2__t}{A\+D\+A\+X2\+\_\+t}} A\+D\+A\+X2 = \mbox{\hyperlink{bms__cmdlist_8c_a7ab345aed805a0993dec4d392a647060}{A\+D\+A\+X2\+\_\+default}}}
+
+
+
+Definition at line 295 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a7ab345aed805a0993dec4d392a647060}\label{bms__cmdlist_8c_a7ab345aed805a0993dec4d392a647060}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!ADAX2\_default@{ADAX2\_default}}
+\index{ADAX2\_default@{ADAX2\_default}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{ADAX2\_default}{ADAX2\_default}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{struct_a_d_a_x2__t}{A\+D\+A\+X2\+\_\+t}} A\+D\+A\+X2\+\_\+default}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    .RES   = 0b000001000000,}
+\DoxyCodeLine{    .CH    = 0b0000,}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line 289 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_aa9e3bfdadc69c75b4dfd960c6d194af3}\label{bms__cmdlist_8c_aa9e3bfdadc69c75b4dfd960c6d194af3}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!ADAX\_default@{ADAX\_default}}
+\index{ADAX\_default@{ADAX\_default}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{ADAX\_default}{ADAX\_default}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{struct_a_d_a_x__t}{A\+D\+A\+X\+\_\+t}} A\+D\+A\+X\+\_\+default}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    .OW   = 0b0,}
+\DoxyCodeLine{    .RES0 = 0b10,}
+\DoxyCodeLine{    .X    = 0b00000,}
+\DoxyCodeLine{}
+\DoxyCodeLine{    .CH   = 0b0000,}
+\DoxyCodeLine{    .RES1 = 0b01,}
+\DoxyCodeLine{    .CH4  = 0b0,}
+\DoxyCodeLine{    .PUP  = 0b0,}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line 298 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ac64d4f523a43deeb063de03aa79e114d}\label{bms__cmdlist_8c_ac64d4f523a43deeb063de03aa79e114d}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!ADCV@{ADCV}}
+\index{ADCV@{ADCV}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{ADCV}{ADCV}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_a_d_c_v__t}{A\+D\+C\+V\+\_\+t}} A\+D\+CV = \mbox{\hyperlink{bms__cmdlist_8c_aa27bd060dda25410183d0b417f7423ac}{A\+D\+C\+V\+\_\+default}}}
+
+
+
+Definition at line 270 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+start\+Adcv\+Cont().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_aa27bd060dda25410183d0b417f7423ac}\label{bms__cmdlist_8c_aa27bd060dda25410183d0b417f7423ac}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!ADCV\_default@{ADCV\_default}}
+\index{ADCV\_default@{ADCV\_default}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{ADCV\_default}{ADCV\_default}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{struct_a_d_c_v__t}{A\+D\+C\+V\+\_\+t}} A\+D\+C\+V\+\_\+default}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    .RD   = 0,}
+\DoxyCodeLine{    .RES2 = 0b01,}
+\DoxyCodeLine{    .X    = 0b00000,}
+\DoxyCodeLine{}
+\DoxyCodeLine{    .OW   = 0,}
+\DoxyCodeLine{    .RSTF = 0,}
+\DoxyCodeLine{    .RES0 = 0b0,}
+\DoxyCodeLine{    .DCP  = 0,}
+\DoxyCodeLine{    .RES1 = 0b11,}
+\DoxyCodeLine{    .CONT = 0,}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line 256 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_af5feb4e1c61ed5528846d6c6a69de26e}\label{bms__cmdlist_8c_af5feb4e1c61ed5528846d6c6a69de26e}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!ADSV@{ADSV}}
+\index{ADSV@{ADSV}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{ADSV}{ADSV}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_a_d_s_v__t}{A\+D\+S\+V\+\_\+t}} A\+D\+SV = \mbox{\hyperlink{bms__cmdlist_8c_a4d367c748783cf013f08440e4aaf566b}{A\+D\+S\+V\+\_\+default}}}
+
+
+
+Definition at line 285 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+balancing\+Measure\+Voltage(), and bms\+\_\+open\+Wire\+Check().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a4d367c748783cf013f08440e4aaf566b}\label{bms__cmdlist_8c_a4d367c748783cf013f08440e4aaf566b}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!ADSV\_default@{ADSV\_default}}
+\index{ADSV\_default@{ADSV\_default}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{ADSV\_default}{ADSV\_default}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{struct_a_d_s_v__t}{A\+D\+S\+V\+\_\+t}} A\+D\+S\+V\+\_\+default}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    .RES2 = 0b001,}
+\DoxyCodeLine{    .X    = 0b00000,}
+\DoxyCodeLine{}
+\DoxyCodeLine{    .OW   = 0b00,}
+\DoxyCodeLine{    .RES0 = 0b10,}
+\DoxyCodeLine{    .DCP  = 0,}
+\DoxyCodeLine{    .RES1 = 0b11,}
+\DoxyCodeLine{    .CONT = 0,}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line 273 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a9808d74632a2e4cf344c8d140c70defe}\label{bms__cmdlist_8c_a9808d74632a2e4cf344c8d140c70defe}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!CLOVUV@{CLOVUV}}
+\index{CLOVUV@{CLOVUV}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{CLOVUV}{CLOVUV}}
+{\footnotesize\ttfamily uint8\+\_\+t C\+L\+O\+V\+UV\mbox{[}2\mbox{]} = \{ 0x07, 0x15 \}}
+
+
+
+Definition at line 234 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a7bd2c060732664a0e1f7f13673cf0967}\label{bms__cmdlist_8c_a7bd2c060732664a0e1f7f13673cf0967}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!CLRA@{CLRA}}
+\index{CLRA@{CLRA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{CLRA}{CLRA}}
+{\footnotesize\ttfamily uint8\+\_\+t C\+L\+RA\mbox{[}2\mbox{]} = \{ 0x07, 0x14 \}}
+
+
+
+Definition at line 126 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a4cad6563603e724ea5ddab6d2cfd35d7}\label{bms__cmdlist_8c_a4cad6563603e724ea5ddab6d2cfd35d7}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!CLRAUX@{CLRAUX}}
+\index{CLRAUX@{CLRAUX}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{CLRAUX}{CLRAUX}}
+{\footnotesize\ttfamily uint8\+\_\+t C\+L\+R\+A\+UX\mbox{[}2\mbox{]} = \{ 0x07, 0x12 \}}
+
+
+
+Definition at line 231 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ae10c47f6c8569c67cd6f63b5cc1c5c37}\label{bms__cmdlist_8c_ae10c47f6c8569c67cd6f63b5cc1c5c37}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!CLRC@{CLRC}}
+\index{CLRC@{CLRC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{CLRC}{CLRC}}
+{\footnotesize\ttfamily uint8\+\_\+t C\+L\+RC\mbox{[}2\mbox{]} = \{ 0x07, 0x16 \}}
+
+
+
+Definition at line 128 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ae2656b9c0d6484d4f61d93fb2454b40b}\label{bms__cmdlist_8c_ae2656b9c0d6484d4f61d93fb2454b40b}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!CLRCELL@{CLRCELL}}
+\index{CLRCELL@{CLRCELL}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{CLRCELL}{CLRCELL}}
+{\footnotesize\ttfamily uint8\+\_\+t C\+L\+R\+C\+E\+LL\mbox{[}2\mbox{]} = \{ 0x07, 0x11 \}}
+
+
+
+Definition at line 230 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a872f88be8a0aceb77f0e49aa8eae9cef}\label{bms__cmdlist_8c_a872f88be8a0aceb77f0e49aa8eae9cef}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!CLRFC@{CLRFC}}
+\index{CLRFC@{CLRFC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{CLRFC}{CLRFC}}
+{\footnotesize\ttfamily uint8\+\_\+t C\+L\+R\+FC\mbox{[}2\mbox{]} = \{ 0x07, 0x14 \}}
+
+
+
+Definition at line 233 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a194036f88758fd14f12242d63d970f3e}\label{bms__cmdlist_8c_a194036f88758fd14f12242d63d970f3e}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!CLRFLAG@{CLRFLAG}}
+\index{CLRFLAG@{CLRFLAG}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{CLRFLAG}{CLRFLAG}}
+{\footnotesize\ttfamily uint8\+\_\+t C\+L\+R\+F\+L\+AG\mbox{[}2\mbox{]} = \{ 0x07, 0x17 \}}
+
+
+
+Definition at line 36 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a4bcc647de436934c1474963109655fe4}\label{bms__cmdlist_8c_a4bcc647de436934c1474963109655fe4}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!CLRI@{CLRI}}
+\index{CLRI@{CLRI}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{CLRI}{CLRI}}
+{\footnotesize\ttfamily uint8\+\_\+t C\+L\+RI\mbox{[}2\mbox{]} = \{ 0x07, 0x11 \}}
+
+
+
+Definition at line 125 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a955847f3aaa199383d309e00442dbd05}\label{bms__cmdlist_8c_a955847f3aaa199383d309e00442dbd05}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!CLRO@{CLRO}}
+\index{CLRO@{CLRO}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{CLRO}{CLRO}}
+{\footnotesize\ttfamily uint8\+\_\+t C\+L\+RO\mbox{[}2\mbox{]} = \{ 0x07, 0x13 \}}
+
+
+
+Definition at line 127 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_adcdac8a17d9b69756f1343d123d2d3f8}\label{bms__cmdlist_8c_adcdac8a17d9b69756f1343d123d2d3f8}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!CLRSPIN@{CLRSPIN}}
+\index{CLRSPIN@{CLRSPIN}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{CLRSPIN}{CLRSPIN}}
+{\footnotesize\ttfamily uint8\+\_\+t C\+L\+R\+S\+P\+IN\mbox{[}2\mbox{]} = \{ 0x07, 0x16 \}}
+
+
+
+Definition at line 232 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a6315479cbf7a071f5e8bffa9442f3fec}\label{bms__cmdlist_8c_a6315479cbf7a071f5e8bffa9442f3fec}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!CLRVX@{CLRVX}}
+\index{CLRVX@{CLRVX}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{CLRVX}{CLRVX}}
+{\footnotesize\ttfamily uint8\+\_\+t C\+L\+R\+VX\mbox{[}2\mbox{]} = \{ 0x07, 0x12 \}}
+
+
+
+Definition at line 129 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_acb5c95131568a0530e41634ad92a1e9e}\label{bms__cmdlist_8c_acb5c95131568a0530e41634ad92a1e9e}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!DIAGN@{DIAGN}}
+\index{DIAGN@{DIAGN}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{DIAGN}{DIAGN}}
+{\footnotesize\ttfamily uint8\+\_\+t D\+I\+A\+GN\mbox{[}2\mbox{]} = \{0x07 , 0x15\}}
+
+
+
+Definition at line 244 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_af6d1655819cb0b860a7caa5ebbb556bb}\label{bms__cmdlist_8c_af6d1655819cb0b860a7caa5ebbb556bb}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!MUTE@{MUTE}}
+\index{MUTE@{MUTE}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{MUTE}{MUTE}}
+{\footnotesize\ttfamily uint8\+\_\+t M\+U\+TE\mbox{[}2\mbox{]} = \{ 0x00, 0x28 \}}
+
+
+
+Definition at line 247 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a4c3ce80f655f724d3c43a2eb54576c72}\label{bms__cmdlist_8c_a4c3ce80f655f724d3c43a2eb54576c72}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!PLADC@{PLADC}}
+\index{PLADC@{PLADC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{PLADC}{PLADC}}
+{\footnotesize\ttfamily uint8\+\_\+t P\+L\+A\+DC\mbox{[}2\mbox{]} = \{ 0x07, 0x18 \}}
+
+G\+P\+I\+Os Comm commands 
+
+Definition at line 39 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a97e0521d930f996a463a3829739a06b2}\label{bms__cmdlist_8c_a97e0521d930f996a463a3829739a06b2}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!PLAUT@{PLAUT}}
+\index{PLAUT@{PLAUT}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{PLAUT}{PLAUT}}
+{\footnotesize\ttfamily uint8\+\_\+t P\+L\+A\+UT\mbox{[}2\mbox{]} = \{ 0x07, 0x19 \}}
+
+
+
+Definition at line 237 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a013af0f293cc7c020149b61000826956}\label{bms__cmdlist_8c_a013af0f293cc7c020149b61000826956}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!PLAUX1@{PLAUX1}}
+\index{PLAUX1@{PLAUX1}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{PLAUX1}{PLAUX1}}
+{\footnotesize\ttfamily uint8\+\_\+t P\+L\+A\+U\+X1\mbox{[}2\mbox{]} = \{ 0x07, 0x1E \}}
+
+
+
+Definition at line 240 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+get\+Aux\+Measurement().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a704f1560fd27e7bee4417ba3ba2bef89}\label{bms__cmdlist_8c_a704f1560fd27e7bee4417ba3ba2bef89}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!PLAUX2@{PLAUX2}}
+\index{PLAUX2@{PLAUX2}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{PLAUX2}{PLAUX2}}
+{\footnotesize\ttfamily uint8\+\_\+t P\+L\+A\+U\+X2\mbox{[}2\mbox{]} = \{ 0x07, 0x1F \}}
+
+
+
+Definition at line 241 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a5f1092b0965bdbf8f73f00fdac903f49}\label{bms__cmdlist_8c_a5f1092b0965bdbf8f73f00fdac903f49}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!PLCADC@{PLCADC}}
+\index{PLCADC@{PLCADC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{PLCADC}{PLCADC}}
+{\footnotesize\ttfamily uint8\+\_\+t P\+L\+C\+A\+DC\mbox{[}2\mbox{]} = \{ 0x07, 0x1C \}}
+
+
+
+Definition at line 238 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ab4d792cd41a4be3f5da350d3d8121014}\label{bms__cmdlist_8c_ab4d792cd41a4be3f5da350d3d8121014}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!PLI1@{PLI1}}
+\index{PLI1@{PLI1}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{PLI1}{PLI1}}
+{\footnotesize\ttfamily uint8\+\_\+t P\+L\+I1\mbox{[}2\mbox{]} = \{ 0x07, 0x1C \}}
+
+
+
+Definition at line 135 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a3adf0710f38c3edec0960ec35b0b2fd1}\label{bms__cmdlist_8c_a3adf0710f38c3edec0960ec35b0b2fd1}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!PLI2@{PLI2}}
+\index{PLI2@{PLI2}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{PLI2}{PLI2}}
+{\footnotesize\ttfamily uint8\+\_\+t P\+L\+I2\mbox{[}2\mbox{]} = \{ 0x07, 0x1D \}}
+
+
+
+Definition at line 136 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_abd8b3ea0f542035a8de89579b1641a69}\label{bms__cmdlist_8c_abd8b3ea0f542035a8de89579b1641a69}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!PLSADC@{PLSADC}}
+\index{PLSADC@{PLSADC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{PLSADC}{PLSADC}}
+{\footnotesize\ttfamily uint8\+\_\+t P\+L\+S\+A\+DC\mbox{[}2\mbox{]} = \{ 0x07, 0x1D \}}
+
+
+
+Definition at line 239 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+balancing\+Measure\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a2a6794132345860ca6730ada650e977a}\label{bms__cmdlist_8c_a2a6794132345860ca6730ada650e977a}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!PLV@{PLV}}
+\index{PLV@{PLV}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{PLV}{PLV}}
+{\footnotesize\ttfamily uint8\+\_\+t P\+LV\mbox{[}2\mbox{]} = \{ 0x07, 0x1E \}}
+
+
+
+Definition at line 137 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ad9cfdacf031db9d520569b839236ca78}\label{bms__cmdlist_8c_ad9cfdacf031db9d520569b839236ca78}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!PLX@{PLX}}
+\index{PLX@{PLX}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{PLX}{PLX}}
+{\footnotesize\ttfamily uint8\+\_\+t P\+LX\mbox{[}2\mbox{]} = \{ 0x07, 0x1F \}}
+
+
+
+Definition at line 138 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_abfeb34824f84c94c4868a19aeb7c79be}\label{bms__cmdlist_8c_abfeb34824f84c94c4868a19aeb7c79be}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDACA@{RDACA}}
+\index{RDACA@{RDACA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDACA}{RDACA}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+CA\mbox{[}2\mbox{]} = \{ 0x00, 0x44 \}}
+
+
+
+Definition at line 185 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+Avg\+Cell\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a11b6f55de4bf8e9fab518238aca1b7a5}\label{bms__cmdlist_8c_a11b6f55de4bf8e9fab518238aca1b7a5}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDACALL@{RDACALL}}
+\index{RDACALL@{RDACALL}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDACALL}{RDACALL}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+C\+A\+LL\mbox{[}2\mbox{]} = \{ 0x00, 0x4C \}}
+
+
+
+Definition at line 191 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ab34e88dd255e726ced943fdd810a77b7}\label{bms__cmdlist_8c_ab34e88dd255e726ced943fdd810a77b7}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDACB@{RDACB}}
+\index{RDACB@{RDACB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDACB}{RDACB}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+CB\mbox{[}2\mbox{]} = \{ 0x00, 0x46 \}}
+
+
+
+Definition at line 186 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+Avg\+Cell\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ab03274a18079454cc8357ce0903d6fac}\label{bms__cmdlist_8c_ab03274a18079454cc8357ce0903d6fac}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDACC@{RDACC}}
+\index{RDACC@{RDACC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDACC}{RDACC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+CC\mbox{[}2\mbox{]} = \{ 0x00, 0x48 \}}
+
+
+
+Definition at line 187 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+Avg\+Cell\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_acfc6e66ba687897dc6bf994936eff984}\label{bms__cmdlist_8c_acfc6e66ba687897dc6bf994936eff984}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDACD@{RDACD}}
+\index{RDACD@{RDACD}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDACD}{RDACD}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+CD\mbox{[}2\mbox{]} = \{ 0x00, 0x4A \}}
+
+
+
+Definition at line 188 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+Avg\+Cell\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ad670efc65fe17c8952b8ea27e173950c}\label{bms__cmdlist_8c_ad670efc65fe17c8952b8ea27e173950c}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDACE@{RDACE}}
+\index{RDACE@{RDACE}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDACE}{RDACE}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+CE\mbox{[}2\mbox{]} = \{ 0x00, 0x49 \}}
+
+
+
+Definition at line 189 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+Avg\+Cell\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a30957a7dfda27d594ab14d7328f9f0d4}\label{bms__cmdlist_8c_a30957a7dfda27d594ab14d7328f9f0d4}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDACF@{RDACF}}
+\index{RDACF@{RDACF}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDACF}{RDACF}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+CF\mbox{[}2\mbox{]} = \{ 0x00, 0x4B \}}
+
+
+
+Definition at line 190 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+Avg\+Cell\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a8273f055477e619458946e8483864924}\label{bms__cmdlist_8c_a8273f055477e619458946e8483864924}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDACSALL@{RDACSALL}}
+\index{RDACSALL@{RDACSALL}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDACSALL}{RDACSALL}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+C\+S\+A\+LL\mbox{[}2\mbox{]} = \{ 0x00, 0x51 \}}
+
+
+
+Definition at line 204 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ad25ddd70607437f8e4e7032c47ba7675}\label{bms__cmdlist_8c_ad25ddd70607437f8e4e7032c47ba7675}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDALLA@{RDALLA}}
+\index{RDALLA@{RDALLA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDALLA}{RDALLA}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+L\+LA\mbox{[}2\mbox{]} = \{ 0x00, 0x4C \}}
+
+
+
+Definition at line 103 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ada091ecc774b8b5e05de26e3cced059a}\label{bms__cmdlist_8c_ada091ecc774b8b5e05de26e3cced059a}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDALLC@{RDALLC}}
+\index{RDALLC@{RDALLC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDALLC}{RDALLC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+L\+LC\mbox{[}2\mbox{]} = \{ 0x00, 0x10 \}}
+
+
+
+Definition at line 106 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_abc1e49a9ba7e81e2c1a035b109814077}\label{bms__cmdlist_8c_abc1e49a9ba7e81e2c1a035b109814077}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDALLI@{RDALLI}}
+\index{RDALLI@{RDALLI}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDALLI}{RDALLI}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+L\+LI\mbox{[}2\mbox{]} = \{ 0x00, 0x0C \}}
+
+
+
+Definition at line 100 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_adf13b0a287c68b04f01646dfeb78dd6f}\label{bms__cmdlist_8c_adf13b0a287c68b04f01646dfeb78dd6f}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDALLR@{RDALLR}}
+\index{RDALLR@{RDALLR}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDALLR}{RDALLR}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+L\+LR\mbox{[}2\mbox{]} = \{ 0x00, 0x11 \}}
+
+
+
+Definition at line 112 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a9094be9f542f7fe89c742a451201121c}\label{bms__cmdlist_8c_a9094be9f542f7fe89c742a451201121c}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDALLV@{RDALLV}}
+\index{RDALLV@{RDALLV}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDALLV}{RDALLV}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+L\+LV\mbox{[}2\mbox{]} = \{ 0x00, 0x35 \}}
+
+
+
+Definition at line 109 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a133d62a87b1eb5fd0fb2e7e4255a66f4}\label{bms__cmdlist_8c_a133d62a87b1eb5fd0fb2e7e4255a66f4}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDALLX@{RDALLX}}
+\index{RDALLX@{RDALLX}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDALLX}{RDALLX}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+L\+LX\mbox{[}2\mbox{]} = \{ 0x00, 0x51 \}}
+
+
+
+Definition at line 115 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a793eb0f1932765112d75e4b7734cfc2f}\label{bms__cmdlist_8c_a793eb0f1932765112d75e4b7734cfc2f}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDASALL@{RDASALL}}
+\index{RDASALL@{RDASALL}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDASALL}{RDASALL}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+S\+A\+LL\mbox{[}2\mbox{]} = \{ 0x00, 0x35 \}}
+
+Reserved Read Commands -\/ 2950 
+
+Definition at line 23 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_af0d92c815359e589709e39a9ed65a402}\label{bms__cmdlist_8c_af0d92c815359e589709e39a9ed65a402}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDAUXA@{RDAUXA}}
+\index{RDAUXA@{RDAUXA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDAUXA}{RDAUXA}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+U\+XA\mbox{[}2\mbox{]} = \{ 0x00, 0x19 \}}
+
+
+
+Definition at line 216 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+get\+Aux\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a859207f0c4f1eaf022147bbb5e5d9b26}\label{bms__cmdlist_8c_a859207f0c4f1eaf022147bbb5e5d9b26}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDAUXB@{RDAUXB}}
+\index{RDAUXB@{RDAUXB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDAUXB}{RDAUXB}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+U\+XB\mbox{[}2\mbox{]} = \{ 0x00, 0x1A \}}
+
+
+
+Definition at line 217 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+get\+Aux\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ae0ba30bc13258d71383d36a80109add0}\label{bms__cmdlist_8c_ae0ba30bc13258d71383d36a80109add0}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDAUXC@{RDAUXC}}
+\index{RDAUXC@{RDAUXC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDAUXC}{RDAUXC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+U\+XC\mbox{[}2\mbox{]} = \{ 0x00, 0x1B \}}
+
+
+
+Definition at line 27 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+get\+Aux\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a4335e74f1bf46b5143e9fae456933b48}\label{bms__cmdlist_8c_a4335e74f1bf46b5143e9fae456933b48}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDAUXD@{RDAUXD}}
+\index{RDAUXD@{RDAUXD}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDAUXD}{RDAUXD}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+A\+U\+XD\mbox{[}2\mbox{]} = \{ 0x00, 0x1F \}}
+
+Reserved Read Commands -\/ 2950 
+
+Definition at line 28 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+get\+Aux\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a599b9d36ac2fc8f9709d43a820ffff15}\label{bms__cmdlist_8c_a599b9d36ac2fc8f9709d43a820ffff15}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDCFGA@{RDCFGA}}
+\index{RDCFGA@{RDCFGA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDCFGA}{RDCFGA}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+C\+F\+GA\mbox{[}2\mbox{]} = \{ 0x00, 0x02 \}}
+
+
+
+Definition at line 11 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+Config\+A().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a4d8eccc4c55ee65741cbd42d9a2f32dd}\label{bms__cmdlist_8c_a4d8eccc4c55ee65741cbd42d9a2f32dd}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDCFGB@{RDCFGB}}
+\index{RDCFGB@{RDCFGB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDCFGB}{RDCFGB}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+C\+F\+GB\mbox{[}2\mbox{]} = \{ 0x00, 0x26 \}}
+
+Read status registers 
+
+Definition at line 12 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+Config\+B().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a1913b0f27c1ce47933a0a88ff3a46089}\label{bms__cmdlist_8c_a1913b0f27c1ce47933a0a88ff3a46089}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDCOMM@{RDCOMM}}
+\index{RDCOMM@{RDCOMM}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDCOMM}{RDCOMM}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+C\+O\+MM\mbox{[}2\mbox{]} = \{ 0x07, 0x22 \}}
+
+command + dummy data for 72 clock cycles 
+
+Definition at line 43 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ab1970083ca8a33813e2cd902b60d7800}\label{bms__cmdlist_8c_ab1970083ca8a33813e2cd902b60d7800}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDCSALL@{RDCSALL}}
+\index{RDCSALL@{RDCSALL}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDCSALL}{RDCSALL}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+C\+S\+A\+LL\mbox{[}2\mbox{]} = \{ 0x00, 0x11 \}}
+
+
+
+Definition at line 203 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_abab2e9360b789f36c7a470ded7ee4a9a}\label{bms__cmdlist_8c_abab2e9360b789f36c7a470ded7ee4a9a}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDCVA@{RDCVA}}
+\index{RDCVA@{RDCVA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDCVA}{RDCVA}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+C\+VA\mbox{[}2\mbox{]} = \{ 0x00, 0x04 \}}
+
+
+
+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/--- 6830 O\+N\+LY -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/--- /// 
+
+
+
+Definition at line 176 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_afbaaef6ce9bb74fc6adb494689a6a273}\label{bms__cmdlist_8c_afbaaef6ce9bb74fc6adb494689a6a273}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDCVALL@{RDCVALL}}
+\index{RDCVALL@{RDCVALL}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDCVALL}{RDCVALL}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+C\+V\+A\+LL\mbox{[}2\mbox{]} = \{ 0x00, 0x0C \}}
+
+
+
+Definition at line 182 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a52fc0eaa7f63b96fcdf07220657cc30a}\label{bms__cmdlist_8c_a52fc0eaa7f63b96fcdf07220657cc30a}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDCVB@{RDCVB}}
+\index{RDCVB@{RDCVB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDCVB}{RDCVB}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+C\+VB\mbox{[}2\mbox{]} = \{ 0x00, 0x06 \}}
+
+
+
+Definition at line 177 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a9376cd5e25a7cdf7aa8b39191e5317fd}\label{bms__cmdlist_8c_a9376cd5e25a7cdf7aa8b39191e5317fd}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDCVC@{RDCVC}}
+\index{RDCVC@{RDCVC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDCVC}{RDCVC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+C\+VC\mbox{[}2\mbox{]} = \{ 0x00, 0x08 \}}
+
+
+
+Definition at line 178 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a1ccc73199b78997dadc0c68f24d25fb0}\label{bms__cmdlist_8c_a1ccc73199b78997dadc0c68f24d25fb0}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDCVD@{RDCVD}}
+\index{RDCVD@{RDCVD}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDCVD}{RDCVD}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+C\+VD\mbox{[}2\mbox{]} = \{ 0x00, 0x0A \}}
+
+
+
+Definition at line 179 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a60043ae8daf2c5d22c6fff39fde78baf}\label{bms__cmdlist_8c_a60043ae8daf2c5d22c6fff39fde78baf}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDCVE@{RDCVE}}
+\index{RDCVE@{RDCVE}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDCVE}{RDCVE}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+C\+VE\mbox{[}2\mbox{]} = \{ 0x00, 0x09 \}}
+
+
+
+Definition at line 180 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_aaa8d1d27daed787b702f2c5a363e979a}\label{bms__cmdlist_8c_aaa8d1d27daed787b702f2c5a363e979a}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDCVF@{RDCVF}}
+\index{RDCVF@{RDCVF}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDCVF}{RDCVF}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+C\+VF\mbox{[}2\mbox{]} = \{ 0x00, 0x0B \}}
+
+
+
+Definition at line 181 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a5048493cb927e784cd67535e9d80d86e}\label{bms__cmdlist_8c_a5048493cb927e784cd67535e9d80d86e}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDFCA@{RDFCA}}
+\index{RDFCA@{RDFCA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDFCA}{RDFCA}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+F\+CA\mbox{[}2\mbox{]} = \{ 0x00, 0x12 \}}
+
+
+
+Definition at line 207 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_acb775013e2d3b832370d68c11e7c7641}\label{bms__cmdlist_8c_acb775013e2d3b832370d68c11e7c7641}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDFCALL@{RDFCALL}}
+\index{RDFCALL@{RDFCALL}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDFCALL}{RDFCALL}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+F\+C\+A\+LL\mbox{[}2\mbox{]} = \{ 0x00, 0x18 \}}
+
+
+
+Definition at line 213 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a36e0b5f29d3f188bee74183fd009a30f}\label{bms__cmdlist_8c_a36e0b5f29d3f188bee74183fd009a30f}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDFCB@{RDFCB}}
+\index{RDFCB@{RDFCB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDFCB}{RDFCB}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+F\+CB\mbox{[}2\mbox{]} = \{ 0x00, 0x13 \}}
+
+
+
+Definition at line 208 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a443ce149412c55e2a2aa4fdd3c1f2e54}\label{bms__cmdlist_8c_a443ce149412c55e2a2aa4fdd3c1f2e54}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDFCC@{RDFCC}}
+\index{RDFCC@{RDFCC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDFCC}{RDFCC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+F\+CC\mbox{[}2\mbox{]} = \{ 0x00, 0x14 \}}
+
+
+
+Definition at line 209 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a4bb3128eb5fa4bcee7da37106229b478}\label{bms__cmdlist_8c_a4bb3128eb5fa4bcee7da37106229b478}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDFCD@{RDFCD}}
+\index{RDFCD@{RDFCD}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDFCD}{RDFCD}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+F\+CD\mbox{[}2\mbox{]} = \{ 0x00, 0x15 \}}
+
+
+
+Definition at line 210 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a75a645efaebb83e930ef748cc10b8dbf}\label{bms__cmdlist_8c_a75a645efaebb83e930ef748cc10b8dbf}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDFCE@{RDFCE}}
+\index{RDFCE@{RDFCE}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDFCE}{RDFCE}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+F\+CE\mbox{[}2\mbox{]} = \{ 0x00, 0x16 \}}
+
+
+
+Definition at line 211 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ab118737cac7ca0f072e7bee2bc7df5be}\label{bms__cmdlist_8c_ab118737cac7ca0f072e7bee2bc7df5be}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDFCF@{RDFCF}}
+\index{RDFCF@{RDFCF}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDFCF}{RDFCF}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+F\+CF\mbox{[}2\mbox{]} = \{ 0x00, 0x17 \}}
+
+
+
+Definition at line 212 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a81fdd4b0683376ff8c4e4299afead0f5}\label{bms__cmdlist_8c_a81fdd4b0683376ff8c4e4299afead0f5}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDFLAG@{RDFLAG}}
+\index{RDFLAG@{RDFLAG}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDFLAG}{RDFLAG}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+F\+L\+AG\mbox{[}2\mbox{]} = \{ 0x00, 0x32 \}}
+
+
+
+Definition at line 90 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_af9f830272fbe441ecf3e8c3b374dfa93}\label{bms__cmdlist_8c_af9f830272fbe441ecf3e8c3b374dfa93}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDFLAGERR@{RDFLAGERR}}
+\index{RDFLAGERR@{RDFLAGERR}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDFLAGERR}{RDFLAGERR}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+F\+L\+A\+G\+E\+RR\mbox{[}2\mbox{]} = \{ 0x00, 0x72 \}}
+
+
+
+Definition at line 91 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a80ca885b68e587cc65dfda6686ccde42}\label{bms__cmdlist_8c_a80ca885b68e587cc65dfda6686ccde42}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDI@{RDI}}
+\index{RDI@{RDI}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDI}{RDI}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+DI\mbox{[}2\mbox{]} = \{ 0x00, 0x04 \}}
+
+
+
+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/--- 2950 O\+N\+LY -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/--- /// 
+
+
+
+Definition at line 65 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a8737f1f567f5da70b738c057e4ba8c3b}\label{bms__cmdlist_8c_a8737f1f567f5da70b738c057e4ba8c3b}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDIACC@{RDIACC}}
+\index{RDIACC@{RDIACC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDIACC}{RDIACC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+I\+A\+CC\mbox{[}2\mbox{]} = \{ 0x00, 0x44 \}}
+
+
+
+Definition at line 68 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a6f422d8e54fde8e1bc7866eeadce46dc}\label{bms__cmdlist_8c_a6f422d8e54fde8e1bc7866eeadce46dc}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDIVB1@{RDIVB1}}
+\index{RDIVB1@{RDIVB1}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDIVB1}{RDIVB1}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+I\+V\+B1\mbox{[}2\mbox{]} = \{ 0x00, 0x08 \}}
+
+
+
+Definition at line 67 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a3d1bd1470f0142f6c34b982b26f135a4}\label{bms__cmdlist_8c_a3d1bd1470f0142f6c34b982b26f135a4}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDIVB1ACC@{RDIVB1ACC}}
+\index{RDIVB1ACC@{RDIVB1ACC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDIVB1ACC}{RDIVB1ACC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+I\+V\+B1\+A\+CC\mbox{[}2\mbox{]} = \{ 0x00, 0x48 \}}
+
+
+
+Definition at line 70 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a50cf1ca6efd31c136fe83bc790516655}\label{bms__cmdlist_8c_a50cf1ca6efd31c136fe83bc790516655}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDOC@{RDOC}}
+\index{RDOC@{RDOC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDOC}{RDOC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+OC\mbox{[}2\mbox{]} = \{ 0x00, 0x0B \}}
+
+
+
+Definition at line 73 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a97fa86b7dc7702d93cefeb7a7493bd54}\label{bms__cmdlist_8c_a97fa86b7dc7702d93cefeb7a7493bd54}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDPWM1@{RDPWM1}}
+\index{RDPWM1@{RDPWM1}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDPWM1}{RDPWM1}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+P\+W\+M1\mbox{[}2\mbox{]} = \{ 0x00, 0x22 \}}
+
+
+
+Definition at line 225 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a06a2c500f2f5a87528ba184598eb5c59}\label{bms__cmdlist_8c_a06a2c500f2f5a87528ba184598eb5c59}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDPWM2@{RDPWM2}}
+\index{RDPWM2@{RDPWM2}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDPWM2}{RDPWM2}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+P\+W\+M2\mbox{[}2\mbox{]} = \{ 0x00, 0x23 \}}
+
+
+
+Definition at line 227 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ac553c5ae7442f9cb5a7893cb0f70e2e3}\label{bms__cmdlist_8c_ac553c5ae7442f9cb5a7893cb0f70e2e3}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDPWMA@{RDPWMA}}
+\index{RDPWMA@{RDPWMA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDPWMA}{RDPWMA}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+P\+W\+MA\mbox{[}2\mbox{]} = \{ 0x00, 0x22 \}}
+
+
+
+Definition at line 119 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a8864d9742092ec940d4418249856be69}\label{bms__cmdlist_8c_a8864d9742092ec940d4418249856be69}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDPWMB@{RDPWMB}}
+\index{RDPWMB@{RDPWMB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDPWMB}{RDPWMB}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+P\+W\+MB\mbox{[}2\mbox{]} = \{ 0x00, 0x23 \}}
+
+
+
+Definition at line 121 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a957a32659b7cd578c3259dc0780cf5ee}\label{bms__cmdlist_8c_a957a32659b7cd578c3259dc0780cf5ee}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDRAXA@{RDRAXA}}
+\index{RDRAXA@{RDRAXA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDRAXA}{RDRAXA}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+R\+A\+XA\mbox{[}2\mbox{]} = \{ 0x00, 0x1C \}}
+
+
+
+Definition at line 220 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a0ef6da56f5a79b04d435ac4a4d55343e}\label{bms__cmdlist_8c_a0ef6da56f5a79b04d435ac4a4d55343e}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDRAXB@{RDRAXB}}
+\index{RDRAXB@{RDRAXB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDRAXB}{RDRAXB}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+R\+A\+XB\mbox{[}2\mbox{]} = \{ 0x00, 0x1D \}}
+
+
+
+Definition at line 221 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_af32eb6ba25479f8930745187014f9fa5}\label{bms__cmdlist_8c_af32eb6ba25479f8930745187014f9fa5}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDRAXC@{RDRAXC}}
+\index{RDRAXC@{RDRAXC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDRAXC}{RDRAXC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+R\+A\+XC\mbox{[}2\mbox{]} = \{ 0x00, 0x1E \}}
+
+
+
+Definition at line 32 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a5f0e21a7418dbc5a7d05987a83a906f9}\label{bms__cmdlist_8c_a5f0e21a7418dbc5a7d05987a83a906f9}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDRAXD@{RDRAXD}}
+\index{RDRAXD@{RDRAXD}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDRAXD}{RDRAXD}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+R\+A\+XD\mbox{[}2\mbox{]} = \{ 0x00, 0x25 \}}
+
+
+
+Definition at line 33 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_aefa1cfa65a6f880763640f15d947444d}\label{bms__cmdlist_8c_aefa1cfa65a6f880763640f15d947444d}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSALL@{RDSALL}}
+\index{RDSALL@{RDSALL}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSALL}{RDSALL}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+A\+LL\mbox{[}2\mbox{]} = \{ 0x00, 0x10 \}}
+
+
+
+Definition at line 200 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ab3b68c4722cdbdc1960dc3f1a15c8871}\label{bms__cmdlist_8c_ab3b68c4722cdbdc1960dc3f1a15c8871}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSID@{RDSID}}
+\index{RDSID@{RDSID}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSID}{RDSID}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+ID\mbox{[}2\mbox{]} = \{ 0x00, 0x2C \}}
+
+
+
+Definition at line 48 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+Sid().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_afcdf004295bcd8f9f7e464c855de249c}\label{bms__cmdlist_8c_afcdf004295bcd8f9f7e464c855de249c}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSTAT@{RDSTAT}}
+\index{RDSTAT@{RDSTAT}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSTAT}{RDSTAT}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+T\+AT\mbox{[}2\mbox{]} = \{ 0x00, 0x34 \}}
+
+
+
+Definition at line 87 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_aa7db1925b943ba7a24f2e0d9b58706fc}\label{bms__cmdlist_8c_aa7db1925b943ba7a24f2e0d9b58706fc}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSTATA@{RDSTATA}}
+\index{RDSTATA@{RDSTATA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSTATA}{RDSTATA}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+T\+A\+TA\mbox{[}2\mbox{]} = \{ 0x00, 0x30 \}}
+
+
+
+Definition at line 15 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+get\+Aux\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a13710021ee021f09051406938edefaf8}\label{bms__cmdlist_8c_a13710021ee021f09051406938edefaf8}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSTATB@{RDSTATB}}
+\index{RDSTATB@{RDSTATB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSTATB}{RDSTATB}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+T\+A\+TB\mbox{[}2\mbox{]} = \{ 0x00, 0x31 \}}
+
+
+
+Definition at line 16 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a5d8b84fbe28c329410008d03438e66cd}\label{bms__cmdlist_8c_a5d8b84fbe28c329410008d03438e66cd}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSTATC@{RDSTATC}}
+\index{RDSTATC@{RDSTATC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSTATC}{RDSTATC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+T\+A\+TC\mbox{[}2\mbox{]} = \{ 0x00, 0x32 \}}
+
+
+
+Definition at line 17 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ac792a281c7c3a2d1427fb1b8c1197c9a}\label{bms__cmdlist_8c_ac792a281c7c3a2d1427fb1b8c1197c9a}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSTATCERR@{RDSTATCERR}}
+\index{RDSTATCERR@{RDSTATCERR}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSTATCERR}{RDSTATCERR}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+T\+A\+T\+C\+E\+RR\mbox{[}2\mbox{]} = \{ 0x00, 0x72 \}}
+
+
+
+Definition at line 18 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a786dcca6d6ab884cff60142d4285400a}\label{bms__cmdlist_8c_a786dcca6d6ab884cff60142d4285400a}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSTATD@{RDSTATD}}
+\index{RDSTATD@{RDSTATD}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSTATD}{RDSTATD}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+T\+A\+TD\mbox{[}2\mbox{]} = \{ 0x00, 0x33 \}}
+
+
+
+Definition at line 19 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a60a3d816167e94d1ad6b54bf54ae8bc2}\label{bms__cmdlist_8c_a60a3d816167e94d1ad6b54bf54ae8bc2}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSTATE@{RDSTATE}}
+\index{RDSTATE@{RDSTATE}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSTATE}{RDSTATE}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+T\+A\+TE\mbox{[}2\mbox{]} = \{ 0x00, 0x34 \}}
+
+
+
+Definition at line 20 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_acefa3301f5340bc950e8d184e877c7d7}\label{bms__cmdlist_8c_acefa3301f5340bc950e8d184e877c7d7}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSVA@{RDSVA}}
+\index{RDSVA@{RDSVA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSVA}{RDSVA}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+VA\mbox{[}2\mbox{]} = \{ 0x00, 0x03 \}}
+
+
+
+Definition at line 194 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+S\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_af9119139cf2689f312324655e794ec75}\label{bms__cmdlist_8c_af9119139cf2689f312324655e794ec75}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSVB@{RDSVB}}
+\index{RDSVB@{RDSVB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSVB}{RDSVB}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+VB\mbox{[}2\mbox{]} = \{ 0x00, 0x05 \}}
+
+
+
+Definition at line 195 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+S\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a7069142991c917150f35d55e3361c3a9}\label{bms__cmdlist_8c_a7069142991c917150f35d55e3361c3a9}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSVC@{RDSVC}}
+\index{RDSVC@{RDSVC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSVC}{RDSVC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+VC\mbox{[}2\mbox{]} = \{ 0x00, 0x07 \}}
+
+
+
+Definition at line 196 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+S\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_aad34889ad76237257111a05524bd1336}\label{bms__cmdlist_8c_aad34889ad76237257111a05524bd1336}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSVD@{RDSVD}}
+\index{RDSVD@{RDSVD}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSVD}{RDSVD}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+VD\mbox{[}2\mbox{]} = \{ 0x00, 0x0D \}}
+
+
+
+Definition at line 197 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+S\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_aeeaba54f08c52534e6be5aff192668af}\label{bms__cmdlist_8c_aeeaba54f08c52534e6be5aff192668af}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSVE@{RDSVE}}
+\index{RDSVE@{RDSVE}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSVE}{RDSVE}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+VE\mbox{[}2\mbox{]} = \{ 0x00, 0x0E \}}
+
+
+
+Definition at line 198 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+S\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ad8af6ab068367b09aed66b3006cd0f41}\label{bms__cmdlist_8c_ad8af6ab068367b09aed66b3006cd0f41}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDSVF@{RDSVF}}
+\index{RDSVF@{RDSVF}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDSVF}{RDSVF}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+S\+VF\mbox{[}2\mbox{]} = \{ 0x00, 0x0F \}}
+
+
+
+Definition at line 199 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+S\+Voltage().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a3f163da4315baf6c03a538c18a31a0da}\label{bms__cmdlist_8c_a3f163da4315baf6c03a538c18a31a0da}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDV1A@{RDV1A}}
+\index{RDV1A@{RDV1A}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDV1A}{RDV1A}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+V1A\mbox{[}2\mbox{]} = \{ 0x00, 0x0A \}}
+
+
+
+Definition at line 76 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a16cd6f3056ed370425e98f282be45c7d}\label{bms__cmdlist_8c_a16cd6f3056ed370425e98f282be45c7d}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDV1B@{RDV1B}}
+\index{RDV1B@{RDV1B}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDV1B}{RDV1B}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+V1B\mbox{[}2\mbox{]} = \{ 0x00, 0x09 \}}
+
+
+
+Definition at line 77 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_af08a18bc95bbc6a863170a5b9ffa6625}\label{bms__cmdlist_8c_af08a18bc95bbc6a863170a5b9ffa6625}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDV1C@{RDV1C}}
+\index{RDV1C@{RDV1C}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDV1C}{RDV1C}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+V1C\mbox{[}2\mbox{]} = \{ 0x00, 0x03 \}}
+
+
+
+Definition at line 78 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a3f483c92da7ed19c526f2dd4852d52bc}\label{bms__cmdlist_8c_a3f483c92da7ed19c526f2dd4852d52bc}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDV1D@{RDV1D}}
+\index{RDV1D@{RDV1D}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDV1D}{RDV1D}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+V1D\mbox{[}2\mbox{]} = \{ 0x00, 0x1B \}}
+
+
+
+Definition at line 79 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a1fbd318d67818f0c783e57d4c532b6e1}\label{bms__cmdlist_8c_a1fbd318d67818f0c783e57d4c532b6e1}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDV2A@{RDV2A}}
+\index{RDV2A@{RDV2A}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDV2A}{RDV2A}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+V2A\mbox{[}2\mbox{]} = \{ 0x00, 0x07 \}}
+
+
+
+Definition at line 80 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a5e4767bb59633d336486e7f5e4d0b3de}\label{bms__cmdlist_8c_a5e4767bb59633d336486e7f5e4d0b3de}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDV2B@{RDV2B}}
+\index{RDV2B@{RDV2B}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDV2B}{RDV2B}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+V2B\mbox{[}2\mbox{]} = \{ 0x00, 0x0D \}}
+
+
+
+Definition at line 81 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a9ff426789cef935067d496562c652950}\label{bms__cmdlist_8c_a9ff426789cef935067d496562c652950}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDV2C@{RDV2C}}
+\index{RDV2C@{RDV2C}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDV2C}{RDV2C}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+V2C\mbox{[}2\mbox{]} = \{ 0x00, 0x05 \}}
+
+
+
+Definition at line 82 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ac85035774650d29539937f63034afc8b}\label{bms__cmdlist_8c_ac85035774650d29539937f63034afc8b}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDV2D@{RDV2D}}
+\index{RDV2D@{RDV2D}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDV2D}{RDV2D}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+V2D\mbox{[}2\mbox{]} = \{ 0x00, 0x1F \}}
+
+
+
+Definition at line 83 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a24403fa59666f668e487c34aa256d9d3}\label{bms__cmdlist_8c_a24403fa59666f668e487c34aa256d9d3}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDV2E@{RDV2E}}
+\index{RDV2E@{RDV2E}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDV2E}{RDV2E}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+V2E\mbox{[}2\mbox{]} = \{ 0x00, 0x25 \}}
+
+
+
+Definition at line 84 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_aa50916116d8e48d6db9e7e319168b431}\label{bms__cmdlist_8c_aa50916116d8e48d6db9e7e319168b431}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDVB@{RDVB}}
+\index{RDVB@{RDVB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDVB}{RDVB}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+VB\mbox{[}2\mbox{]} = \{ 0x00, 0x06 \}}
+
+
+
+Definition at line 66 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+read\+V\+B().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a4fcda61f121441e13c40101055927959}\label{bms__cmdlist_8c_a4fcda61f121441e13c40101055927959}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDVBACC@{RDVBACC}}
+\index{RDVBACC@{RDVBACC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDVBACC}{RDVBACC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+V\+B\+A\+CC\mbox{[}2\mbox{]} = \{ 0x00, 0x46 \}}
+
+
+
+Definition at line 69 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a1096909523b0ad78647c8145576e56a5}\label{bms__cmdlist_8c_a1096909523b0ad78647c8145576e56a5}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDXA@{RDXA}}
+\index{RDXA@{RDXA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDXA}{RDXA}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+XA\mbox{[}2\mbox{]} = \{ 0x00, 0x30 \}}
+
+
+
+Definition at line 94 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a7100086ed4bd4993d0a5a707ed475e3d}\label{bms__cmdlist_8c_a7100086ed4bd4993d0a5a707ed475e3d}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDXB@{RDXB}}
+\index{RDXB@{RDXB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDXB}{RDXB}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+XB\mbox{[}2\mbox{]} = \{ 0x00, 0x31 \}}
+
+
+
+Definition at line 95 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ad4babfab214ce440378113d7777a956a}\label{bms__cmdlist_8c_ad4babfab214ce440378113d7777a956a}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RDXC@{RDXC}}
+\index{RDXC@{RDXC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RDXC}{RDXC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+D\+XC\mbox{[}2\mbox{]} = \{ 0x00, 0x33 \}}
+
+
+
+Definition at line 96 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a2ab12d1453b09fdde6a23fe7140c31ca}\label{bms__cmdlist_8c_a2ab12d1453b09fdde6a23fe7140c31ca}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RFLAG@{RFLAG}}
+\index{RFLAG@{RFLAG}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RFLAG}{RFLAG}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+F\+L\+AG\mbox{[}4\mbox{]} = \{0x00, 0x32, 0xc6, 0x78\}}
+
+
+
+Definition at line 158 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a159fcdb1cb6182154207dd7c55535f29}\label{bms__cmdlist_8c_a159fcdb1cb6182154207dd7c55535f29}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RSTATD@{RSTATD}}
+\index{RSTATD@{RSTATD}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RSTATD}{RSTATD}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+S\+T\+A\+TD\mbox{[}4\mbox{]} = \{0x00, 0x33, 0x4D, 0x4A\}}
+
+
+
+Definition at line 156 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a8e3837bfeb525d8bce7afe7894fb22c0}\label{bms__cmdlist_8c_a8e3837bfeb525d8bce7afe7894fb22c0}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!RSTCC@{RSTCC}}
+\index{RSTCC@{RSTCC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{RSTCC}{RSTCC}}
+{\footnotesize\ttfamily uint8\+\_\+t R\+S\+T\+CC\mbox{[}2\mbox{]} = \{ 0x00, 0x2E \}}
+
+
+
+Definition at line 49 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a4c2e3d410b4cc5318de0d1b1191b03ff}\label{bms__cmdlist_8c_a4c2e3d410b4cc5318de0d1b1191b03ff}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!sADI1@{sADI1}}
+\index{sADI1@{sADI1}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{sADI1}{sADI1}}
+{\footnotesize\ttfamily uint8\+\_\+t s\+A\+D\+I1\mbox{[}2\mbox{]} = \{ 0x02, 0x60 \}}
+
+
+
+Definition at line 152 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a08a0904b676fcb91e440cbf7cc89ba6b}\label{bms__cmdlist_8c_a08a0904b676fcb91e440cbf7cc89ba6b}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!sADX@{sADX}}
+\index{sADX@{sADX}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{sADX}{sADX}}
+{\footnotesize\ttfamily uint8\+\_\+t s\+A\+DX\mbox{[}2\mbox{]} = \{ 0x05, 0x30 \}}
+
+
+
+Definition at line 153 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_abb6d8b7f0b7e5fceb99923559e83ea4f}\label{bms__cmdlist_8c_abb6d8b7f0b7e5fceb99923559e83ea4f}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!sCLRAB@{sCLRAB}}
+\index{sCLRAB@{sCLRAB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{sCLRAB}{sCLRAB}}
+{\footnotesize\ttfamily uint8\+\_\+t s\+C\+L\+R\+AB\mbox{[}4\mbox{]} = \{0x07,0x11,0x\+C9,0x\+C0\}}
+
+
+
+Definition at line 160 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ae186b2f13c5a11480d7dfa57aef1272c}\label{bms__cmdlist_8c_ae186b2f13c5a11480d7dfa57aef1272c}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!SNAP@{SNAP}}
+\index{SNAP@{SNAP}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{SNAP}{SNAP}}
+{\footnotesize\ttfamily uint8\+\_\+t S\+N\+AP\mbox{[}2\mbox{]} = \{ 0x00, 0x2D \}}
+
+
+
+Definition at line 50 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a13ebfa3afd646a0180e2f4cba64971b2}\label{bms__cmdlist_8c_a13ebfa3afd646a0180e2f4cba64971b2}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!sRDI@{sRDI}}
+\index{sRDI@{sRDI}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{sRDI}{sRDI}}
+{\footnotesize\ttfamily uint8\+\_\+t s\+R\+DI\mbox{[}4\mbox{]} = \{0x00, 0x04, 0x07, 0x\+C2\}}
+
+
+
+Definition at line 159 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ab79411d346d7cd7da57c30cee1920c7b}\label{bms__cmdlist_8c_ab79411d346d7cd7da57c30cee1920c7b}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!sRDIAV@{sRDIAV}}
+\index{sRDIAV@{sRDIAV}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{sRDIAV}{sRDIAV}}
+{\footnotesize\ttfamily uint8\+\_\+t s\+R\+D\+I\+AV\mbox{[}4\mbox{]} = \{ 0x00, 0x44 , 0x\+E0, 0x48\}}
+
+
+
+Definition at line 166 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a401bfaf2556daf85edf15c77c1b8d713}\label{bms__cmdlist_8c_a401bfaf2556daf85edf15c77c1b8d713}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!sRDVA@{sRDVA}}
+\index{sRDVA@{sRDVA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{sRDVA}{sRDVA}}
+{\footnotesize\ttfamily uint8\+\_\+t s\+R\+D\+VA\mbox{[}4\mbox{]} = \{ 0x00, 0x0A , 0x\+C3 , 0x04\}}
+
+
+
+Definition at line 162 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a433b12df8b1d91bcebdb8e3812b3b351}\label{bms__cmdlist_8c_a433b12df8b1d91bcebdb8e3812b3b351}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!sRDVB@{sRDVB}}
+\index{sRDVB@{sRDVB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{sRDVB}{sRDVB}}
+{\footnotesize\ttfamily uint8\+\_\+t s\+R\+D\+VB\mbox{[}4\mbox{]} = \{ 0x00, 0x09 , 0x\+D5 , 0x60\}}
+
+
+
+Definition at line 163 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_afe7cf89dec8d9a2f517068300d0972f8}\label{bms__cmdlist_8c_afe7cf89dec8d9a2f517068300d0972f8}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!sRDVBAT@{sRDVBAT}}
+\index{sRDVBAT@{sRDVBAT}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{sRDVBAT}{sRDVBAT}}
+{\footnotesize\ttfamily uint8\+\_\+t s\+R\+D\+V\+B\+AT\mbox{[}4\mbox{]} = \{ 0x00, 0x06 , 0x9A, 0x94\}}
+
+
+
+Definition at line 167 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ad88cebc6d25216bd6dc54fd1cf5a1374}\label{bms__cmdlist_8c_ad88cebc6d25216bd6dc54fd1cf5a1374}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!sRDVC@{sRDVC}}
+\index{sRDVC@{sRDVC}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{sRDVC}{sRDVC}}
+{\footnotesize\ttfamily uint8\+\_\+t s\+R\+D\+VC\mbox{[}4\mbox{]} = \{ 0x00, 0x03 , 0x\+A0, 0x38\}}
+
+
+
+Definition at line 164 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a3d5d568612f8546337680f146badd2c1}\label{bms__cmdlist_8c_a3d5d568612f8546337680f146badd2c1}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!sRDVD@{sRDVD}}
+\index{sRDVD@{sRDVD}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{sRDVD}{sRDVD}}
+{\footnotesize\ttfamily uint8\+\_\+t s\+R\+D\+VD\mbox{[}4\mbox{]} = \{ 0x00, 0x05 , 0x8C, 0x\+F0\}}
+
+
+
+Definition at line 165 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a2f5563fb0aeefd438466f55654a2fcb5}\label{bms__cmdlist_8c_a2f5563fb0aeefd438466f55654a2fcb5}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!SRST@{SRST}}
+\index{SRST@{SRST}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{SRST}{SRST}}
+{\footnotesize\ttfamily uint8\+\_\+t S\+R\+ST\mbox{[}2\mbox{]} = \{ 0x00, 0x27 \}}
+
+
+
+Definition at line 52 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+stop\+Discharge().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_af41ee80bdc6615a6ebba404eee8afdff}\label{bms__cmdlist_8c_af41ee80bdc6615a6ebba404eee8afdff}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!STCOMM@{STCOMM}}
+\index{STCOMM@{STCOMM}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{STCOMM}{STCOMM}}
+{\footnotesize\ttfamily uint8\+\_\+t S\+T\+C\+O\+MM\mbox{[}13\mbox{]} = \{ 0x07, 0x23, 0x\+B9, 0x\+E4 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00 ,0x00\}}
+
+Control Commands 
+
+Definition at line 45 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ad19da93c8ef1d7be162bc2b6e095779f}\label{bms__cmdlist_8c_ad19da93c8ef1d7be162bc2b6e095779f}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!TM\_48@{TM\_48}}
+\index{TM\_48@{TM\_48}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{TM\_48}{TM\_48}}
+{\footnotesize\ttfamily uint8\+\_\+t T\+M\+\_\+48\mbox{[}2\mbox{]} = \{ 0x00, 0x0E \}}
+
+
+
+Definition at line 169 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a8c03bfab0e061fa0d215520dfe8a7e71}\label{bms__cmdlist_8c_a8c03bfab0e061fa0d215520dfe8a7e71}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!UNMUTE@{UNMUTE}}
+\index{UNMUTE@{UNMUTE}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{UNMUTE}{UNMUTE}}
+{\footnotesize\ttfamily uint8\+\_\+t U\+N\+M\+U\+TE\mbox{[}2\mbox{]} = \{ 0x00, 0x29 \}}
+
+
+
+Definition at line 248 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a6b0a44ba28b98a475a5c5c437005f3a5}\label{bms__cmdlist_8c_a6b0a44ba28b98a475a5c5c437005f3a5}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!UNSNAP@{UNSNAP}}
+\index{UNSNAP@{UNSNAP}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{UNSNAP}{UNSNAP}}
+{\footnotesize\ttfamily uint8\+\_\+t U\+N\+S\+N\+AP\mbox{[}2\mbox{]} = \{ 0x00, 0x2F \}}
+
+
+
+Definition at line 51 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a7dad65a0c478796a854ab35b45ac34b9}\label{bms__cmdlist_8c_a7dad65a0c478796a854ab35b45ac34b9}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!WRCFGA@{WRCFGA}}
+\index{WRCFGA@{WRCFGA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{WRCFGA}{WRCFGA}}
+{\footnotesize\ttfamily uint8\+\_\+t W\+R\+C\+F\+GA\mbox{[}2\mbox{]} = \{ 0x00, 0x01 \}}
+
+
+
+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/--- B\+O\+TH 2950 A\+ND 6830 -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/--- /// 
+
+$<$ configuration registers commands 
+
+Definition at line 9 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+write\+Config\+A().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a282e16f5fd0a607d103507ed935539bf}\label{bms__cmdlist_8c_a282e16f5fd0a607d103507ed935539bf}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!WRCFGB@{WRCFGB}}
+\index{WRCFGB@{WRCFGB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{WRCFGB}{WRCFGB}}
+{\footnotesize\ttfamily uint8\+\_\+t W\+R\+C\+F\+GB\mbox{[}2\mbox{]} = \{ 0x00, 0x24 \}}
+
+
+
+Definition at line 10 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+write\+Config\+B().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_ad576dfa7835126c3baaf18f90655b5db}\label{bms__cmdlist_8c_ad576dfa7835126c3baaf18f90655b5db}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!WRCOMM@{WRCOMM}}
+\index{WRCOMM@{WRCOMM}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{WRCOMM}{WRCOMM}}
+{\footnotesize\ttfamily uint8\+\_\+t W\+R\+C\+O\+MM\mbox{[}2\mbox{]} = \{ 0x07, 0x21 \}}
+
+
+
+Definition at line 42 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a5f81c579a9e06377fd4348ee26252144}\label{bms__cmdlist_8c_a5f81c579a9e06377fd4348ee26252144}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!WRPWM1@{WRPWM1}}
+\index{WRPWM1@{WRPWM1}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{WRPWM1}{WRPWM1}}
+{\footnotesize\ttfamily uint8\+\_\+t W\+R\+P\+W\+M1\mbox{[}2\mbox{]} = \{ 0x00, 0x20 \}}
+
+
+
+Definition at line 224 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+write\+Pwm\+A().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a13cdc92c70c4b4e92061585a330add79}\label{bms__cmdlist_8c_a13cdc92c70c4b4e92061585a330add79}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!WRPWM2@{WRPWM2}}
+\index{WRPWM2@{WRPWM2}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{WRPWM2}{WRPWM2}}
+{\footnotesize\ttfamily uint8\+\_\+t W\+R\+P\+W\+M2\mbox{[}2\mbox{]} = \{ 0x00, 0x21 \}}
+
+
+
+Definition at line 226 of file bms\+\_\+cmdlist.\+c.
+
+
+
+Referenced by bms\+\_\+write\+Pwm\+B().
+
+\mbox{\Hypertarget{bms__cmdlist_8c_acaf0dc4792d91bf73a848c824f26cdc8}\label{bms__cmdlist_8c_acaf0dc4792d91bf73a848c824f26cdc8}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!WRPWMA@{WRPWMA}}
+\index{WRPWMA@{WRPWMA}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{WRPWMA}{WRPWMA}}
+{\footnotesize\ttfamily uint8\+\_\+t W\+R\+P\+W\+MA\mbox{[}2\mbox{]} = \{ 0x00, 0x20 \}}
+
+
+
+Definition at line 118 of file bms\+\_\+cmdlist.\+c.
+
+\mbox{\Hypertarget{bms__cmdlist_8c_a9ecfffc9cc7f7dc3a72effee5a1b68da}\label{bms__cmdlist_8c_a9ecfffc9cc7f7dc3a72effee5a1b68da}} 
+\index{bms\_cmdlist.c@{bms\_cmdlist.c}!WRPWMB@{WRPWMB}}
+\index{WRPWMB@{WRPWMB}!bms\_cmdlist.c@{bms\_cmdlist.c}}
+\doxysubsubsection{\texorpdfstring{WRPWMB}{WRPWMB}}
+{\footnotesize\ttfamily uint8\+\_\+t W\+R\+P\+W\+MB\mbox{[}2\mbox{]} = \{ 0x00, 0x21 \}}
+
+
+
+Definition at line 120 of file bms\+\_\+cmdlist.\+c.
+

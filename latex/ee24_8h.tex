@@ -1,0 +1,356 @@
+\hypertarget{ee24_8h}{}\doxysection{Core/\+Inc/ee24.h File Reference}
+\label{ee24_8h}\index{Core/Inc/ee24.h@{Core/Inc/ee24.h}}
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}main.\+h\char`\"{}}\newline
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{ee24_8h_aae190d972d6fa27076bb0b5fc85e8c6b}{E\+E24\+\_\+\+A\+D\+D\+R\+E\+S\+S\+\_\+\+D\+E\+F\+A\+U\+LT}}~0x\+A0
+\item 
+\#define \mbox{\hyperlink{ee24_8h_a8624b092154dcc0eac99dd62a4056a31}{E\+E24\+\_\+1\+K\+B\+IT}}~1
+\item 
+\#define \mbox{\hyperlink{ee24_8h_ab7bbf0e9edf34ac90aabad3d4b27614b}{E\+E24\+\_\+2\+K\+B\+IT}}~2
+\item 
+\#define \mbox{\hyperlink{ee24_8h_aad107cf20bda7430f0d40fc28a2223ed}{E\+E24\+\_\+4\+K\+B\+IT}}~4
+\item 
+\#define \mbox{\hyperlink{ee24_8h_a8e77c524226b75696156234ff180b008}{E\+E24\+\_\+8\+K\+B\+IT}}~8
+\item 
+\#define \mbox{\hyperlink{ee24_8h_a3047de91c16e485e9e8d416520d37e54}{E\+E24\+\_\+16\+K\+B\+IT}}~16
+\item 
+\#define \mbox{\hyperlink{ee24_8h_af82463e857b6915c82549557ac456cda}{E\+E24\+\_\+32\+K\+B\+IT}}~32
+\item 
+\#define \mbox{\hyperlink{ee24_8h_a70fd3e50830d4c6b2e0ecbff564b347d}{E\+E24\+\_\+64\+K\+B\+IT}}~64
+\item 
+\#define \mbox{\hyperlink{ee24_8h_afe6726d41e8d0f1f74a40210a18a4ddd}{E\+E24\+\_\+128\+K\+B\+IT}}~128
+\item 
+\#define \mbox{\hyperlink{ee24_8h_af25d7e31a23391ddc476917307d2f01f}{E\+E24\+\_\+256\+K\+B\+IT}}~256
+\item 
+\#define \mbox{\hyperlink{ee24_8h_af89f397b62becb1a7865182942704bdf}{E\+E24\+\_\+512\+K\+B\+IT}}~512
+\item 
+\#define \mbox{\hyperlink{ee24_8h_aa45ac91605ddba18de016933650de821}{E\+E24\+\_\+\+R\+T\+O\+S\+\_\+\+D\+I\+S\+A\+B\+LE}}~0
+\item 
+\#define \mbox{\hyperlink{ee24_8h_a97e00ab6631ae69a4b48a9e67ad2d474}{E\+E24\+\_\+\+R\+T\+O\+S\+\_\+\+C\+M\+S\+I\+S\+\_\+\+V1}}~1
+\item 
+\#define \mbox{\hyperlink{ee24_8h_ac45ce8f91e20f36fd71233b7a0dd1042}{E\+E24\+\_\+\+R\+T\+O\+S\+\_\+\+C\+M\+S\+I\+S\+\_\+\+V2}}~2
+\item 
+\#define \mbox{\hyperlink{ee24_8h_a5e26884fd5ffa14a8903471905673e08}{E\+E24\+\_\+\+R\+T\+O\+S\+\_\+\+T\+H\+R\+E\+A\+DX}}~3
+\item 
+\#define \mbox{\hyperlink{ee24_8h_a2f2ba2b41cae20442261cb2bf19ea9b9}{E\+E24\+\_\+\+S\+I\+ZE}}~\mbox{\hyperlink{ee24_8h_a8e77c524226b75696156234ff180b008}{E\+E24\+\_\+8\+K\+B\+IT}}
+\item 
+\#define \mbox{\hyperlink{ee24_8h_a0a005701ee32396eff5ee87105bed463}{E\+E24\+\_\+\+R\+T\+OS}}~\mbox{\hyperlink{ee24_8h_aa45ac91605ddba18de016933650de821}{E\+E24\+\_\+\+R\+T\+O\+S\+\_\+\+D\+I\+S\+A\+B\+LE}}
+\item 
+\#define \mbox{\hyperlink{ee24_8h_ab08873d1c999e435d127e9948f0e454a}{E\+E24\+\_\+\+U\+S\+E\+\_\+\+W\+P\+\_\+\+P\+IN}}~false
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{ee24_8h_a4c3c6c2f25430203b1890976f34893ce}{E\+E24\+\_\+\+Init}} (\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$Handle, I2\+C\+\_\+\+Handle\+Type\+Def $\ast$H\+I2c, uint8\+\_\+t I2\+C\+Address)
+\begin{DoxyCompactList}\small\item\em Initialize E\+E\+P\+R\+OM handle. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{ee24_8h_ab1e4f3fbc0e459fe406070fd1c20eee7}{E\+E24\+\_\+\+Read}} (\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$Handle, uint32\+\_\+t Address, uint8\+\_\+t $\ast$Data, size\+\_\+t Len, uint32\+\_\+t Timeout)
+\begin{DoxyCompactList}\small\item\em Read from Memory. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{ee24_8h_a3dc55d2c1024be6689928a4a8990c628}{E\+E24\+\_\+\+Write}} (\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$Handle, uint32\+\_\+t Address, uint8\+\_\+t $\ast$Data, size\+\_\+t Len, uint32\+\_\+t Timeout)
+\begin{DoxyCompactList}\small\item\em Write to Memory. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{ee24_8h_afe6726d41e8d0f1f74a40210a18a4ddd}\label{ee24_8h_afe6726d41e8d0f1f74a40210a18a4ddd}} 
+\index{ee24.h@{ee24.h}!EE24\_128KBIT@{EE24\_128KBIT}}
+\index{EE24\_128KBIT@{EE24\_128KBIT}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_128KBIT}{EE24\_128KBIT}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+128\+K\+B\+IT~128}
+
+
+
+Definition at line 53 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_a3047de91c16e485e9e8d416520d37e54}\label{ee24_8h_a3047de91c16e485e9e8d416520d37e54}} 
+\index{ee24.h@{ee24.h}!EE24\_16KBIT@{EE24\_16KBIT}}
+\index{EE24\_16KBIT@{EE24\_16KBIT}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_16KBIT}{EE24\_16KBIT}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+16\+K\+B\+IT~16}
+
+
+
+Definition at line 50 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_a8624b092154dcc0eac99dd62a4056a31}\label{ee24_8h_a8624b092154dcc0eac99dd62a4056a31}} 
+\index{ee24.h@{ee24.h}!EE24\_1KBIT@{EE24\_1KBIT}}
+\index{EE24\_1KBIT@{EE24\_1KBIT}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_1KBIT}{EE24\_1KBIT}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+1\+K\+B\+IT~1}
+
+
+
+Definition at line 46 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_af25d7e31a23391ddc476917307d2f01f}\label{ee24_8h_af25d7e31a23391ddc476917307d2f01f}} 
+\index{ee24.h@{ee24.h}!EE24\_256KBIT@{EE24\_256KBIT}}
+\index{EE24\_256KBIT@{EE24\_256KBIT}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_256KBIT}{EE24\_256KBIT}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+256\+K\+B\+IT~256}
+
+
+
+Definition at line 54 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_ab7bbf0e9edf34ac90aabad3d4b27614b}\label{ee24_8h_ab7bbf0e9edf34ac90aabad3d4b27614b}} 
+\index{ee24.h@{ee24.h}!EE24\_2KBIT@{EE24\_2KBIT}}
+\index{EE24\_2KBIT@{EE24\_2KBIT}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_2KBIT}{EE24\_2KBIT}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+2\+K\+B\+IT~2}
+
+
+
+Definition at line 47 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_af82463e857b6915c82549557ac456cda}\label{ee24_8h_af82463e857b6915c82549557ac456cda}} 
+\index{ee24.h@{ee24.h}!EE24\_32KBIT@{EE24\_32KBIT}}
+\index{EE24\_32KBIT@{EE24\_32KBIT}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_32KBIT}{EE24\_32KBIT}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+32\+K\+B\+IT~32}
+
+
+
+Definition at line 51 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_aad107cf20bda7430f0d40fc28a2223ed}\label{ee24_8h_aad107cf20bda7430f0d40fc28a2223ed}} 
+\index{ee24.h@{ee24.h}!EE24\_4KBIT@{EE24\_4KBIT}}
+\index{EE24\_4KBIT@{EE24\_4KBIT}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_4KBIT}{EE24\_4KBIT}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+4\+K\+B\+IT~4}
+
+
+
+Definition at line 48 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_af89f397b62becb1a7865182942704bdf}\label{ee24_8h_af89f397b62becb1a7865182942704bdf}} 
+\index{ee24.h@{ee24.h}!EE24\_512KBIT@{EE24\_512KBIT}}
+\index{EE24\_512KBIT@{EE24\_512KBIT}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_512KBIT}{EE24\_512KBIT}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+512\+K\+B\+IT~512}
+
+
+
+Definition at line 55 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_a70fd3e50830d4c6b2e0ecbff564b347d}\label{ee24_8h_a70fd3e50830d4c6b2e0ecbff564b347d}} 
+\index{ee24.h@{ee24.h}!EE24\_64KBIT@{EE24\_64KBIT}}
+\index{EE24\_64KBIT@{EE24\_64KBIT}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_64KBIT}{EE24\_64KBIT}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+64\+K\+B\+IT~64}
+
+
+
+Definition at line 52 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_a8e77c524226b75696156234ff180b008}\label{ee24_8h_a8e77c524226b75696156234ff180b008}} 
+\index{ee24.h@{ee24.h}!EE24\_8KBIT@{EE24\_8KBIT}}
+\index{EE24\_8KBIT@{EE24\_8KBIT}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_8KBIT}{EE24\_8KBIT}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+8\+K\+B\+IT~8}
+
+
+
+Definition at line 49 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_aae190d972d6fa27076bb0b5fc85e8c6b}\label{ee24_8h_aae190d972d6fa27076bb0b5fc85e8c6b}} 
+\index{ee24.h@{ee24.h}!EE24\_ADDRESS\_DEFAULT@{EE24\_ADDRESS\_DEFAULT}}
+\index{EE24\_ADDRESS\_DEFAULT@{EE24\_ADDRESS\_DEFAULT}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_ADDRESS\_DEFAULT}{EE24\_ADDRESS\_DEFAULT}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+\+A\+D\+D\+R\+E\+S\+S\+\_\+\+D\+E\+F\+A\+U\+LT~0x\+A0}
+
+
+
+Definition at line 44 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_a0a005701ee32396eff5ee87105bed463}\label{ee24_8h_a0a005701ee32396eff5ee87105bed463}} 
+\index{ee24.h@{ee24.h}!EE24\_RTOS@{EE24\_RTOS}}
+\index{EE24\_RTOS@{EE24\_RTOS}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_RTOS}{EE24\_RTOS}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+\+R\+T\+OS~\mbox{\hyperlink{ee24_8h_aa45ac91605ddba18de016933650de821}{E\+E24\+\_\+\+R\+T\+O\+S\+\_\+\+D\+I\+S\+A\+B\+LE}}}
+
+
+
+Definition at line 67 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_a97e00ab6631ae69a4b48a9e67ad2d474}\label{ee24_8h_a97e00ab6631ae69a4b48a9e67ad2d474}} 
+\index{ee24.h@{ee24.h}!EE24\_RTOS\_CMSIS\_V1@{EE24\_RTOS\_CMSIS\_V1}}
+\index{EE24\_RTOS\_CMSIS\_V1@{EE24\_RTOS\_CMSIS\_V1}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_RTOS\_CMSIS\_V1}{EE24\_RTOS\_CMSIS\_V1}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+\+R\+T\+O\+S\+\_\+\+C\+M\+S\+I\+S\+\_\+\+V1~1}
+
+
+
+Definition at line 58 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_ac45ce8f91e20f36fd71233b7a0dd1042}\label{ee24_8h_ac45ce8f91e20f36fd71233b7a0dd1042}} 
+\index{ee24.h@{ee24.h}!EE24\_RTOS\_CMSIS\_V2@{EE24\_RTOS\_CMSIS\_V2}}
+\index{EE24\_RTOS\_CMSIS\_V2@{EE24\_RTOS\_CMSIS\_V2}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_RTOS\_CMSIS\_V2}{EE24\_RTOS\_CMSIS\_V2}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+\+R\+T\+O\+S\+\_\+\+C\+M\+S\+I\+S\+\_\+\+V2~2}
+
+
+
+Definition at line 59 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_aa45ac91605ddba18de016933650de821}\label{ee24_8h_aa45ac91605ddba18de016933650de821}} 
+\index{ee24.h@{ee24.h}!EE24\_RTOS\_DISABLE@{EE24\_RTOS\_DISABLE}}
+\index{EE24\_RTOS\_DISABLE@{EE24\_RTOS\_DISABLE}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_RTOS\_DISABLE}{EE24\_RTOS\_DISABLE}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+\+R\+T\+O\+S\+\_\+\+D\+I\+S\+A\+B\+LE~0}
+
+
+
+Definition at line 57 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_a5e26884fd5ffa14a8903471905673e08}\label{ee24_8h_a5e26884fd5ffa14a8903471905673e08}} 
+\index{ee24.h@{ee24.h}!EE24\_RTOS\_THREADX@{EE24\_RTOS\_THREADX}}
+\index{EE24\_RTOS\_THREADX@{EE24\_RTOS\_THREADX}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_RTOS\_THREADX}{EE24\_RTOS\_THREADX}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+\+R\+T\+O\+S\+\_\+\+T\+H\+R\+E\+A\+DX~3}
+
+
+
+Definition at line 60 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_a2f2ba2b41cae20442261cb2bf19ea9b9}\label{ee24_8h_a2f2ba2b41cae20442261cb2bf19ea9b9}} 
+\index{ee24.h@{ee24.h}!EE24\_SIZE@{EE24\_SIZE}}
+\index{EE24\_SIZE@{EE24\_SIZE}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_SIZE}{EE24\_SIZE}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+\+S\+I\+ZE~\mbox{\hyperlink{ee24_8h_a8e77c524226b75696156234ff180b008}{E\+E24\+\_\+8\+K\+B\+IT}}}
+
+
+
+Definition at line 64 of file ee24.\+h.
+
+\mbox{\Hypertarget{ee24_8h_ab08873d1c999e435d127e9948f0e454a}\label{ee24_8h_ab08873d1c999e435d127e9948f0e454a}} 
+\index{ee24.h@{ee24.h}!EE24\_USE\_WP\_PIN@{EE24\_USE\_WP\_PIN}}
+\index{EE24\_USE\_WP\_PIN@{EE24\_USE\_WP\_PIN}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_USE\_WP\_PIN}{EE24\_USE\_WP\_PIN}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+\+U\+S\+E\+\_\+\+W\+P\+\_\+\+P\+IN~false}
+
+
+
+Definition at line 70 of file ee24.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{ee24_8h_a4c3c6c2f25430203b1890976f34893ce}\label{ee24_8h_a4c3c6c2f25430203b1890976f34893ce}} 
+\index{ee24.h@{ee24.h}!EE24\_Init@{EE24\_Init}}
+\index{EE24\_Init@{EE24\_Init}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_Init()}{EE24\_Init()}}
+{\footnotesize\ttfamily bool E\+E24\+\_\+\+Init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$}]{Handle,  }\item[{I2\+C\+\_\+\+Handle\+Type\+Def $\ast$}]{H\+I2c,  }\item[{uint8\+\_\+t}]{I2\+C\+Address }\end{DoxyParamCaption})}
+
+
+
+Initialize E\+E\+P\+R\+OM handle. 
+
+\begin{DoxyNote}{Note}
+Initialize E\+E\+P\+R\+OM handle and set E\+E\+P\+R\+OM address
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$\+Handle} & Pointer to \mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} structure \\
+\hline
+{\em $\ast$\+H\+I2c} & Pointer to I2\+C\+\_\+\+Handle\+Type\+Def structure \\
+\hline
+{\em I2\+C\+Address} & I2C Memory address\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em bool} & true or false \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 86 of file ee24.\+c.
+
+
+
+Referenced by Read\+\_\+\+E\+E\+P\+R\+O\+M(), and Write\+\_\+\+E\+E\+P\+R\+O\+M().
+
+\mbox{\Hypertarget{ee24_8h_ab1e4f3fbc0e459fe406070fd1c20eee7}\label{ee24_8h_ab1e4f3fbc0e459fe406070fd1c20eee7}} 
+\index{ee24.h@{ee24.h}!EE24\_Read@{EE24\_Read}}
+\index{EE24\_Read@{EE24\_Read}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_Read()}{EE24\_Read()}}
+{\footnotesize\ttfamily bool E\+E24\+\_\+\+Read (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$}]{Handle,  }\item[{uint32\+\_\+t}]{Address,  }\item[{uint8\+\_\+t $\ast$}]{Data,  }\item[{size\+\_\+t}]{Len,  }\item[{uint32\+\_\+t}]{Timeout }\end{DoxyParamCaption})}
+
+
+
+Read from Memory. 
+
+\begin{DoxyNote}{Note}
+Read data from memory and copy to an array
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$\+Handle} & Pointer to \mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} structure \\
+\hline
+{\em Address} & Start address for read \\
+\hline
+{\em $\ast$\+Data} & Pointer to copy data from E\+E\+P\+R\+OM \\
+\hline
+{\em Len} & Data length to read \\
+\hline
+{\em Timeout} & Timeout of this operation in ms\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em bool} & true or false \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 158 of file ee24.\+c.
+
+
+
+Referenced by Read\+\_\+\+E\+E\+P\+R\+O\+M(), and Write\+\_\+\+E\+E\+P\+R\+O\+M().
+
+\mbox{\Hypertarget{ee24_8h_a3dc55d2c1024be6689928a4a8990c628}\label{ee24_8h_a3dc55d2c1024be6689928a4a8990c628}} 
+\index{ee24.h@{ee24.h}!EE24\_Write@{EE24\_Write}}
+\index{EE24\_Write@{EE24\_Write}!ee24.h@{ee24.h}}
+\doxysubsubsection{\texorpdfstring{EE24\_Write()}{EE24\_Write()}}
+{\footnotesize\ttfamily bool E\+E24\+\_\+\+Write (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$}]{Handle,  }\item[{uint32\+\_\+t}]{Address,  }\item[{uint8\+\_\+t $\ast$}]{Data,  }\item[{size\+\_\+t}]{Len,  }\item[{uint32\+\_\+t}]{Timeout }\end{DoxyParamCaption})}
+
+
+
+Write to Memory. 
+
+\begin{DoxyNote}{Note}
+Write an array to memory
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$\+Handle} & Pointer to \mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} structure \\
+\hline
+{\em Address} & Start address for write \\
+\hline
+{\em $\ast$\+Data} & Pointer to copy data to E\+E\+P\+E\+OM \\
+\hline
+{\em Len} & Data length to write \\
+\hline
+{\em Timeout} & Timeout of this operation in ms\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em bool} & true or false \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 199 of file ee24.\+c.
+
+
+
+Referenced by Write\+\_\+\+E\+E\+P\+R\+O\+M().
+

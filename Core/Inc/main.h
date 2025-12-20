@@ -75,6 +75,8 @@ extern CAN_HandleTypeDef hcan2;
 
 /* USER CODE END EM */
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -100,8 +102,6 @@ void Error_Handler(void);
 #define CONTACT_AIR_positivo_GPIO_Port GPIOB
 #define CONTACT_AIR_negativo_Pin GPIO_PIN_1
 #define CONTACT_AIR_negativo_GPIO_Port GPIOB
-#define LED_BLUE_Pin GPIO_PIN_2
-#define LED_BLUE_GPIO_Port GPIOB
 #define LED_RED_Pin GPIO_PIN_10
 #define LED_RED_GPIO_Port GPIOB
 #define CHARGER_CAN_RX_Pin GPIO_PIN_12

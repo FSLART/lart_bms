@@ -1,0 +1,582 @@
+.TH "Core/Src/bms_libWrapper.c" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Core/Src/bms_libWrapper.c
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'bms_libWrapper\&.h'\fP
+.br
+\fC#include 'bms_datatypes\&.h'\fP
+.br
+\fC#include 'bms_utility\&.h'\fP
+.br
+\fC#include 'bms_mcuWrapper\&.h'\fP
+.br
+\fC#include 'bms_cmdlist\&.h'\fP
+.br
+\fC#include <string\&.h>\fP
+.br
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include <math\&.h>\fP
+.br
+\fC#include 'main\&.h'\fP
+.br
+\fC#include 'brain\&.h'\fP
+.br
+\fC#include 'uartDMA\&.h'\fP
+.br
+\fC#include 'time_rtc\&.h'\fP
+.br
+\fC#include 'can\&.h'\fP
+.br
+\fC#include 'dbc/ams\&.h'\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBic_ad68_t\fP"
+.br
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBWAIT_8MS\fP   8U"
+.br
+.ti -1c
+.RI "#define \fBWAIT_12MS\fP   12U"
+.br
+.ti -1c
+.RI "#define \fBWAIT_100MS\fP   100U"
+.br
+.ti -1c
+.RI "#define \fBPRINT_COMMA\fP   do { if (first) first = 0; else \fBprintfDmaBT\fP(','); } while (0)"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBbms_resetConfig\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_init\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_writeConfigA\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_writeConfigB\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_writePwmA\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_writePwmB\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms68_setGpo45\fP (uint8_t twoBitIndex)"
+.br
+.ti -1c
+.RI "void \fBbms_printRawData\fP (uint8_t data[\fBTOTAL_IC\fP][\fBDATA_LEN\fP], uint8_t cc[\fBTOTAL_IC\fP])"
+.br
+.ti -1c
+.RI "bool \fBbms_checkRxFault\fP (uint8_t data[\fBTOTAL_IC\fP][\fBDATA_LEN\fP], uint16_t pec[\fBTOTAL_IC\fP], uint8_t cc[\fBTOTAL_IC\fP])"
+.br
+.ti -1c
+.RI "void \fBbms_readSid\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_readConfigA\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_readConfigB\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_startAdcvCont\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_parseVoltage\fP (uint8_t rawData[\fBTOTAL_IC\fP][\fBDATA_LEN\fP], float vArr[\fBTOTAL_CELL\fP], uint8_t cell_index)"
+.br
+.ti -1c
+.RI "void \fBbms_parseAuxVoltage\fP (uint8_t rawData[\fBTOTAL_IC\fP][\fBDATA_LEN\fP], float vArr[\fBRTH_PER_MODULE\fP], uint8_t cell_index, uint8_t muxIndex)"
+.br
+.ti -1c
+.RI "void \fBbms_calculateStats\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_printVoltage\fP (float vArr[\fBTOTAL_CELL\fP])"
+.br
+.ti -1c
+.RI "void \fBbms_printTemps\fP (float tArr[\fBRTH_PER_MODULE\fP])"
+.br
+.ti -1c
+.RI "void \fBbms_readAvgCellVoltage\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_readSVoltage\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_getAuxVoltage\fP (uint8_t muxIndex)"
+.br
+.ti -1c
+.RI "float \fBconvertCellTemp\fP (float cellVoltage)"
+.br
+.ti -1c
+.RI "void \fBbms_parseTemps\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_getAuxMeasurement\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_setPwm\fP (\fBic_ad68_t\fP *ic, uint8_t cell, uint8_t dutyCycle)"
+.br
+.ti -1c
+.RI "float \fBbms_calculateBalancing\fP (float delta_threshold)"
+.br
+.ti -1c
+.RI "void \fBbms_startDischarge\fP (float threshold)"
+.br
+.ti -1c
+.RI "void \fBbms_stopDischarge\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_readVB\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_printRthTempsJson\fP (void)"
+.br
+.ti -1c
+.RI "void \fBsend_ad68_ui\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_balancingMeasureVoltage\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_startBalancing\fP (float \fBdeltaThreshold\fP)"
+.br
+.ti -1c
+.RI "void \fBad68_dump_csv_bt\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_openWireCheck\fP (\fBbms_ow_status_t\fP *\fBow_status\fP[\fBTOTAL_AD68\fP][\fBTOTAL_CELL\fP])"
+.br
+.ti -1c
+.RI "HAL_StatusTypeDef \fBSlaves_CAN_SendMessage\fP (CAN_HandleTypeDef *hcan, uint32_t canID, uint32_t dataLength, const uint8_t *TxData)"
+.br
+.RI "Sends a CAN message via the CAN TX FIFO\&. "
+.ti -1c
+.RI "uint16_t \fBconv_voltage\fP (float v)"
+.br
+.ti -1c
+.RI "HAL_StatusTypeDef \fBCAN_Send_AD68_Voltages_Module\fP (CAN_HandleTypeDef *hcan, uint8_t module)"
+.br
+.ti -1c
+.RI "uint16_t \fBconv_temp\fP (float t)"
+.br
+.ti -1c
+.RI "HAL_StatusTypeDef \fBCAN_Send_AD68_Temperatures_Module\fP (CAN_HandleTypeDef *hcan, uint8_t module)"
+.br
+.ti -1c
+.RI "void \fBCAN_Send_AD68_All\fP (CAN_HandleTypeDef *hcan)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "uint8_t \fBtxData\fP [\fBTOTAL_IC\fP][\fBDATA_LEN\fP]"
+.br
+.ti -1c
+.RI "uint8_t \fBrxData\fP [\fBTOTAL_IC\fP][\fBDATA_LEN\fP]"
+.br
+.ti -1c
+.RI "uint16_t \fBrxPec\fP [\fBTOTAL_IC\fP]"
+.br
+.ti -1c
+.RI "uint8_t \fBrxCc\fP [\fBTOTAL_IC\fP]"
+.br
+.ti -1c
+.RI "\fBic_ad68_t\fP \fBic_ad68\fP [\fBTOTAL_AD68\fP]"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define PRINT_COMMA   do { if (first) first = 0; else \fBprintfDmaBT\fP(','); } while (0)"
+
+.SS "#define WAIT_100MS   100U"
+
+.PP
+Definition at line 63 of file bms_libWrapper\&.c\&.
+.SS "#define WAIT_12MS   12U"
+
+.PP
+Definition at line 62 of file bms_libWrapper\&.c\&.
+.SS "#define WAIT_8MS   8U"
+
+.PP
+Definition at line 61 of file bms_libWrapper\&.c\&.
+.SH "Function Documentation"
+.PP 
+.SS "void ad68_dump_csv_bt (void)"
+
+.PP
+Definition at line 1044 of file bms_libWrapper\&.c\&.
+.PP
+References ic_ad68, PRINT_COMMA, printfDmaBT(), RTH_PER_MODULE, TOTAL_AD68, and TOTAL_CELL\&.
+.SS "void bms68_setGpo45 (uint8_t twoBitIndex)"
+
+.PP
+Definition at line 172 of file bms_libWrapper\&.c\&.
+.PP
+References bms_writeConfigA(), ic_ad68_t::cfa_Tx, ad68_cfa_t::gpo1to8, ic_ad68, and TOTAL_AD68\&.
+.SS "void bms_balancingMeasureVoltage (void)"
+
+.PP
+Definition at line 1019 of file bms_libWrapper\&.c\&.
+.PP
+References ADSV, bms_readSVoltage(), bms_transmitCmd(), bms_transmitPoll(), ADSV_t::CONT, ADSV_t::DCP, ADSV_t::OW, and PLSADC\&.
+.SS "float bms_calculateBalancing (float delta_threshold)"
+
+.PP
+Definition at line 791 of file bms_libWrapper\&.c\&.
+.PP
+References ic_ad68, TOTAL_AD68, ic_ad68_t::v_avgCell_max, and ic_ad68_t::v_avgCell_min\&.
+.PP
+Referenced by bms_startBalancing(), and brain_loop()\&.
+.SS "void bms_calculateStats (void)"
+
+.PP
+Definition at line 380 of file bms_libWrapper\&.c\&.
+.PP
+References ic_ad68, TOTAL_AD68, TOTAL_CELL, ic_ad68_t::v_avgCell, ic_ad68_t::v_avgCell_avg, ic_ad68_t::v_avgCell_delta, ic_ad68_t::v_avgCell_max, ic_ad68_t::v_avgCell_min, and ic_ad68_t::v_avgCell_sum\&.
+.PP
+Referenced by bms_readAvgCellVoltage()\&.
+.SS "bool bms_checkRxFault (uint8_t data[TOTAL_IC][DATA_LEN], uint16_t pec[TOTAL_IC], uint8_t cc[TOTAL_IC])"
+
+.PP
+Definition at line 194 of file bms_libWrapper\&.c\&.
+.PP
+References bms_checkRxPec(), printConsole(), and TOTAL_IC\&.
+.PP
+Referenced by bms_getAuxVoltage(), bms_readAvgCellVoltage(), bms_readConfigA(), bms_readConfigB(), bms_readSid(), bms_readSVoltage(), and bms_readVB()\&.
+.SS "void bms_getAuxMeasurement (void)"
+
+.PP
+Definition at line 629 of file bms_libWrapper\&.c\&.
+.PP
+References ADAX, bms_getAuxVoltage(), bms_parseTemps(), bms_transmitCmd(), bms_transmitPoll(), bms_wakeupChain(), ADAX_t::CH, ADAX_t::CH4, ADAX_t::OW, PLAUX1, and ADAX_t::PUP\&.
+.PP
+Referenced by brain_loop(), and brain_start()\&.
+.SS "void bms_getAuxVoltage (uint8_t muxIndex)"
+
+.PP
+Definition at line 490 of file bms_libWrapper\&.c\&.
+.PP
+References bms_checkRxFault(), bms_parseAuxVoltage(), bms_receiveData(), ic_ad68, RDAUXA, RDAUXB, RDAUXC, RDAUXD, RDSTATA, rxCc, rxData, and rxPec\&.
+.PP
+Referenced by bms_getAuxMeasurement()\&.
+.SS "void bms_init (void)"
+
+.PP
+Definition at line 116 of file bms_libWrapper\&.c\&.
+.PP
+References bms_resetConfig()\&.
+.PP
+Referenced by brain_start()\&.
+.SS "void bms_openWireCheck (\fBbms_ow_status_t\fP * ow_status[TOTAL_AD68][TOTAL_CELL])"
+
+.PP
+Definition at line 1116 of file bms_libWrapper\&.c\&.
+.PP
+References ADSV, bms_delayMsActive(), bms_printVoltage(), bms_readSVoltage(), bms_transmitCmd(), bms_wakeupChain(), ADSV_t::CONT, ADSV_t::DCP, ic_ad68, ADSV_t::OW, OW_OPEN_EDGE, OW_RATIO_MAX, OW_RATIO_MIN, OW_UV_IGNORE_THRESH, printConsole(), TOTAL_AD68, TOTAL_CELL, and ic_ad68_t::v_sCell\&.
+.SS "void bms_parseAuxVoltage (uint8_t rawData[TOTAL_IC][DATA_LEN], float vArr[RTH_PER_MODULE], uint8_t cell_index, uint8_t muxIndex)"
+
+.PP
+Definition at line 270 of file bms_libWrapper\&.c\&.
+.PP
+References ic_ad68, RTH_PER_MODULE, ic_ad68_t::temp_ic, TOTAL_IC, and ic_ad68_t::v_segment\&.
+.PP
+Referenced by bms_getAuxVoltage()\&.
+.SS "void bms_parseTemps (void)"
+
+.PP
+Definition at line 620 of file bms_libWrapper\&.c\&.
+.PP
+References convertCellTemp(), ic_ad68, RTH_PER_MODULE, ic_ad68_t::temp_cell, and TOTAL_AD68\&.
+.PP
+Referenced by bms_getAuxMeasurement()\&.
+.SS "void bms_parseVoltage (uint8_t rawData[TOTAL_IC][DATA_LEN], float vArr[TOTAL_CELL], uint8_t cell_index)"
+
+.PP
+Definition at line 256 of file bms_libWrapper\&.c\&.
+.PP
+References TOTAL_IC\&.
+.PP
+Referenced by bms_readAvgCellVoltage(), and bms_readSVoltage()\&.
+.SS "void bms_printRawData (uint8_t data[TOTAL_IC][DATA_LEN], uint8_t cc[TOTAL_IC])"
+
+.PP
+Definition at line 182 of file bms_libWrapper\&.c\&.
+.PP
+References printConsole(), and TOTAL_IC\&.
+.PP
+Referenced by bms_readConfigA(), bms_readConfigB(), bms_readSid(), and bms_readVB()\&.
+.SS "void bms_printRthTempsJson (void)"
+
+.PP
+Definition at line 897 of file bms_libWrapper\&.c\&.
+.PP
+References ic_ad68, printfDma(), RTH_PER_MODULE, and TOTAL_AD68\&.
+.SS "void bms_printTemps (float tArr[RTH_PER_MODULE])"
+
+.PP
+Definition at line 425 of file bms_libWrapper\&.c\&.
+.PP
+References printfDma(), TOTAL_AD68, and TOTAL_CELL\&.
+.SS "void bms_printVoltage (float vArr[TOTAL_CELL])"
+
+.PP
+Definition at line 406 of file bms_libWrapper\&.c\&.
+.PP
+References ic_ad68, printfDma(), printfDmaBT(), TOTAL_AD68, and TOTAL_CELL\&.
+.PP
+Referenced by bms_openWireCheck()\&.
+.SS "void bms_readAvgCellVoltage (void)"
+
+.PP
+Definition at line 443 of file bms_libWrapper\&.c\&.
+.PP
+References bms_calculateStats(), bms_checkRxFault(), bms_parseVoltage(), bms_receiveData(), ic_ad68, RDACA, RDACB, RDACC, RDACD, RDACE, RDACF, rxCc, rxData, and rxPec\&.
+.PP
+Referenced by brain_loop(), and brain_start()\&.
+.SS "void bms_readConfigA (void)"
+
+.PP
+Definition at line 223 of file bms_libWrapper\&.c\&.
+.PP
+References bms_checkRxFault(), bms_printRawData(), bms_receiveData(), RDCFGA, rxCc, rxData, and rxPec\&.
+.SS "void bms_readConfigB (void)"
+
+.PP
+Definition at line 230 of file bms_libWrapper\&.c\&.
+.PP
+References bms_checkRxFault(), bms_printRawData(), bms_receiveData(), RDCFGB, rxCc, rxData, and rxPec\&.
+.SS "void bms_readSid (void)"
+
+.PP
+Definition at line 216 of file bms_libWrapper\&.c\&.
+.PP
+References bms_checkRxFault(), bms_printRawData(), bms_receiveData(), printConsole(), RDSID, rxCc, rxData, and rxPec\&.
+.PP
+Referenced by brain_start()\&.
+.SS "void bms_readSVoltage (void)"
+
+.PP
+Definition at line 476 of file bms_libWrapper\&.c\&.
+.PP
+References bms_checkRxFault(), bms_parseVoltage(), bms_receiveData(), ic_ad68, RDSVA, RDSVB, RDSVC, RDSVD, RDSVE, RDSVF, rxCc, rxData, and rxPec\&.
+.PP
+Referenced by bms_balancingMeasureVoltage(), bms_openWireCheck(), and brain_start()\&.
+.SS "void bms_readVB (void)"
+
+.PP
+Definition at line 888 of file bms_libWrapper\&.c\&.
+.PP
+References bms_checkRxFault(), bms_printRawData(), bms_receiveData(), printfDma(), RDVB, rxCc, rxData, and rxPec\&.
+.SS "void bms_resetConfig (void)"
+
+.PP
+Definition at line 98 of file bms_libWrapper\&.c\&.
+.PP
+References DATA_LEN, ic_ad68, and TOTAL_AD68\&.
+.PP
+Referenced by bms_init()\&.
+.SS "void bms_setPwm (\fBic_ad68_t\fP * ic, uint8_t cell, uint8_t dutyCycle)"
+
+.PP
+Definition at line 732 of file bms_libWrapper\&.c\&.
+.PP
+References ad68_pwma_t::pwm1, ad68_pwma_t::pwm10, ad68_pwma_t::pwm11, ad68_pwma_t::pwm12, ad68_pwmb_t::pwm13, ad68_pwmb_t::pwm14, ad68_pwmb_t::pwm15, ad68_pwmb_t::pwm16, ad68_pwma_t::pwm2, ad68_pwma_t::pwm3, ad68_pwma_t::pwm4, ad68_pwma_t::pwm5, ad68_pwma_t::pwm6, ad68_pwma_t::pwm7, ad68_pwma_t::pwm8, ad68_pwma_t::pwm9, ic_ad68_t::pwma, and ic_ad68_t::pwmb\&.
+.PP
+Referenced by bms_startDischarge()\&.
+.SS "void bms_startAdcvCont (void)"
+
+.PP
+Definition at line 237 of file bms_libWrapper\&.c\&.
+.PP
+References ADCV, bms_transmitCmd(), ADCV_t::CONT, ADCV_t::DCP, ADCV_t::OW, ADCV_t::RD, and ADCV_t::RSTF\&.
+.PP
+Referenced by brain_loop(), and brain_start()\&.
+.SS "void bms_startBalancing (float deltaThreshold)"
+
+.PP
+Definition at line 1036 of file bms_libWrapper\&.c\&.
+.PP
+References bms_calculateBalancing(), bms_startDischarge(), and deltaThreshold\&.
+.SS "void bms_startDischarge (float threshold)"
+
+.PP
+Definition at line 839 of file bms_libWrapper\&.c\&.
+.PP
+References bms_setPwm(), bms_writeConfigB(), bms_writePwmA(), bms_writePwmB(), ic_ad68_t::cfb_Tx, ad68_cfb_t::dcto, ad68_cfb_t::dtmen, ic_ad68, printfDma(), ad68_pwma_t::pwm1, ic_ad68_t::pwma, TOTAL_AD68, and TOTAL_CELL\&.
+.PP
+Referenced by bms_startBalancing()\&.
+.SS "void bms_stopDischarge (void)"
+
+.PP
+Definition at line 873 of file bms_libWrapper\&.c\&.
+.PP
+References bms_transmitCmd(), bms_wakeupChain(), printfDma(), and SRST\&.
+.PP
+Referenced by brain_start()\&.
+.SS "void bms_writeConfigA (void)"
+
+.PP
+Definition at line 120 of file bms_libWrapper\&.c\&.
+.PP
+References bms_transmitData(), DATA_LEN, ic_ad68, TOTAL_AD68, txData, and WRCFGA\&.
+.PP
+Referenced by bms68_setGpo45()\&.
+.SS "void bms_writeConfigB (void)"
+
+.PP
+Definition at line 133 of file bms_libWrapper\&.c\&.
+.PP
+References bms_transmitData(), DATA_LEN, ic_ad68, TOTAL_AD68, txData, and WRCFGB\&.
+.PP
+Referenced by bms_startDischarge()\&.
+.SS "void bms_writePwmA (void)"
+
+.PP
+Definition at line 146 of file bms_libWrapper\&.c\&.
+.PP
+References bms_transmitData(), DATA_LEN, ic_ad68, TOTAL_AD68, txData, and WRPWM1\&.
+.PP
+Referenced by bms_startDischarge()\&.
+.SS "void bms_writePwmB (void)"
+
+.PP
+Definition at line 159 of file bms_libWrapper\&.c\&.
+.PP
+References bms_transmitData(), DATA_LEN, ic_ad68, TOTAL_AD68, txData, and WRPWM2\&.
+.PP
+Referenced by bms_startDischarge()\&.
+.SS "void CAN_Send_AD68_All (CAN_HandleTypeDef * hcan)"
+
+.PP
+Definition at line 2202 of file bms_libWrapper\&.c\&.
+.PP
+References CAN_Send_AD68_Temperatures_Module(), CAN_Send_AD68_Voltages_Module(), and TOTAL_AD68\&.
+.PP
+Referenced by brain_loop()\&.
+.SS "HAL_StatusTypeDef CAN_Send_AD68_Temperatures_Module (CAN_HandleTypeDef * hcan, uint8_t module)"
+
+.PP
+Definition at line 1751 of file bms_libWrapper\&.c\&.
+.PP
+References AMS_SLAVE_01_TEMPERATURE_ID_1_FRAME_ID, ams_slave_01_temperature_id_1_pack(), AMS_SLAVE_01_TEMPERATURE_ID_2_FRAME_ID, ams_slave_01_temperature_id_2_pack(), AMS_SLAVE_01_TEMPERATURE_ID_3_FRAME_ID, ams_slave_01_temperature_id_3_pack(), AMS_SLAVE_02_TEMPERATURE_ID_1_FRAME_ID, ams_slave_02_temperature_id_1_pack(), AMS_SLAVE_02_TEMPERATURE_ID_2_FRAME_ID, ams_slave_02_temperature_id_2_pack(), AMS_SLAVE_02_TEMPERATURE_ID_3_FRAME_ID, ams_slave_02_temperature_id_3_pack(), AMS_SLAVE_03_TEMPERATURE_ID_1_FRAME_ID, ams_slave_03_temperature_id_1_pack(), AMS_SLAVE_03_TEMPERATURE_ID_2_FRAME_ID, ams_slave_03_temperature_id_2_pack(), AMS_SLAVE_03_TEMPERATURE_ID_3_FRAME_ID, ams_slave_03_temperature_id_3_pack(), AMS_SLAVE_04_TEMPERATURE_ID_1_FRAME_ID, ams_slave_04_temperature_id_1_pack(), AMS_SLAVE_04_TEMPERATURE_ID_2_FRAME_ID, ams_slave_04_temperature_id_2_pack(), AMS_SLAVE_04_TEMPERATURE_ID_3_FRAME_ID, ams_slave_04_temperature_id_3_pack(), AMS_SLAVE_05_TEMPERATURE_ID_1_FRAME_ID, ams_slave_05_temperature_id_1_pack(), AMS_SLAVE_05_TEMPERATURE_ID_2_FRAME_ID, ams_slave_05_temperature_id_2_pack(), AMS_SLAVE_05_TEMPERATURE_ID_3_FRAME_ID, ams_slave_05_temperature_id_3_pack(), AMS_SLAVE_06_TEMPERATURE_ID_1_FRAME_ID, ams_slave_06_temperature_id_1_pack(), AMS_SLAVE_06_TEMPERATURE_ID_2_FRAME_ID, ams_slave_06_temperature_id_2_pack(), AMS_SLAVE_06_TEMPERATURE_ID_3_FRAME_ID, ams_slave_06_temperature_id_3_pack(), AMS_SLAVE_07_TEMPERATURE_ID_1_FRAME_ID, ams_slave_07_temperature_id_1_pack(), AMS_SLAVE_07_TEMPERATURE_ID_2_FRAME_ID, ams_slave_07_temperature_id_2_pack(), AMS_SLAVE_07_TEMPERATURE_ID_3_FRAME_ID, ams_slave_07_temperature_id_3_pack(), AMS_SLAVE_08_TEMPERATURE_ID_1_FRAME_ID, ams_slave_08_temperature_id_1_pack(), AMS_SLAVE_08_TEMPERATURE_ID_2_FRAME_ID, ams_slave_08_temperature_id_2_pack(), AMS_SLAVE_08_TEMPERATURE_ID_3_FRAME_ID, ams_slave_08_temperature_id_3_pack(), AMS_SLAVE_09_TEMPERATURE_ID_1_FRAME_ID, ams_slave_09_temperature_id_1_pack(), AMS_SLAVE_09_TEMPERATURE_ID_2_FRAME_ID, ams_slave_09_temperature_id_2_pack(), AMS_SLAVE_09_TEMPERATURE_ID_3_FRAME_ID, ams_slave_09_temperature_id_3_pack(), AMS_SLAVE_10_TEMPERATURE_ID_1_FRAME_ID, ams_slave_10_temperature_id_1_pack(), AMS_SLAVE_10_TEMPERATURE_ID_2_FRAME_ID, ams_slave_10_temperature_id_2_pack(), AMS_SLAVE_10_TEMPERATURE_ID_3_FRAME_ID, ams_slave_10_temperature_id_3_pack(), AMS_SLAVE_11_TEMPERATURE_ID_1_FRAME_ID, ams_slave_11_temperature_id_1_pack(), AMS_SLAVE_11_TEMPERATURE_ID_2_FRAME_ID, ams_slave_11_temperature_id_2_pack(), AMS_SLAVE_11_TEMPERATURE_ID_3_FRAME_ID, ams_slave_11_temperature_id_3_pack(), AMS_SLAVE_12_TEMPERATURE_ID_1_FRAME_ID, ams_slave_12_temperature_id_1_pack(), AMS_SLAVE_12_TEMPERATURE_ID_2_FRAME_ID, ams_slave_12_temperature_id_2_pack(), AMS_SLAVE_12_TEMPERATURE_ID_3_FRAME_ID, ams_slave_12_temperature_id_3_pack(), conv_temp(), ic_ad68, Slaves_CAN_SendMessage(), ic_ad68_t::temp_cell, ams_slave_01_temperature_id_1_t::temperature_value_1, ams_slave_01_temperature_id_3_t::temperature_value_10, ams_slave_09_temperature_id_1_t::temperature_value_100, ams_slave_09_temperature_id_2_t::temperature_value_101, ams_slave_09_temperature_id_2_t::temperature_value_102, ams_slave_09_temperature_id_2_t::temperature_value_103, ams_slave_09_temperature_id_2_t::temperature_value_104, ams_slave_09_temperature_id_3_t::temperature_value_105, ams_slave_09_temperature_id_3_t::temperature_value_106, ams_slave_09_temperature_id_3_t::temperature_value_107, ams_slave_09_temperature_id_3_t::temperature_value_108, ams_slave_10_temperature_id_1_t::temperature_value_109, ams_slave_01_temperature_id_3_t::temperature_value_11, ams_slave_10_temperature_id_1_t::temperature_value_110, ams_slave_10_temperature_id_1_t::temperature_value_111, ams_slave_10_temperature_id_1_t::temperature_value_112, ams_slave_10_temperature_id_2_t::temperature_value_113, ams_slave_10_temperature_id_2_t::temperature_value_114, ams_slave_10_temperature_id_2_t::temperature_value_115, ams_slave_10_temperature_id_2_t::temperature_value_116, ams_slave_10_temperature_id_3_t::temperature_value_117, ams_slave_10_temperature_id_3_t::temperature_value_118, ams_slave_10_temperature_id_3_t::temperature_value_119, ams_slave_01_temperature_id_3_t::temperature_value_12, ams_slave_10_temperature_id_3_t::temperature_value_120, ams_slave_11_temperature_id_1_t::temperature_value_121, ams_slave_11_temperature_id_1_t::temperature_value_122, ams_slave_11_temperature_id_1_t::temperature_value_123, ams_slave_11_temperature_id_1_t::temperature_value_124, ams_slave_11_temperature_id_2_t::temperature_value_125, ams_slave_11_temperature_id_2_t::temperature_value_126, ams_slave_11_temperature_id_2_t::temperature_value_127, ams_slave_11_temperature_id_2_t::temperature_value_128, ams_slave_11_temperature_id_3_t::temperature_value_129, ams_slave_02_temperature_id_1_t::temperature_value_13, ams_slave_11_temperature_id_3_t::temperature_value_130, ams_slave_11_temperature_id_3_t::temperature_value_131, ams_slave_11_temperature_id_3_t::temperature_value_132, ams_slave_12_temperature_id_1_t::temperature_value_133, ams_slave_12_temperature_id_1_t::temperature_value_134, ams_slave_12_temperature_id_1_t::temperature_value_135, ams_slave_12_temperature_id_1_t::temperature_value_136, ams_slave_12_temperature_id_2_t::temperature_value_137, ams_slave_12_temperature_id_2_t::temperature_value_138, ams_slave_12_temperature_id_2_t::temperature_value_139, ams_slave_02_temperature_id_1_t::temperature_value_14, ams_slave_12_temperature_id_2_t::temperature_value_140, ams_slave_12_temperature_id_3_t::temperature_value_141, ams_slave_12_temperature_id_3_t::temperature_value_142, ams_slave_12_temperature_id_3_t::temperature_value_143, ams_slave_12_temperature_id_3_t::temperature_value_144, ams_slave_02_temperature_id_1_t::temperature_value_15, ams_slave_02_temperature_id_1_t::temperature_value_16, ams_slave_02_temperature_id_2_t::temperature_value_17, ams_slave_02_temperature_id_2_t::temperature_value_18, ams_slave_02_temperature_id_2_t::temperature_value_19, ams_slave_01_temperature_id_1_t::temperature_value_2, ams_slave_02_temperature_id_2_t::temperature_value_20, ams_slave_02_temperature_id_3_t::temperature_value_21, ams_slave_02_temperature_id_3_t::temperature_value_22, ams_slave_02_temperature_id_3_t::temperature_value_23, ams_slave_02_temperature_id_3_t::temperature_value_24, ams_slave_03_temperature_id_1_t::temperature_value_25, ams_slave_03_temperature_id_1_t::temperature_value_26, ams_slave_03_temperature_id_1_t::temperature_value_27, ams_slave_03_temperature_id_1_t::temperature_value_28, ams_slave_03_temperature_id_2_t::temperature_value_29, ams_slave_01_temperature_id_1_t::temperature_value_3, ams_slave_03_temperature_id_2_t::temperature_value_30, ams_slave_03_temperature_id_2_t::temperature_value_31, ams_slave_03_temperature_id_2_t::temperature_value_32, ams_slave_03_temperature_id_3_t::temperature_value_33, ams_slave_03_temperature_id_3_t::temperature_value_34, ams_slave_03_temperature_id_3_t::temperature_value_35, ams_slave_03_temperature_id_3_t::temperature_value_36, ams_slave_04_temperature_id_1_t::temperature_value_37, ams_slave_04_temperature_id_1_t::temperature_value_38, ams_slave_04_temperature_id_1_t::temperature_value_39, ams_slave_01_temperature_id_1_t::temperature_value_4, ams_slave_04_temperature_id_1_t::temperature_value_40, ams_slave_04_temperature_id_2_t::temperature_value_41, ams_slave_04_temperature_id_2_t::temperature_value_42, ams_slave_04_temperature_id_2_t::temperature_value_43, ams_slave_04_temperature_id_2_t::temperature_value_44, ams_slave_04_temperature_id_3_t::temperature_value_45, ams_slave_04_temperature_id_3_t::temperature_value_46, ams_slave_04_temperature_id_3_t::temperature_value_47, ams_slave_04_temperature_id_3_t::temperature_value_48, ams_slave_05_temperature_id_1_t::temperature_value_49, ams_slave_01_temperature_id_2_t::temperature_value_5, ams_slave_05_temperature_id_1_t::temperature_value_50, ams_slave_05_temperature_id_1_t::temperature_value_51, ams_slave_05_temperature_id_1_t::temperature_value_52, ams_slave_05_temperature_id_2_t::temperature_value_53, ams_slave_05_temperature_id_2_t::temperature_value_54, ams_slave_05_temperature_id_2_t::temperature_value_55, ams_slave_05_temperature_id_2_t::temperature_value_56, ams_slave_05_temperature_id_3_t::temperature_value_57, ams_slave_05_temperature_id_3_t::temperature_value_58, ams_slave_05_temperature_id_3_t::temperature_value_59, ams_slave_01_temperature_id_2_t::temperature_value_6, ams_slave_05_temperature_id_3_t::temperature_value_60, ams_slave_06_temperature_id_1_t::temperature_value_61, ams_slave_06_temperature_id_1_t::temperature_value_62, ams_slave_06_temperature_id_1_t::temperature_value_63, ams_slave_06_temperature_id_1_t::temperature_value_64, ams_slave_06_temperature_id_2_t::temperature_value_65, ams_slave_06_temperature_id_2_t::temperature_value_66, ams_slave_06_temperature_id_2_t::temperature_value_67, ams_slave_06_temperature_id_2_t::temperature_value_68, ams_slave_06_temperature_id_3_t::temperature_value_69, ams_slave_01_temperature_id_2_t::temperature_value_7, ams_slave_06_temperature_id_3_t::temperature_value_70, ams_slave_06_temperature_id_3_t::temperature_value_71, ams_slave_06_temperature_id_3_t::temperature_value_72, ams_slave_07_temperature_id_1_t::temperature_value_73, ams_slave_07_temperature_id_1_t::temperature_value_74, ams_slave_07_temperature_id_1_t::temperature_value_75, ams_slave_07_temperature_id_1_t::temperature_value_76, ams_slave_07_temperature_id_2_t::temperature_value_77, ams_slave_07_temperature_id_2_t::temperature_value_78, ams_slave_07_temperature_id_2_t::temperature_value_79, ams_slave_01_temperature_id_2_t::temperature_value_8, ams_slave_07_temperature_id_2_t::temperature_value_80, ams_slave_07_temperature_id_3_t::temperature_value_81, ams_slave_07_temperature_id_3_t::temperature_value_82, ams_slave_07_temperature_id_3_t::temperature_value_83, ams_slave_07_temperature_id_3_t::temperature_value_84, ams_slave_08_temperature_id_1_t::temperature_value_85, ams_slave_08_temperature_id_1_t::temperature_value_86, ams_slave_08_temperature_id_1_t::temperature_value_87, ams_slave_08_temperature_id_1_t::temperature_value_88, ams_slave_08_temperature_id_2_t::temperature_value_89, ams_slave_01_temperature_id_3_t::temperature_value_9, ams_slave_08_temperature_id_2_t::temperature_value_90, ams_slave_08_temperature_id_2_t::temperature_value_91, ams_slave_08_temperature_id_2_t::temperature_value_92, ams_slave_08_temperature_id_3_t::temperature_value_93, ams_slave_08_temperature_id_3_t::temperature_value_94, ams_slave_08_temperature_id_3_t::temperature_value_95, ams_slave_08_temperature_id_3_t::temperature_value_96, ams_slave_09_temperature_id_1_t::temperature_value_97, ams_slave_09_temperature_id_1_t::temperature_value_98, ams_slave_09_temperature_id_1_t::temperature_value_99, and TOTAL_AD68\&.
+.PP
+Referenced by CAN_Send_AD68_All()\&.
+.SS "HAL_StatusTypeDef CAN_Send_AD68_Voltages_Module (CAN_HandleTypeDef * hcan, uint8_t module)"
+
+.PP
+Definition at line 1293 of file bms_libWrapper\&.c\&.
+.PP
+References AMS_SLAVE_01_VOLTAGE_ID_1_FRAME_ID, ams_slave_01_voltage_id_1_pack(), AMS_SLAVE_01_VOLTAGE_ID_2_FRAME_ID, ams_slave_01_voltage_id_2_pack(), AMS_SLAVE_01_VOLTAGE_ID_3_FRAME_ID, ams_slave_01_voltage_id_3_pack(), AMS_SLAVE_02_VOLTAGE_ID_1_FRAME_ID, ams_slave_02_voltage_id_1_pack(), AMS_SLAVE_02_VOLTAGE_ID_2_FRAME_ID, ams_slave_02_voltage_id_2_pack(), AMS_SLAVE_02_VOLTAGE_ID_3_FRAME_ID, ams_slave_02_voltage_id_3_pack(), AMS_SLAVE_03_VOLTAGE_ID_1_FRAME_ID, ams_slave_03_voltage_id_1_pack(), AMS_SLAVE_03_VOLTAGE_ID_2_FRAME_ID, ams_slave_03_voltage_id_2_pack(), AMS_SLAVE_03_VOLTAGE_ID_3_FRAME_ID, ams_slave_03_voltage_id_3_pack(), AMS_SLAVE_04_VOLTAGE_ID_1_FRAME_ID, ams_slave_04_voltage_id_1_pack(), AMS_SLAVE_04_VOLTAGE_ID_2_FRAME_ID, ams_slave_04_voltage_id_2_pack(), AMS_SLAVE_04_VOLTAGE_ID_3_FRAME_ID, ams_slave_04_voltage_id_3_pack(), AMS_SLAVE_05_VOLTAGE_ID_1_FRAME_ID, ams_slave_05_voltage_id_1_pack(), AMS_SLAVE_05_VOLTAGE_ID_2_FRAME_ID, ams_slave_05_voltage_id_2_pack(), AMS_SLAVE_05_VOLTAGE_ID_3_FRAME_ID, ams_slave_05_voltage_id_3_pack(), AMS_SLAVE_06_VOLTAGE_ID_1_FRAME_ID, ams_slave_06_voltage_id_1_pack(), AMS_SLAVE_06_VOLTAGE_ID_2_FRAME_ID, ams_slave_06_voltage_id_2_pack(), AMS_SLAVE_06_VOLTAGE_ID_3_FRAME_ID, ams_slave_06_voltage_id_3_pack(), AMS_SLAVE_07_VOLTAGE_ID_1_FRAME_ID, ams_slave_07_voltage_id_1_pack(), AMS_SLAVE_07_VOLTAGE_ID_2_FRAME_ID, ams_slave_07_voltage_id_2_pack(), AMS_SLAVE_07_VOLTAGE_ID_3_FRAME_ID, ams_slave_07_voltage_id_3_pack(), AMS_SLAVE_08_VOLTAGE_ID_1_FRAME_ID, ams_slave_08_voltage_id_1_pack(), AMS_SLAVE_08_VOLTAGE_ID_2_FRAME_ID, ams_slave_08_voltage_id_2_pack(), AMS_SLAVE_08_VOLTAGE_ID_3_FRAME_ID, ams_slave_08_voltage_id_3_pack(), AMS_SLAVE_09_VOLTAGE_ID_1_FRAME_ID, ams_slave_09_voltage_id_1_pack(), AMS_SLAVE_09_VOLTAGE_ID_2_FRAME_ID, ams_slave_09_voltage_id_2_pack(), AMS_SLAVE_09_VOLTAGE_ID_3_FRAME_ID, ams_slave_09_voltage_id_3_pack(), AMS_SLAVE_10_VOLTAGE_ID_1_FRAME_ID, ams_slave_10_voltage_id_1_pack(), AMS_SLAVE_10_VOLTAGE_ID_2_FRAME_ID, ams_slave_10_voltage_id_2_pack(), AMS_SLAVE_10_VOLTAGE_ID_3_FRAME_ID, ams_slave_10_voltage_id_3_pack(), AMS_SLAVE_11_VOLTAGE_ID_1_FRAME_ID, ams_slave_11_voltage_id_1_pack(), AMS_SLAVE_11_VOLTAGE_ID_2_FRAME_ID, ams_slave_11_voltage_id_2_pack(), AMS_SLAVE_11_VOLTAGE_ID_3_FRAME_ID, ams_slave_11_voltage_id_3_pack(), AMS_SLAVE_12_VOLTAGE_ID_1_FRAME_ID, ams_slave_12_voltage_id_1_pack(), AMS_SLAVE_12_VOLTAGE_ID_2_FRAME_ID, ams_slave_12_voltage_id_2_pack(), AMS_SLAVE_12_VOLTAGE_ID_3_FRAME_ID, ams_slave_12_voltage_id_3_pack(), ams_slave_01_voltage_id_1_t::cell_voltage_1, ams_slave_01_voltage_id_3_t::cell_voltage_10, ams_slave_09_voltage_id_1_t::cell_voltage_100, ams_slave_09_voltage_id_2_t::cell_voltage_101, ams_slave_09_voltage_id_2_t::cell_voltage_102, ams_slave_09_voltage_id_2_t::cell_voltage_103, ams_slave_09_voltage_id_2_t::cell_voltage_104, ams_slave_09_voltage_id_3_t::cell_voltage_105, ams_slave_09_voltage_id_3_t::cell_voltage_106, ams_slave_09_voltage_id_3_t::cell_voltage_107, ams_slave_09_voltage_id_3_t::cell_voltage_108, ams_slave_10_voltage_id_1_t::cell_voltage_109, ams_slave_01_voltage_id_3_t::cell_voltage_11, ams_slave_10_voltage_id_1_t::cell_voltage_110, ams_slave_10_voltage_id_1_t::cell_voltage_111, ams_slave_10_voltage_id_1_t::cell_voltage_112, ams_slave_10_voltage_id_2_t::cell_voltage_113, ams_slave_10_voltage_id_2_t::cell_voltage_114, ams_slave_10_voltage_id_2_t::cell_voltage_115, ams_slave_10_voltage_id_2_t::cell_voltage_116, ams_slave_10_voltage_id_3_t::cell_voltage_117, ams_slave_10_voltage_id_3_t::cell_voltage_118, ams_slave_10_voltage_id_3_t::cell_voltage_119, ams_slave_01_voltage_id_3_t::cell_voltage_12, ams_slave_10_voltage_id_3_t::cell_voltage_120, ams_slave_11_voltage_id_1_t::cell_voltage_121, ams_slave_11_voltage_id_1_t::cell_voltage_122, ams_slave_11_voltage_id_1_t::cell_voltage_123, ams_slave_11_voltage_id_1_t::cell_voltage_124, ams_slave_11_voltage_id_2_t::cell_voltage_125, ams_slave_11_voltage_id_2_t::cell_voltage_126, ams_slave_11_voltage_id_2_t::cell_voltage_127, ams_slave_11_voltage_id_2_t::cell_voltage_128, ams_slave_11_voltage_id_3_t::cell_voltage_129, ams_slave_02_voltage_id_1_t::cell_voltage_13, ams_slave_11_voltage_id_3_t::cell_voltage_130, ams_slave_11_voltage_id_3_t::cell_voltage_131, ams_slave_11_voltage_id_3_t::cell_voltage_132, ams_slave_12_voltage_id_1_t::cell_voltage_133, ams_slave_12_voltage_id_1_t::cell_voltage_134, ams_slave_12_voltage_id_1_t::cell_voltage_135, ams_slave_12_voltage_id_1_t::cell_voltage_136, ams_slave_12_voltage_id_2_t::cell_voltage_137, ams_slave_12_voltage_id_2_t::cell_voltage_138, ams_slave_12_voltage_id_2_t::cell_voltage_139, ams_slave_02_voltage_id_1_t::cell_voltage_14, ams_slave_12_voltage_id_2_t::cell_voltage_140, ams_slave_12_voltage_id_3_t::cell_voltage_141, ams_slave_12_voltage_id_3_t::cell_voltage_142, ams_slave_12_voltage_id_3_t::cell_voltage_143, ams_slave_12_voltage_id_3_t::cell_voltage_144, ams_slave_02_voltage_id_1_t::cell_voltage_15, ams_slave_02_voltage_id_1_t::cell_voltage_16, ams_slave_02_voltage_id_2_t::cell_voltage_17, ams_slave_02_voltage_id_2_t::cell_voltage_18, ams_slave_02_voltage_id_2_t::cell_voltage_19, ams_slave_01_voltage_id_1_t::cell_voltage_2, ams_slave_02_voltage_id_2_t::cell_voltage_20, ams_slave_02_voltage_id_3_t::cell_voltage_21, ams_slave_02_voltage_id_3_t::cell_voltage_22, ams_slave_02_voltage_id_3_t::cell_voltage_23, ams_slave_02_voltage_id_3_t::cell_voltage_24, ams_slave_03_voltage_id_1_t::cell_voltage_25, ams_slave_03_voltage_id_1_t::cell_voltage_26, ams_slave_03_voltage_id_1_t::cell_voltage_27, ams_slave_03_voltage_id_1_t::cell_voltage_28, ams_slave_03_voltage_id_2_t::cell_voltage_29, ams_slave_01_voltage_id_1_t::cell_voltage_3, ams_slave_03_voltage_id_2_t::cell_voltage_30, ams_slave_03_voltage_id_2_t::cell_voltage_31, ams_slave_03_voltage_id_2_t::cell_voltage_32, ams_slave_03_voltage_id_3_t::cell_voltage_33, ams_slave_03_voltage_id_3_t::cell_voltage_34, ams_slave_03_voltage_id_3_t::cell_voltage_35, ams_slave_03_voltage_id_3_t::cell_voltage_36, ams_slave_04_voltage_id_1_t::cell_voltage_37, ams_slave_04_voltage_id_1_t::cell_voltage_38, ams_slave_04_voltage_id_1_t::cell_voltage_39, ams_slave_01_voltage_id_1_t::cell_voltage_4, ams_slave_04_voltage_id_1_t::cell_voltage_40, ams_slave_04_voltage_id_2_t::cell_voltage_41, ams_slave_04_voltage_id_2_t::cell_voltage_42, ams_slave_04_voltage_id_2_t::cell_voltage_43, ams_slave_04_voltage_id_2_t::cell_voltage_44, ams_slave_04_voltage_id_3_t::cell_voltage_45, ams_slave_04_voltage_id_3_t::cell_voltage_46, ams_slave_04_voltage_id_3_t::cell_voltage_47, ams_slave_04_voltage_id_3_t::cell_voltage_48, ams_slave_05_voltage_id_1_t::cell_voltage_49, ams_slave_01_voltage_id_2_t::cell_voltage_5, ams_slave_05_voltage_id_1_t::cell_voltage_50, ams_slave_05_voltage_id_1_t::cell_voltage_51, ams_slave_05_voltage_id_1_t::cell_voltage_52, ams_slave_05_voltage_id_2_t::cell_voltage_53, ams_slave_05_voltage_id_2_t::cell_voltage_54, ams_slave_05_voltage_id_2_t::cell_voltage_55, ams_slave_05_voltage_id_2_t::cell_voltage_56, ams_slave_05_voltage_id_3_t::cell_voltage_57, ams_slave_05_voltage_id_3_t::cell_voltage_58, ams_slave_05_voltage_id_3_t::cell_voltage_59, ams_slave_01_voltage_id_2_t::cell_voltage_6, ams_slave_05_voltage_id_3_t::cell_voltage_60, ams_slave_06_voltage_id_1_t::cell_voltage_61, ams_slave_06_voltage_id_1_t::cell_voltage_62, ams_slave_06_voltage_id_1_t::cell_voltage_63, ams_slave_06_voltage_id_1_t::cell_voltage_64, ams_slave_06_voltage_id_2_t::cell_voltage_65, ams_slave_06_voltage_id_2_t::cell_voltage_66, ams_slave_06_voltage_id_2_t::cell_voltage_67, ams_slave_06_voltage_id_2_t::cell_voltage_68, ams_slave_06_voltage_id_3_t::cell_voltage_69, ams_slave_01_voltage_id_2_t::cell_voltage_7, ams_slave_06_voltage_id_3_t::cell_voltage_70, ams_slave_06_voltage_id_3_t::cell_voltage_71, ams_slave_06_voltage_id_3_t::cell_voltage_72, ams_slave_07_voltage_id_1_t::cell_voltage_73, ams_slave_07_voltage_id_1_t::cell_voltage_74, ams_slave_07_voltage_id_1_t::cell_voltage_75, ams_slave_07_voltage_id_1_t::cell_voltage_76, ams_slave_07_voltage_id_2_t::cell_voltage_77, ams_slave_07_voltage_id_2_t::cell_voltage_78, ams_slave_07_voltage_id_2_t::cell_voltage_79, ams_slave_01_voltage_id_2_t::cell_voltage_8, ams_slave_07_voltage_id_2_t::cell_voltage_80, ams_slave_07_voltage_id_3_t::cell_voltage_81, ams_slave_07_voltage_id_3_t::cell_voltage_82, ams_slave_07_voltage_id_3_t::cell_voltage_83, ams_slave_07_voltage_id_3_t::cell_voltage_84, ams_slave_08_voltage_id_1_t::cell_voltage_85, ams_slave_08_voltage_id_1_t::cell_voltage_86, ams_slave_08_voltage_id_1_t::cell_voltage_87, ams_slave_08_voltage_id_1_t::cell_voltage_88, ams_slave_08_voltage_id_2_t::cell_voltage_89, ams_slave_01_voltage_id_3_t::cell_voltage_9, ams_slave_08_voltage_id_2_t::cell_voltage_90, ams_slave_08_voltage_id_2_t::cell_voltage_91, ams_slave_08_voltage_id_2_t::cell_voltage_92, ams_slave_08_voltage_id_3_t::cell_voltage_93, ams_slave_08_voltage_id_3_t::cell_voltage_94, ams_slave_08_voltage_id_3_t::cell_voltage_95, ams_slave_08_voltage_id_3_t::cell_voltage_96, ams_slave_09_voltage_id_1_t::cell_voltage_97, ams_slave_09_voltage_id_1_t::cell_voltage_98, ams_slave_09_voltage_id_1_t::cell_voltage_99, conv_voltage(), ic_ad68, Slaves_CAN_SendMessage(), TOTAL_AD68, and ic_ad68_t::v_avgCell\&.
+.PP
+Referenced by CAN_Send_AD68_All()\&.
+.SS "uint16_t conv_temp (float t)"
+
+.PP
+Definition at line 1744 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by CAN_Send_AD68_Temperatures_Module()\&.
+.SS "uint16_t conv_voltage (float v)"
+
+.PP
+Definition at line 1284 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by CAN_Send_AD68_Voltages_Module()\&.
+.SS "float convertCellTemp (float cellVoltage)"
+
+.PP
+Definition at line 578 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_parseTemps()\&.
+.SS "void send_ad68_ui (void)"
+
+.PP
+Definition at line 915 of file bms_libWrapper\&.c\&.
+.PP
+References ic_ad68_t::cfa_Rx, ic_ad68_t::cfa_Tx, ic_ad68_t::cfb_Rx, ic_ad68_t::cfb_Tx, ad68_cfa_t::comm_bk, ad68_cfa_t::cth, ad68_cfb_t::dcc, ad68_cfb_t::dcto, ad68_cfb_t::dtmen, ad68_cfb_t::dtrng, ad68_cfa_t::fc, ad68_cfa_t::flag_d, ad68_cfa_t::gpo1to8, ad68_cfa_t::gpo9to10, ic_ad68, ad68_cfa_t::mute_st, ad68_cfa_t::owa, ad68_cfa_t::owrng, printfDma(), ad68_pwma_t::pwm1, ad68_pwma_t::pwm10, ad68_pwma_t::pwm11, ad68_pwma_t::pwm12, ad68_pwmb_t::pwm13, ad68_pwmb_t::pwm14, ad68_pwmb_t::pwm15, ad68_pwmb_t::pwm16, ad68_pwma_t::pwm2, ad68_pwma_t::pwm3, ad68_pwma_t::pwm4, ad68_pwma_t::pwm5, ad68_pwma_t::pwm6, ad68_pwma_t::pwm7, ad68_pwma_t::pwm8, ad68_pwma_t::pwm9, ic_ad68_t::pwma, ic_ad68_t::pwmb, ad68_cfa_t::refon, ad68_pwmb_t::rsv, RTH_PER_MODULE, ad68_cfa_t::snap_st, ad68_cfa_t::soakon, ic_ad68_t::temp_cell, ic_ad68_t::temp_ic, TOTAL_AD68, TOTAL_CELL, ic_ad68_t::v_avgCell, ic_ad68_t::v_avgCell_avg, ic_ad68_t::v_avgCell_delta, ic_ad68_t::v_avgCell_max, ic_ad68_t::v_avgCell_min, ic_ad68_t::v_avgCell_sum, ic_ad68_t::v_sCell, ic_ad68_t::v_segment, ic_ad68_t::v_tempSens, ad68_cfb_t::vov0to3, ad68_cfb_t::vov4to11, ad68_cfb_t::vuv0to7, and ad68_cfb_t::vuv8to11\&.
+.PP
+Referenced by brain_loop()\&.
+.SS "HAL_StatusTypeDef Slaves_CAN_SendMessage (CAN_HandleTypeDef * hcan, uint32_t canID, uint32_t dataLength, const uint8_t * TxData)"
+
+.PP
+Sends a CAN message via the CAN TX FIFO\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhcan\fP Pointer to the CAN handle (e\&.g\&., &hcan1)\&. 
+.br
+\fIcanID\fP CAN ID of the message (standard 11-bit)\&. 
+.br
+\fIdataLength\fP Length of the message data in bytes (0 to 8 for Classic CAN)\&. 
+.br
+\fIdata\fP Pointer to the message data array (up to 8 bytes for Classic CAN)\&. 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fIHAL_StatusTypeDef\fP Returns HAL_OK if successful, otherwise HAL_ERROR\&. 
+.RE
+.PP
+
+.PP
+Definition at line 1269 of file bms_libWrapper\&.c\&.
+.PP
+References CAN_TX_Add_To_Queue()\&.
+.PP
+Referenced by CAN_Send_AD68_Temperatures_Module(), and CAN_Send_AD68_Voltages_Module()\&.
+.SH "Variable Documentation"
+.PP 
+.SS "\fBic_ad68_t\fP ic_ad68[\fBTOTAL_AD68\fP]"
+
+.PP
+Definition at line 96 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by ad68_dump_csv_bt(), bms68_setGpo45(), bms_calculateBalancing(), bms_calculateStats(), bms_getAuxVoltage(), bms_openWireCheck(), bms_parseAuxVoltage(), bms_parseTemps(), bms_printRthTempsJson(), bms_printVoltage(), bms_readAvgCellVoltage(), bms_readSVoltage(), bms_resetConfig(), bms_startDischarge(), bms_writeConfigA(), bms_writeConfigB(), bms_writePwmA(), bms_writePwmB(), CAN_Send_AD68_Temperatures_Module(), CAN_Send_AD68_Voltages_Module(), and send_ad68_ui()\&.
+.SS "uint8_t rxCc[\fBTOTAL_IC\fP]"
+
+.PP
+Definition at line 68 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_checkRxPec(), bms_getAuxVoltage(), bms_readAvgCellVoltage(), bms_readConfigA(), bms_readConfigB(), bms_readSid(), bms_readSVoltage(), bms_readVB(), bms_receiveData(), and bms_spiReceiveData()\&.
+.SS "uint8_t rxData[\fBTOTAL_IC\fP][\fBDATA_LEN\fP]"
+
+.PP
+Definition at line 66 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_checkRxPec(), bms_getAuxVoltage(), bms_readAvgCellVoltage(), bms_readConfigA(), bms_readConfigB(), bms_readSid(), bms_readSVoltage(), bms_readVB(), bms_spiReceiveData(), and HAL_CAN_RxFifo0MsgPendingCallback()\&.
+.SS "uint16_t rxPec[\fBTOTAL_IC\fP]"
+
+.PP
+Definition at line 67 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_checkRxPec(), bms_getAuxVoltage(), bms_readAvgCellVoltage(), bms_readConfigA(), bms_readConfigB(), bms_readSid(), bms_readSVoltage(), bms_readVB(), bms_receiveData(), and bms_spiReceiveData()\&.
+.SS "uint8_t txData[\fBTOTAL_IC\fP][\fBDATA_LEN\fP]"
+
+.PP
+Definition at line 65 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_writeConfigA(), bms_writeConfigB(), bms_writePwmA(), and bms_writePwmB()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

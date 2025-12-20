@@ -1,0 +1,60 @@
+.TH "EE24_HandleTypeDef" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+EE24_HandleTypeDef
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <ee24\&.h>\fP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "I2C_HandleTypeDef * \fBHI2c\fP"
+.br
+.ti -1c
+.RI "uint8_t \fBAddress\fP"
+.br
+.ti -1c
+.RI "uint8_t \fBLock\fP"
+.br
+.ti -1c
+.RI "GPIO_TypeDef * \fBWpGpio\fP"
+.br
+.ti -1c
+.RI "uint16_t \fBWpPin\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 75 of file ee24\&.h\&.
+.SH "Field Documentation"
+.PP 
+.SS "uint8_t EE24_HandleTypeDef::Address"
+
+.PP
+Definition at line 79 of file ee24\&.h\&.
+.SS "I2C_HandleTypeDef* EE24_HandleTypeDef::HI2c"
+
+.PP
+Definition at line 78 of file ee24\&.h\&.
+.SS "uint8_t EE24_HandleTypeDef::Lock"
+
+.PP
+Definition at line 80 of file ee24\&.h\&.
+.PP
+Referenced by EE24_Lock(), and EE24_UnLock()\&.
+.SS "GPIO_TypeDef* EE24_HandleTypeDef::WpGpio"
+
+.PP
+Definition at line 82 of file ee24\&.h\&.
+.SS "uint16_t EE24_HandleTypeDef::WpPin"
+
+.PP
+Definition at line 83 of file ee24\&.h\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

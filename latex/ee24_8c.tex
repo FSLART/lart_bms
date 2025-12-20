@@ -1,0 +1,194 @@
+\hypertarget{ee24_8c}{}\doxysection{Core/\+Src/ee24.c File Reference}
+\label{ee24_8c}\index{Core/Src/ee24.c@{Core/Src/ee24.c}}
+{\ttfamily \#include \char`\"{}ee24.\+h\char`\"{}}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{ee24_8c_a23fa916b261b2eb74cc7842d4b6c7c6e}{E\+E24\+\_\+\+P\+S\+I\+ZE}}~8
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{ee24_8c_a5d26b4236baf6a74ee5ef0731f944dc6}{E\+E24\+\_\+\+Delay}} (uint32\+\_\+t Delay)
+\item 
+void \mbox{\hyperlink{ee24_8c_a5f40de0e7d27e672f553dc9c9d4e2c25}{E\+E24\+\_\+\+Lock}} (\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$Handle)
+\item 
+void \mbox{\hyperlink{ee24_8c_ad8a21c6d188d0a5b9ff2413118954d2c}{E\+E24\+\_\+\+Un\+Lock}} (\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$Handle)
+\item 
+bool \mbox{\hyperlink{ee24_8c_a4c3c6c2f25430203b1890976f34893ce}{E\+E24\+\_\+\+Init}} (\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$Handle, I2\+C\+\_\+\+Handle\+Type\+Def $\ast$H\+I2c, uint8\+\_\+t I2\+C\+Address)
+\begin{DoxyCompactList}\small\item\em Initialize E\+E\+P\+R\+OM handle. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{ee24_8c_ab1e4f3fbc0e459fe406070fd1c20eee7}{E\+E24\+\_\+\+Read}} (\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$Handle, uint32\+\_\+t Address, uint8\+\_\+t $\ast$Data, size\+\_\+t Len, uint32\+\_\+t Timeout)
+\begin{DoxyCompactList}\small\item\em Read from Memory. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{ee24_8c_a3dc55d2c1024be6689928a4a8990c628}{E\+E24\+\_\+\+Write}} (\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$Handle, uint32\+\_\+t Address, uint8\+\_\+t $\ast$Data, size\+\_\+t Len, uint32\+\_\+t Timeout)
+\begin{DoxyCompactList}\small\item\em Write to Memory. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{ee24_8c_a23fa916b261b2eb74cc7842d4b6c7c6e}\label{ee24_8c_a23fa916b261b2eb74cc7842d4b6c7c6e}} 
+\index{ee24.c@{ee24.c}!EE24\_PSIZE@{EE24\_PSIZE}}
+\index{EE24\_PSIZE@{EE24\_PSIZE}!ee24.c@{ee24.c}}
+\doxysubsubsection{\texorpdfstring{EE24\_PSIZE}{EE24\_PSIZE}}
+{\footnotesize\ttfamily \#define E\+E24\+\_\+\+P\+S\+I\+ZE~8}
+
+
+
+Definition at line 21 of file ee24.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{ee24_8c_a5d26b4236baf6a74ee5ef0731f944dc6}\label{ee24_8c_a5d26b4236baf6a74ee5ef0731f944dc6}} 
+\index{ee24.c@{ee24.c}!EE24\_Delay@{EE24\_Delay}}
+\index{EE24\_Delay@{EE24\_Delay}!ee24.c@{ee24.c}}
+\doxysubsubsection{\texorpdfstring{EE24\_Delay()}{EE24\_Delay()}}
+{\footnotesize\ttfamily void E\+E24\+\_\+\+Delay (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{Delay }\end{DoxyParamCaption})}
+
+
+
+Definition at line 37 of file ee24.\+c.
+
+
+
+Referenced by E\+E24\+\_\+\+Lock().
+
+\mbox{\Hypertarget{ee24_8c_a4c3c6c2f25430203b1890976f34893ce}\label{ee24_8c_a4c3c6c2f25430203b1890976f34893ce}} 
+\index{ee24.c@{ee24.c}!EE24\_Init@{EE24\_Init}}
+\index{EE24\_Init@{EE24\_Init}!ee24.c@{ee24.c}}
+\doxysubsubsection{\texorpdfstring{EE24\_Init()}{EE24\_Init()}}
+{\footnotesize\ttfamily bool E\+E24\+\_\+\+Init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$}]{Handle,  }\item[{I2\+C\+\_\+\+Handle\+Type\+Def $\ast$}]{H\+I2c,  }\item[{uint8\+\_\+t}]{I2\+C\+Address }\end{DoxyParamCaption})}
+
+
+
+Initialize E\+E\+P\+R\+OM handle. 
+
+\begin{DoxyNote}{Note}
+Initialize E\+E\+P\+R\+OM handle and set E\+E\+P\+R\+OM address
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$\+Handle} & Pointer to \mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} structure \\
+\hline
+{\em $\ast$\+H\+I2c} & Pointer to I2\+C\+\_\+\+Handle\+Type\+Def structure \\
+\hline
+{\em I2\+C\+Address} & I2C Memory address\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em bool} & true or false \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 86 of file ee24.\+c.
+
+
+
+Referenced by Read\+\_\+\+E\+E\+P\+R\+O\+M(), and Write\+\_\+\+E\+E\+P\+R\+O\+M().
+
+\mbox{\Hypertarget{ee24_8c_a5f40de0e7d27e672f553dc9c9d4e2c25}\label{ee24_8c_a5f40de0e7d27e672f553dc9c9d4e2c25}} 
+\index{ee24.c@{ee24.c}!EE24\_Lock@{EE24\_Lock}}
+\index{EE24\_Lock@{EE24\_Lock}!ee24.c@{ee24.c}}
+\doxysubsubsection{\texorpdfstring{EE24\_Lock()}{EE24\_Lock()}}
+{\footnotesize\ttfamily void E\+E24\+\_\+\+Lock (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$}]{Handle }\end{DoxyParamCaption})}
+
+
+
+Definition at line 56 of file ee24.\+c.
+
+
+
+References E\+E24\+\_\+\+Delay(), and E\+E24\+\_\+\+Handle\+Type\+Def\+::\+Lock.
+
+\mbox{\Hypertarget{ee24_8c_ab1e4f3fbc0e459fe406070fd1c20eee7}\label{ee24_8c_ab1e4f3fbc0e459fe406070fd1c20eee7}} 
+\index{ee24.c@{ee24.c}!EE24\_Read@{EE24\_Read}}
+\index{EE24\_Read@{EE24\_Read}!ee24.c@{ee24.c}}
+\doxysubsubsection{\texorpdfstring{EE24\_Read()}{EE24\_Read()}}
+{\footnotesize\ttfamily bool E\+E24\+\_\+\+Read (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$}]{Handle,  }\item[{uint32\+\_\+t}]{Address,  }\item[{uint8\+\_\+t $\ast$}]{Data,  }\item[{size\+\_\+t}]{Len,  }\item[{uint32\+\_\+t}]{Timeout }\end{DoxyParamCaption})}
+
+
+
+Read from Memory. 
+
+\begin{DoxyNote}{Note}
+Read data from memory and copy to an array
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$\+Handle} & Pointer to \mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} structure \\
+\hline
+{\em Address} & Start address for read \\
+\hline
+{\em $\ast$\+Data} & Pointer to copy data from E\+E\+P\+R\+OM \\
+\hline
+{\em Len} & Data length to read \\
+\hline
+{\em Timeout} & Timeout of this operation in ms\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em bool} & true or false \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 158 of file ee24.\+c.
+
+
+
+Referenced by Read\+\_\+\+E\+E\+P\+R\+O\+M(), and Write\+\_\+\+E\+E\+P\+R\+O\+M().
+
+\mbox{\Hypertarget{ee24_8c_ad8a21c6d188d0a5b9ff2413118954d2c}\label{ee24_8c_ad8a21c6d188d0a5b9ff2413118954d2c}} 
+\index{ee24.c@{ee24.c}!EE24\_UnLock@{EE24\_UnLock}}
+\index{EE24\_UnLock@{EE24\_UnLock}!ee24.c@{ee24.c}}
+\doxysubsubsection{\texorpdfstring{EE24\_UnLock()}{EE24\_UnLock()}}
+{\footnotesize\ttfamily void E\+E24\+\_\+\+Un\+Lock (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$}]{Handle }\end{DoxyParamCaption})}
+
+
+
+Definition at line 67 of file ee24.\+c.
+
+
+
+References E\+E24\+\_\+\+Handle\+Type\+Def\+::\+Lock.
+
+\mbox{\Hypertarget{ee24_8c_a3dc55d2c1024be6689928a4a8990c628}\label{ee24_8c_a3dc55d2c1024be6689928a4a8990c628}} 
+\index{ee24.c@{ee24.c}!EE24\_Write@{EE24\_Write}}
+\index{EE24\_Write@{EE24\_Write}!ee24.c@{ee24.c}}
+\doxysubsubsection{\texorpdfstring{EE24\_Write()}{EE24\_Write()}}
+{\footnotesize\ttfamily bool E\+E24\+\_\+\+Write (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} $\ast$}]{Handle,  }\item[{uint32\+\_\+t}]{Address,  }\item[{uint8\+\_\+t $\ast$}]{Data,  }\item[{size\+\_\+t}]{Len,  }\item[{uint32\+\_\+t}]{Timeout }\end{DoxyParamCaption})}
+
+
+
+Write to Memory. 
+
+\begin{DoxyNote}{Note}
+Write an array to memory
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$\+Handle} & Pointer to \mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} structure \\
+\hline
+{\em Address} & Start address for write \\
+\hline
+{\em $\ast$\+Data} & Pointer to copy data to E\+E\+P\+E\+OM \\
+\hline
+{\em Len} & Data length to write \\
+\hline
+{\em Timeout} & Timeout of this operation in ms\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em bool} & true or false \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 199 of file ee24.\+c.
+
+
+
+Referenced by Write\+\_\+\+E\+E\+P\+R\+O\+M().
+

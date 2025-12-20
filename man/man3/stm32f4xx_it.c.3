@@ -1,0 +1,336 @@
+.TH "Core/Src/stm32f4xx_it.c" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Core/Src/stm32f4xx_it.c \- Interrupt Service Routines\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'main\&.h'\fP
+.br
+\fC#include 'stm32f4xx_it\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBNMI_Handler\fP (void)"
+.br
+.RI "This function handles Non maskable interrupt\&. "
+.ti -1c
+.RI "void \fBHardFault_Handler\fP (void)"
+.br
+.RI "This function handles Hard fault interrupt\&. "
+.ti -1c
+.RI "void \fBMemManage_Handler\fP (void)"
+.br
+.RI "This function handles Memory management fault\&. "
+.ti -1c
+.RI "void \fBBusFault_Handler\fP (void)"
+.br
+.RI "This function handles Pre-fetch fault, memory access fault\&. "
+.ti -1c
+.RI "void \fBUsageFault_Handler\fP (void)"
+.br
+.RI "This function handles Undefined instruction or illegal state\&. "
+.ti -1c
+.RI "void \fBSVC_Handler\fP (void)"
+.br
+.RI "This function handles System service call via SWI instruction\&. "
+.ti -1c
+.RI "void \fBDebugMon_Handler\fP (void)"
+.br
+.RI "This function handles Debug monitor\&. "
+.ti -1c
+.RI "void \fBPendSV_Handler\fP (void)"
+.br
+.RI "This function handles Pendable request for system service\&. "
+.ti -1c
+.RI "void \fBSysTick_Handler\fP (void)"
+.br
+.RI "This function handles System tick timer\&. "
+.ti -1c
+.RI "void \fBDMA1_Stream6_IRQHandler\fP (void)"
+.br
+.RI "This function handles DMA1 stream6 global interrupt\&. "
+.ti -1c
+.RI "void \fBCAN1_RX0_IRQHandler\fP (void)"
+.br
+.RI "This function handles CAN1 RX0 interrupts\&. "
+.ti -1c
+.RI "void \fBTIM1_UP_TIM10_IRQHandler\fP (void)"
+.br
+.RI "This function handles TIM1 update interrupt and TIM10 global interrupt\&. "
+.ti -1c
+.RI "void \fBTIM1_TRG_COM_TIM11_IRQHandler\fP (void)"
+.br
+.RI "This function handles TIM1 trigger and commutation interrupts and TIM11 global interrupt\&. "
+.ti -1c
+.RI "void \fBUSART1_IRQHandler\fP (void)"
+.br
+.RI "This function handles USART1 global interrupt\&. "
+.ti -1c
+.RI "void \fBUSART2_IRQHandler\fP (void)"
+.br
+.RI "This function handles USART2 global interrupt\&. "
+.ti -1c
+.RI "void \fBEXTI15_10_IRQHandler\fP (void)"
+.br
+.RI "This function handles EXTI line[15:10] interrupts\&. "
+.ti -1c
+.RI "void \fBTIM8_UP_TIM13_IRQHandler\fP (void)"
+.br
+.RI "This function handles TIM8 update interrupt and TIM13 global interrupt\&. "
+.ti -1c
+.RI "void \fBDMA2_Stream0_IRQHandler\fP (void)"
+.br
+.RI "This function handles DMA2 stream0 global interrupt\&. "
+.ti -1c
+.RI "void \fBDMA2_Stream7_IRQHandler\fP (void)"
+.br
+.RI "This function handles DMA2 stream7 global interrupt\&. "
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "DMA_HandleTypeDef \fBhdma_adc1\fP"
+.br
+.ti -1c
+.RI "CAN_HandleTypeDef \fBhcan1\fP"
+.br
+.ti -1c
+.RI "TIM_HandleTypeDef \fBhtim8\fP"
+.br
+.ti -1c
+.RI "TIM_HandleTypeDef \fBhtim10\fP"
+.br
+.ti -1c
+.RI "TIM_HandleTypeDef \fBhtim11\fP"
+.br
+.ti -1c
+.RI "DMA_HandleTypeDef \fBhdma_usart1_tx\fP"
+.br
+.ti -1c
+.RI "DMA_HandleTypeDef \fBhdma_usart2_tx\fP"
+.br
+.ti -1c
+.RI "UART_HandleTypeDef \fBhuart1\fP"
+.br
+.ti -1c
+.RI "UART_HandleTypeDef \fBhuart2\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Interrupt Service Routines\&. 
+
+
+.PP
+\fBAttention\fP
+.RS 4
+
+.RE
+.PP
+Copyright (c) 2025 STMicroelectronics\&. All rights reserved\&.
+.PP
+This software is licensed under terms that can be found in the LICENSE file in the root directory of this software component\&. If no LICENSE file comes with this software, it is provided AS-IS\&. 
+.PP
+Definition in file \fBstm32f4xx_it\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "void BusFault_Handler (void)"
+
+.PP
+This function handles Pre-fetch fault, memory access fault\&. 
+.PP
+Definition at line 122 of file stm32f4xx_it\&.c\&.
+.SS "void CAN1_RX0_IRQHandler (void)"
+
+.PP
+This function handles CAN1 RX0 interrupts\&. 
+.PP
+Definition at line 227 of file stm32f4xx_it\&.c\&.
+.PP
+References hcan1\&.
+.SS "void DebugMon_Handler (void)"
+
+.PP
+This function handles Debug monitor\&. 
+.PP
+Definition at line 165 of file stm32f4xx_it\&.c\&.
+.SS "void DMA1_Stream6_IRQHandler (void)"
+
+.PP
+This function handles DMA1 stream6 global interrupt\&. 
+.PP
+Definition at line 213 of file stm32f4xx_it\&.c\&.
+.PP
+References hdma_usart2_tx\&.
+.SS "void DMA2_Stream0_IRQHandler (void)"
+
+.PP
+This function handles DMA2 stream0 global interrupt\&. 
+.PP
+Definition at line 325 of file stm32f4xx_it\&.c\&.
+.PP
+References hdma_adc1\&.
+.SS "void DMA2_Stream7_IRQHandler (void)"
+
+.PP
+This function handles DMA2 stream7 global interrupt\&. 
+.PP
+Definition at line 339 of file stm32f4xx_it\&.c\&.
+.PP
+References hdma_usart1_tx\&.
+.SS "void EXTI15_10_IRQHandler (void)"
+
+.PP
+This function handles EXTI line[15:10] interrupts\&. 
+.PP
+Definition at line 297 of file stm32f4xx_it\&.c\&.
+.PP
+References B1_Pin\&.
+.SS "void HardFault_Handler (void)"
+
+.PP
+This function handles Hard fault interrupt\&. 
+.PP
+Definition at line 92 of file stm32f4xx_it\&.c\&.
+.SS "void MemManage_Handler (void)"
+
+.PP
+This function handles Memory management fault\&. 
+.PP
+Definition at line 107 of file stm32f4xx_it\&.c\&.
+.SS "void NMI_Handler (void)"
+
+.PP
+This function handles Non maskable interrupt\&. 
+.PP
+Definition at line 77 of file stm32f4xx_it\&.c\&.
+.SS "void PendSV_Handler (void)"
+
+.PP
+This function handles Pendable request for system service\&. 
+.PP
+Definition at line 178 of file stm32f4xx_it\&.c\&.
+.SS "void SVC_Handler (void)"
+
+.PP
+This function handles System service call via SWI instruction\&. 
+.PP
+Definition at line 152 of file stm32f4xx_it\&.c\&.
+.SS "void SysTick_Handler (void)"
+
+.PP
+This function handles System tick timer\&. 
+.PP
+Definition at line 191 of file stm32f4xx_it\&.c\&.
+.SS "void TIM1_TRG_COM_TIM11_IRQHandler (void)"
+
+.PP
+This function handles TIM1 trigger and commutation interrupts and TIM11 global interrupt\&. 
+.PP
+Definition at line 255 of file stm32f4xx_it\&.c\&.
+.PP
+References htim11\&.
+.SS "void TIM1_UP_TIM10_IRQHandler (void)"
+
+.PP
+This function handles TIM1 update interrupt and TIM10 global interrupt\&. 
+.PP
+Definition at line 241 of file stm32f4xx_it\&.c\&.
+.PP
+References htim10\&.
+.SS "void TIM8_UP_TIM13_IRQHandler (void)"
+
+.PP
+This function handles TIM8 update interrupt and TIM13 global interrupt\&. 
+.PP
+Definition at line 311 of file stm32f4xx_it\&.c\&.
+.PP
+References htim8\&.
+.SS "void UsageFault_Handler (void)"
+
+.PP
+This function handles Undefined instruction or illegal state\&. 
+.PP
+Definition at line 137 of file stm32f4xx_it\&.c\&.
+.SS "void USART1_IRQHandler (void)"
+
+.PP
+This function handles USART1 global interrupt\&. 
+.PP
+Definition at line 269 of file stm32f4xx_it\&.c\&.
+.PP
+References huart1\&.
+.SS "void USART2_IRQHandler (void)"
+
+.PP
+This function handles USART2 global interrupt\&. 
+.PP
+Definition at line 283 of file stm32f4xx_it\&.c\&.
+.PP
+References huart2\&.
+.SH "Variable Documentation"
+.PP 
+.SS "CAN_HandleTypeDef hcan1"
+
+.PP
+Definition at line 48 of file main\&.c\&.
+.PP
+Referenced by CAN1_RX0_IRQHandler(), and MX_CAN1_Init()\&.
+.SS "DMA_HandleTypeDef hdma_adc1"
+
+.PP
+Definition at line 46 of file main\&.c\&.
+.PP
+Referenced by DMA2_Stream0_IRQHandler()\&.
+.SS "DMA_HandleTypeDef hdma_usart1_tx"
+
+.PP
+Definition at line 66 of file main\&.c\&.
+.PP
+Referenced by DMA2_Stream7_IRQHandler()\&.
+.SS "DMA_HandleTypeDef hdma_usart2_tx"
+
+.PP
+Definition at line 67 of file main\&.c\&.
+.PP
+Referenced by DMA1_Stream6_IRQHandler()\&.
+.SS "TIM_HandleTypeDef htim10"
+
+.PP
+Definition at line 61 of file main\&.c\&.
+.PP
+Referenced by MX_TIM10_Init(), and TIM1_UP_TIM10_IRQHandler()\&.
+.SS "TIM_HandleTypeDef htim11"
+
+.PP
+Definition at line 62 of file main\&.c\&.
+.PP
+Referenced by MX_TIM11_Init(), and TIM1_TRG_COM_TIM11_IRQHandler()\&.
+.SS "TIM_HandleTypeDef htim8"
+
+.PP
+Definition at line 60 of file main\&.c\&.
+.PP
+Referenced by MX_TIM8_Init(), and TIM8_UP_TIM13_IRQHandler()\&.
+.SS "UART_HandleTypeDef huart1"
+
+.PP
+Definition at line 64 of file main\&.c\&.
+.PP
+Referenced by MX_USART1_UART_Init(), and USART1_IRQHandler()\&.
+.SS "UART_HandleTypeDef huart2"
+
+.PP
+Definition at line 65 of file main\&.c\&.
+.PP
+Referenced by MX_USART2_UART_Init(), and USART2_IRQHandler()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

@@ -1,0 +1,174 @@
+.TH "ic_ad68_t" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ic_ad68_t
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "\fBad68_cfa_t\fP \fBcfa_Tx\fP"
+.br
+.ti -1c
+.RI "\fBad68_cfa_t\fP \fBcfa_Rx\fP"
+.br
+.ti -1c
+.RI "\fBad68_cfb_t\fP \fBcfb_Tx\fP"
+.br
+.ti -1c
+.RI "\fBad68_cfb_t\fP \fBcfb_Rx\fP"
+.br
+.ti -1c
+.RI "\fBad68_pwma_t\fP \fBpwma\fP"
+.br
+.ti -1c
+.RI "\fBad68_pwmb_t\fP \fBpwmb\fP"
+.br
+.ti -1c
+.RI "float \fBv_avgCell\fP [\fBTOTAL_CELL\fP]"
+.br
+.ti -1c
+.RI "float \fBv_avgCell_sum\fP"
+.br
+.ti -1c
+.RI "float \fBv_avgCell_avg\fP"
+.br
+.ti -1c
+.RI "float \fBv_avgCell_min\fP"
+.br
+.ti -1c
+.RI "float \fBv_avgCell_max\fP"
+.br
+.ti -1c
+.RI "float \fBv_avgCell_delta\fP"
+.br
+.ti -1c
+.RI "float \fBv_sCell\fP [\fBTOTAL_CELL\fP]"
+.br
+.ti -1c
+.RI "float \fBv_tempSens\fP [\fBRTH_PER_MODULE\fP]"
+.br
+.ti -1c
+.RI "float \fBv_segment\fP"
+.br
+.ti -1c
+.RI "float \fBtemp_cell\fP [\fBRTH_PER_MODULE\fP]"
+.br
+.ti -1c
+.RI "float \fBtemp_ic\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 70 of file bms_libWrapper\&.c\&.
+.SH "Field Documentation"
+.PP 
+.SS "\fBad68_cfa_t\fP ic_ad68_t::cfa_Rx"
+
+.PP
+Definition at line 72 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by send_ad68_ui()\&.
+.SS "\fBad68_cfa_t\fP ic_ad68_t::cfa_Tx"
+
+.PP
+Definition at line 71 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms68_setGpo45(), and send_ad68_ui()\&.
+.SS "\fBad68_cfb_t\fP ic_ad68_t::cfb_Rx"
+
+.PP
+Definition at line 74 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by send_ad68_ui()\&.
+.SS "\fBad68_cfb_t\fP ic_ad68_t::cfb_Tx"
+
+.PP
+Definition at line 73 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_startDischarge(), and send_ad68_ui()\&.
+.SS "\fBad68_pwma_t\fP ic_ad68_t::pwma"
+
+.PP
+Definition at line 76 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_setPwm(), bms_startDischarge(), and send_ad68_ui()\&.
+.SS "\fBad68_pwmb_t\fP ic_ad68_t::pwmb"
+
+.PP
+Definition at line 77 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_setPwm(), and send_ad68_ui()\&.
+.SS "float ic_ad68_t::temp_cell[\fBRTH_PER_MODULE\fP]"
+
+.PP
+Definition at line 91 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_parseTemps(), CAN_Send_AD68_Temperatures_Module(), and send_ad68_ui()\&.
+.SS "float ic_ad68_t::temp_ic"
+
+.PP
+Definition at line 92 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_parseAuxVoltage(), and send_ad68_ui()\&.
+.SS "float ic_ad68_t::v_avgCell[\fBTOTAL_CELL\fP]"
+
+.PP
+Definition at line 79 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_calculateStats(), CAN_Send_AD68_Voltages_Module(), and send_ad68_ui()\&.
+.SS "float ic_ad68_t::v_avgCell_avg"
+
+.PP
+Definition at line 81 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_calculateStats(), and send_ad68_ui()\&.
+.SS "float ic_ad68_t::v_avgCell_delta"
+
+.PP
+Definition at line 84 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_calculateStats(), and send_ad68_ui()\&.
+.SS "float ic_ad68_t::v_avgCell_max"
+
+.PP
+Definition at line 83 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_calculateBalancing(), bms_calculateStats(), and send_ad68_ui()\&.
+.SS "float ic_ad68_t::v_avgCell_min"
+
+.PP
+Definition at line 82 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_calculateBalancing(), bms_calculateStats(), and send_ad68_ui()\&.
+.SS "float ic_ad68_t::v_avgCell_sum"
+
+.PP
+Definition at line 80 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_calculateStats(), and send_ad68_ui()\&.
+.SS "float ic_ad68_t::v_sCell[\fBTOTAL_CELL\fP]"
+
+.PP
+Definition at line 86 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_openWireCheck(), and send_ad68_ui()\&.
+.SS "float ic_ad68_t::v_segment"
+
+.PP
+Definition at line 89 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by bms_parseAuxVoltage(), and send_ad68_ui()\&.
+.SS "float ic_ad68_t::v_tempSens[\fBRTH_PER_MODULE\fP]"
+
+.PP
+Definition at line 88 of file bms_libWrapper\&.c\&.
+.PP
+Referenced by send_ad68_ui()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

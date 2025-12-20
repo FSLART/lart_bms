@@ -1,0 +1,57 @@
+.TH "CanTxItem_t" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CanTxItem_t
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "CAN_HandleTypeDef * \fBhcan\fP"
+.br
+.ti -1c
+.RI "uint32_t \fBid\fP"
+.br
+.ti -1c
+.RI "uint8_t \fBdlc\fP"
+.br
+.ti -1c
+.RI "uint8_t \fBdata\fP [8]"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 49 of file can\&.c\&.
+.SH "Field Documentation"
+.PP 
+.SS "uint8_t CanTxItem_t::data[8]"
+
+.PP
+Definition at line 53 of file can\&.c\&.
+.PP
+Referenced by CAN_TX_Add_To_Queue(), and CanTx_ProcessQueue()\&.
+.SS "uint8_t CanTxItem_t::dlc"
+
+.PP
+Definition at line 52 of file can\&.c\&.
+.PP
+Referenced by CAN_TX_Add_To_Queue(), and CanTx_ProcessQueue()\&.
+.SS "CAN_HandleTypeDef* CanTxItem_t::hcan"
+
+.PP
+Definition at line 50 of file can\&.c\&.
+.PP
+Referenced by CAN_TX_Add_To_Queue(), and CanTx_ProcessQueue()\&.
+.SS "uint32_t CanTxItem_t::id"
+
+.PP
+Definition at line 51 of file can\&.c\&.
+.PP
+Referenced by CAN_TX_Add_To_Queue(), and CanTx_ProcessQueue()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

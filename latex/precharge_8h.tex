@@ -1,0 +1,278 @@
+\hypertarget{precharge_8h}{}\doxysection{Core/\+Inc/precharge.h File Reference}
+\label{precharge_8h}\index{Core/Inc/precharge.h@{Core/Inc/precharge.h}}
+{\ttfamily \#include \char`\"{}main.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51c}{Precharge\+State\+\_\+t}} \{ \newline
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51cafd00a355c1bb093dc6fd86afa732d4f9}{R\+X\+\_\+\+C\+AN}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51ca13d000b4d7dc70d90239b7430d1eb6b2}{S\+T\+A\+RT}} = 0, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51ca7a2534b530866022b67ece0cd0710297}{O\+P\+E\+N\+\_\+\+A\+LL}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51ca56ec76a0c6dce37d1e7d43a1aed9aceb}{S\+W\+I\+T\+C\+H\+\_\+\+H\+V\+N\+EG}}, 
+\newline
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51ca6d3fbd8361e158bffcbd9bf4be0a51e7}{D\+E\+L\+A\+Y1}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51cade8dfe7019adaf09530361f574029f58}{V\+E\+R\+I\+F\+Y1}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51caaaaf23d3358cabedac24841697062cf5}{S\+W\+I\+T\+C\+H\+\_\+\+P\+R\+E\+C\+H\+A\+R\+GE}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51ca3451854fcc7d49bd456acf752f439fb0}{D\+E\+L\+A\+Y2}}, 
+\newline
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51cac66083d409ac11ef6539515d8ef46a26}{V\+E\+R\+I\+F\+Y2}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51caecbae5ae55fa551ab1bd2a759c381c1b}{V\+E\+R\+I\+F\+Y\+\_\+\+C\+U\+R\+R\+E\+NT}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51ca8f34065fb8344ec8cf065b3516603e39}{V\+E\+R\+I\+F\+Y\+\_\+\+B\+U\+S\+\_\+\+V\+O\+LT}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51cae465af75f003c5e73f18f5155aee1a2e}{S\+W\+I\+T\+C\+H\+\_\+\+H\+V\+P\+OS}}, 
+\newline
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51ca9a0f48b9bd29565b52cf2911517f0b3e}{D\+E\+L\+A\+Y3}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51ca4b7a1d00a9547ec04df7fbb6feb1c561}{V\+E\+R\+I\+F\+Y3}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51ca9a60756fae5a7968191003a1f3a5d047}{T\+U\+R\+N\+\_\+\+O\+F\+F\+\_\+\+P\+R\+E\+C\+H\+A\+R\+GE}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51ca87bf7e04a8880f11fcb12516998599ee}{V\+E\+R\+I\+F\+Y4}}, 
+\newline
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51cadc6f24fd6915a3f2786a1b7045406924}{E\+ND}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51cae50e47256d3583f0f0cbf9c30c360594}{W\+R\+O\+NG}}, 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51ca702a32e3574ea40b8d2f358dec764298}{K\+I\+LL}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{precharge_8h_ac83fa94b88161f9f94b643045acb1b28}{Precharge\+\_\+\+Init}} (void)
+\item 
+void \mbox{\hyperlink{precharge_8h_af89a658cc71c271b27b13bfae17fcd96}{Precharge\+\_\+\+C\+A\+N\+\_\+\+Init}} (void)
+\item 
+\mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51c}{Precharge\+State\+\_\+t}} \mbox{\hyperlink{precharge_8h_ac1c32798077caa680409f6276d995b4a}{Precharge\+\_\+\+Get\+State}} (void)
+\item 
+void \mbox{\hyperlink{precharge_8h_a1352c0bfce84891188f28ae6ee510ca0}{Precharge\+\_\+\+Update}} (void)
+\item 
+void \mbox{\hyperlink{precharge_8h_a00020a513d7c2fbd8c5bd5420280189a}{Pre\+Charge\+\_\+\+C\+A\+N\+\_\+\+Rx}} (const C\+A\+N\+\_\+\+Rx\+Header\+Type\+Def $\ast$hdr, const uint8\+\_\+t $\ast$data)
+\item 
+bool \mbox{\hyperlink{precharge_8h_a3b330526aea1fdaebc5b9d913a505955}{Verify\+H\+V\+N\+E\+G\+\_\+\+H\+V\+P\+O\+S\+\_\+\+States}} (void)
+\item 
+bool \mbox{\hyperlink{precharge_8h_a8e25354dd4f5ae50c7cc204b5e0bfe34}{Is\+Bus\+Voltage\+OK}} (void)
+\item 
+bool \mbox{\hyperlink{precharge_8h_aeceb2509c0d77c99c9f8ed16756a360c}{Is\+Current\+OK}} (void)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51c}\label{precharge_8h_ad008c1b5780369bb02179b416682c51c}} 
+\index{precharge.h@{precharge.h}!PrechargeState\_t@{PrechargeState\_t}}
+\index{PrechargeState\_t@{PrechargeState\_t}!precharge.h@{precharge.h}}
+\doxysubsubsection{\texorpdfstring{PrechargeState\_t}{PrechargeState\_t}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51c}{Precharge\+State\+\_\+t}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RX\_CAN@{RX\_CAN}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!RX\_CAN@{RX\_CAN}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51cafd00a355c1bb093dc6fd86afa732d4f9}\label{precharge_8h_ad008c1b5780369bb02179b416682c51cafd00a355c1bb093dc6fd86afa732d4f9}} 
+R\+X\+\_\+\+C\+AN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{START@{START}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!START@{START}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51ca13d000b4d7dc70d90239b7430d1eb6b2}\label{precharge_8h_ad008c1b5780369bb02179b416682c51ca13d000b4d7dc70d90239b7430d1eb6b2}} 
+S\+T\+A\+RT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OPEN\_ALL@{OPEN\_ALL}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!OPEN\_ALL@{OPEN\_ALL}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51ca7a2534b530866022b67ece0cd0710297}\label{precharge_8h_ad008c1b5780369bb02179b416682c51ca7a2534b530866022b67ece0cd0710297}} 
+O\+P\+E\+N\+\_\+\+A\+LL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SWITCH\_HVNEG@{SWITCH\_HVNEG}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!SWITCH\_HVNEG@{SWITCH\_HVNEG}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51ca56ec76a0c6dce37d1e7d43a1aed9aceb}\label{precharge_8h_ad008c1b5780369bb02179b416682c51ca56ec76a0c6dce37d1e7d43a1aed9aceb}} 
+S\+W\+I\+T\+C\+H\+\_\+\+H\+V\+N\+EG&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DELAY1@{DELAY1}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!DELAY1@{DELAY1}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51ca6d3fbd8361e158bffcbd9bf4be0a51e7}\label{precharge_8h_ad008c1b5780369bb02179b416682c51ca6d3fbd8361e158bffcbd9bf4be0a51e7}} 
+D\+E\+L\+A\+Y1&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VERIFY1@{VERIFY1}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!VERIFY1@{VERIFY1}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51cade8dfe7019adaf09530361f574029f58}\label{precharge_8h_ad008c1b5780369bb02179b416682c51cade8dfe7019adaf09530361f574029f58}} 
+V\+E\+R\+I\+F\+Y1&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SWITCH\_PRECHARGE@{SWITCH\_PRECHARGE}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!SWITCH\_PRECHARGE@{SWITCH\_PRECHARGE}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51caaaaf23d3358cabedac24841697062cf5}\label{precharge_8h_ad008c1b5780369bb02179b416682c51caaaaf23d3358cabedac24841697062cf5}} 
+S\+W\+I\+T\+C\+H\+\_\+\+P\+R\+E\+C\+H\+A\+R\+GE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DELAY2@{DELAY2}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!DELAY2@{DELAY2}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51ca3451854fcc7d49bd456acf752f439fb0}\label{precharge_8h_ad008c1b5780369bb02179b416682c51ca3451854fcc7d49bd456acf752f439fb0}} 
+D\+E\+L\+A\+Y2&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VERIFY2@{VERIFY2}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!VERIFY2@{VERIFY2}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51cac66083d409ac11ef6539515d8ef46a26}\label{precharge_8h_ad008c1b5780369bb02179b416682c51cac66083d409ac11ef6539515d8ef46a26}} 
+V\+E\+R\+I\+F\+Y2&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VERIFY\_CURRENT@{VERIFY\_CURRENT}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!VERIFY\_CURRENT@{VERIFY\_CURRENT}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51caecbae5ae55fa551ab1bd2a759c381c1b}\label{precharge_8h_ad008c1b5780369bb02179b416682c51caecbae5ae55fa551ab1bd2a759c381c1b}} 
+V\+E\+R\+I\+F\+Y\+\_\+\+C\+U\+R\+R\+E\+NT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VERIFY\_BUS\_VOLT@{VERIFY\_BUS\_VOLT}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!VERIFY\_BUS\_VOLT@{VERIFY\_BUS\_VOLT}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51ca8f34065fb8344ec8cf065b3516603e39}\label{precharge_8h_ad008c1b5780369bb02179b416682c51ca8f34065fb8344ec8cf065b3516603e39}} 
+V\+E\+R\+I\+F\+Y\+\_\+\+B\+U\+S\+\_\+\+V\+O\+LT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SWITCH\_HVPOS@{SWITCH\_HVPOS}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!SWITCH\_HVPOS@{SWITCH\_HVPOS}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51cae465af75f003c5e73f18f5155aee1a2e}\label{precharge_8h_ad008c1b5780369bb02179b416682c51cae465af75f003c5e73f18f5155aee1a2e}} 
+S\+W\+I\+T\+C\+H\+\_\+\+H\+V\+P\+OS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DELAY3@{DELAY3}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!DELAY3@{DELAY3}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51ca9a0f48b9bd29565b52cf2911517f0b3e}\label{precharge_8h_ad008c1b5780369bb02179b416682c51ca9a0f48b9bd29565b52cf2911517f0b3e}} 
+D\+E\+L\+A\+Y3&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VERIFY3@{VERIFY3}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!VERIFY3@{VERIFY3}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51ca4b7a1d00a9547ec04df7fbb6feb1c561}\label{precharge_8h_ad008c1b5780369bb02179b416682c51ca4b7a1d00a9547ec04df7fbb6feb1c561}} 
+V\+E\+R\+I\+F\+Y3&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TURN\_OFF\_PRECHARGE@{TURN\_OFF\_PRECHARGE}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!TURN\_OFF\_PRECHARGE@{TURN\_OFF\_PRECHARGE}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51ca9a60756fae5a7968191003a1f3a5d047}\label{precharge_8h_ad008c1b5780369bb02179b416682c51ca9a60756fae5a7968191003a1f3a5d047}} 
+T\+U\+R\+N\+\_\+\+O\+F\+F\+\_\+\+P\+R\+E\+C\+H\+A\+R\+GE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VERIFY4@{VERIFY4}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!VERIFY4@{VERIFY4}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51ca87bf7e04a8880f11fcb12516998599ee}\label{precharge_8h_ad008c1b5780369bb02179b416682c51ca87bf7e04a8880f11fcb12516998599ee}} 
+V\+E\+R\+I\+F\+Y4&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{END@{END}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!END@{END}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51cadc6f24fd6915a3f2786a1b7045406924}\label{precharge_8h_ad008c1b5780369bb02179b416682c51cadc6f24fd6915a3f2786a1b7045406924}} 
+E\+ND&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{WRONG@{WRONG}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!WRONG@{WRONG}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51cae50e47256d3583f0f0cbf9c30c360594}\label{precharge_8h_ad008c1b5780369bb02179b416682c51cae50e47256d3583f0f0cbf9c30c360594}} 
+W\+R\+O\+NG&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{KILL@{KILL}!precharge.h@{precharge.h}}\index{precharge.h@{precharge.h}!KILL@{KILL}}}\mbox{\Hypertarget{precharge_8h_ad008c1b5780369bb02179b416682c51ca702a32e3574ea40b8d2f358dec764298}\label{precharge_8h_ad008c1b5780369bb02179b416682c51ca702a32e3574ea40b8d2f358dec764298}} 
+K\+I\+LL&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 14 of file precharge.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{precharge_8h_a8e25354dd4f5ae50c7cc204b5e0bfe34}\label{precharge_8h_a8e25354dd4f5ae50c7cc204b5e0bfe34}} 
+\index{precharge.h@{precharge.h}!IsBusVoltageOK@{IsBusVoltageOK}}
+\index{IsBusVoltageOK@{IsBusVoltageOK}!precharge.h@{precharge.h}}
+\doxysubsubsection{\texorpdfstring{IsBusVoltageOK()}{IsBusVoltageOK()}}
+{\footnotesize\ttfamily bool Is\+Bus\+Voltage\+OK (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 159 of file precharge.\+c.
+
+
+
+Referenced by Precharge\+\_\+\+Update().
+
+\mbox{\Hypertarget{precharge_8h_aeceb2509c0d77c99c9f8ed16756a360c}\label{precharge_8h_aeceb2509c0d77c99c9f8ed16756a360c}} 
+\index{precharge.h@{precharge.h}!IsCurrentOK@{IsCurrentOK}}
+\index{IsCurrentOK@{IsCurrentOK}!precharge.h@{precharge.h}}
+\doxysubsubsection{\texorpdfstring{IsCurrentOK()}{IsCurrentOK()}}
+{\footnotesize\ttfamily bool Is\+Current\+OK (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 163 of file precharge.\+c.
+
+
+
+Referenced by Precharge\+\_\+\+Update().
+
+\mbox{\Hypertarget{precharge_8h_af89a658cc71c271b27b13bfae17fcd96}\label{precharge_8h_af89a658cc71c271b27b13bfae17fcd96}} 
+\index{precharge.h@{precharge.h}!Precharge\_CAN\_Init@{Precharge\_CAN\_Init}}
+\index{Precharge\_CAN\_Init@{Precharge\_CAN\_Init}!precharge.h@{precharge.h}}
+\doxysubsubsection{\texorpdfstring{Precharge\_CAN\_Init()}{Precharge\_CAN\_Init()}}
+{\footnotesize\ttfamily void Precharge\+\_\+\+C\+A\+N\+\_\+\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 35 of file precharge.\+c.
+
+
+
+References C\+A\+N\+\_\+\+Register\+Rx\+Callback(), and Pre\+Charge\+\_\+\+C\+A\+N\+\_\+\+Rx().
+
+
+
+Referenced by brain\+\_\+start().
+
+\mbox{\Hypertarget{precharge_8h_a00020a513d7c2fbd8c5bd5420280189a}\label{precharge_8h_a00020a513d7c2fbd8c5bd5420280189a}} 
+\index{precharge.h@{precharge.h}!PreCharge\_CAN\_Rx@{PreCharge\_CAN\_Rx}}
+\index{PreCharge\_CAN\_Rx@{PreCharge\_CAN\_Rx}!precharge.h@{precharge.h}}
+\doxysubsubsection{\texorpdfstring{PreCharge\_CAN\_Rx()}{PreCharge\_CAN\_Rx()}}
+{\footnotesize\ttfamily void Pre\+Charge\+\_\+\+C\+A\+N\+\_\+\+Rx (\begin{DoxyParamCaption}\item[{const C\+A\+N\+\_\+\+Rx\+Header\+Type\+Def $\ast$}]{hdr,  }\item[{const uint8\+\_\+t $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+Definition at line 167 of file precharge.\+c.
+
+
+
+References A\+M\+S\+\_\+\+S\+T\+A\+R\+T\+\_\+\+P\+R\+E\+\_\+\+C\+H\+A\+R\+G\+E\+\_\+\+F\+R\+A\+M\+E\+\_\+\+ID, ams\+\_\+start\+\_\+pre\+\_\+charge\+\_\+unpack(), K\+I\+LL, ams\+\_\+start\+\_\+pre\+\_\+charge\+\_\+t\+::precharge\+\_\+request, Precharge\+\_\+\+Update(), R\+X\+\_\+\+C\+AN, and state.
+
+
+
+Referenced by Precharge\+\_\+\+C\+A\+N\+\_\+\+Init().
+
+\mbox{\Hypertarget{precharge_8h_ac1c32798077caa680409f6276d995b4a}\label{precharge_8h_ac1c32798077caa680409f6276d995b4a}} 
+\index{precharge.h@{precharge.h}!Precharge\_GetState@{Precharge\_GetState}}
+\index{Precharge\_GetState@{Precharge\_GetState}!precharge.h@{precharge.h}}
+\doxysubsubsection{\texorpdfstring{Precharge\_GetState()}{Precharge\_GetState()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{precharge_8h_ad008c1b5780369bb02179b416682c51c}{Precharge\+State\+\_\+t}} Precharge\+\_\+\+Get\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 40 of file precharge.\+c.
+
+
+
+References state.
+
+
+
+Referenced by brain\+\_\+loop().
+
+\mbox{\Hypertarget{precharge_8h_ac83fa94b88161f9f94b643045acb1b28}\label{precharge_8h_ac83fa94b88161f9f94b643045acb1b28}} 
+\index{precharge.h@{precharge.h}!Precharge\_Init@{Precharge\_Init}}
+\index{Precharge\_Init@{Precharge\_Init}!precharge.h@{precharge.h}}
+\doxysubsubsection{\texorpdfstring{Precharge\_Init()}{Precharge\_Init()}}
+{\footnotesize\ttfamily void Precharge\+\_\+\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 30 of file precharge.\+c.
+
+
+
+References delay\+Start, S\+T\+A\+RT, and state.
+
+
+
+Referenced by brain\+\_\+loop(), and Precharge\+\_\+\+Update().
+
+\mbox{\Hypertarget{precharge_8h_a1352c0bfce84891188f28ae6ee510ca0}\label{precharge_8h_a1352c0bfce84891188f28ae6ee510ca0}} 
+\index{precharge.h@{precharge.h}!Precharge\_Update@{Precharge\_Update}}
+\index{Precharge\_Update@{Precharge\_Update}!precharge.h@{precharge.h}}
+\doxysubsubsection{\texorpdfstring{Precharge\_Update()}{Precharge\_Update()}}
+{\footnotesize\ttfamily void Precharge\+\_\+\+Update (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 44 of file precharge.\+c.
+
+
+
+References bypass\+Checks, Close\+A\+I\+R\+\_\+negativo(), Close\+A\+I\+R\+\_\+positivo(), Close\+Pre\+Carga(), D\+E\+L\+A\+Y1, D\+E\+L\+A\+Y2, D\+E\+L\+A\+Y3, delay\+Start, E\+ND, Is\+Bus\+Voltage\+O\+K(), Is\+Current\+O\+K(), K\+I\+LL, O\+P\+E\+N\+\_\+\+A\+LL, Open\+All\+Contactors(), Open\+Pre\+Carga(), P\+R\+E\+C\+H\+A\+R\+G\+E\+\_\+\+D\+E\+L\+A\+Y\+\_\+\+MS, Precharge\+\_\+\+Init(), S\+T\+A\+RT, state, S\+W\+I\+T\+C\+H\+\_\+\+H\+V\+N\+EG, S\+W\+I\+T\+C\+H\+\_\+\+H\+V\+P\+OS, S\+W\+I\+T\+C\+H\+\_\+\+P\+R\+E\+C\+H\+A\+R\+GE, T\+U\+R\+N\+\_\+\+O\+F\+F\+\_\+\+P\+R\+E\+C\+H\+A\+R\+GE, V\+E\+R\+I\+F\+Y1, V\+E\+R\+I\+F\+Y2, V\+E\+R\+I\+F\+Y3, V\+E\+R\+I\+F\+Y4, V\+E\+R\+I\+F\+Y\+\_\+\+B\+U\+S\+\_\+\+V\+O\+LT, V\+E\+R\+I\+F\+Y\+\_\+\+C\+U\+R\+R\+E\+NT, Verify\+H\+V\+N\+E\+G\+\_\+\+H\+V\+P\+O\+S\+\_\+\+States(), and W\+R\+O\+NG.
+
+
+
+Referenced by brain\+\_\+loop(), and Pre\+Charge\+\_\+\+C\+A\+N\+\_\+\+Rx().
+
+\mbox{\Hypertarget{precharge_8h_a3b330526aea1fdaebc5b9d913a505955}\label{precharge_8h_a3b330526aea1fdaebc5b9d913a505955}} 
+\index{precharge.h@{precharge.h}!VerifyHVNEG\_HVPOS\_States@{VerifyHVNEG\_HVPOS\_States}}
+\index{VerifyHVNEG\_HVPOS\_States@{VerifyHVNEG\_HVPOS\_States}!precharge.h@{precharge.h}}
+\doxysubsubsection{\texorpdfstring{VerifyHVNEG\_HVPOS\_States()}{VerifyHVNEG\_HVPOS\_States()}}
+{\footnotesize\ttfamily bool Verify\+H\+V\+N\+E\+G\+\_\+\+H\+V\+P\+O\+S\+\_\+\+States (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 155 of file precharge.\+c.
+
+
+
+Referenced by Precharge\+\_\+\+Update().
+

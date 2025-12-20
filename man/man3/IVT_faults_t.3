@@ -1,0 +1,131 @@
+.TH "IVT_faults_t" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+IVT_faults_t
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <isa_ivt\-s\&.h>\fP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "bool \fBCAN\fP"
+.br
+.ti -1c
+.RI "bool \fBpower\fP"
+.br
+.ti -1c
+.RI "bool \fBcurrent\fP"
+.br
+.ti -1c
+.RI "bool \fBvRef\fP"
+.br
+.ti -1c
+.RI "bool \fBU3_oc\fP"
+.br
+.ti -1c
+.RI "bool \fBU2_oc\fP"
+.br
+.ti -1c
+.RI "bool \fBU1_oc\fP"
+.br
+.ti -1c
+.RI "bool \fBcurrent_oc\fP"
+.br
+.ti -1c
+.RI "bool \fBntc_l_oc\fP"
+.br
+.ti -1c
+.RI "bool \fBntc_h_oc\fP"
+.br
+.ti -1c
+.RI "bool \fBadc\fP"
+.br
+.ti -1c
+.RI "bool \fBtemp\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 42 of file isa_ivt\-s\&.h\&.
+.SH "Field Documentation"
+.PP 
+.SS "bool IVT_faults_t::adc"
+
+.PP
+Definition at line 54 of file isa_ivt\-s\&.h\&.
+.PP
+Referenced by IVT_PROCESS_MEASURERRORS(), and send_ivt_ui()\&.
+.SS "bool IVT_faults_t::CAN"
+
+.PP
+Definition at line 44 of file isa_ivt\-s\&.h\&.
+.PP
+Referenced by IVT_PROCESS_SYSERRORS(), and send_ivt_ui()\&.
+.SS "bool IVT_faults_t::current"
+
+.PP
+Definition at line 46 of file isa_ivt\-s\&.h\&.
+.PP
+Referenced by IVT_PROCESS_MEASURERRORS(), IVT_PROCESS_SYSERRORS(), and send_ivt_ui()\&.
+.SS "bool IVT_faults_t::current_oc"
+
+.PP
+Definition at line 51 of file isa_ivt\-s\&.h\&.
+.PP
+Referenced by IVT_PROCESS_MEASURERRORS(), and send_ivt_ui()\&.
+.SS "bool IVT_faults_t::ntc_h_oc"
+
+.PP
+Definition at line 53 of file isa_ivt\-s\&.h\&.
+.PP
+Referenced by IVT_PROCESS_MEASURERRORS(), and send_ivt_ui()\&.
+.SS "bool IVT_faults_t::ntc_l_oc"
+
+.PP
+Definition at line 52 of file isa_ivt\-s\&.h\&.
+.PP
+Referenced by IVT_PROCESS_MEASURERRORS(), and send_ivt_ui()\&.
+.SS "bool IVT_faults_t::power"
+
+.PP
+Definition at line 45 of file isa_ivt\-s\&.h\&.
+.PP
+Referenced by IVT_PROCESS_SYSERRORS(), and send_ivt_ui()\&.
+.SS "bool IVT_faults_t::temp"
+
+.PP
+Definition at line 55 of file isa_ivt\-s\&.h\&.
+.PP
+Referenced by IVT_PROCESS_SYSERRORS(), and send_ivt_ui()\&.
+.SS "bool IVT_faults_t::U1_oc"
+
+.PP
+Definition at line 50 of file isa_ivt\-s\&.h\&.
+.PP
+Referenced by IVT_PROCESS_MEASURERRORS(), and send_ivt_ui()\&.
+.SS "bool IVT_faults_t::U2_oc"
+
+.PP
+Definition at line 49 of file isa_ivt\-s\&.h\&.
+.PP
+Referenced by IVT_PROCESS_MEASURERRORS(), and send_ivt_ui()\&.
+.SS "bool IVT_faults_t::U3_oc"
+
+.PP
+Definition at line 48 of file isa_ivt\-s\&.h\&.
+.PP
+Referenced by IVT_PROCESS_MEASURERRORS(), and send_ivt_ui()\&.
+.SS "bool IVT_faults_t::vRef"
+
+.PP
+Definition at line 47 of file isa_ivt\-s\&.h\&.
+.PP
+Referenced by IVT_PROCESS_MEASURERRORS(), IVT_PROCESS_SYSERRORS(), and send_ivt_ui()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

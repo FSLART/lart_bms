@@ -1,0 +1,264 @@
+\hypertarget{bms__utility_8h}{}\doxysection{Core/\+Inc/bms\+\_\+utility.h File Reference}
+\label{bms__utility_8h}\index{Core/Inc/bms\_utility.h@{Core/Inc/bms\_utility.h}}
+{\ttfamily \#include \char`\"{}main.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{bms__utility_8h_af02e45f15080b8ec9dd7b286157617ff}{D\+A\+T\+A\+\_\+\+L\+EN}}~(6)
+\item 
+\#define \mbox{\hyperlink{bms__utility_8h_ace1ea095b3c3dcd610fec99e7a2c8370}{D\+A\+T\+A\+P\+K\+T\+\_\+\+L\+EN}}~(6 + 2)
+\item 
+\#define \mbox{\hyperlink{bms__utility_8h_ac5c85a6a18b2073865149b2c0554ce8d}{C\+M\+D\+\_\+\+L\+EN}}~(2)
+\item 
+\#define \mbox{\hyperlink{bms__utility_8h_afebf4cf30d8c1346d7534577ac1a354c}{C\+M\+D\+P\+K\+T\+\_\+\+L\+EN}}~(2 + 2)
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+uint16\+\_\+t \mbox{\hyperlink{bms__utility_8h_a0d5784ed0acefac6561cbd507b17c87d}{bms\+\_\+calc\+Pec15}} (uint8\+\_\+t $\ast$data, uint8\+\_\+t len)
+\item 
+uint16\+\_\+t \mbox{\hyperlink{bms__utility_8h_a77a7e7329039aa05532fbedf48bc387a}{bms\+\_\+calc\+Pec10}} (uint8\+\_\+t $\ast$p\+Data\+Buf, int n\+Length, uint8\+\_\+t $\ast$command\+Counter)
+\item 
+void \mbox{\hyperlink{bms__utility_8h_afc3d78bd186cfc1e5d1bf39890c4e6f9}{bms\+\_\+spi\+Transmit\+Cmd}} (uint8\+\_\+t cmd\mbox{[}\mbox{\hyperlink{bms__utility_8h_ac5c85a6a18b2073865149b2c0554ce8d}{C\+M\+D\+\_\+\+L\+EN}}\mbox{]})
+\item 
+void \mbox{\hyperlink{bms__utility_8h_a5d261eafbf5120b8064bd09ee698f8f9}{bms\+\_\+spi\+Transmit\+Data}} (uint8\+\_\+t data\mbox{[}\mbox{\hyperlink{main_8h_ae6a550fbd88bdbdbbbecc30db830c6a8}{T\+O\+T\+A\+L\+\_\+\+IC}}\mbox{]}\mbox{[}\mbox{\hyperlink{bms__utility_8h_af02e45f15080b8ec9dd7b286157617ff}{D\+A\+T\+A\+\_\+\+L\+EN}}\mbox{]})
+\item 
+void \mbox{\hyperlink{bms__utility_8h_a8d2a3f0216659e00c653051339243b02}{bms\+\_\+spi\+Receive\+Data}} (uint8\+\_\+t \mbox{\hyperlink{bms__lib_wrapper_8c_a668640f49b0e202ea01dc2efc723cbd7}{rx\+Data}}\mbox{[}\mbox{\hyperlink{main_8h_ae6a550fbd88bdbdbbbecc30db830c6a8}{T\+O\+T\+A\+L\+\_\+\+IC}}\mbox{]}\mbox{[}\mbox{\hyperlink{bms__utility_8h_af02e45f15080b8ec9dd7b286157617ff}{D\+A\+T\+A\+\_\+\+L\+EN}}\mbox{]}, uint16\+\_\+t \mbox{\hyperlink{bms__lib_wrapper_8c_a3f4ae7541c384152166f87d42d5f8ff3}{rx\+Pec}}\mbox{[}\mbox{\hyperlink{main_8h_ae6a550fbd88bdbdbbbecc30db830c6a8}{T\+O\+T\+A\+L\+\_\+\+IC}}\mbox{]}, uint8\+\_\+t \mbox{\hyperlink{bms__lib_wrapper_8c_af1a4d22e93e331f859d01437e6e3114c}{rx\+Cc}}\mbox{[}\mbox{\hyperlink{main_8h_ae6a550fbd88bdbdbbbecc30db830c6a8}{T\+O\+T\+A\+L\+\_\+\+IC}}\mbox{]})
+\item 
+bool \mbox{\hyperlink{bms__utility_8h_a4e9ce919488bbf82009d5f7e047a237a}{bms\+\_\+check\+Rx\+Pec}} (uint8\+\_\+t \mbox{\hyperlink{bms__lib_wrapper_8c_a668640f49b0e202ea01dc2efc723cbd7}{rx\+Data}}\mbox{[}\mbox{\hyperlink{main_8h_ae6a550fbd88bdbdbbbecc30db830c6a8}{T\+O\+T\+A\+L\+\_\+\+IC}}\mbox{]}\mbox{[}\mbox{\hyperlink{bms__utility_8h_af02e45f15080b8ec9dd7b286157617ff}{D\+A\+T\+A\+\_\+\+L\+EN}}\mbox{]}, uint16\+\_\+t \mbox{\hyperlink{bms__lib_wrapper_8c_a3f4ae7541c384152166f87d42d5f8ff3}{rx\+Pec}}\mbox{[}\mbox{\hyperlink{main_8h_ae6a550fbd88bdbdbbbecc30db830c6a8}{T\+O\+T\+A\+L\+\_\+\+IC}}\mbox{]}, uint8\+\_\+t \mbox{\hyperlink{bms__lib_wrapper_8c_af1a4d22e93e331f859d01437e6e3114c}{rx\+Cc}}\mbox{[}\mbox{\hyperlink{main_8h_ae6a550fbd88bdbdbbbecc30db830c6a8}{T\+O\+T\+A\+L\+\_\+\+IC}}\mbox{]}, bool error\+Index\mbox{[}\mbox{\hyperlink{main_8h_ae6a550fbd88bdbdbbbecc30db830c6a8}{T\+O\+T\+A\+L\+\_\+\+IC}}\mbox{]})
+\item 
+void \mbox{\hyperlink{bms__utility_8h_a338dd599e15616c3d278c0b79caa108d}{bms\+\_\+transmit\+Cmd}} (uint8\+\_\+t cmd\mbox{[}\mbox{\hyperlink{bms__utility_8h_ac5c85a6a18b2073865149b2c0554ce8d}{C\+M\+D\+\_\+\+L\+EN}}\mbox{]})
+\item 
+void \mbox{\hyperlink{bms__utility_8h_af134df498fba3bbfdd6f126534df9f9b}{bms\+\_\+transmit\+Poll}} (uint8\+\_\+t cmd\mbox{[}\mbox{\hyperlink{bms__utility_8h_ac5c85a6a18b2073865149b2c0554ce8d}{C\+M\+D\+\_\+\+L\+EN}}\mbox{]})
+\item 
+void \mbox{\hyperlink{bms__utility_8h_a966ed16e1432a02705e9a77be6d886c8}{bms\+\_\+transmit\+Data}} (uint8\+\_\+t cmd\mbox{[}\mbox{\hyperlink{bms__utility_8h_ac5c85a6a18b2073865149b2c0554ce8d}{C\+M\+D\+\_\+\+L\+EN}}\mbox{]}, uint8\+\_\+t tx\+Buffer\mbox{[}\mbox{\hyperlink{main_8h_ae6a550fbd88bdbdbbbecc30db830c6a8}{T\+O\+T\+A\+L\+\_\+\+IC}}\mbox{]}\mbox{[}\mbox{\hyperlink{bms__utility_8h_af02e45f15080b8ec9dd7b286157617ff}{D\+A\+T\+A\+\_\+\+L\+EN}}\mbox{]})
+\item 
+void \mbox{\hyperlink{bms__utility_8h_a07354d997dd67a0df3a8713c71705dde}{bms\+\_\+receive\+Data}} (uint8\+\_\+t cmd\mbox{[}\mbox{\hyperlink{bms__utility_8h_ac5c85a6a18b2073865149b2c0554ce8d}{C\+M\+D\+\_\+\+L\+EN}}\mbox{]}, uint8\+\_\+t rx\+Buffer\mbox{[}\mbox{\hyperlink{main_8h_ae6a550fbd88bdbdbbbecc30db830c6a8}{T\+O\+T\+A\+L\+\_\+\+IC}}\mbox{]}\mbox{[}\mbox{\hyperlink{bms__utility_8h_af02e45f15080b8ec9dd7b286157617ff}{D\+A\+T\+A\+\_\+\+L\+EN}}\mbox{]}, uint16\+\_\+t \mbox{\hyperlink{bms__lib_wrapper_8c_a3f4ae7541c384152166f87d42d5f8ff3}{rx\+Pec}}\mbox{[}\mbox{\hyperlink{main_8h_ae6a550fbd88bdbdbbbecc30db830c6a8}{T\+O\+T\+A\+L\+\_\+\+IC}}\mbox{]}, uint8\+\_\+t \mbox{\hyperlink{bms__lib_wrapper_8c_af1a4d22e93e331f859d01437e6e3114c}{rx\+Cc}}\mbox{[}\mbox{\hyperlink{main_8h_ae6a550fbd88bdbdbbbecc30db830c6a8}{T\+O\+T\+A\+L\+\_\+\+IC}}\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{bms__utility_8h_ac5c85a6a18b2073865149b2c0554ce8d}\label{bms__utility_8h_ac5c85a6a18b2073865149b2c0554ce8d}} 
+\index{bms\_utility.h@{bms\_utility.h}!CMD\_LEN@{CMD\_LEN}}
+\index{CMD\_LEN@{CMD\_LEN}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{CMD\_LEN}{CMD\_LEN}}
+{\footnotesize\ttfamily \#define C\+M\+D\+\_\+\+L\+EN~(2)}
+
+
+
+Definition at line 15 of file bms\+\_\+utility.\+h.
+
+\mbox{\Hypertarget{bms__utility_8h_afebf4cf30d8c1346d7534577ac1a354c}\label{bms__utility_8h_afebf4cf30d8c1346d7534577ac1a354c}} 
+\index{bms\_utility.h@{bms\_utility.h}!CMDPKT\_LEN@{CMDPKT\_LEN}}
+\index{CMDPKT\_LEN@{CMDPKT\_LEN}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{CMDPKT\_LEN}{CMDPKT\_LEN}}
+{\footnotesize\ttfamily \#define C\+M\+D\+P\+K\+T\+\_\+\+L\+EN~(2 + 2)}
+
+
+
+Definition at line 16 of file bms\+\_\+utility.\+h.
+
+\mbox{\Hypertarget{bms__utility_8h_af02e45f15080b8ec9dd7b286157617ff}\label{bms__utility_8h_af02e45f15080b8ec9dd7b286157617ff}} 
+\index{bms\_utility.h@{bms\_utility.h}!DATA\_LEN@{DATA\_LEN}}
+\index{DATA\_LEN@{DATA\_LEN}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{DATA\_LEN}{DATA\_LEN}}
+{\footnotesize\ttfamily \#define D\+A\+T\+A\+\_\+\+L\+EN~(6)}
+
+
+
+Definition at line 13 of file bms\+\_\+utility.\+h.
+
+\mbox{\Hypertarget{bms__utility_8h_ace1ea095b3c3dcd610fec99e7a2c8370}\label{bms__utility_8h_ace1ea095b3c3dcd610fec99e7a2c8370}} 
+\index{bms\_utility.h@{bms\_utility.h}!DATAPKT\_LEN@{DATAPKT\_LEN}}
+\index{DATAPKT\_LEN@{DATAPKT\_LEN}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{DATAPKT\_LEN}{DATAPKT\_LEN}}
+{\footnotesize\ttfamily \#define D\+A\+T\+A\+P\+K\+T\+\_\+\+L\+EN~(6 + 2)}
+
+
+
+Definition at line 14 of file bms\+\_\+utility.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{bms__utility_8h_a77a7e7329039aa05532fbedf48bc387a}\label{bms__utility_8h_a77a7e7329039aa05532fbedf48bc387a}} 
+\index{bms\_utility.h@{bms\_utility.h}!bms\_calcPec10@{bms\_calcPec10}}
+\index{bms\_calcPec10@{bms\_calcPec10}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{bms\_calcPec10()}{bms\_calcPec10()}}
+{\footnotesize\ttfamily uint16\+\_\+t bms\+\_\+calc\+Pec10 (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{p\+Data\+Buf,  }\item[{int}]{n\+Length,  }\item[{uint8\+\_\+t $\ast$}]{command\+Counter }\end{DoxyParamCaption})}
+
+
+
+Definition at line 80 of file bms\+\_\+utility.\+c.
+
+
+
+References crc10\+Table.
+
+
+
+Referenced by bms\+\_\+check\+Rx\+Pec(), and bms\+\_\+spi\+Transmit\+Data().
+
+\mbox{\Hypertarget{bms__utility_8h_a0d5784ed0acefac6561cbd507b17c87d}\label{bms__utility_8h_a0d5784ed0acefac6561cbd507b17c87d}} 
+\index{bms\_utility.h@{bms\_utility.h}!bms\_calcPec15@{bms\_calcPec15}}
+\index{bms\_calcPec15@{bms\_calcPec15}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{bms\_calcPec15()}{bms\_calcPec15()}}
+{\footnotesize\ttfamily uint16\+\_\+t bms\+\_\+calc\+Pec15 (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{data,  }\item[{uint8\+\_\+t}]{len }\end{DoxyParamCaption})}
+
+
+
+Definition at line 67 of file bms\+\_\+utility.\+c.
+
+
+
+References Crc15\+Table.
+
+
+
+Referenced by bms\+\_\+spi\+Transmit\+Cmd().
+
+\mbox{\Hypertarget{bms__utility_8h_a4e9ce919488bbf82009d5f7e047a237a}\label{bms__utility_8h_a4e9ce919488bbf82009d5f7e047a237a}} 
+\index{bms\_utility.h@{bms\_utility.h}!bms\_checkRxPec@{bms\_checkRxPec}}
+\index{bms\_checkRxPec@{bms\_checkRxPec}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{bms\_checkRxPec()}{bms\_checkRxPec()}}
+{\footnotesize\ttfamily bool bms\+\_\+check\+Rx\+Pec (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{rx\+Data\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+I\+C\mbox{]}\mbox{[}\+D\+A\+T\+A\+\_\+\+L\+E\+N\mbox{]},  }\item[{uint16\+\_\+t}]{rx\+Pec\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+I\+C\mbox{]},  }\item[{uint8\+\_\+t}]{rx\+Cc\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+I\+C\mbox{]},  }\item[{bool}]{error\+Index\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+I\+C\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 179 of file bms\+\_\+utility.\+c.
+
+
+
+References bms\+\_\+calc\+Pec10(), D\+A\+T\+A\+\_\+\+L\+EN, rx\+Cc, rx\+Data, rx\+Pec, and T\+O\+T\+A\+L\+\_\+\+IC.
+
+
+
+Referenced by bms\+\_\+check\+Rx\+Fault().
+
+\mbox{\Hypertarget{bms__utility_8h_a07354d997dd67a0df3a8713c71705dde}\label{bms__utility_8h_a07354d997dd67a0df3a8713c71705dde}} 
+\index{bms\_utility.h@{bms\_utility.h}!bms\_receiveData@{bms\_receiveData}}
+\index{bms\_receiveData@{bms\_receiveData}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{bms\_receiveData()}{bms\_receiveData()}}
+{\footnotesize\ttfamily void bms\+\_\+receive\+Data (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{cmd\mbox{[}\+C\+M\+D\+\_\+\+L\+E\+N\mbox{]},  }\item[{uint8\+\_\+t}]{rx\+Buffer\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+I\+C\mbox{]}\mbox{[}\+D\+A\+T\+A\+\_\+\+L\+E\+N\mbox{]},  }\item[{uint16\+\_\+t}]{rx\+Pec\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+I\+C\mbox{]},  }\item[{uint8\+\_\+t}]{rx\+Cc\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+I\+C\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 231 of file bms\+\_\+utility.\+c.
+
+
+
+References bms\+\_\+cs\+High(), bms\+\_\+cs\+Low(), bms\+\_\+spi\+Receive\+Data(), bms\+\_\+spi\+Transmit\+Cmd(), rx\+Cc, and rx\+Pec.
+
+
+
+Referenced by bms\+\_\+get\+Aux\+Voltage(), bms\+\_\+read\+Avg\+Cell\+Voltage(), bms\+\_\+read\+Config\+A(), bms\+\_\+read\+Config\+B(), bms\+\_\+read\+Sid(), bms\+\_\+read\+S\+Voltage(), and bms\+\_\+read\+V\+B().
+
+\mbox{\Hypertarget{bms__utility_8h_a8d2a3f0216659e00c653051339243b02}\label{bms__utility_8h_a8d2a3f0216659e00c653051339243b02}} 
+\index{bms\_utility.h@{bms\_utility.h}!bms\_spiReceiveData@{bms\_spiReceiveData}}
+\index{bms\_spiReceiveData@{bms\_spiReceiveData}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{bms\_spiReceiveData()}{bms\_spiReceiveData()}}
+{\footnotesize\ttfamily void bms\+\_\+spi\+Receive\+Data (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{rx\+Data\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+I\+C\mbox{]}\mbox{[}\+D\+A\+T\+A\+\_\+\+L\+E\+N\mbox{]},  }\item[{uint16\+\_\+t}]{rx\+Pec\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+I\+C\mbox{]},  }\item[{uint8\+\_\+t}]{rx\+Cc\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+I\+C\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 158 of file bms\+\_\+utility.\+c.
+
+
+
+References D\+A\+T\+A\+\_\+\+L\+EN, D\+A\+T\+A\+P\+K\+T\+\_\+\+L\+EN, hspi, rx\+Cc, rx\+Data, rx\+Pec, and T\+O\+T\+A\+L\+\_\+\+IC.
+
+
+
+Referenced by bms\+\_\+receive\+Data().
+
+\mbox{\Hypertarget{bms__utility_8h_afc3d78bd186cfc1e5d1bf39890c4e6f9}\label{bms__utility_8h_afc3d78bd186cfc1e5d1bf39890c4e6f9}} 
+\index{bms\_utility.h@{bms\_utility.h}!bms\_spiTransmitCmd@{bms\_spiTransmitCmd}}
+\index{bms\_spiTransmitCmd@{bms\_spiTransmitCmd}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{bms\_spiTransmitCmd()}{bms\_spiTransmitCmd()}}
+{\footnotesize\ttfamily void bms\+\_\+spi\+Transmit\+Cmd (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{cmd\mbox{[}\+C\+M\+D\+\_\+\+L\+E\+N\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 117 of file bms\+\_\+utility.\+c.
+
+
+
+References bms\+\_\+calc\+Pec15(), C\+M\+D\+\_\+\+L\+EN, C\+M\+D\+P\+K\+T\+\_\+\+L\+EN, and hspi.
+
+
+
+Referenced by bms\+\_\+receive\+Data(), bms\+\_\+transmit\+Cmd(), bms\+\_\+transmit\+Data(), and bms\+\_\+transmit\+Poll().
+
+\mbox{\Hypertarget{bms__utility_8h_a5d261eafbf5120b8064bd09ee698f8f9}\label{bms__utility_8h_a5d261eafbf5120b8064bd09ee698f8f9}} 
+\index{bms\_utility.h@{bms\_utility.h}!bms\_spiTransmitData@{bms\_spiTransmitData}}
+\index{bms\_spiTransmitData@{bms\_spiTransmitData}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{bms\_spiTransmitData()}{bms\_spiTransmitData()}}
+{\footnotesize\ttfamily void bms\+\_\+spi\+Transmit\+Data (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{data\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+I\+C\mbox{]}\mbox{[}\+D\+A\+T\+A\+\_\+\+L\+E\+N\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 135 of file bms\+\_\+utility.\+c.
+
+
+
+References bms\+\_\+calc\+Pec10(), D\+A\+T\+A\+\_\+\+L\+EN, D\+A\+T\+A\+P\+K\+T\+\_\+\+L\+EN, hspi, and T\+O\+T\+A\+L\+\_\+\+IC.
+
+
+
+Referenced by bms\+\_\+transmit\+Data().
+
+\mbox{\Hypertarget{bms__utility_8h_a338dd599e15616c3d278c0b79caa108d}\label{bms__utility_8h_a338dd599e15616c3d278c0b79caa108d}} 
+\index{bms\_utility.h@{bms\_utility.h}!bms\_transmitCmd@{bms\_transmitCmd}}
+\index{bms\_transmitCmd@{bms\_transmitCmd}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{bms\_transmitCmd()}{bms\_transmitCmd()}}
+{\footnotesize\ttfamily void bms\+\_\+transmit\+Cmd (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{cmd\mbox{[}\+C\+M\+D\+\_\+\+L\+E\+N\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 198 of file bms\+\_\+utility.\+c.
+
+
+
+References bms\+\_\+cs\+High(), bms\+\_\+cs\+Low(), and bms\+\_\+spi\+Transmit\+Cmd().
+
+
+
+Referenced by bms\+\_\+balancing\+Measure\+Voltage(), bms\+\_\+get\+Aux\+Measurement(), bms\+\_\+open\+Wire\+Check(), bms\+\_\+start\+Adcv\+Cont(), and bms\+\_\+stop\+Discharge().
+
+\mbox{\Hypertarget{bms__utility_8h_a966ed16e1432a02705e9a77be6d886c8}\label{bms__utility_8h_a966ed16e1432a02705e9a77be6d886c8}} 
+\index{bms\_utility.h@{bms\_utility.h}!bms\_transmitData@{bms\_transmitData}}
+\index{bms\_transmitData@{bms\_transmitData}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{bms\_transmitData()}{bms\_transmitData()}}
+{\footnotesize\ttfamily void bms\+\_\+transmit\+Data (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{cmd\mbox{[}\+C\+M\+D\+\_\+\+L\+E\+N\mbox{]},  }\item[{uint8\+\_\+t}]{tx\+Buffer\mbox{[}\+T\+O\+T\+A\+L\+\_\+\+I\+C\mbox{]}\mbox{[}\+D\+A\+T\+A\+\_\+\+L\+E\+N\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 222 of file bms\+\_\+utility.\+c.
+
+
+
+References bms\+\_\+cs\+High(), bms\+\_\+cs\+Low(), bms\+\_\+spi\+Transmit\+Cmd(), and bms\+\_\+spi\+Transmit\+Data().
+
+
+
+Referenced by bms\+\_\+write\+Config\+A(), bms\+\_\+write\+Config\+B(), bms\+\_\+write\+Pwm\+A(), and bms\+\_\+write\+Pwm\+B().
+
+\mbox{\Hypertarget{bms__utility_8h_af134df498fba3bbfdd6f126534df9f9b}\label{bms__utility_8h_af134df498fba3bbfdd6f126534df9f9b}} 
+\index{bms\_utility.h@{bms\_utility.h}!bms\_transmitPoll@{bms\_transmitPoll}}
+\index{bms\_transmitPoll@{bms\_transmitPoll}!bms\_utility.h@{bms\_utility.h}}
+\doxysubsubsection{\texorpdfstring{bms\_transmitPoll()}{bms\_transmitPoll()}}
+{\footnotesize\ttfamily void bms\+\_\+transmit\+Poll (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{cmd\mbox{[}\+C\+M\+D\+\_\+\+L\+E\+N\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 206 of file bms\+\_\+utility.\+c.
+
+
+
+References bms\+\_\+cs\+High(), bms\+\_\+cs\+Low(), bms\+\_\+spi\+Transmit\+Cmd(), and hspi.
+
+
+
+Referenced by bms\+\_\+balancing\+Measure\+Voltage(), and bms\+\_\+get\+Aux\+Measurement().
+

@@ -1,0 +1,145 @@
+\hypertarget{eeprom__utils_8c}{}\doxysection{Core/\+Src/eeprom\+\_\+utils.c File Reference}
+\label{eeprom__utils_8c}\index{Core/Src/eeprom\_utils.c@{Core/Src/eeprom\_utils.c}}
+{\ttfamily \#include \char`\"{}eeprom\+\_\+utils.\+h\char`\"{}}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{eeprom__utils_8c_a0d57378e32bf8278011460740bc29f7f}{U\+A\+R\+T\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}}~64
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{eeprom__utils_8c_abcff5eb231fe7205cc7ebd020bb854ad}{Write\+\_\+\+E\+E\+P\+R\+OM}} (\mbox{\hyperlink{struct_e_e_p_r_o_m___comms}{E\+E\+P\+R\+O\+M\+\_\+\+Comms}} $\ast$comms, uint8\+\_\+t type, uint16\+\_\+t value, bool debug)
+\item 
+int \mbox{\hyperlink{eeprom__utils_8c_a3673723fedddb8f34048c7c59a360276}{Read\+\_\+\+E\+E\+P\+R\+OM}} (\mbox{\hyperlink{struct_e_e_p_r_o_m___comms}{E\+E\+P\+R\+O\+M\+\_\+\+Comms}} $\ast$comms, uint8\+\_\+t type, bool debug)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} \mbox{\hyperlink{eeprom__utils_8c_a504230d719a19db1ad1f3098fc069c0d}{ee24fc08}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{eeprom__utils_8c_a70473319e89ec40885074b4ee6c1601b}{uart\+\_\+rx\+\_\+buffer}} \mbox{[}1\mbox{]}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{eeprom__utils_8c_a9a3c620603fd153fcbfd84f7a94564fa}{uart\+\_\+message}} \mbox{[}\mbox{\hyperlink{eeprom__utils_8c_a0d57378e32bf8278011460740bc29f7f}{U\+A\+R\+T\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}}\mbox{]}
+\item 
+volatile uint8\+\_\+t \mbox{\hyperlink{eeprom__utils_8c_af4454189897a02ca09679e97ddca5f78}{uart\+\_\+index}} = 0
+\item 
+volatile bool \mbox{\hyperlink{eeprom__utils_8c_a16d3fb4c78de3c9de3ac215f1224514a}{uart\+\_\+message\+\_\+ready}} = false
+\item 
+static U\+A\+R\+T\+\_\+\+Handle\+Type\+Def $\ast$ \mbox{\hyperlink{eeprom__utils_8c_aecd6ebef43e7ff2ea3898cd6824866c6}{global\+\_\+uart}} = N\+U\+LL
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{eeprom__utils_8c_a0d57378e32bf8278011460740bc29f7f}\label{eeprom__utils_8c_a0d57378e32bf8278011460740bc29f7f}} 
+\index{eeprom\_utils.c@{eeprom\_utils.c}!UART\_BUFFER\_SIZE@{UART\_BUFFER\_SIZE}}
+\index{UART\_BUFFER\_SIZE@{UART\_BUFFER\_SIZE}!eeprom\_utils.c@{eeprom\_utils.c}}
+\doxysubsubsection{\texorpdfstring{UART\_BUFFER\_SIZE}{UART\_BUFFER\_SIZE}}
+{\footnotesize\ttfamily \#define U\+A\+R\+T\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE~64}
+
+
+
+Definition at line 3 of file eeprom\+\_\+utils.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{eeprom__utils_8c_a3673723fedddb8f34048c7c59a360276}\label{eeprom__utils_8c_a3673723fedddb8f34048c7c59a360276}} 
+\index{eeprom\_utils.c@{eeprom\_utils.c}!Read\_EEPROM@{Read\_EEPROM}}
+\index{Read\_EEPROM@{Read\_EEPROM}!eeprom\_utils.c@{eeprom\_utils.c}}
+\doxysubsubsection{\texorpdfstring{Read\_EEPROM()}{Read\_EEPROM()}}
+{\footnotesize\ttfamily int Read\+\_\+\+E\+E\+P\+R\+OM (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_e_e_p_r_o_m___comms}{E\+E\+P\+R\+O\+M\+\_\+\+Comms}} $\ast$}]{comms,  }\item[{uint8\+\_\+t}]{type,  }\item[{bool}]{debug }\end{DoxyParamCaption})}
+
+
+
+Definition at line 130 of file eeprom\+\_\+utils.\+c.
+
+
+
+References E\+E24\+\_\+\+A\+D\+D\+R\+E\+S\+S\+\_\+\+D\+E\+F\+A\+U\+LT, E\+E24\+\_\+\+Init(), E\+E24\+\_\+\+Read(), ee24fc08, global\+\_\+uart, E\+E\+P\+R\+O\+M\+\_\+\+Comms\+::hi2c, E\+E\+P\+R\+O\+M\+\_\+\+Comms\+::huart, and printf\+Dma().
+
+\mbox{\Hypertarget{eeprom__utils_8c_abcff5eb231fe7205cc7ebd020bb854ad}\label{eeprom__utils_8c_abcff5eb231fe7205cc7ebd020bb854ad}} 
+\index{eeprom\_utils.c@{eeprom\_utils.c}!Write\_EEPROM@{Write\_EEPROM}}
+\index{Write\_EEPROM@{Write\_EEPROM}!eeprom\_utils.c@{eeprom\_utils.c}}
+\doxysubsubsection{\texorpdfstring{Write\_EEPROM()}{Write\_EEPROM()}}
+{\footnotesize\ttfamily bool Write\+\_\+\+E\+E\+P\+R\+OM (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_e_e_p_r_o_m___comms}{E\+E\+P\+R\+O\+M\+\_\+\+Comms}} $\ast$}]{comms,  }\item[{uint8\+\_\+t}]{type,  }\item[{uint16\+\_\+t}]{value,  }\item[{bool}]{debug }\end{DoxyParamCaption})}
+
+
+
+Definition at line 15 of file eeprom\+\_\+utils.\+c.
+
+
+
+References E\+E24\+\_\+\+A\+D\+D\+R\+E\+S\+S\+\_\+\+D\+E\+F\+A\+U\+LT, E\+E24\+\_\+\+Init(), E\+E24\+\_\+\+Read(), E\+E24\+\_\+\+Write(), ee24fc08, global\+\_\+uart, E\+E\+P\+R\+O\+M\+\_\+\+Comms\+::hi2c, E\+E\+P\+R\+O\+M\+\_\+\+Comms\+::huart, and printf\+Dma().
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{eeprom__utils_8c_a504230d719a19db1ad1f3098fc069c0d}\label{eeprom__utils_8c_a504230d719a19db1ad1f3098fc069c0d}} 
+\index{eeprom\_utils.c@{eeprom\_utils.c}!ee24fc08@{ee24fc08}}
+\index{ee24fc08@{ee24fc08}!eeprom\_utils.c@{eeprom\_utils.c}}
+\doxysubsubsection{\texorpdfstring{ee24fc08}{ee24fc08}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_e_e24___handle_type_def}{E\+E24\+\_\+\+Handle\+Type\+Def}} ee24fc08\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 6 of file eeprom\+\_\+utils.\+c.
+
+
+
+Referenced by Read\+\_\+\+E\+E\+P\+R\+O\+M(), and Write\+\_\+\+E\+E\+P\+R\+O\+M().
+
+\mbox{\Hypertarget{eeprom__utils_8c_aecd6ebef43e7ff2ea3898cd6824866c6}\label{eeprom__utils_8c_aecd6ebef43e7ff2ea3898cd6824866c6}} 
+\index{eeprom\_utils.c@{eeprom\_utils.c}!global\_uart@{global\_uart}}
+\index{global\_uart@{global\_uart}!eeprom\_utils.c@{eeprom\_utils.c}}
+\doxysubsubsection{\texorpdfstring{global\_uart}{global\_uart}}
+{\footnotesize\ttfamily U\+A\+R\+T\+\_\+\+Handle\+Type\+Def$\ast$ global\+\_\+uart = N\+U\+LL\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 13 of file eeprom\+\_\+utils.\+c.
+
+
+
+Referenced by Read\+\_\+\+E\+E\+P\+R\+O\+M(), and Write\+\_\+\+E\+E\+P\+R\+O\+M().
+
+\mbox{\Hypertarget{eeprom__utils_8c_af4454189897a02ca09679e97ddca5f78}\label{eeprom__utils_8c_af4454189897a02ca09679e97ddca5f78}} 
+\index{eeprom\_utils.c@{eeprom\_utils.c}!uart\_index@{uart\_index}}
+\index{uart\_index@{uart\_index}!eeprom\_utils.c@{eeprom\_utils.c}}
+\doxysubsubsection{\texorpdfstring{uart\_index}{uart\_index}}
+{\footnotesize\ttfamily volatile uint8\+\_\+t uart\+\_\+index = 0}
+
+
+
+Definition at line 10 of file eeprom\+\_\+utils.\+c.
+
+\mbox{\Hypertarget{eeprom__utils_8c_a9a3c620603fd153fcbfd84f7a94564fa}\label{eeprom__utils_8c_a9a3c620603fd153fcbfd84f7a94564fa}} 
+\index{eeprom\_utils.c@{eeprom\_utils.c}!uart\_message@{uart\_message}}
+\index{uart\_message@{uart\_message}!eeprom\_utils.c@{eeprom\_utils.c}}
+\doxysubsubsection{\texorpdfstring{uart\_message}{uart\_message}}
+{\footnotesize\ttfamily uint8\+\_\+t uart\+\_\+message\mbox{[}\mbox{\hyperlink{eeprom__utils_8c_a0d57378e32bf8278011460740bc29f7f}{U\+A\+R\+T\+\_\+\+B\+U\+F\+F\+E\+R\+\_\+\+S\+I\+ZE}}\mbox{]}}
+
+
+
+Definition at line 9 of file eeprom\+\_\+utils.\+c.
+
+\mbox{\Hypertarget{eeprom__utils_8c_a16d3fb4c78de3c9de3ac215f1224514a}\label{eeprom__utils_8c_a16d3fb4c78de3c9de3ac215f1224514a}} 
+\index{eeprom\_utils.c@{eeprom\_utils.c}!uart\_message\_ready@{uart\_message\_ready}}
+\index{uart\_message\_ready@{uart\_message\_ready}!eeprom\_utils.c@{eeprom\_utils.c}}
+\doxysubsubsection{\texorpdfstring{uart\_message\_ready}{uart\_message\_ready}}
+{\footnotesize\ttfamily volatile bool uart\+\_\+message\+\_\+ready = false}
+
+
+
+Definition at line 11 of file eeprom\+\_\+utils.\+c.
+
+\mbox{\Hypertarget{eeprom__utils_8c_a70473319e89ec40885074b4ee6c1601b}\label{eeprom__utils_8c_a70473319e89ec40885074b4ee6c1601b}} 
+\index{eeprom\_utils.c@{eeprom\_utils.c}!uart\_rx\_buffer@{uart\_rx\_buffer}}
+\index{uart\_rx\_buffer@{uart\_rx\_buffer}!eeprom\_utils.c@{eeprom\_utils.c}}
+\doxysubsubsection{\texorpdfstring{uart\_rx\_buffer}{uart\_rx\_buffer}}
+{\footnotesize\ttfamily uint8\+\_\+t uart\+\_\+rx\+\_\+buffer\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 8 of file eeprom\+\_\+utils.\+c.
+

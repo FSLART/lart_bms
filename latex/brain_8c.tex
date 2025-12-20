@@ -1,0 +1,371 @@
+\hypertarget{brain_8c}{}\doxysection{Core/\+Src/brain.c File Reference}
+\label{brain_8c}\index{Core/Src/brain.c@{Core/Src/brain.c}}
+{\ttfamily \#include \char`\"{}main.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}brain.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}math.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}stdio.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}bms\+\_\+cmdlist.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}bms\+\_\+datatypes.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}bms\+\_\+utility.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}bms\+\_\+mcu\+Wrapper.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}bms\+\_\+lib\+Wrapper.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}eeprom\+\_\+utils.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}isa\+\_\+ivt-\/s.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}time\+\_\+rtc.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}contactors.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}uart\+D\+M\+A.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}version.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}temperatures.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}precharge.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ams.\+h\char`\"{}}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{brain_8c_ac5502b43ab04d9bcdcbc47e37a92d6ff}{B\+Y\+P\+A\+S\+S\+\_\+\+C\+A\+N\+\_\+\+I\+SA}}
+\item 
+\#define \mbox{\hyperlink{brain_8c_a49e2a53133c7cde2aeb63f93ec5816b3}{S\+T\+E\+E\+R\+I\+N\+G\+\_\+\+M\+AX}}~0x\+A1
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{brain_8c_a4281a4d134ebb595f975dcaac88de184}{brain\+\_\+start}} (void)
+\item 
+void \mbox{\hyperlink{brain_8c_a59f2a3394837f10478ed46594097f63d}{brain\+\_\+loop}} (void)
+\item 
+void \mbox{\hyperlink{brain_8c_a8a3b0ad512a6e6c6157440b68d395eac}{H\+A\+L\+\_\+\+T\+I\+M\+\_\+\+Period\+Elapsed\+Callback}} (T\+I\+M\+\_\+\+Handle\+Type\+Def $\ast$\mbox{\hyperlink{bms__mcu_wrapper_8c_a5dc7d1c65997ccaed48a93a3f4ffc486}{htim}})
+\begin{DoxyCompactList}\small\item\em Timer interrupt callback. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{brain_8c_a5033855e81ba2071231b60599a3ce9a1}{H\+A\+L\+\_\+\+S\+Y\+S\+T\+I\+C\+K\+\_\+\+Callback}} (void)
+\item 
+uint32\+\_\+t \mbox{\hyperlink{brain_8c_a49b5cdc332f8641e1acb0969c8173abf}{get\+Runtime\+Ms}} (void)
+\item 
+uint32\+\_\+t \mbox{\hyperlink{brain_8c_a46454ee0f980cdb49bc69a1db2185250}{get\+Runtime\+Ms\+Diff}} (uint32\+\_\+t start\+Time)
+\item 
+void \mbox{\hyperlink{brain_8c_a0cd91fd3a9608559c2a87a8ba6cba55f}{H\+A\+L\+\_\+\+G\+P\+I\+O\+\_\+\+E\+X\+T\+I\+\_\+\+Callback}} (uint16\+\_\+t G\+P\+I\+O\+\_\+\+Pin)
+\item 
+void \mbox{\hyperlink{brain_8c_a8d6eea94544591aa1bde5c8dcc23184c}{Raise\+Error}} (\mbox{\hyperlink{brain_8h_a905255056c349318139d94aa4523d516}{Error\+Code\+\_\+t}} errorcode)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const float \mbox{\hyperlink{brain_8c_aaebb8db66aeb78fb5448bb7493be4fc1}{delta\+Threshold}} = 0.\+010f
+\item 
+\mbox{\hyperlink{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bf}{bms\+\_\+ow\+\_\+status\+\_\+t}} \mbox{\hyperlink{brain_8c_add4b4d288b6fea2f90ad249301cbad33}{ow\+\_\+status}} \mbox{[}\mbox{\hyperlink{main_8h_a2d73aea5048e1c0d121e74ce2bde681c}{T\+O\+T\+A\+L\+\_\+\+A\+D68}}\mbox{]}\mbox{[}\mbox{\hyperlink{main_8h_a0b577b82c1c99fae4aae5229e6d6d072}{T\+O\+T\+A\+L\+\_\+\+C\+E\+LL}}\mbox{]}
+\item 
+volatile \mbox{\hyperlink{brain_8h_af9d4213ec04afb7e718012e6fd7aed17}{Bms\+States}} \mbox{\hyperlink{brain_8c_a8c33424427a41da4e9cce0b2bf3bc772}{bms\+State}} = \mbox{\hyperlink{brain_8h_af9d4213ec04afb7e718012e6fd7aed17afd6a0e4343048b10646dd2976cc5ad18}{I\+D\+LE}}
+\item 
+volatile \mbox{\hyperlink{brain_8h_af9d4213ec04afb7e718012e6fd7aed17}{Bms\+States}} \mbox{\hyperlink{brain_8c_a544521518a06878a4a55e3202acae88f}{bms\+Curr\+State}} = \mbox{\hyperlink{brain_8h_af9d4213ec04afb7e718012e6fd7aed17afd6a0e4343048b10646dd2976cc5ad18}{I\+D\+LE}}
+\item 
+volatile \mbox{\hyperlink{brain_8h_af9d4213ec04afb7e718012e6fd7aed17}{Bms\+States}} \mbox{\hyperlink{brain_8c_acddd917cda5cba00b9d44695b50d6e5f}{bms\+Prev\+State}} = \mbox{\hyperlink{brain_8h_af9d4213ec04afb7e718012e6fd7aed17afd6a0e4343048b10646dd2976cc5ad18}{I\+D\+LE}}
+\item 
+static volatile uint32\+\_\+t \mbox{\hyperlink{brain_8c_a5261c6ce1a224a6f6165092f683f8e2e}{runtime\+\_\+sec}} = 0
+\item 
+static volatile bool \mbox{\hyperlink{brain_8c_ac99db91b6e353f4b5ceba2de7c5b3257}{fault\+Check}} = false
+\item 
+static volatile bool \mbox{\hyperlink{brain_8c_a1b21c015ef4a047c4b785b7e90c63b51}{update\+UI}} = false
+\item 
+static uint32\+\_\+t \mbox{\hyperlink{brain_8c_a3326a923b3364008406e8a003018962a}{time\+Diff}} = 0
+\item 
+static uint32\+\_\+t \mbox{\hyperlink{brain_8c_a3a980872fc8282bced886a8b0b363798}{time\+Start}} = 0
+\item 
+static uint32\+\_\+t \mbox{\hyperlink{brain_8c_a45e468b4cfaa82e1d4d08e712159b4e6}{time\+Cmmd}} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{brain_8c_ac5502b43ab04d9bcdcbc47e37a92d6ff}\label{brain_8c_ac5502b43ab04d9bcdcbc47e37a92d6ff}} 
+\index{brain.c@{brain.c}!BYPASS\_CAN\_ISA@{BYPASS\_CAN\_ISA}}
+\index{BYPASS\_CAN\_ISA@{BYPASS\_CAN\_ISA}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{BYPASS\_CAN\_ISA}{BYPASS\_CAN\_ISA}}
+{\footnotesize\ttfamily \#define B\+Y\+P\+A\+S\+S\+\_\+\+C\+A\+N\+\_\+\+I\+SA}
+
+
+
+Definition at line 39 of file brain.\+c.
+
+\mbox{\Hypertarget{brain_8c_a49e2a53133c7cde2aeb63f93ec5816b3}\label{brain_8c_a49e2a53133c7cde2aeb63f93ec5816b3}} 
+\index{brain.c@{brain.c}!STEERING\_MAX@{STEERING\_MAX}}
+\index{STEERING\_MAX@{STEERING\_MAX}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{STEERING\_MAX}{STEERING\_MAX}}
+{\footnotesize\ttfamily \#define S\+T\+E\+E\+R\+I\+N\+G\+\_\+\+M\+AX~0x\+A1}
+
+
+
+Definition at line 43 of file brain.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{brain_8c_a59f2a3394837f10478ed46594097f63d}\label{brain_8c_a59f2a3394837f10478ed46594097f63d}} 
+\index{brain.c@{brain.c}!brain\_loop@{brain\_loop}}
+\index{brain\_loop@{brain\_loop}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{brain\_loop()}{brain\_loop()}}
+{\footnotesize\ttfamily void brain\+\_\+loop (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 146 of file brain.\+c.
+
+
+
+References B\+A\+L\+A\+N\+C\+I\+NG, bms\+\_\+calculate\+Balancing(), bms\+\_\+delay\+Ms\+Active(), bms\+\_\+get\+Aux\+Measurement(), bms\+\_\+read\+Avg\+Cell\+Voltage(), bms\+\_\+start\+Adcv\+Cont(), bms\+\_\+wakeup\+Chain(), bms\+Curr\+State, bms\+Prev\+State, bms\+State, C\+A\+N\+\_\+\+Send\+\_\+\+A\+D68\+\_\+\+All(), Can\+Tx\+\_\+\+Process\+Queue(), delta\+Threshold, E\+ND, fault\+Check, get\+Runtime\+Ms(), get\+Runtime\+Ms\+Diff(), hcan1, I\+D\+LE, I\+N\+A\+C\+T\+I\+VE, Precharge\+\_\+\+Get\+State(), Precharge\+\_\+\+Init(), Precharge\+\_\+\+Update(), print\+Console(), read\+\_\+mcu\+\_\+temp(), R\+X\+\_\+\+C\+AN, send\+\_\+ad68\+\_\+ui(), S\+T\+A\+RT, S\+T\+A\+R\+T\+UP, time\+Cmmd, time\+Diff, time\+Start, and update\+UI.
+
+
+
+Referenced by main().
+
+\mbox{\Hypertarget{brain_8c_a4281a4d134ebb595f975dcaac88de184}\label{brain_8c_a4281a4d134ebb595f975dcaac88de184}} 
+\index{brain.c@{brain.c}!brain\_start@{brain\_start}}
+\index{brain\_start@{brain\_start}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{brain\_start()}{brain\_start()}}
+{\footnotesize\ttfamily void brain\+\_\+start (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 66 of file brain.\+c.
+
+
+
+References bms\+\_\+delay\+Ms\+Active(), bms\+\_\+get\+Aux\+Measurement(), bms\+\_\+init(), B\+M\+S\+\_\+\+M\+S\+T\+R\+\_\+\+G\+P\+I\+O\+\_\+\+Port, B\+M\+S\+\_\+\+M\+S\+T\+R\+\_\+\+Pin, bms\+\_\+read\+Avg\+Cell\+Voltage(), bms\+\_\+read\+Sid(), bms\+\_\+read\+S\+Voltage(), bms\+\_\+start\+Adcv\+Cont(), bms\+\_\+stop\+Discharge(), bms\+\_\+wakeup\+Chain(), bms\+Curr\+State, bms\+Prev\+State, bms\+State, hcan1, htim10, htim11, htim8, I\+D\+LE, I\+N\+A\+C\+T\+I\+VE, I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config(), I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Setup\+\_\+\+All\+Messages(), I\+V\+T\+\_\+\+S\+E\+T\+\_\+\+B\+I\+T\+R\+A\+T\+E(), Open\+All\+Contactors(), Precharge\+\_\+\+C\+A\+N\+\_\+\+Init(), print\+Console(), printf\+Dma\+B\+T(), and start\+U\+I().
+
+
+
+Referenced by main().
+
+\mbox{\Hypertarget{brain_8c_a49b5cdc332f8641e1acb0969c8173abf}\label{brain_8c_a49b5cdc332f8641e1acb0969c8173abf}} 
+\index{brain.c@{brain.c}!getRuntimeMs@{getRuntimeMs}}
+\index{getRuntimeMs@{getRuntimeMs}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{getRuntimeMs()}{getRuntimeMs()}}
+{\footnotesize\ttfamily uint32\+\_\+t get\+Runtime\+Ms (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 332 of file brain.\+c.
+
+
+
+Referenced by brain\+\_\+loop().
+
+\mbox{\Hypertarget{brain_8c_a46454ee0f980cdb49bc69a1db2185250}\label{brain_8c_a46454ee0f980cdb49bc69a1db2185250}} 
+\index{brain.c@{brain.c}!getRuntimeMsDiff@{getRuntimeMsDiff}}
+\index{getRuntimeMsDiff@{getRuntimeMsDiff}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{getRuntimeMsDiff()}{getRuntimeMsDiff()}}
+{\footnotesize\ttfamily uint32\+\_\+t get\+Runtime\+Ms\+Diff (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{start\+Time }\end{DoxyParamCaption})}
+
+
+
+Definition at line 336 of file brain.\+c.
+
+
+
+Referenced by brain\+\_\+loop().
+
+\mbox{\Hypertarget{brain_8c_a0cd91fd3a9608559c2a87a8ba6cba55f}\label{brain_8c_a0cd91fd3a9608559c2a87a8ba6cba55f}} 
+\index{brain.c@{brain.c}!HAL\_GPIO\_EXTI\_Callback@{HAL\_GPIO\_EXTI\_Callback}}
+\index{HAL\_GPIO\_EXTI\_Callback@{HAL\_GPIO\_EXTI\_Callback}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{HAL\_GPIO\_EXTI\_Callback()}{HAL\_GPIO\_EXTI\_Callback()}}
+{\footnotesize\ttfamily void H\+A\+L\+\_\+\+G\+P\+I\+O\+\_\+\+E\+X\+T\+I\+\_\+\+Callback (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{G\+P\+I\+O\+\_\+\+Pin }\end{DoxyParamCaption})}
+
+
+
+Definition at line 340 of file brain.\+c.
+
+
+
+References B1\+\_\+\+Pin, bms\+State, I\+D\+LE, and O\+N\+M\+I\+S\+S\+I\+ON.
+
+\mbox{\Hypertarget{brain_8c_a5033855e81ba2071231b60599a3ce9a1}\label{brain_8c_a5033855e81ba2071231b60599a3ce9a1}} 
+\index{brain.c@{brain.c}!HAL\_SYSTICK\_Callback@{HAL\_SYSTICK\_Callback}}
+\index{HAL\_SYSTICK\_Callback@{HAL\_SYSTICK\_Callback}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{HAL\_SYSTICK\_Callback()}{HAL\_SYSTICK\_Callback()}}
+{\footnotesize\ttfamily void H\+A\+L\+\_\+\+S\+Y\+S\+T\+I\+C\+K\+\_\+\+Callback (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 313 of file brain.\+c.
+
+
+
+References L\+E\+D\+\_\+\+R\+E\+D\+\_\+\+G\+P\+I\+O\+\_\+\+Port, and L\+E\+D\+\_\+\+R\+E\+D\+\_\+\+Pin.
+
+\mbox{\Hypertarget{brain_8c_a8a3b0ad512a6e6c6157440b68d395eac}\label{brain_8c_a8a3b0ad512a6e6c6157440b68d395eac}} 
+\index{brain.c@{brain.c}!HAL\_TIM\_PeriodElapsedCallback@{HAL\_TIM\_PeriodElapsedCallback}}
+\index{HAL\_TIM\_PeriodElapsedCallback@{HAL\_TIM\_PeriodElapsedCallback}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{HAL\_TIM\_PeriodElapsedCallback()}{HAL\_TIM\_PeriodElapsedCallback()}}
+{\footnotesize\ttfamily void H\+A\+L\+\_\+\+T\+I\+M\+\_\+\+Period\+Elapsed\+Callback (\begin{DoxyParamCaption}\item[{T\+I\+M\+\_\+\+Handle\+Type\+Def $\ast$}]{htim }\end{DoxyParamCaption})}
+
+
+
+Timer interrupt callback. 
+
+
+
+Definition at line 294 of file brain.\+c.
+
+
+
+References fault\+Check, htim, htim10, runtime\+\_\+sec, and update\+UI.
+
+\mbox{\Hypertarget{brain_8c_a8d6eea94544591aa1bde5c8dcc23184c}\label{brain_8c_a8d6eea94544591aa1bde5c8dcc23184c}} 
+\index{brain.c@{brain.c}!RaiseError@{RaiseError}}
+\index{RaiseError@{RaiseError}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{RaiseError()}{RaiseError()}}
+{\footnotesize\ttfamily void Raise\+Error (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{brain_8h_a905255056c349318139d94aa4523d516}{Error\+Code\+\_\+t}}}]{errorcode }\end{DoxyParamCaption})}
+
+
+
+Definition at line 350 of file brain.\+c.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{brain_8c_a544521518a06878a4a55e3202acae88f}\label{brain_8c_a544521518a06878a4a55e3202acae88f}} 
+\index{brain.c@{brain.c}!bmsCurrState@{bmsCurrState}}
+\index{bmsCurrState@{bmsCurrState}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{bmsCurrState}{bmsCurrState}}
+{\footnotesize\ttfamily volatile \mbox{\hyperlink{brain_8h_af9d4213ec04afb7e718012e6fd7aed17}{Bms\+States}} bms\+Curr\+State = \mbox{\hyperlink{brain_8h_af9d4213ec04afb7e718012e6fd7aed17afd6a0e4343048b10646dd2976cc5ad18}{I\+D\+LE}}}
+
+
+
+Definition at line 53 of file brain.\+c.
+
+
+
+Referenced by brain\+\_\+loop(), and brain\+\_\+start().
+
+\mbox{\Hypertarget{brain_8c_acddd917cda5cba00b9d44695b50d6e5f}\label{brain_8c_acddd917cda5cba00b9d44695b50d6e5f}} 
+\index{brain.c@{brain.c}!bmsPrevState@{bmsPrevState}}
+\index{bmsPrevState@{bmsPrevState}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{bmsPrevState}{bmsPrevState}}
+{\footnotesize\ttfamily volatile \mbox{\hyperlink{brain_8h_af9d4213ec04afb7e718012e6fd7aed17}{Bms\+States}} bms\+Prev\+State = \mbox{\hyperlink{brain_8h_af9d4213ec04afb7e718012e6fd7aed17afd6a0e4343048b10646dd2976cc5ad18}{I\+D\+LE}}}
+
+
+
+Definition at line 54 of file brain.\+c.
+
+
+
+Referenced by brain\+\_\+loop(), and brain\+\_\+start().
+
+\mbox{\Hypertarget{brain_8c_a8c33424427a41da4e9cce0b2bf3bc772}\label{brain_8c_a8c33424427a41da4e9cce0b2bf3bc772}} 
+\index{brain.c@{brain.c}!bmsState@{bmsState}}
+\index{bmsState@{bmsState}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{bmsState}{bmsState}}
+{\footnotesize\ttfamily volatile \mbox{\hyperlink{brain_8h_af9d4213ec04afb7e718012e6fd7aed17}{Bms\+States}} bms\+State = \mbox{\hyperlink{brain_8h_af9d4213ec04afb7e718012e6fd7aed17afd6a0e4343048b10646dd2976cc5ad18}{I\+D\+LE}}}
+
+
+
+Definition at line 52 of file brain.\+c.
+
+
+
+Referenced by brain\+\_\+loop(), brain\+\_\+start(), and H\+A\+L\+\_\+\+G\+P\+I\+O\+\_\+\+E\+X\+T\+I\+\_\+\+Callback().
+
+\mbox{\Hypertarget{brain_8c_aaebb8db66aeb78fb5448bb7493be4fc1}\label{brain_8c_aaebb8db66aeb78fb5448bb7493be4fc1}} 
+\index{brain.c@{brain.c}!deltaThreshold@{deltaThreshold}}
+\index{deltaThreshold@{deltaThreshold}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{deltaThreshold}{deltaThreshold}}
+{\footnotesize\ttfamily const float delta\+Threshold = 0.\+010f}
+
+
+
+Definition at line 44 of file brain.\+c.
+
+
+
+Referenced by bms\+\_\+start\+Balancing(), and brain\+\_\+loop().
+
+\mbox{\Hypertarget{brain_8c_ac99db91b6e353f4b5ceba2de7c5b3257}\label{brain_8c_ac99db91b6e353f4b5ceba2de7c5b3257}} 
+\index{brain.c@{brain.c}!faultCheck@{faultCheck}}
+\index{faultCheck@{faultCheck}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{faultCheck}{faultCheck}}
+{\footnotesize\ttfamily volatile bool fault\+Check = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 58 of file brain.\+c.
+
+
+
+Referenced by brain\+\_\+loop(), and H\+A\+L\+\_\+\+T\+I\+M\+\_\+\+Period\+Elapsed\+Callback().
+
+\mbox{\Hypertarget{brain_8c_add4b4d288b6fea2f90ad249301cbad33}\label{brain_8c_add4b4d288b6fea2f90ad249301cbad33}} 
+\index{brain.c@{brain.c}!ow\_status@{ow\_status}}
+\index{ow\_status@{ow\_status}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{ow\_status}{ow\_status}}
+{\footnotesize\ttfamily \mbox{\hyperlink{bms__lib_wrapper_8h_a71362c6477bcfc547996ab1b55ef98bf}{bms\+\_\+ow\+\_\+status\+\_\+t}} ow\+\_\+status\mbox{[}\mbox{\hyperlink{main_8h_a2d73aea5048e1c0d121e74ce2bde681c}{T\+O\+T\+A\+L\+\_\+\+A\+D68}}\mbox{]}\mbox{[}\mbox{\hyperlink{main_8h_a0b577b82c1c99fae4aae5229e6d6d072}{T\+O\+T\+A\+L\+\_\+\+C\+E\+LL}}\mbox{]}}
+
+
+
+Definition at line 47 of file brain.\+c.
+
+\mbox{\Hypertarget{brain_8c_a5261c6ce1a224a6f6165092f683f8e2e}\label{brain_8c_a5261c6ce1a224a6f6165092f683f8e2e}} 
+\index{brain.c@{brain.c}!runtime\_sec@{runtime\_sec}}
+\index{runtime\_sec@{runtime\_sec}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{runtime\_sec}{runtime\_sec}}
+{\footnotesize\ttfamily volatile uint32\+\_\+t runtime\+\_\+sec = 0\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 57 of file brain.\+c.
+
+
+
+Referenced by H\+A\+L\+\_\+\+T\+I\+M\+\_\+\+Period\+Elapsed\+Callback().
+
+\mbox{\Hypertarget{brain_8c_a45e468b4cfaa82e1d4d08e712159b4e6}\label{brain_8c_a45e468b4cfaa82e1d4d08e712159b4e6}} 
+\index{brain.c@{brain.c}!timeCmmd@{timeCmmd}}
+\index{timeCmmd@{timeCmmd}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{timeCmmd}{timeCmmd}}
+{\footnotesize\ttfamily uint32\+\_\+t time\+Cmmd = 0\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 64 of file brain.\+c.
+
+
+
+Referenced by brain\+\_\+loop().
+
+\mbox{\Hypertarget{brain_8c_a3326a923b3364008406e8a003018962a}\label{brain_8c_a3326a923b3364008406e8a003018962a}} 
+\index{brain.c@{brain.c}!timeDiff@{timeDiff}}
+\index{timeDiff@{timeDiff}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{timeDiff}{timeDiff}}
+{\footnotesize\ttfamily uint32\+\_\+t time\+Diff = 0\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 62 of file brain.\+c.
+
+
+
+Referenced by brain\+\_\+loop().
+
+\mbox{\Hypertarget{brain_8c_a3a980872fc8282bced886a8b0b363798}\label{brain_8c_a3a980872fc8282bced886a8b0b363798}} 
+\index{brain.c@{brain.c}!timeStart@{timeStart}}
+\index{timeStart@{timeStart}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{timeStart}{timeStart}}
+{\footnotesize\ttfamily uint32\+\_\+t time\+Start = 0\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 63 of file brain.\+c.
+
+
+
+Referenced by brain\+\_\+loop().
+
+\mbox{\Hypertarget{brain_8c_a1b21c015ef4a047c4b785b7e90c63b51}\label{brain_8c_a1b21c015ef4a047c4b785b7e90c63b51}} 
+\index{brain.c@{brain.c}!updateUI@{updateUI}}
+\index{updateUI@{updateUI}!brain.c@{brain.c}}
+\doxysubsubsection{\texorpdfstring{updateUI}{updateUI}}
+{\footnotesize\ttfamily volatile bool update\+UI = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 59 of file brain.\+c.
+
+
+
+Referenced by brain\+\_\+loop(), and H\+A\+L\+\_\+\+T\+I\+M\+\_\+\+Period\+Elapsed\+Callback().
+

@@ -1,0 +1,669 @@
+\hypertarget{isa__ivt-s_8h}{}\doxysection{Core/\+Inc/isa\+\_\+ivt-\/s.h File Reference}
+\label{isa__ivt-s_8h}\index{Core/Inc/isa\_ivt-\/s.h@{Core/Inc/isa\_ivt-\/s.h}}
+{\ttfamily \#include \char`\"{}main.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_i_v_t__faults__t}{I\+V\+T\+\_\+faults\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{isa__ivt-s_8h_a3dfcdf85ae12752a19d065a7ddea530b}{I\+V\+T\+\_\+\+C\+O\+M\+M\+A\+N\+D\+\_\+\+C\+A\+N\+ID}}~((uint16\+\_\+t)0x411)
+\item 
+\#define \mbox{\hyperlink{isa__ivt-s_8h_aaa895b48b98bf74641ca158018e04d72}{I\+V\+T\+\_\+\+D\+E\+B\+U\+G\+\_\+\+C\+A\+N\+ID}}~((uint16\+\_\+t)0x510)
+\item 
+\#define \mbox{\hyperlink{isa__ivt-s_8h_ac508d2cb337f891ae188659ac0963c4d}{I\+V\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+C\+A\+N\+ID}}~((uint16\+\_\+t)0x511)
+\item 
+\#define \mbox{\hyperlink{isa__ivt-s_8h_aaaf9b350d3e22e0f799ec51e78022210}{I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+I\+\_\+\+C\+A\+N\+ID}}~((uint16\+\_\+t)0x521)
+\item 
+\#define \mbox{\hyperlink{isa__ivt-s_8h_a3bb83d427ae792ff9778fbd17677bf41}{I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+U1\+\_\+\+C\+A\+N\+ID}}~((uint16\+\_\+t)0x522)
+\item 
+\#define \mbox{\hyperlink{isa__ivt-s_8h_a8c4bd5ab31b8868254496c0a574d207e}{I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+U2\+\_\+\+C\+A\+N\+ID}}~((uint16\+\_\+t)0x523)
+\item 
+\#define \mbox{\hyperlink{isa__ivt-s_8h_af3471111160bb45a0ac6aef62ba9d0f6}{I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+U3\+\_\+\+C\+A\+N\+ID}}~((uint16\+\_\+t)0x524)
+\item 
+\#define \mbox{\hyperlink{isa__ivt-s_8h_a1d04631542824f77b4ed3e82e44a91cd}{I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+T\+\_\+\+C\+A\+N\+ID}}~((uint16\+\_\+t)0\+X525)
+\item 
+\#define \mbox{\hyperlink{isa__ivt-s_8h_a996dd2547629597339782b462b329e19}{I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+W\+\_\+\+C\+A\+N\+ID}}~((uint16\+\_\+t)0\+X526)
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{isa__ivt-s_8h_a8ce14c44c749ec78eec4d48f3feb3a85}{I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Setup}} (C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$hcan)
+\begin{DoxyCompactList}\small\item\em Configures F\+D\+C\+AN filters for I\+V\+T-\/S sensor data and starts the controller. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{isa__ivt-s_8h_ab2e9970d037b7508e279ffcd4634e6c8}{I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Setup\+\_\+\+All\+Messages}} (C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$hcan)
+\begin{DoxyCompactList}\small\item\em Configures F\+D\+C\+AN to receive all C\+AN messages by setting wildcard filters. \end{DoxyCompactList}\item 
+H\+A\+L\+\_\+\+Status\+Type\+Def \mbox{\hyperlink{isa__ivt-s_8h_a5aab47265553fecb80725c536169d241}{I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Send\+Message}} (C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$hcan, uint32\+\_\+t can\+ID, uint32\+\_\+t data\+Length, const uint8\+\_\+t $\ast$Tx\+Data)
+\begin{DoxyCompactList}\small\item\em Sends a C\+AN message via the F\+D\+C\+AN TX F\+I\+FO. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{isa__ivt-s_8h_a5b2f440c46b36817d7d54d6147e1413d}{I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config}} (void)
+\begin{DoxyCompactList}\small\item\em Configures the I\+V\+T-\/S sensor by sending a sequence of C\+AN commands. Each command must be acknowledged within 2 ms or a retry/failure is triggered. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{isa__ivt-s_8h_af2d26e52ff04a2fa185a7cb3b786205e}{I\+V\+T\+\_\+\+F\+A\+U\+L\+T\+\_\+\+C\+H\+E\+CK}} (void)
+\begin{DoxyCompactList}\small\item\em Initiates a fault check by requesting system error status from the I\+V\+T-\/S sensor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{isa__ivt-s_8h_aedbd493486f94e109a9a9d516b1ed24c}{I\+V\+T\+\_\+\+P\+R\+O\+C\+E\+S\+S\+\_\+\+S\+Y\+S\+E\+R\+R\+O\+RS}} (uint8\+\_\+t $\ast$\mbox{\hyperlink{isa__ivt-s_8c_a14629afcc7f0b2d62c2b617b07d98184}{Rx\+Data}})
+\begin{DoxyCompactList}\small\item\em Processes the system-\/error bitmask and updates ivt.\+faults accordingly. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{isa__ivt-s_8h_a34f861b7b903c0928d7c36445892ccc2}{I\+V\+T\+\_\+\+P\+R\+O\+C\+E\+S\+S\+\_\+\+M\+E\+A\+S\+U\+R\+E\+R\+R\+O\+RS}} (uint8\+\_\+t $\ast$\mbox{\hyperlink{isa__ivt-s_8c_a14629afcc7f0b2d62c2b617b07d98184}{Rx\+Data}})
+\begin{DoxyCompactList}\small\item\em Processes the measurement-\/error bitmask and updates ivt.\+faults accordingly. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{isa__ivt-s_8h_acb92f42fa2cbd6a00368ebe25575a92e}{send\+\_\+ivt\+\_\+ui}} (void)
+\begin{DoxyCompactList}\small\item\em Serializes the global {\ttfamily ivt} structure to J\+S\+ON and sends it over U\+A\+RT. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{isa__ivt-s_8h_a588bc4a354ce55445a7fb1b8300de5be}{I\+V\+T\+\_\+\+S\+E\+T\+\_\+\+B\+I\+T\+R\+A\+TE}} (void)
+\item 
+void \mbox{\hyperlink{isa__ivt-s_8h_a199c132225b2c236c6f8bd717c56fb1d}{I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+On\+Message}} (const C\+A\+N\+\_\+\+Rx\+Header\+Type\+Def $\ast$hdr, const uint8\+\_\+t $\ast$data)
+\item 
+void \mbox{\hyperlink{isa__ivt-s_8h_aad298c8874dbea7c26ab5e36c47fd36f}{I\+V\+T\+\_\+\+Init}} (void)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_a41a51f46f88126bd2208f1098832a186}{I\+V\+T\+\_\+\+S\+T\+O\+P\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x34, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_a6ce424ea63489b50b238bb09183c4c02}{I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x20, 0x02, 0x00, 0x64, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_a6e1c3ec17ee8d9087e60f1a96914c32d}{I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+C\+A\+N\+R\+A\+T\+E\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x3A, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_ae71b3529b3e5763c5dd86273009fbf07}{I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+U1\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x21, 0x02, 0x00, 0x64, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_a82b46c224baac0dd3dd9aeca9ce23691}{I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+U2\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x22, 0x02, 0x00, 0x64, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_a2c369c109af37bbafc4e9fcca284ebe8}{I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+U3\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x23, 0x02, 0x00, 0x64, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_a62206562d97905cb68769debed024683}{I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+T\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x24, 0x02, 0x00, 0x\+C8, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_a37d989809cfeb0a5558c7ac9c75fc815}{I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+W\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x25, 0x02, 0x00, 0x\+C8, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_a8a99717dd9a460c40b3676d34eccf577}{I\+V\+T\+\_\+\+S\+T\+O\+R\+E\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_aae5b3d551f57468e71d563003a58b8a4}{I\+V\+T\+\_\+\+S\+T\+A\+R\+T\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x34, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_a76088b4e96114b0cc630c518c7043b51}{I\+V\+T\+\_\+\+R\+E\+S\+E\+T\+\_\+\+M\+E\+A\+S\+U\+R\+E\+R\+R\+O\+R\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_a33071aee5d34d2d4121d0cc47cb87d18}{I\+V\+T\+\_\+\+R\+E\+S\+E\+T\+\_\+\+S\+Y\+S\+E\+R\+R\+O\+R\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x30, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_a1e8aa05e529fa220cbfc160d52aa543d}{I\+V\+T\+\_\+\+S\+Y\+S\+E\+R\+R\+O\+R\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_afd00f56b563420524c7f5637d7ebdf6a}{I\+V\+T\+\_\+\+M\+E\+A\+S\+U\+R\+E\+R\+R\+O\+R\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_a6a2b716ab91cca1e24a515ed047728cf}{I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+I\+\_\+\+T\+H\+R\+E\+\_\+\+P\+O\+S\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x35, 0x80, 0x64, 0x80, 0x01, 0x00, 0x00, 0x00\}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{isa__ivt-s_8h_ae2051af5eb1d28144fe1aaf3a4b35d8b}{I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+I\+\_\+\+T\+H\+R\+E\+\_\+\+N\+E\+G\+\_\+\+C\+MD}} \mbox{[}8\mbox{]} = \{0x35, 0x7F, 0x9C, 0x80, 0x01, 0x00, 0x00, 0x00\}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{isa__ivt-s_8h_a3dfcdf85ae12752a19d065a7ddea530b}\label{isa__ivt-s_8h_a3dfcdf85ae12752a19d065a7ddea530b}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_COMMAND\_CANID@{IVT\_COMMAND\_CANID}}
+\index{IVT\_COMMAND\_CANID@{IVT\_COMMAND\_CANID}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_COMMAND\_CANID}{IVT\_COMMAND\_CANID}}
+{\footnotesize\ttfamily \#define I\+V\+T\+\_\+\+C\+O\+M\+M\+A\+N\+D\+\_\+\+C\+A\+N\+ID~((uint16\+\_\+t)0x411)}
+
+
+
+Definition at line 9 of file isa\+\_\+ivt-\/s.\+h.
+
+\mbox{\Hypertarget{isa__ivt-s_8h_aaa895b48b98bf74641ca158018e04d72}\label{isa__ivt-s_8h_aaa895b48b98bf74641ca158018e04d72}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_DEBUG\_CANID@{IVT\_DEBUG\_CANID}}
+\index{IVT\_DEBUG\_CANID@{IVT\_DEBUG\_CANID}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_DEBUG\_CANID}{IVT\_DEBUG\_CANID}}
+{\footnotesize\ttfamily \#define I\+V\+T\+\_\+\+D\+E\+B\+U\+G\+\_\+\+C\+A\+N\+ID~((uint16\+\_\+t)0x510)}
+
+
+
+Definition at line 10 of file isa\+\_\+ivt-\/s.\+h.
+
+\mbox{\Hypertarget{isa__ivt-s_8h_ac508d2cb337f891ae188659ac0963c4d}\label{isa__ivt-s_8h_ac508d2cb337f891ae188659ac0963c4d}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_RESPONSE\_CANID@{IVT\_RESPONSE\_CANID}}
+\index{IVT\_RESPONSE\_CANID@{IVT\_RESPONSE\_CANID}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_RESPONSE\_CANID}{IVT\_RESPONSE\_CANID}}
+{\footnotesize\ttfamily \#define I\+V\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+C\+A\+N\+ID~((uint16\+\_\+t)0x511)}
+
+
+
+Definition at line 11 of file isa\+\_\+ivt-\/s.\+h.
+
+\mbox{\Hypertarget{isa__ivt-s_8h_aaaf9b350d3e22e0f799ec51e78022210}\label{isa__ivt-s_8h_aaaf9b350d3e22e0f799ec51e78022210}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_RESULTI\_CANID@{IVT\_RESULTI\_CANID}}
+\index{IVT\_RESULTI\_CANID@{IVT\_RESULTI\_CANID}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_RESULTI\_CANID}{IVT\_RESULTI\_CANID}}
+{\footnotesize\ttfamily \#define I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+I\+\_\+\+C\+A\+N\+ID~((uint16\+\_\+t)0x521)}
+
+
+
+Definition at line 12 of file isa\+\_\+ivt-\/s.\+h.
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a1d04631542824f77b4ed3e82e44a91cd}\label{isa__ivt-s_8h_a1d04631542824f77b4ed3e82e44a91cd}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_RESULTT\_CANID@{IVT\_RESULTT\_CANID}}
+\index{IVT\_RESULTT\_CANID@{IVT\_RESULTT\_CANID}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_RESULTT\_CANID}{IVT\_RESULTT\_CANID}}
+{\footnotesize\ttfamily \#define I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+T\+\_\+\+C\+A\+N\+ID~((uint16\+\_\+t)0\+X525)}
+
+
+
+Definition at line 16 of file isa\+\_\+ivt-\/s.\+h.
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a3bb83d427ae792ff9778fbd17677bf41}\label{isa__ivt-s_8h_a3bb83d427ae792ff9778fbd17677bf41}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_RESULTU1\_CANID@{IVT\_RESULTU1\_CANID}}
+\index{IVT\_RESULTU1\_CANID@{IVT\_RESULTU1\_CANID}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_RESULTU1\_CANID}{IVT\_RESULTU1\_CANID}}
+{\footnotesize\ttfamily \#define I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+U1\+\_\+\+C\+A\+N\+ID~((uint16\+\_\+t)0x522)}
+
+
+
+Definition at line 13 of file isa\+\_\+ivt-\/s.\+h.
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a8c4bd5ab31b8868254496c0a574d207e}\label{isa__ivt-s_8h_a8c4bd5ab31b8868254496c0a574d207e}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_RESULTU2\_CANID@{IVT\_RESULTU2\_CANID}}
+\index{IVT\_RESULTU2\_CANID@{IVT\_RESULTU2\_CANID}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_RESULTU2\_CANID}{IVT\_RESULTU2\_CANID}}
+{\footnotesize\ttfamily \#define I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+U2\+\_\+\+C\+A\+N\+ID~((uint16\+\_\+t)0x523)}
+
+
+
+Definition at line 14 of file isa\+\_\+ivt-\/s.\+h.
+
+\mbox{\Hypertarget{isa__ivt-s_8h_af3471111160bb45a0ac6aef62ba9d0f6}\label{isa__ivt-s_8h_af3471111160bb45a0ac6aef62ba9d0f6}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_RESULTU3\_CANID@{IVT\_RESULTU3\_CANID}}
+\index{IVT\_RESULTU3\_CANID@{IVT\_RESULTU3\_CANID}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_RESULTU3\_CANID}{IVT\_RESULTU3\_CANID}}
+{\footnotesize\ttfamily \#define I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+U3\+\_\+\+C\+A\+N\+ID~((uint16\+\_\+t)0x524)}
+
+
+
+Definition at line 15 of file isa\+\_\+ivt-\/s.\+h.
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a996dd2547629597339782b462b329e19}\label{isa__ivt-s_8h_a996dd2547629597339782b462b329e19}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_RESULTW\_CANID@{IVT\_RESULTW\_CANID}}
+\index{IVT\_RESULTW\_CANID@{IVT\_RESULTW\_CANID}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_RESULTW\_CANID}{IVT\_RESULTW\_CANID}}
+{\footnotesize\ttfamily \#define I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+W\+\_\+\+C\+A\+N\+ID~((uint16\+\_\+t)0\+X526)}
+
+
+
+Definition at line 17 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{isa__ivt-s_8h_a5b2f440c46b36817d7d54d6147e1413d}\label{isa__ivt-s_8h_a5b2f440c46b36817d7d54d6147e1413d}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CAN\_Config@{IVT\_CAN\_Config}}
+\index{IVT\_CAN\_Config@{IVT\_CAN\_Config}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CAN\_Config()}{IVT\_CAN\_Config()}}
+{\footnotesize\ttfamily void I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Configures the I\+V\+T-\/S sensor by sending a sequence of C\+AN commands. Each command must be acknowledged within 2 ms or a retry/failure is triggered. 
+
+\begin{DoxyNote}{Note}
+This routine blocks while waiting for each command’s acknowledgment flag\+: I\+V\+T\+\_\+command\+Received\+Flag must be set before proceeding to the next step. 
+\end{DoxyNote}
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 238 of file isa\+\_\+ivt-\/s.\+c.
+
+
+
+References comms\+Check, ivt\+\_\+t\+::conf\+\_\+\+C\+A\+Nbit, ivt\+\_\+t\+::conf\+\_\+max\+Current, ivt\+\_\+t\+::conf\+\_\+max\+Temp, ivt\+\_\+t\+::conf\+\_\+max\+U1, ivt\+\_\+t\+::conf\+\_\+max\+U2, ivt\+\_\+t\+::conf\+\_\+max\+U3, ivt\+\_\+t\+::conf\+\_\+min\+Current, ivt\+\_\+t\+::conf\+\_\+min\+Temp, ivt\+\_\+t\+::conf\+\_\+min\+U1, ivt\+\_\+t\+::conf\+\_\+min\+U2, ivt\+\_\+t\+::conf\+\_\+min\+U3, hcan1, ivt, I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Send\+Message(), I\+V\+T\+\_\+\+C\+O\+M\+M\+A\+N\+D\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+command\+Received\+Flag, I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+C\+MD, I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+T\+\_\+\+C\+MD, I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+U1\+\_\+\+C\+MD, I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+U2\+\_\+\+C\+MD, I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+U3\+\_\+\+C\+MD, I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+W\+\_\+\+C\+MD, I\+V\+T\+\_\+\+S\+T\+A\+R\+T\+\_\+\+C\+MD, I\+V\+T\+\_\+\+S\+T\+O\+P\+\_\+\+C\+MD, I\+V\+T\+\_\+\+S\+T\+O\+R\+E\+\_\+\+C\+MD, and print\+Console().
+
+
+
+Referenced by brain\+\_\+start().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a199c132225b2c236c6f8bd717c56fb1d}\label{isa__ivt-s_8h_a199c132225b2c236c6f8bd717c56fb1d}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CAN\_OnMessage@{IVT\_CAN\_OnMessage}}
+\index{IVT\_CAN\_OnMessage@{IVT\_CAN\_OnMessage}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CAN\_OnMessage()}{IVT\_CAN\_OnMessage()}}
+{\footnotesize\ttfamily void I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+On\+Message (\begin{DoxyParamCaption}\item[{const C\+A\+N\+\_\+\+Rx\+Header\+Type\+Def $\ast$}]{hdr,  }\item[{const uint8\+\_\+t $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+Definition at line 417 of file isa\+\_\+ivt-\/s.\+c.
+
+
+
+References ivt\+\_\+t\+::i\+Batt, ivt, I\+V\+T\+\_\+command\+Received\+Flag, I\+V\+T\+\_\+\+Current, I\+V\+T\+\_\+\+Power, I\+V\+T\+\_\+\+P\+R\+O\+C\+E\+S\+S\+\_\+\+M\+E\+A\+S\+U\+R\+E\+R\+R\+O\+R\+S(), I\+V\+T\+\_\+\+P\+R\+O\+C\+E\+S\+S\+\_\+\+S\+Y\+S\+E\+R\+R\+O\+R\+S(), I\+V\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+I\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+T\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+U1\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+W\+\_\+\+C\+A\+N\+ID, last\+Time, ivt\+\_\+t\+::power, Rx\+Data, ivt\+\_\+t\+::temp, temp\+I\+VT, v\+Batt, and ivt\+\_\+t\+::v\+Batt.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Setup().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a5aab47265553fecb80725c536169d241}\label{isa__ivt-s_8h_a5aab47265553fecb80725c536169d241}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CAN\_SendMessage@{IVT\_CAN\_SendMessage}}
+\index{IVT\_CAN\_SendMessage@{IVT\_CAN\_SendMessage}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CAN\_SendMessage()}{IVT\_CAN\_SendMessage()}}
+{\footnotesize\ttfamily H\+A\+L\+\_\+\+Status\+Type\+Def I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Send\+Message (\begin{DoxyParamCaption}\item[{C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$}]{hcan,  }\item[{uint32\+\_\+t}]{can\+ID,  }\item[{uint32\+\_\+t}]{data\+Length,  }\item[{const uint8\+\_\+t $\ast$}]{Tx\+Data }\end{DoxyParamCaption})}
+
+
+
+Sends a C\+AN message via the F\+D\+C\+AN TX F\+I\+FO. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em hfdcan} & Pointer to the F\+D\+C\+AN handle (e.\+g., \&hcan1). \\
+\hline
+{\em can\+ID} & C\+AN ID of the message (standard 11-\/bit). \\
+\hline
+{\em data\+Length} & Length of the message data in bytes (0 to 8 for Classic C\+AN). \\
+\hline
+{\em data} & Pointer to the message data array (up to 8 bytes for Classic C\+AN). \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em H\+A\+L\+\_\+\+Status\+Type\+Def} & Returns H\+A\+L\+\_\+\+OK if successful, otherwise H\+A\+L\+\_\+\+E\+R\+R\+OR. \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 211 of file isa\+\_\+ivt-\/s.\+c.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config(), I\+V\+T\+\_\+\+F\+A\+U\+L\+T\+\_\+\+C\+H\+E\+C\+K(), I\+V\+T\+\_\+\+P\+R\+O\+C\+E\+S\+S\+\_\+\+S\+Y\+S\+E\+R\+R\+O\+R\+S(), and I\+V\+T\+\_\+\+S\+E\+T\+\_\+\+B\+I\+T\+R\+A\+T\+E().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a8ce14c44c749ec78eec4d48f3feb3a85}\label{isa__ivt-s_8h_a8ce14c44c749ec78eec4d48f3feb3a85}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CAN\_Setup@{IVT\_CAN\_Setup}}
+\index{IVT\_CAN\_Setup@{IVT\_CAN\_Setup}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CAN\_Setup()}{IVT\_CAN\_Setup()}}
+{\footnotesize\ttfamily void I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Setup (\begin{DoxyParamCaption}\item[{C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$}]{hcan }\end{DoxyParamCaption})}
+
+
+
+Configures F\+D\+C\+AN filters for I\+V\+T-\/S sensor data and starts the controller. 
+
+Sets up individual mask filters to accept only the specific I\+V\+T-\/S C\+AN I\+Ds for voltage (U1, U2, U3), current, temperature, power, and command acknowledgments. Routes all accepted messages to RX F\+I\+F\+O0, enables the RX F\+I\+F\+O0 interrupt, and starts the F\+D\+C\+AN peripheral. 
+\begin{DoxyParams}{Parameters}
+{\em hfdcan} & Pointer to the initialized F\+D\+C\+AN handle (e.\+g., \&hcan1). \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 113 of file isa\+\_\+ivt-\/s.\+c.
+
+
+
+References C\+A\+N\+\_\+\+Register\+Rx\+Callback(), I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+On\+Message(), I\+V\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+I\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+T\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+U1\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+U2\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+U3\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+\+R\+E\+S\+U\+L\+T\+W\+\_\+\+C\+A\+N\+ID, print\+Console(), and s\+Filter\+Config.
+
+
+
+Referenced by M\+X\+\_\+\+C\+A\+N1\+\_\+\+Init().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_ab2e9970d037b7508e279ffcd4634e6c8}\label{isa__ivt-s_8h_ab2e9970d037b7508e279ffcd4634e6c8}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CAN\_Setup\_AllMessages@{IVT\_CAN\_Setup\_AllMessages}}
+\index{IVT\_CAN\_Setup\_AllMessages@{IVT\_CAN\_Setup\_AllMessages}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CAN\_Setup\_AllMessages()}{IVT\_CAN\_Setup\_AllMessages()}}
+{\footnotesize\ttfamily void I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Setup\+\_\+\+All\+Messages (\begin{DoxyParamCaption}\item[{C\+A\+N\+\_\+\+Handle\+Type\+Def $\ast$}]{hcan }\end{DoxyParamCaption})}
+
+
+
+Configures F\+D\+C\+AN to receive all C\+AN messages by setting wildcard filters. 
+
+Installs two mask filters—one for standard I\+Ds (0x000–0x7\+FF) and one for extended I\+Ds (0x00000000–0x1\+F\+F\+F\+F\+F\+FF)—each with a zero mask so that all I\+Ds pass through. Routes all messages into RX F\+I\+FO 0, enables the new-\/message interrupt, and starts the F\+D\+C\+AN peripheral. 
+\begin{DoxyParams}{Parameters}
+{\em hfdcan} & Pointer to the initialized F\+D\+C\+AN handle (e.\+g., \&hcan1). \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 70 of file isa\+\_\+ivt-\/s.\+c.
+
+
+
+References hcan1, print\+Console(), and s\+Filter\+Config.
+
+
+
+Referenced by brain\+\_\+start().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_af2d26e52ff04a2fa185a7cb3b786205e}\label{isa__ivt-s_8h_af2d26e52ff04a2fa185a7cb3b786205e}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_FAULT\_CHECK@{IVT\_FAULT\_CHECK}}
+\index{IVT\_FAULT\_CHECK@{IVT\_FAULT\_CHECK}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_FAULT\_CHECK()}{IVT\_FAULT\_CHECK()}}
+{\footnotesize\ttfamily void I\+V\+T\+\_\+\+F\+A\+U\+L\+T\+\_\+\+C\+H\+E\+CK (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Initiates a fault check by requesting system error status from the I\+V\+T-\/S sensor. 
+
+Sends the “\+Get system errors” command (0x41/0x00) over C\+AN. An optional measurement-\/error request (I\+V\+T\+\_\+\+M\+E\+A\+S\+U\+R\+E\+R\+R\+O\+R\+\_\+\+C\+MD) is commented out. \begin{DoxyNote}{Note}
+The response will be handled in H\+A\+L\+\_\+\+F\+D\+C\+A\+N\+\_\+\+Rx\+Fifo0\+Callback(). 
+\end{DoxyNote}
+
+\begin{DoxyRetVals}{Return values}
+{\em None} & \\
+\hline
+\end{DoxyRetVals}
+
+
+Definition at line 491 of file isa\+\_\+ivt-\/s.\+c.
+
+
+
+References comms\+Check, hcan1, I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Send\+Message(), I\+V\+T\+\_\+\+C\+O\+M\+M\+A\+N\+D\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+\+S\+Y\+S\+E\+R\+R\+O\+R\+\_\+\+C\+MD, last\+Time, and print\+Console().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_aad298c8874dbea7c26ab5e36c47fd36f}\label{isa__ivt-s_8h_aad298c8874dbea7c26ab5e36c47fd36f}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_Init@{IVT\_Init}}
+\index{IVT\_Init@{IVT\_Init}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_Init()}{IVT\_Init()}}
+{\footnotesize\ttfamily void I\+V\+T\+\_\+\+Init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a34f861b7b903c0928d7c36445892ccc2}\label{isa__ivt-s_8h_a34f861b7b903c0928d7c36445892ccc2}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_PROCESS\_MEASURERRORS@{IVT\_PROCESS\_MEASURERRORS}}
+\index{IVT\_PROCESS\_MEASURERRORS@{IVT\_PROCESS\_MEASURERRORS}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_PROCESS\_MEASURERRORS()}{IVT\_PROCESS\_MEASURERRORS()}}
+{\footnotesize\ttfamily void I\+V\+T\+\_\+\+P\+R\+O\+C\+E\+S\+S\+\_\+\+M\+E\+A\+S\+U\+R\+E\+R\+R\+O\+RS (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{Rx\+Data }\end{DoxyParamCaption})}
+
+
+
+Processes the measurement-\/error bitmask and updates ivt.\+faults accordingly. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Rx\+Data} & The 8-\/byte payload from the I\+V\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+C\+A\+N\+ID frame. Rx\+Data\mbox{[}1\mbox{]} == 0x00 indicates the bitmask sub-\/index. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 583 of file isa\+\_\+ivt-\/s.\+c.
+
+
+
+References I\+V\+T\+\_\+faults\+\_\+t\+::adc, I\+V\+T\+\_\+faults\+\_\+t\+::current, I\+V\+T\+\_\+faults\+\_\+t\+::current\+\_\+oc, ivt\+\_\+t\+::faults, ivt, I\+V\+T\+\_\+faults\+\_\+t\+::ntc\+\_\+h\+\_\+oc, I\+V\+T\+\_\+faults\+\_\+t\+::ntc\+\_\+l\+\_\+oc, print\+Console(), Rx\+Data, I\+V\+T\+\_\+faults\+\_\+t\+::\+U1\+\_\+oc, I\+V\+T\+\_\+faults\+\_\+t\+::\+U2\+\_\+oc, I\+V\+T\+\_\+faults\+\_\+t\+::\+U3\+\_\+oc, and I\+V\+T\+\_\+faults\+\_\+t\+::v\+Ref.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+On\+Message().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_aedbd493486f94e109a9a9d516b1ed24c}\label{isa__ivt-s_8h_aedbd493486f94e109a9a9d516b1ed24c}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_PROCESS\_SYSERRORS@{IVT\_PROCESS\_SYSERRORS}}
+\index{IVT\_PROCESS\_SYSERRORS@{IVT\_PROCESS\_SYSERRORS}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_PROCESS\_SYSERRORS()}{IVT\_PROCESS\_SYSERRORS()}}
+{\footnotesize\ttfamily void I\+V\+T\+\_\+\+P\+R\+O\+C\+E\+S\+S\+\_\+\+S\+Y\+S\+E\+R\+R\+O\+RS (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{Rx\+Data }\end{DoxyParamCaption})}
+
+
+
+Processes the system-\/error bitmask and updates ivt.\+faults accordingly. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Rx\+Data} & The 8-\/byte payload from the I\+V\+T\+\_\+\+R\+E\+S\+P\+O\+N\+S\+E\+\_\+\+C\+A\+N\+ID frame. Rx\+Data\mbox{[}1\mbox{]} == 0x00 indicates the bitmask sub-\/index. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 514 of file isa\+\_\+ivt-\/s.\+c.
+
+
+
+References I\+V\+T\+\_\+faults\+\_\+t\+::\+C\+AN, comms\+Check, I\+V\+T\+\_\+faults\+\_\+t\+::current, ivt\+\_\+t\+::faults, hcan1, ivt, I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Send\+Message(), I\+V\+T\+\_\+\+C\+O\+M\+M\+A\+N\+D\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+\+M\+E\+A\+S\+U\+R\+E\+R\+R\+O\+R\+\_\+\+C\+MD, I\+V\+T\+\_\+faults\+\_\+t\+::power, print\+Console(), Rx\+Data, I\+V\+T\+\_\+faults\+\_\+t\+::temp, and I\+V\+T\+\_\+faults\+\_\+t\+::v\+Ref.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+On\+Message().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a588bc4a354ce55445a7fb1b8300de5be}\label{isa__ivt-s_8h_a588bc4a354ce55445a7fb1b8300de5be}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_SET\_BITRATE@{IVT\_SET\_BITRATE}}
+\index{IVT\_SET\_BITRATE@{IVT\_SET\_BITRATE}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_SET\_BITRATE()}{IVT\_SET\_BITRATE()}}
+{\footnotesize\ttfamily void I\+V\+T\+\_\+\+S\+E\+T\+\_\+\+B\+I\+T\+R\+A\+TE (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 647 of file isa\+\_\+ivt-\/s.\+c.
+
+
+
+References comms\+Check, hcan1, I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Send\+Message(), I\+V\+T\+\_\+\+C\+O\+M\+M\+A\+N\+D\+\_\+\+C\+A\+N\+ID, I\+V\+T\+\_\+command\+Received\+Flag, I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+C\+A\+N\+R\+A\+T\+E\+\_\+\+C\+MD, I\+V\+T\+\_\+\+S\+T\+O\+P\+\_\+\+C\+MD, and print\+Console().
+
+
+
+Referenced by brain\+\_\+start().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_acb92f42fa2cbd6a00368ebe25575a92e}\label{isa__ivt-s_8h_acb92f42fa2cbd6a00368ebe25575a92e}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!send\_ivt\_ui@{send\_ivt\_ui}}
+\index{send\_ivt\_ui@{send\_ivt\_ui}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{send\_ivt\_ui()}{send\_ivt\_ui()}}
+{\footnotesize\ttfamily void send\+\_\+ivt\+\_\+ui (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Serializes the global {\ttfamily ivt} structure to J\+S\+ON and sends it over U\+A\+RT. 
+
+\begin{DoxyNote}{Note}
+Uses \mbox{\hyperlink{uart_d_m_a_8h_a6c025583134abb6fd5a230a31a0fc45a}{printf\+Dma()}} for all output. Produces a single J\+S\+ON object. 
+\end{DoxyNote}
+
+
+Definition at line 679 of file isa\+\_\+ivt-\/s.\+c.
+
+
+
+References I\+V\+T\+\_\+faults\+\_\+t\+::adc, I\+V\+T\+\_\+faults\+\_\+t\+::\+C\+AN, ivt\+\_\+t\+::conf\+\_\+\+C\+A\+Nbit, ivt\+\_\+t\+::conf\+\_\+max\+Current, ivt\+\_\+t\+::conf\+\_\+max\+Temp, ivt\+\_\+t\+::conf\+\_\+max\+U1, ivt\+\_\+t\+::conf\+\_\+max\+U2, ivt\+\_\+t\+::conf\+\_\+max\+U3, ivt\+\_\+t\+::conf\+\_\+min\+Current, ivt\+\_\+t\+::conf\+\_\+min\+Temp, ivt\+\_\+t\+::conf\+\_\+min\+U1, ivt\+\_\+t\+::conf\+\_\+min\+U2, ivt\+\_\+t\+::conf\+\_\+min\+U3, I\+V\+T\+\_\+faults\+\_\+t\+::current, I\+V\+T\+\_\+faults\+\_\+t\+::current\+\_\+oc, ivt\+\_\+t\+::faults, ivt\+\_\+t\+::i\+Batt, ivt, I\+V\+T\+\_\+faults\+\_\+t\+::ntc\+\_\+h\+\_\+oc, I\+V\+T\+\_\+faults\+\_\+t\+::ntc\+\_\+l\+\_\+oc, ivt\+\_\+t\+::power, I\+V\+T\+\_\+faults\+\_\+t\+::power, printf\+Dma(), ivt\+\_\+t\+::\+S\+OC, ivt\+\_\+t\+::\+S\+OH, ivt\+\_\+t\+::temp, I\+V\+T\+\_\+faults\+\_\+t\+::temp, I\+V\+T\+\_\+faults\+\_\+t\+::\+U1\+\_\+oc, I\+V\+T\+\_\+faults\+\_\+t\+::\+U2\+\_\+oc, I\+V\+T\+\_\+faults\+\_\+t\+::\+U3\+\_\+oc, ivt\+\_\+t\+::v\+Batt, and I\+V\+T\+\_\+faults\+\_\+t\+::v\+Ref.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{isa__ivt-s_8h_a6e1c3ec17ee8d9087e60f1a96914c32d}\label{isa__ivt-s_8h_a6e1c3ec17ee8d9087e60f1a96914c32d}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CONFIG\_CANRATE\_CMD@{IVT\_CONFIG\_CANRATE\_CMD}}
+\index{IVT\_CONFIG\_CANRATE\_CMD@{IVT\_CONFIG\_CANRATE\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CONFIG\_CANRATE\_CMD}{IVT\_CONFIG\_CANRATE\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+C\+A\+N\+R\+A\+T\+E\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x3A, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 23 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+Referenced by I\+V\+T\+\_\+\+S\+E\+T\+\_\+\+B\+I\+T\+R\+A\+T\+E().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a6ce424ea63489b50b238bb09183c4c02}\label{isa__ivt-s_8h_a6ce424ea63489b50b238bb09183c4c02}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CONFIG\_CURRENT\_CMD@{IVT\_CONFIG\_CURRENT\_CMD}}
+\index{IVT\_CONFIG\_CURRENT\_CMD@{IVT\_CONFIG\_CURRENT\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CONFIG\_CURRENT\_CMD}{IVT\_CONFIG\_CURRENT\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x20, 0x02, 0x00, 0x64, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 22 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_ae2051af5eb1d28144fe1aaf3a4b35d8b}\label{isa__ivt-s_8h_ae2051af5eb1d28144fe1aaf3a4b35d8b}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CONFIG\_I\_THRE\_NEG\_CMD@{IVT\_CONFIG\_I\_THRE\_NEG\_CMD}}
+\index{IVT\_CONFIG\_I\_THRE\_NEG\_CMD@{IVT\_CONFIG\_I\_THRE\_NEG\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CONFIG\_I\_THRE\_NEG\_CMD}{IVT\_CONFIG\_I\_THRE\_NEG\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+I\+\_\+\+T\+H\+R\+E\+\_\+\+N\+E\+G\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x35, 0x7F, 0x9C, 0x80, 0x01, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 39 of file isa\+\_\+ivt-\/s.\+h.
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a6a2b716ab91cca1e24a515ed047728cf}\label{isa__ivt-s_8h_a6a2b716ab91cca1e24a515ed047728cf}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CONFIG\_I\_THRE\_POS\_CMD@{IVT\_CONFIG\_I\_THRE\_POS\_CMD}}
+\index{IVT\_CONFIG\_I\_THRE\_POS\_CMD@{IVT\_CONFIG\_I\_THRE\_POS\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CONFIG\_I\_THRE\_POS\_CMD}{IVT\_CONFIG\_I\_THRE\_POS\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+I\+\_\+\+T\+H\+R\+E\+\_\+\+P\+O\+S\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x35, 0x80, 0x64, 0x80, 0x01, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 38 of file isa\+\_\+ivt-\/s.\+h.
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a62206562d97905cb68769debed024683}\label{isa__ivt-s_8h_a62206562d97905cb68769debed024683}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CONFIG\_T\_CMD@{IVT\_CONFIG\_T\_CMD}}
+\index{IVT\_CONFIG\_T\_CMD@{IVT\_CONFIG\_T\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CONFIG\_T\_CMD}{IVT\_CONFIG\_T\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+T\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x24, 0x02, 0x00, 0x\+C8, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 27 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_ae71b3529b3e5763c5dd86273009fbf07}\label{isa__ivt-s_8h_ae71b3529b3e5763c5dd86273009fbf07}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CONFIG\_U1\_CMD@{IVT\_CONFIG\_U1\_CMD}}
+\index{IVT\_CONFIG\_U1\_CMD@{IVT\_CONFIG\_U1\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CONFIG\_U1\_CMD}{IVT\_CONFIG\_U1\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+U1\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x21, 0x02, 0x00, 0x64, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 24 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a82b46c224baac0dd3dd9aeca9ce23691}\label{isa__ivt-s_8h_a82b46c224baac0dd3dd9aeca9ce23691}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CONFIG\_U2\_CMD@{IVT\_CONFIG\_U2\_CMD}}
+\index{IVT\_CONFIG\_U2\_CMD@{IVT\_CONFIG\_U2\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CONFIG\_U2\_CMD}{IVT\_CONFIG\_U2\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+U2\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x22, 0x02, 0x00, 0x64, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 25 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a2c369c109af37bbafc4e9fcca284ebe8}\label{isa__ivt-s_8h_a2c369c109af37bbafc4e9fcca284ebe8}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CONFIG\_U3\_CMD@{IVT\_CONFIG\_U3\_CMD}}
+\index{IVT\_CONFIG\_U3\_CMD@{IVT\_CONFIG\_U3\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CONFIG\_U3\_CMD}{IVT\_CONFIG\_U3\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+U3\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x23, 0x02, 0x00, 0x64, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 26 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a37d989809cfeb0a5558c7ac9c75fc815}\label{isa__ivt-s_8h_a37d989809cfeb0a5558c7ac9c75fc815}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_CONFIG\_W\_CMD@{IVT\_CONFIG\_W\_CMD}}
+\index{IVT\_CONFIG\_W\_CMD@{IVT\_CONFIG\_W\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_CONFIG\_W\_CMD}{IVT\_CONFIG\_W\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+C\+O\+N\+F\+I\+G\+\_\+\+W\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x25, 0x02, 0x00, 0x\+C8, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 28 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_afd00f56b563420524c7f5637d7ebdf6a}\label{isa__ivt-s_8h_afd00f56b563420524c7f5637d7ebdf6a}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_MEASURERROR\_CMD@{IVT\_MEASURERROR\_CMD}}
+\index{IVT\_MEASURERROR\_CMD@{IVT\_MEASURERROR\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_MEASURERROR\_CMD}{IVT\_MEASURERROR\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+M\+E\+A\+S\+U\+R\+E\+R\+R\+O\+R\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 36 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+Referenced by I\+V\+T\+\_\+\+P\+R\+O\+C\+E\+S\+S\+\_\+\+S\+Y\+S\+E\+R\+R\+O\+R\+S().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a76088b4e96114b0cc630c518c7043b51}\label{isa__ivt-s_8h_a76088b4e96114b0cc630c518c7043b51}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_RESET\_MEASURERROR\_CMD@{IVT\_RESET\_MEASURERROR\_CMD}}
+\index{IVT\_RESET\_MEASURERROR\_CMD@{IVT\_RESET\_MEASURERROR\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_RESET\_MEASURERROR\_CMD}{IVT\_RESET\_MEASURERROR\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+R\+E\+S\+E\+T\+\_\+\+M\+E\+A\+S\+U\+R\+E\+R\+R\+O\+R\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 32 of file isa\+\_\+ivt-\/s.\+h.
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a33071aee5d34d2d4121d0cc47cb87d18}\label{isa__ivt-s_8h_a33071aee5d34d2d4121d0cc47cb87d18}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_RESET\_SYSERROR\_CMD@{IVT\_RESET\_SYSERROR\_CMD}}
+\index{IVT\_RESET\_SYSERROR\_CMD@{IVT\_RESET\_SYSERROR\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_RESET\_SYSERROR\_CMD}{IVT\_RESET\_SYSERROR\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+R\+E\+S\+E\+T\+\_\+\+S\+Y\+S\+E\+R\+R\+O\+R\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x30, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 33 of file isa\+\_\+ivt-\/s.\+h.
+
+\mbox{\Hypertarget{isa__ivt-s_8h_aae5b3d551f57468e71d563003a58b8a4}\label{isa__ivt-s_8h_aae5b3d551f57468e71d563003a58b8a4}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_START\_CMD@{IVT\_START\_CMD}}
+\index{IVT\_START\_CMD@{IVT\_START\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_START\_CMD}{IVT\_START\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+S\+T\+A\+R\+T\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x34, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 30 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a41a51f46f88126bd2208f1098832a186}\label{isa__ivt-s_8h_a41a51f46f88126bd2208f1098832a186}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_STOP\_CMD@{IVT\_STOP\_CMD}}
+\index{IVT\_STOP\_CMD@{IVT\_STOP\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_STOP\_CMD}{IVT\_STOP\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+S\+T\+O\+P\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x34, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 21 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config(), and I\+V\+T\+\_\+\+S\+E\+T\+\_\+\+B\+I\+T\+R\+A\+T\+E().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a8a99717dd9a460c40b3676d34eccf577}\label{isa__ivt-s_8h_a8a99717dd9a460c40b3676d34eccf577}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_STORE\_CMD@{IVT\_STORE\_CMD}}
+\index{IVT\_STORE\_CMD@{IVT\_STORE\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_STORE\_CMD}{IVT\_STORE\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+S\+T\+O\+R\+E\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 29 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+Referenced by I\+V\+T\+\_\+\+C\+A\+N\+\_\+\+Config().
+
+\mbox{\Hypertarget{isa__ivt-s_8h_a1e8aa05e529fa220cbfc160d52aa543d}\label{isa__ivt-s_8h_a1e8aa05e529fa220cbfc160d52aa543d}} 
+\index{isa\_ivt-\/s.h@{isa\_ivt-\/s.h}!IVT\_SYSERROR\_CMD@{IVT\_SYSERROR\_CMD}}
+\index{IVT\_SYSERROR\_CMD@{IVT\_SYSERROR\_CMD}!isa\_ivt-\/s.h@{isa\_ivt-\/s.h}}
+\doxysubsubsection{\texorpdfstring{IVT\_SYSERROR\_CMD}{IVT\_SYSERROR\_CMD}}
+{\footnotesize\ttfamily const uint8\+\_\+t I\+V\+T\+\_\+\+S\+Y\+S\+E\+R\+R\+O\+R\+\_\+\+C\+MD\mbox{[}8\mbox{]} = \{0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 35 of file isa\+\_\+ivt-\/s.\+h.
+
+
+
+Referenced by I\+V\+T\+\_\+\+F\+A\+U\+L\+T\+\_\+\+C\+H\+E\+C\+K().
+

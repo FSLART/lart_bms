@@ -1,0 +1,428 @@
+.TH "Core/Src/stm32f4xx_hal_msp.c" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Core/Src/stm32f4xx_hal_msp.c \- This file provides code for the MSP Initialization and de-Initialization codes\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'main\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBHAL_MspInit\fP (void)"
+.br
+.ti -1c
+.RI "void \fBHAL_ADC_MspInit\fP (ADC_HandleTypeDef *hadc)"
+.br
+.RI "ADC MSP Initialization This function configures the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_ADC_MspDeInit\fP (ADC_HandleTypeDef *hadc)"
+.br
+.RI "ADC MSP De-Initialization This function freeze the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_CAN_MspInit\fP (CAN_HandleTypeDef *hcan)"
+.br
+.RI "CAN MSP Initialization This function configures the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_CAN_MspDeInit\fP (CAN_HandleTypeDef *hcan)"
+.br
+.RI "CAN MSP De-Initialization This function freeze the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_I2C_MspInit\fP (I2C_HandleTypeDef *hi2c)"
+.br
+.RI "I2C MSP Initialization This function configures the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_I2C_MspDeInit\fP (I2C_HandleTypeDef *hi2c)"
+.br
+.RI "I2C MSP De-Initialization This function freeze the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_RTC_MspInit\fP (RTC_HandleTypeDef *\fBhrtc\fP)"
+.br
+.RI "RTC MSP Initialization This function configures the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_RTC_MspDeInit\fP (RTC_HandleTypeDef *\fBhrtc\fP)"
+.br
+.RI "RTC MSP De-Initialization This function freeze the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_SPI_MspInit\fP (SPI_HandleTypeDef *\fBhspi\fP)"
+.br
+.RI "SPI MSP Initialization This function configures the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_SPI_MspDeInit\fP (SPI_HandleTypeDef *\fBhspi\fP)"
+.br
+.RI "SPI MSP De-Initialization This function freeze the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_TIM_Base_MspInit\fP (TIM_HandleTypeDef *htim_base)"
+.br
+.RI "TIM_Base MSP Initialization This function configures the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_TIM_Base_MspDeInit\fP (TIM_HandleTypeDef *htim_base)"
+.br
+.RI "TIM_Base MSP De-Initialization This function freeze the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_UART_MspInit\fP (UART_HandleTypeDef *huart)"
+.br
+.RI "UART MSP Initialization This function configures the hardware resources used in this example\&. "
+.ti -1c
+.RI "void \fBHAL_UART_MspDeInit\fP (UART_HandleTypeDef *huart)"
+.br
+.RI "UART MSP De-Initialization This function freeze the hardware resources used in this example\&. "
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "DMA_HandleTypeDef \fBhdma_adc1\fP"
+.br
+.ti -1c
+.RI "DMA_HandleTypeDef \fBhdma_usart1_tx\fP"
+.br
+.ti -1c
+.RI "DMA_HandleTypeDef \fBhdma_usart2_tx\fP"
+.br
+.ti -1c
+.RI "static uint32_t \fBHAL_RCC_CAN1_CLK_ENABLED\fP =0"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+This file provides code for the MSP Initialization and de-Initialization codes\&. 
+
+
+.PP
+\fBAttention\fP
+.RS 4
+
+.RE
+.PP
+Copyright (c) 2025 STMicroelectronics\&. All rights reserved\&.
+.PP
+This software is licensed under terms that can be found in the LICENSE file in the root directory of this software component\&. If no LICENSE file comes with this software, it is provided AS-IS\&. 
+.PP
+Definition in file \fBstm32f4xx_hal_msp\&.c\fP\&.
+.SH "Function Documentation"
+.PP 
+.SS "void HAL_ADC_MspDeInit (ADC_HandleTypeDef * hadc)"
+
+.PP
+ADC MSP De-Initialization This function freeze the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhadc\fP ADC handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+
+.PP
+Definition at line 134 of file stm32f4xx_hal_msp\&.c\&.
+.SS "void HAL_ADC_MspInit (ADC_HandleTypeDef * hadc)"
+
+.PP
+ADC MSP Initialization This function configures the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhadc\fP ADC handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+
+.PP
+Definition at line 91 of file stm32f4xx_hal_msp\&.c\&.
+.PP
+References Error_Handler(), and hdma_adc1\&.
+.SS "void HAL_CAN_MspDeInit (CAN_HandleTypeDef * hcan)"
+
+.PP
+CAN MSP De-Initialization This function freeze the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhcan\fP CAN handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+CAN1 GPIO Configuration PA11 ------> CAN1_RX PA12 ------> CAN1_TX
+.PP
+CAN2 GPIO Configuration PB12 ------> CAN2_RX PB13 ------> CAN2_TX
+.PP
+Definition at line 231 of file stm32f4xx_hal_msp\&.c\&.
+.PP
+References BMS_CAN_RX_Pin, BMS_CAN_TX_Pin, CHARGER_CAN_RX_Pin, CHARGER_CAN_TX_Pin, and HAL_RCC_CAN1_CLK_ENABLED\&.
+.SS "void HAL_CAN_MspInit (CAN_HandleTypeDef * hcan)"
+
+.PP
+CAN MSP Initialization This function configures the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhcan\fP CAN handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+CAN1 GPIO Configuration PA11 ------> CAN1_RX PA12 ------> CAN1_TX
+.PP
+CAN2 GPIO Configuration PB12 ------> CAN2_RX PB13 ------> CAN2_TX
+.PP
+Definition at line 161 of file stm32f4xx_hal_msp\&.c\&.
+.PP
+References BMS_CAN_RX_Pin, BMS_CAN_TX_Pin, CHARGER_CAN_RX_Pin, CHARGER_CAN_TX_Pin, and HAL_RCC_CAN1_CLK_ENABLED\&.
+.SS "void HAL_I2C_MspDeInit (I2C_HandleTypeDef * hi2c)"
+
+.PP
+I2C MSP De-Initialization This function freeze the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhi2c\fP I2C handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+I2C1 GPIO Configuration PB8 ------> I2C1_SCL PB9 ------> I2C1_SDA
+.PP
+I2C3 GPIO Configuration PC9 ------> I2C3_SDA PA8 ------> I2C3_SCL
+.PP
+Definition at line 352 of file stm32f4xx_hal_msp\&.c\&.
+.PP
+References AUX_SENS_SCL_GPIO_Port, AUX_SENS_SCL_Pin, AUX_SENS_SDA_GPIO_Port, AUX_SENS_SDA_Pin, EEPROM_SCL_GPIO_Port, EEPROM_SCL_Pin, EEPROM_SDA_GPIO_Port, and EEPROM_SDA_Pin\&.
+.SS "void HAL_I2C_MspInit (I2C_HandleTypeDef * hi2c)"
+
+.PP
+I2C MSP Initialization This function configures the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhi2c\fP I2C handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+I2C1 GPIO Configuration PB8 ------> I2C1_SCL PB9 ------> I2C1_SDA
+.PP
+I2C3 GPIO Configuration PC9 ------> I2C3_SDA PA8 ------> I2C3_SCL
+.PP
+Definition at line 284 of file stm32f4xx_hal_msp\&.c\&.
+.PP
+References AUX_SENS_SCL_GPIO_Port, AUX_SENS_SCL_Pin, AUX_SENS_SDA_GPIO_Port, AUX_SENS_SDA_Pin, EEPROM_SCL_Pin, and EEPROM_SDA_Pin\&.
+.SS "void HAL_MspInit (void)"
+Initializes the Global MSP\&. 
+.PP
+Definition at line 68 of file stm32f4xx_hal_msp\&.c\&.
+.SS "void HAL_RTC_MspDeInit (RTC_HandleTypeDef * hrtc)"
+
+.PP
+RTC MSP De-Initialization This function freeze the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhrtc\fP RTC handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+
+.PP
+Definition at line 437 of file stm32f4xx_hal_msp\&.c\&.
+.PP
+References hrtc\&.
+.SS "void HAL_RTC_MspInit (RTC_HandleTypeDef * hrtc)"
+
+.PP
+RTC MSP Initialization This function configures the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhrtc\fP RTC handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+Initializes the peripherals clock
+.PP
+Definition at line 403 of file stm32f4xx_hal_msp\&.c\&.
+.PP
+References Error_Handler(), and hrtc\&.
+.SS "void HAL_SPI_MspDeInit (SPI_HandleTypeDef * hspi)"
+
+.PP
+SPI MSP De-Initialization This function freeze the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhspi\fP SPI handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+SPI1 GPIO Configuration PA5 ------> SPI1_SCK PA6 ------> SPI1_MISO PA7 ------> SPI1_MOSI
+.PP
+Definition at line 497 of file stm32f4xx_hal_msp\&.c\&.
+.PP
+References hspi\&.
+.SS "void HAL_SPI_MspInit (SPI_HandleTypeDef * hspi)"
+
+.PP
+SPI MSP Initialization This function configures the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhspi\fP SPI handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+SPI1 GPIO Configuration PA5 ------> SPI1_SCK PA6 ------> SPI1_MISO PA7 ------> SPI1_MOSI
+.PP
+Definition at line 459 of file stm32f4xx_hal_msp\&.c\&.
+.PP
+References hspi\&.
+.SS "void HAL_TIM_Base_MspDeInit (TIM_HandleTypeDef * htim_base)"
+
+.PP
+TIM_Base MSP De-Initialization This function freeze the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhtim_base\fP TIM_Base handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+
+.PP
+Definition at line 602 of file stm32f4xx_hal_msp\&.c\&.
+.SS "void HAL_TIM_Base_MspInit (TIM_HandleTypeDef * htim_base)"
+
+.PP
+TIM_Base MSP Initialization This function configures the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhtim_base\fP TIM_Base handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+
+.PP
+Definition at line 527 of file stm32f4xx_hal_msp\&.c\&.
+.SS "void HAL_UART_MspDeInit (UART_HandleTypeDef * huart)"
+
+.PP
+UART MSP De-Initialization This function freeze the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhuart\fP UART handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+USART1 GPIO Configuration PA9 ------> USART1_TX PA10 ------> USART1_RX
+.PP
+USART2 GPIO Configuration PA2 ------> USART2_TX PA3 ------> USART2_RX
+.PP
+Definition at line 780 of file stm32f4xx_hal_msp\&.c\&.
+.PP
+References BT_USART2_RX_Pin, and BT_USART2_TX_Pin\&.
+.SS "void HAL_UART_MspInit (UART_HandleTypeDef * huart)"
+
+.PP
+UART MSP Initialization This function configures the hardware resources used in this example\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhuart\fP UART handle pointer 
+.RE
+.PP
+\fBReturn values\fP
+.RS 4
+\fINone\fP 
+.RE
+.PP
+USART1 GPIO Configuration PA9 ------> USART1_TX PA10 ------> USART1_RX
+.PP
+USART2 GPIO Configuration PA2 ------> USART2_TX PA3 ------> USART2_RX
+.PP
+Definition at line 677 of file stm32f4xx_hal_msp\&.c\&.
+.PP
+References BT_USART2_RX_Pin, BT_USART2_TX_Pin, Error_Handler(), hdma_usart1_tx, and hdma_usart2_tx\&.
+.SH "Variable Documentation"
+.PP 
+.SS "uint32_t HAL_RCC_CAN1_CLK_ENABLED =0\fC [static]\fP"
+
+.PP
+Definition at line 153 of file stm32f4xx_hal_msp\&.c\&.
+.PP
+Referenced by HAL_CAN_MspDeInit(), and HAL_CAN_MspInit()\&.
+.SS "DMA_HandleTypeDef hdma_adc1"
+
+.PP
+Definition at line 46 of file main\&.c\&.
+.PP
+Referenced by HAL_ADC_MspInit()\&.
+.SS "DMA_HandleTypeDef hdma_usart1_tx"
+
+.PP
+Definition at line 66 of file main\&.c\&.
+.PP
+Referenced by HAL_UART_MspInit()\&.
+.SS "DMA_HandleTypeDef hdma_usart2_tx"
+
+.PP
+Definition at line 67 of file main\&.c\&.
+.PP
+Referenced by HAL_UART_MspInit()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

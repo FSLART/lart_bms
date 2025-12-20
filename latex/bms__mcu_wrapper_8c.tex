@@ -1,0 +1,313 @@
+\hypertarget{bms__mcu_wrapper_8c}{}\doxysection{Core/\+Src/bms\+\_\+mcu\+Wrapper.c File Reference}
+\label{bms__mcu_wrapper_8c}\index{Core/Src/bms\_mcuWrapper.c@{Core/Src/bms\_mcuWrapper.c}}
+{\ttfamily \#include \char`\"{}bms\+\_\+mcu\+Wrapper.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}main.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}brain.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{bms__mcu_wrapper_8c_aca3271f53e5f291a46f851305ddf2f2a}{W\+A\+K\+E\+U\+P\+\_\+\+D\+E\+L\+AY}}~1
+\item 
+\#define \mbox{\hyperlink{bms__mcu_wrapper_8c_ac5d7411fcdf1f2bb51fb57db9fe7c85c}{G\+P\+I\+O\+\_\+\+P\+O\+RT}}~\mbox{\hyperlink{main_8h_a3db5f0890e201e4a47b390b9b200bfe9}{B\+M\+S\+\_\+\+C\+S\+\_\+\+G\+P\+I\+O\+\_\+\+Port}}
+\item 
+\#define \mbox{\hyperlink{bms__mcu_wrapper_8c_abfcf05153ddbd63d5aff5d018867cc19}{C\+S\+\_\+\+P\+IN}}~\mbox{\hyperlink{main_8h_acffb742db8dfef4f02346eb715c11a73}{B\+M\+S\+\_\+\+C\+S\+\_\+\+Pin}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{bms__mcu_wrapper_8c_ac29f718742d6103d54edc86590a25fd2}{bms\+\_\+cs\+Low}} (void)
+\item 
+void \mbox{\hyperlink{bms__mcu_wrapper_8c_a495bf83e3612cdccdd1a9788d804219d}{bms\+\_\+cs\+High}} (void)
+\item 
+void \mbox{\hyperlink{bms__mcu_wrapper_8c_a9e0c4c37244f68a8feb0e418f15c8003}{bms\+\_\+start\+Timer}} (void)
+\item 
+void \mbox{\hyperlink{bms__mcu_wrapper_8c_a618b13e2d9c0da8cba65341d395b0fd2}{bms\+\_\+stop\+Timer}} (void)
+\item 
+void \mbox{\hyperlink{bms__mcu_wrapper_8c_af7ad75adcfcdb0d0228f7d471ec07caf}{bms\+\_\+stop\+Timer\+\_\+delay}} (void)
+\item 
+void \mbox{\hyperlink{bms__mcu_wrapper_8c_af3cff53ffb3b9cbedfed8e25d9528fc2}{bms\+\_\+start\+Timer\+\_\+delay}} (void)
+\item 
+uint32\+\_\+t \mbox{\hyperlink{bms__mcu_wrapper_8c_a6ed5ab981d90ae000ed0074b87cb08b5}{bms\+\_\+get\+Tim\+Count\+\_\+delay}} (void)
+\item 
+uint32\+\_\+t \mbox{\hyperlink{bms__mcu_wrapper_8c_ae6fed919049b6a25900ad4d9bde2c201}{bms\+\_\+get\+Tim\+Count}} (void)
+\item 
+void \mbox{\hyperlink{bms__mcu_wrapper_8c_a5112621bbaa8fff1148f6f8e76765227}{bms\+\_\+wakeup\+Chain}} (void)
+\item 
+void \mbox{\hyperlink{bms__mcu_wrapper_8c_a14dd7e2bf0d1acf0a96ceff3d42a0b18}{bms\+\_\+delay\+Us}} (uint32\+\_\+t us)
+\item 
+void \mbox{\hyperlink{bms__mcu_wrapper_8c_ad1b5c19cca1f1b1c5aad481801cae98c}{bms\+\_\+delay\+Ms\+Active}} (uint32\+\_\+t ms)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static T\+I\+M\+\_\+\+Handle\+Type\+Def $\ast$ \mbox{\hyperlink{bms__mcu_wrapper_8c_a5dc7d1c65997ccaed48a93a3f4ffc486}{htim}} = \&\mbox{\hyperlink{main_8c_a2c80fd5510e2990a59a5c90d745c716c}{htim2}}
+\item 
+static T\+I\+M\+\_\+\+Handle\+Type\+Def $\ast$ \mbox{\hyperlink{bms__mcu_wrapper_8c_a3092ff3395107365ec62c2a5e7c47b07}{htim\+\_\+delay}} = \&\mbox{\hyperlink{main_8c_acefaeaaa3856ddddae7083b2d220fe4b}{htim5}}
+\item 
+volatile bool \mbox{\hyperlink{bms__mcu_wrapper_8c_a4666d2657e23ceb10808bf68ffba90a7}{bms\+\_\+ow\+\_\+timer\+\_\+done}} = true
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_abfcf05153ddbd63d5aff5d018867cc19}\label{bms__mcu_wrapper_8c_abfcf05153ddbd63d5aff5d018867cc19}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!CS\_PIN@{CS\_PIN}}
+\index{CS\_PIN@{CS\_PIN}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{CS\_PIN}{CS\_PIN}}
+{\footnotesize\ttfamily \#define C\+S\+\_\+\+P\+IN~\mbox{\hyperlink{main_8h_acffb742db8dfef4f02346eb715c11a73}{B\+M\+S\+\_\+\+C\+S\+\_\+\+Pin}}}
+
+
+
+Definition at line 21 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_ac5d7411fcdf1f2bb51fb57db9fe7c85c}\label{bms__mcu_wrapper_8c_ac5d7411fcdf1f2bb51fb57db9fe7c85c}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!GPIO\_PORT@{GPIO\_PORT}}
+\index{GPIO\_PORT@{GPIO\_PORT}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{GPIO\_PORT}{GPIO\_PORT}}
+{\footnotesize\ttfamily \#define G\+P\+I\+O\+\_\+\+P\+O\+RT~\mbox{\hyperlink{main_8h_a3db5f0890e201e4a47b390b9b200bfe9}{B\+M\+S\+\_\+\+C\+S\+\_\+\+G\+P\+I\+O\+\_\+\+Port}}}
+
+
+
+Definition at line 20 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_aca3271f53e5f291a46f851305ddf2f2a}\label{bms__mcu_wrapper_8c_aca3271f53e5f291a46f851305ddf2f2a}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!WAKEUP\_DELAY@{WAKEUP\_DELAY}}
+\index{WAKEUP\_DELAY@{WAKEUP\_DELAY}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{WAKEUP\_DELAY}{WAKEUP\_DELAY}}
+{\footnotesize\ttfamily \#define W\+A\+K\+E\+U\+P\+\_\+\+D\+E\+L\+AY~1}
+
+
+
+Definition at line 14 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_a495bf83e3612cdccdd1a9788d804219d}\label{bms__mcu_wrapper_8c_a495bf83e3612cdccdd1a9788d804219d}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!bms\_csHigh@{bms\_csHigh}}
+\index{bms\_csHigh@{bms\_csHigh}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{bms\_csHigh()}{bms\_csHigh()}}
+{\footnotesize\ttfamily void bms\+\_\+cs\+High (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 32 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+References C\+S\+\_\+\+P\+IN, and G\+P\+I\+O\+\_\+\+P\+O\+RT.
+
+
+
+Referenced by bms\+\_\+delay\+Ms\+Active(), bms\+\_\+receive\+Data(), bms\+\_\+transmit\+Cmd(), bms\+\_\+transmit\+Data(), bms\+\_\+transmit\+Poll(), and bms\+\_\+wakeup\+Chain().
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_ac29f718742d6103d54edc86590a25fd2}\label{bms__mcu_wrapper_8c_ac29f718742d6103d54edc86590a25fd2}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!bms\_csLow@{bms\_csLow}}
+\index{bms\_csLow@{bms\_csLow}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{bms\_csLow()}{bms\_csLow()}}
+{\footnotesize\ttfamily void bms\+\_\+cs\+Low (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 25 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+References C\+S\+\_\+\+P\+IN, and G\+P\+I\+O\+\_\+\+P\+O\+RT.
+
+
+
+Referenced by bms\+\_\+delay\+Ms\+Active(), bms\+\_\+receive\+Data(), bms\+\_\+transmit\+Cmd(), bms\+\_\+transmit\+Data(), bms\+\_\+transmit\+Poll(), and bms\+\_\+wakeup\+Chain().
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_ad1b5c19cca1f1b1c5aad481801cae98c}\label{bms__mcu_wrapper_8c_ad1b5c19cca1f1b1c5aad481801cae98c}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!bms\_delayMsActive@{bms\_delayMsActive}}
+\index{bms\_delayMsActive@{bms\_delayMsActive}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{bms\_delayMsActive()}{bms\_delayMsActive()}}
+{\footnotesize\ttfamily void bms\+\_\+delay\+Ms\+Active (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{ms }\end{DoxyParamCaption})}
+
+
+
+Definition at line 97 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+References bms\+\_\+cs\+High(), bms\+\_\+cs\+Low(), and bms\+\_\+delay\+Us().
+
+
+
+Referenced by bms\+\_\+open\+Wire\+Check(), brain\+\_\+loop(), and brain\+\_\+start().
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_a14dd7e2bf0d1acf0a96ceff3d42a0b18}\label{bms__mcu_wrapper_8c_a14dd7e2bf0d1acf0a96ceff3d42a0b18}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!bms\_delayUs@{bms\_delayUs}}
+\index{bms\_delayUs@{bms\_delayUs}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{bms\_delayUs()}{bms\_delayUs()}}
+{\footnotesize\ttfamily void bms\+\_\+delay\+Us (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{us }\end{DoxyParamCaption})}
+
+
+
+Definition at line 89 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+References bms\+\_\+get\+Tim\+Count\+\_\+delay(), bms\+\_\+start\+Timer\+\_\+delay(), and bms\+\_\+stop\+Timer\+\_\+delay().
+
+
+
+Referenced by bms\+\_\+delay\+Ms\+Active().
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_ae6fed919049b6a25900ad4d9bde2c201}\label{bms__mcu_wrapper_8c_ae6fed919049b6a25900ad4d9bde2c201}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!bms\_getTimCount@{bms\_getTimCount}}
+\index{bms\_getTimCount@{bms\_getTimCount}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{bms\_getTimCount()}{bms\_getTimCount()}}
+{\footnotesize\ttfamily uint32\+\_\+t bms\+\_\+get\+Tim\+Count (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 70 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+References htim.
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_a6ed5ab981d90ae000ed0074b87cb08b5}\label{bms__mcu_wrapper_8c_a6ed5ab981d90ae000ed0074b87cb08b5}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!bms\_getTimCount\_delay@{bms\_getTimCount\_delay}}
+\index{bms\_getTimCount\_delay@{bms\_getTimCount\_delay}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{bms\_getTimCount\_delay()}{bms\_getTimCount\_delay()}}
+{\footnotesize\ttfamily uint32\+\_\+t bms\+\_\+get\+Tim\+Count\+\_\+delay (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 63 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+References htim\+\_\+delay.
+
+
+
+Referenced by bms\+\_\+delay\+Us().
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_a9e0c4c37244f68a8feb0e418f15c8003}\label{bms__mcu_wrapper_8c_a9e0c4c37244f68a8feb0e418f15c8003}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!bms\_startTimer@{bms\_startTimer}}
+\index{bms\_startTimer@{bms\_startTimer}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{bms\_startTimer()}{bms\_startTimer()}}
+{\footnotesize\ttfamily void bms\+\_\+start\+Timer (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 39 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+References htim.
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_af3cff53ffb3b9cbedfed8e25d9528fc2}\label{bms__mcu_wrapper_8c_af3cff53ffb3b9cbedfed8e25d9528fc2}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!bms\_startTimer\_delay@{bms\_startTimer\_delay}}
+\index{bms\_startTimer\_delay@{bms\_startTimer\_delay}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{bms\_startTimer\_delay()}{bms\_startTimer\_delay()}}
+{\footnotesize\ttfamily void bms\+\_\+start\+Timer\+\_\+delay (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 57 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+References htim\+\_\+delay.
+
+
+
+Referenced by bms\+\_\+delay\+Us().
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_a618b13e2d9c0da8cba65341d395b0fd2}\label{bms__mcu_wrapper_8c_a618b13e2d9c0da8cba65341d395b0fd2}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!bms\_stopTimer@{bms\_stopTimer}}
+\index{bms\_stopTimer@{bms\_stopTimer}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{bms\_stopTimer()}{bms\_stopTimer()}}
+{\footnotesize\ttfamily void bms\+\_\+stop\+Timer (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 44 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+References htim.
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_af7ad75adcfcdb0d0228f7d471ec07caf}\label{bms__mcu_wrapper_8c_af7ad75adcfcdb0d0228f7d471ec07caf}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!bms\_stopTimer\_delay@{bms\_stopTimer\_delay}}
+\index{bms\_stopTimer\_delay@{bms\_stopTimer\_delay}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{bms\_stopTimer\_delay()}{bms\_stopTimer\_delay()}}
+{\footnotesize\ttfamily void bms\+\_\+stop\+Timer\+\_\+delay (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 51 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+References htim\+\_\+delay.
+
+
+
+Referenced by bms\+\_\+delay\+Us().
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_a5112621bbaa8fff1148f6f8e76765227}\label{bms__mcu_wrapper_8c_a5112621bbaa8fff1148f6f8e76765227}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!bms\_wakeupChain@{bms\_wakeupChain}}
+\index{bms\_wakeupChain@{bms\_wakeupChain}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{bms\_wakeupChain()}{bms\_wakeupChain()}}
+{\footnotesize\ttfamily void bms\+\_\+wakeup\+Chain (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 77 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+References bms\+\_\+cs\+High(), bms\+\_\+cs\+Low(), T\+O\+T\+A\+L\+\_\+\+IC, and W\+A\+K\+E\+U\+P\+\_\+\+D\+E\+L\+AY.
+
+
+
+Referenced by bms\+\_\+get\+Aux\+Measurement(), bms\+\_\+open\+Wire\+Check(), bms\+\_\+stop\+Discharge(), brain\+\_\+loop(), and brain\+\_\+start().
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_a4666d2657e23ceb10808bf68ffba90a7}\label{bms__mcu_wrapper_8c_a4666d2657e23ceb10808bf68ffba90a7}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!bms\_ow\_timer\_done@{bms\_ow\_timer\_done}}
+\index{bms\_ow\_timer\_done@{bms\_ow\_timer\_done}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{bms\_ow\_timer\_done}{bms\_ow\_timer\_done}}
+{\footnotesize\ttfamily volatile bool bms\+\_\+ow\+\_\+timer\+\_\+done = true}
+
+
+
+Definition at line 23 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_a5dc7d1c65997ccaed48a93a3f4ffc486}\label{bms__mcu_wrapper_8c_a5dc7d1c65997ccaed48a93a3f4ffc486}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!htim@{htim}}
+\index{htim@{htim}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{htim}{htim}}
+{\footnotesize\ttfamily T\+I\+M\+\_\+\+Handle\+Type\+Def$\ast$ htim = \&\mbox{\hyperlink{main_8c_a2c80fd5510e2990a59a5c90d745c716c}{htim2}}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 16 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+Referenced by bms\+\_\+get\+Tim\+Count(), bms\+\_\+start\+Timer(), bms\+\_\+stop\+Timer(), and H\+A\+L\+\_\+\+T\+I\+M\+\_\+\+Period\+Elapsed\+Callback().
+
+\mbox{\Hypertarget{bms__mcu_wrapper_8c_a3092ff3395107365ec62c2a5e7c47b07}\label{bms__mcu_wrapper_8c_a3092ff3395107365ec62c2a5e7c47b07}} 
+\index{bms\_mcuWrapper.c@{bms\_mcuWrapper.c}!htim\_delay@{htim\_delay}}
+\index{htim\_delay@{htim\_delay}!bms\_mcuWrapper.c@{bms\_mcuWrapper.c}}
+\doxysubsubsection{\texorpdfstring{htim\_delay}{htim\_delay}}
+{\footnotesize\ttfamily T\+I\+M\+\_\+\+Handle\+Type\+Def$\ast$ htim\+\_\+delay = \&\mbox{\hyperlink{main_8c_acefaeaaa3856ddddae7083b2d220fe4b}{htim5}}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 17 of file bms\+\_\+mcu\+Wrapper.\+c.
+
+
+
+Referenced by bms\+\_\+get\+Tim\+Count\+\_\+delay(), bms\+\_\+start\+Timer\+\_\+delay(), and bms\+\_\+stop\+Timer\+\_\+delay().
+

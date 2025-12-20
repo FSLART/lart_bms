@@ -1,0 +1,64 @@
+.TH "Core/Inc/eeprom_utils.h" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Core/Inc/eeprom_utils.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'math\&.h'\fP
+.br
+\fC#include 'stdio\&.h'\fP
+.br
+\fC#include 'stdlib\&.h'\fP
+.br
+\fC#include 'stdbool\&.h'\fP
+.br
+\fC#include 'string\&.h'\fP
+.br
+\fC#include 'main\&.h'\fP
+.br
+\fC#include 'ee24\&.h'\fP
+.br
+\fC#include 'uartDMA\&.h'\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBEEPROM_Comms\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "bool \fBWrite_EEPROM\fP (\fBEEPROM_Comms\fP *comms, uint8_t type, uint16_t value, bool debug)"
+.br
+.ti -1c
+.RI "int \fBRead_EEPROM\fP (\fBEEPROM_Comms\fP *comms, uint8_t type, bool debug)"
+.br
+.ti -1c
+.RI "void \fBset_uart\fP (\fBEEPROM_Comms\fP *comms, UART_HandleTypeDef *huart)"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "int Read_EEPROM (\fBEEPROM_Comms\fP * comms, uint8_t type, bool debug)"
+
+.PP
+Definition at line 130 of file eeprom_utils\&.c\&.
+.PP
+References EE24_ADDRESS_DEFAULT, EE24_Init(), EE24_Read(), ee24fc08, global_uart, EEPROM_Comms::hi2c, EEPROM_Comms::huart, and printfDma()\&.
+.SS "void set_uart (\fBEEPROM_Comms\fP * comms, UART_HandleTypeDef * huart)"
+
+.SS "bool Write_EEPROM (\fBEEPROM_Comms\fP * comms, uint8_t type, uint16_t value, bool debug)"
+
+.PP
+Definition at line 15 of file eeprom_utils\&.c\&.
+.PP
+References EE24_ADDRESS_DEFAULT, EE24_Init(), EE24_Read(), EE24_Write(), ee24fc08, global_uart, EEPROM_Comms::hi2c, EEPROM_Comms::huart, and printfDma()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

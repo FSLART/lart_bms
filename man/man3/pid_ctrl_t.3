@@ -1,0 +1,113 @@
+.TH "pid_ctrl_t" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+pid_ctrl_t
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <fan_management\&.h>\fP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "float \fBKp\fP"
+.br
+.ti -1c
+.RI "float \fBKi\fP"
+.br
+.ti -1c
+.RI "float \fBKd\fP"
+.br
+.ti -1c
+.RI "float \fBsetpoint\fP"
+.br
+.ti -1c
+.RI "float \fBTs\fP"
+.br
+.ti -1c
+.RI "float \fBintegrator\fP"
+.br
+.ti -1c
+.RI "float \fBprev_error\fP"
+.br
+.ti -1c
+.RI "float \fBprev_measurement\fP"
+.br
+.ti -1c
+.RI "float \fBout_min\fP"
+.br
+.ti -1c
+.RI "float \fBout_max\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 33 of file fan_management\&.h\&.
+.SH "Field Documentation"
+.PP 
+.SS "float pid_ctrl_t::integrator"
+
+.PP
+Definition at line 39 of file fan_management\&.h\&.
+.PP
+Referenced by PID_Init(), and PID_Update()\&.
+.SS "float pid_ctrl_t::Kd"
+
+.PP
+Definition at line 34 of file fan_management\&.h\&.
+.PP
+Referenced by PID_Init(), PID_SetTunings(), and PID_Update()\&.
+.SS "float pid_ctrl_t::Ki"
+
+.PP
+Definition at line 34 of file fan_management\&.h\&.
+.PP
+Referenced by PID_Init(), PID_SetTunings(), and PID_Update()\&.
+.SS "float pid_ctrl_t::Kp"
+
+.PP
+Definition at line 34 of file fan_management\&.h\&.
+.PP
+Referenced by PID_Init(), PID_SetTunings(), and PID_Update()\&.
+.SS "float pid_ctrl_t::out_max"
+
+.PP
+Definition at line 45 of file fan_management\&.h\&.
+.PP
+Referenced by PID_Init(), and PID_Update()\&.
+.SS "float pid_ctrl_t::out_min"
+
+.PP
+Definition at line 44 of file fan_management\&.h\&.
+.PP
+Referenced by PID_Init(), and PID_Update()\&.
+.SS "float pid_ctrl_t::prev_error"
+
+.PP
+Definition at line 40 of file fan_management\&.h\&.
+.PP
+Referenced by PID_Init(), and PID_Update()\&.
+.SS "float pid_ctrl_t::prev_measurement"
+
+.PP
+Definition at line 41 of file fan_management\&.h\&.
+.PP
+Referenced by PID_Init(), and PID_Update()\&.
+.SS "float pid_ctrl_t::setpoint"
+
+.PP
+Definition at line 35 of file fan_management\&.h\&.
+.PP
+Referenced by PID_Init(), and PID_Update()\&.
+.SS "float pid_ctrl_t::Ts"
+
+.PP
+Definition at line 36 of file fan_management\&.h\&.
+.PP
+Referenced by PID_Init(), and PID_Update()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

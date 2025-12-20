@@ -1,0 +1,183 @@
+.TH "ivt_t" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ivt_t
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "int32_t \fBvBatt\fP"
+.br
+.ti -1c
+.RI "int32_t \fBiBatt\fP"
+.br
+.ti -1c
+.RI "int32_t \fBpower\fP"
+.br
+.ti -1c
+.RI "int32_t \fBtemp\fP"
+.br
+.ti -1c
+.RI "int32_t \fBSOH\fP"
+.br
+.ti -1c
+.RI "int32_t \fBSOC\fP"
+.br
+.ti -1c
+.RI "float \fBconf_CANbit\fP"
+.br
+.ti -1c
+.RI "float \fBconf_maxTemp\fP"
+.br
+.ti -1c
+.RI "float \fBconf_minTemp\fP"
+.br
+.ti -1c
+.RI "float \fBconf_minCurrent\fP"
+.br
+.ti -1c
+.RI "float \fBconf_maxCurrent\fP"
+.br
+.ti -1c
+.RI "float \fBconf_maxU1\fP"
+.br
+.ti -1c
+.RI "float \fBconf_minU1\fP"
+.br
+.ti -1c
+.RI "float \fBconf_maxU2\fP"
+.br
+.ti -1c
+.RI "float \fBconf_minU2\fP"
+.br
+.ti -1c
+.RI "float \fBconf_maxU3\fP"
+.br
+.ti -1c
+.RI "float \fBconf_minU3\fP"
+.br
+.ti -1c
+.RI "\fBIVT_faults_t\fP \fBfaults\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 31 of file isa_ivt\-s\&.c\&.
+.SH "Field Documentation"
+.PP 
+.SS "float ivt_t::conf_CANbit"
+
+.PP
+Definition at line 42 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), and send_ivt_ui()\&.
+.SS "float ivt_t::conf_maxCurrent"
+
+.PP
+Definition at line 46 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), and send_ivt_ui()\&.
+.SS "float ivt_t::conf_maxTemp"
+
+.PP
+Definition at line 43 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), and send_ivt_ui()\&.
+.SS "float ivt_t::conf_maxU1"
+
+.PP
+Definition at line 47 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), and send_ivt_ui()\&.
+.SS "float ivt_t::conf_maxU2"
+
+.PP
+Definition at line 49 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), and send_ivt_ui()\&.
+.SS "float ivt_t::conf_maxU3"
+
+.PP
+Definition at line 51 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), and send_ivt_ui()\&.
+.SS "float ivt_t::conf_minCurrent"
+
+.PP
+Definition at line 45 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), and send_ivt_ui()\&.
+.SS "float ivt_t::conf_minTemp"
+
+.PP
+Definition at line 44 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), and send_ivt_ui()\&.
+.SS "float ivt_t::conf_minU1"
+
+.PP
+Definition at line 48 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), and send_ivt_ui()\&.
+.SS "float ivt_t::conf_minU2"
+
+.PP
+Definition at line 50 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), and send_ivt_ui()\&.
+.SS "float ivt_t::conf_minU3"
+
+.PP
+Definition at line 52 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_Config(), and send_ivt_ui()\&.
+.SS "\fBIVT_faults_t\fP ivt_t::faults"
+
+.PP
+Definition at line 55 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_PROCESS_MEASURERRORS(), IVT_PROCESS_SYSERRORS(), and send_ivt_ui()\&.
+.SS "int32_t ivt_t::iBatt"
+
+.PP
+Definition at line 35 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_OnMessage(), and send_ivt_ui()\&.
+.SS "int32_t ivt_t::power"
+
+.PP
+Definition at line 36 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_OnMessage(), and send_ivt_ui()\&.
+.SS "int32_t ivt_t::SOC"
+
+.PP
+Definition at line 39 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by send_ivt_ui()\&.
+.SS "int32_t ivt_t::SOH"
+
+.PP
+Definition at line 38 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by send_ivt_ui()\&.
+.SS "int32_t ivt_t::temp"
+
+.PP
+Definition at line 37 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_OnMessage(), and send_ivt_ui()\&.
+.SS "int32_t ivt_t::vBatt"
+
+.PP
+Definition at line 34 of file isa_ivt\-s\&.c\&.
+.PP
+Referenced by IVT_CAN_OnMessage(), and send_ivt_ui()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

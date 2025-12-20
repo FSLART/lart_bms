@@ -1,0 +1,137 @@
+.TH "Core/Inc/bms_mcuWrapper.h" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Core/Inc/bms_mcuWrapper.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'stdint\&.h'\fP
+.br
+\fC#include 'bms_libWrapper\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBbms_csLow\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_csHigh\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_startTimer\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_stopTimer\fP (void)"
+.br
+.ti -1c
+.RI "uint32_t \fBbms_getTimCount\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_startTimer_delay\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_stopTimer_delay\fP (void)"
+.br
+.ti -1c
+.RI "uint32_t \fBbms_getTimCount_delay\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_wakeupChain\fP (void)"
+.br
+.ti -1c
+.RI "void \fBbms_delayUs\fP (uint32_t us)"
+.br
+.ti -1c
+.RI "void \fBbms_delayMsActive\fP (uint32_t ms)"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void bms_csHigh (void)"
+
+.PP
+Definition at line 32 of file bms_mcuWrapper\&.c\&.
+.PP
+References CS_PIN, and GPIO_PORT\&.
+.PP
+Referenced by bms_delayMsActive(), bms_receiveData(), bms_transmitCmd(), bms_transmitData(), bms_transmitPoll(), and bms_wakeupChain()\&.
+.SS "void bms_csLow (void)"
+
+.PP
+Definition at line 25 of file bms_mcuWrapper\&.c\&.
+.PP
+References CS_PIN, and GPIO_PORT\&.
+.PP
+Referenced by bms_delayMsActive(), bms_receiveData(), bms_transmitCmd(), bms_transmitData(), bms_transmitPoll(), and bms_wakeupChain()\&.
+.SS "void bms_delayMsActive (uint32_t ms)"
+
+.PP
+Definition at line 97 of file bms_mcuWrapper\&.c\&.
+.PP
+References bms_csHigh(), bms_csLow(), and bms_delayUs()\&.
+.PP
+Referenced by bms_openWireCheck(), brain_loop(), and brain_start()\&.
+.SS "void bms_delayUs (uint32_t us)"
+
+.PP
+Definition at line 89 of file bms_mcuWrapper\&.c\&.
+.PP
+References bms_getTimCount_delay(), bms_startTimer_delay(), and bms_stopTimer_delay()\&.
+.PP
+Referenced by bms_delayMsActive()\&.
+.SS "uint32_t bms_getTimCount (void)"
+
+.PP
+Definition at line 70 of file bms_mcuWrapper\&.c\&.
+.PP
+References htim\&.
+.SS "uint32_t bms_getTimCount_delay (void)"
+
+.PP
+Definition at line 63 of file bms_mcuWrapper\&.c\&.
+.PP
+References htim_delay\&.
+.PP
+Referenced by bms_delayUs()\&.
+.SS "void bms_startTimer (void)"
+
+.PP
+Definition at line 39 of file bms_mcuWrapper\&.c\&.
+.PP
+References htim\&.
+.SS "void bms_startTimer_delay (void)"
+
+.PP
+Definition at line 57 of file bms_mcuWrapper\&.c\&.
+.PP
+References htim_delay\&.
+.PP
+Referenced by bms_delayUs()\&.
+.SS "void bms_stopTimer (void)"
+
+.PP
+Definition at line 44 of file bms_mcuWrapper\&.c\&.
+.PP
+References htim\&.
+.SS "void bms_stopTimer_delay (void)"
+
+.PP
+Definition at line 51 of file bms_mcuWrapper\&.c\&.
+.PP
+References htim_delay\&.
+.PP
+Referenced by bms_delayUs()\&.
+.SS "void bms_wakeupChain (void)"
+
+.PP
+Definition at line 77 of file bms_mcuWrapper\&.c\&.
+.PP
+References bms_csHigh(), bms_csLow(), TOTAL_IC, and WAKEUP_DELAY\&.
+.PP
+Referenced by bms_getAuxMeasurement(), bms_openWireCheck(), bms_stopDischarge(), brain_loop(), and brain_start()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

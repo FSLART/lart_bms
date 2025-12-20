@@ -1,0 +1,152 @@
+\hypertarget{fan__management_8c}{}\doxysection{Core/\+Src/fan\+\_\+management.c File Reference}
+\label{fan__management_8c}\index{Core/Src/fan\_management.c@{Core/Src/fan\_management.c}}
+{\ttfamily \#include \char`\"{}fan\+\_\+management.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static int \mbox{\hyperlink{fan__management_8c_a31928590f70a433c0b0d81ff9f31fad3}{cmp\+\_\+desc}} (const void $\ast$a, const void $\ast$b)
+\item 
+static int \mbox{\hyperlink{fan__management_8c_a6e1e85d15c0ca4574b5254c61e40a3eb}{cmp\+\_\+asc}} (const void $\ast$a, const void $\ast$b)
+\item 
+void \mbox{\hyperlink{fan__management_8c_ab617743297f1f9d053bf722d35cb4a57}{P\+I\+D\+\_\+\+Init}} (\mbox{\hyperlink{structpid__ctrl__t}{pid\+\_\+ctrl\+\_\+t}} $\ast$pid, float Kp, float Ki, float Kd, float Ts\+\_\+sec, float out\+\_\+min, float out\+\_\+max)
+\item 
+void \mbox{\hyperlink{fan__management_8c_a7d5e0f10b047caa41e8a4b6c79221fcd}{P\+I\+D\+\_\+\+Set\+Tunings}} (\mbox{\hyperlink{structpid__ctrl__t}{pid\+\_\+ctrl\+\_\+t}} $\ast$pid, float Kp, float Ki, float Kd)
+\item 
+void \mbox{\hyperlink{fan__management_8c_a2416c173f61c99c851bbc859e09417ea}{P\+I\+D\+\_\+\+From\+Ziegler\+Nichols}} (\mbox{\hyperlink{structpid__ctrl__t}{pid\+\_\+ctrl\+\_\+t}} $\ast$pid, float Ku, float Tu, \mbox{\hyperlink{fan__management_8h_a9416c86a6cb44f555b75d2e4fd239470}{zn\+\_\+style\+\_\+t}} style)
+\item 
+float \mbox{\hyperlink{fan__management_8c_ad102f4c209aa19f20823c13e7ef40bc7}{P\+I\+D\+\_\+\+Update}} (\mbox{\hyperlink{structpid__ctrl__t}{pid\+\_\+ctrl\+\_\+t}} $\ast$pid, float measurement)
+\item 
+float \mbox{\hyperlink{fan__management_8c_a1c25742229ff203e822315cf51d9b7a6}{Fan\+Mgr\+\_\+\+Compute\+Control\+Temp}} (const float $\ast$temps, size\+\_\+t num\+\_\+temps, \mbox{\hyperlink{fan__management_8h_aa083f52af37ef691228bfa66473880dc}{temp\+\_\+ctrl\+\_\+method\+\_\+t}} method, size\+\_\+t top\+\_\+n)
+\item 
+uint8\+\_\+t \mbox{\hyperlink{fan__management_8c_a1574dbc9ecce219601ef46451e78243f}{Fan\+Mgr\+\_\+\+Update\+P\+WM}} (\mbox{\hyperlink{structpid__ctrl__t}{pid\+\_\+ctrl\+\_\+t}} $\ast$pid, const float $\ast$temps, size\+\_\+t num\+\_\+temps, \mbox{\hyperlink{fan__management_8h_aa083f52af37ef691228bfa66473880dc}{temp\+\_\+ctrl\+\_\+method\+\_\+t}} method, size\+\_\+t top\+\_\+n)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{fan__management_8c_a6e1e85d15c0ca4574b5254c61e40a3eb}\label{fan__management_8c_a6e1e85d15c0ca4574b5254c61e40a3eb}} 
+\index{fan\_management.c@{fan\_management.c}!cmp\_asc@{cmp\_asc}}
+\index{cmp\_asc@{cmp\_asc}!fan\_management.c@{fan\_management.c}}
+\doxysubsubsection{\texorpdfstring{cmp\_asc()}{cmp\_asc()}}
+{\footnotesize\ttfamily static int cmp\+\_\+asc (\begin{DoxyParamCaption}\item[{const void $\ast$}]{a,  }\item[{const void $\ast$}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 29 of file fan\+\_\+management.\+c.
+
+
+
+Referenced by Fan\+Mgr\+\_\+\+Compute\+Control\+Temp().
+
+\mbox{\Hypertarget{fan__management_8c_a31928590f70a433c0b0d81ff9f31fad3}\label{fan__management_8c_a31928590f70a433c0b0d81ff9f31fad3}} 
+\index{fan\_management.c@{fan\_management.c}!cmp\_desc@{cmp\_desc}}
+\index{cmp\_desc@{cmp\_desc}!fan\_management.c@{fan\_management.c}}
+\doxysubsubsection{\texorpdfstring{cmp\_desc()}{cmp\_desc()}}
+{\footnotesize\ttfamily static int cmp\+\_\+desc (\begin{DoxyParamCaption}\item[{const void $\ast$}]{a,  }\item[{const void $\ast$}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 14 of file fan\+\_\+management.\+c.
+
+
+
+Referenced by Fan\+Mgr\+\_\+\+Compute\+Control\+Temp().
+
+\mbox{\Hypertarget{fan__management_8c_a1c25742229ff203e822315cf51d9b7a6}\label{fan__management_8c_a1c25742229ff203e822315cf51d9b7a6}} 
+\index{fan\_management.c@{fan\_management.c}!FanMgr\_ComputeControlTemp@{FanMgr\_ComputeControlTemp}}
+\index{FanMgr\_ComputeControlTemp@{FanMgr\_ComputeControlTemp}!fan\_management.c@{fan\_management.c}}
+\doxysubsubsection{\texorpdfstring{FanMgr\_ComputeControlTemp()}{FanMgr\_ComputeControlTemp()}}
+{\footnotesize\ttfamily float Fan\+Mgr\+\_\+\+Compute\+Control\+Temp (\begin{DoxyParamCaption}\item[{const float $\ast$}]{temps,  }\item[{size\+\_\+t}]{num\+\_\+temps,  }\item[{\mbox{\hyperlink{fan__management_8h_aa083f52af37ef691228bfa66473880dc}{temp\+\_\+ctrl\+\_\+method\+\_\+t}}}]{method,  }\item[{size\+\_\+t}]{top\+\_\+n }\end{DoxyParamCaption})}
+
+
+
+Definition at line 155 of file fan\+\_\+management.\+c.
+
+
+
+References cmp\+\_\+asc(), cmp\+\_\+desc(), T\+E\+M\+P\+\_\+\+C\+T\+R\+L\+\_\+\+M\+A\+X\+\_\+\+O\+F\+\_\+\+A\+LL, T\+E\+M\+P\+\_\+\+C\+T\+R\+L\+\_\+\+M\+E\+A\+N\+\_\+\+O\+F\+\_\+\+T\+O\+P\+\_\+N, and T\+E\+M\+P\+\_\+\+C\+T\+R\+L\+\_\+\+M\+E\+D\+I\+A\+N\+\_\+\+O\+F\+\_\+\+A\+LL.
+
+
+
+Referenced by Fan\+Mgr\+\_\+\+Update\+P\+W\+M().
+
+\mbox{\Hypertarget{fan__management_8c_a1574dbc9ecce219601ef46451e78243f}\label{fan__management_8c_a1574dbc9ecce219601ef46451e78243f}} 
+\index{fan\_management.c@{fan\_management.c}!FanMgr\_UpdatePWM@{FanMgr\_UpdatePWM}}
+\index{FanMgr\_UpdatePWM@{FanMgr\_UpdatePWM}!fan\_management.c@{fan\_management.c}}
+\doxysubsubsection{\texorpdfstring{FanMgr\_UpdatePWM()}{FanMgr\_UpdatePWM()}}
+{\footnotesize\ttfamily uint8\+\_\+t Fan\+Mgr\+\_\+\+Update\+P\+WM (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structpid__ctrl__t}{pid\+\_\+ctrl\+\_\+t}} $\ast$}]{pid,  }\item[{const float $\ast$}]{temps,  }\item[{size\+\_\+t}]{num\+\_\+temps,  }\item[{\mbox{\hyperlink{fan__management_8h_aa083f52af37ef691228bfa66473880dc}{temp\+\_\+ctrl\+\_\+method\+\_\+t}}}]{method,  }\item[{size\+\_\+t}]{top\+\_\+n }\end{DoxyParamCaption})}
+
+
+
+Definition at line 213 of file fan\+\_\+management.\+c.
+
+
+
+References Fan\+Mgr\+\_\+\+Clamp\+P\+W\+M(), Fan\+Mgr\+\_\+\+Compute\+Control\+Temp(), and P\+I\+D\+\_\+\+Update().
+
+\mbox{\Hypertarget{fan__management_8c_a2416c173f61c99c851bbc859e09417ea}\label{fan__management_8c_a2416c173f61c99c851bbc859e09417ea}} 
+\index{fan\_management.c@{fan\_management.c}!PID\_FromZieglerNichols@{PID\_FromZieglerNichols}}
+\index{PID\_FromZieglerNichols@{PID\_FromZieglerNichols}!fan\_management.c@{fan\_management.c}}
+\doxysubsubsection{\texorpdfstring{PID\_FromZieglerNichols()}{PID\_FromZieglerNichols()}}
+{\footnotesize\ttfamily void P\+I\+D\+\_\+\+From\+Ziegler\+Nichols (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structpid__ctrl__t}{pid\+\_\+ctrl\+\_\+t}} $\ast$}]{pid,  }\item[{float}]{Ku,  }\item[{float}]{Tu,  }\item[{\mbox{\hyperlink{fan__management_8h_a9416c86a6cb44f555b75d2e4fd239470}{zn\+\_\+style\+\_\+t}}}]{style }\end{DoxyParamCaption})}
+
+
+
+Definition at line 74 of file fan\+\_\+management.\+c.
+
+
+
+References P\+I\+D\+\_\+\+Set\+Tunings(), Z\+N\+\_\+P, Z\+N\+\_\+\+PI, and Z\+N\+\_\+\+P\+I\+D\+\_\+\+C\+L\+A\+S\+S\+IC.
+
+\mbox{\Hypertarget{fan__management_8c_ab617743297f1f9d053bf722d35cb4a57}\label{fan__management_8c_ab617743297f1f9d053bf722d35cb4a57}} 
+\index{fan\_management.c@{fan\_management.c}!PID\_Init@{PID\_Init}}
+\index{PID\_Init@{PID\_Init}!fan\_management.c@{fan\_management.c}}
+\doxysubsubsection{\texorpdfstring{PID\_Init()}{PID\_Init()}}
+{\footnotesize\ttfamily void P\+I\+D\+\_\+\+Init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structpid__ctrl__t}{pid\+\_\+ctrl\+\_\+t}} $\ast$}]{pid,  }\item[{float}]{Kp,  }\item[{float}]{Ki,  }\item[{float}]{Kd,  }\item[{float}]{Ts\+\_\+sec,  }\item[{float}]{out\+\_\+min,  }\item[{float}]{out\+\_\+max }\end{DoxyParamCaption})}
+
+
+
+Definition at line 45 of file fan\+\_\+management.\+c.
+
+
+
+References pid\+\_\+ctrl\+\_\+t\+::integrator, pid\+\_\+ctrl\+\_\+t\+::\+Kd, pid\+\_\+ctrl\+\_\+t\+::\+Ki, pid\+\_\+ctrl\+\_\+t\+::\+Kp, pid\+\_\+ctrl\+\_\+t\+::out\+\_\+max, pid\+\_\+ctrl\+\_\+t\+::out\+\_\+min, pid\+\_\+ctrl\+\_\+t\+::prev\+\_\+error, pid\+\_\+ctrl\+\_\+t\+::prev\+\_\+measurement, pid\+\_\+ctrl\+\_\+t\+::setpoint, and pid\+\_\+ctrl\+\_\+t\+::\+Ts.
+
+\mbox{\Hypertarget{fan__management_8c_a7d5e0f10b047caa41e8a4b6c79221fcd}\label{fan__management_8c_a7d5e0f10b047caa41e8a4b6c79221fcd}} 
+\index{fan\_management.c@{fan\_management.c}!PID\_SetTunings@{PID\_SetTunings}}
+\index{PID\_SetTunings@{PID\_SetTunings}!fan\_management.c@{fan\_management.c}}
+\doxysubsubsection{\texorpdfstring{PID\_SetTunings()}{PID\_SetTunings()}}
+{\footnotesize\ttfamily void P\+I\+D\+\_\+\+Set\+Tunings (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structpid__ctrl__t}{pid\+\_\+ctrl\+\_\+t}} $\ast$}]{pid,  }\item[{float}]{Kp,  }\item[{float}]{Ki,  }\item[{float}]{Kd }\end{DoxyParamCaption})}
+
+
+
+Definition at line 65 of file fan\+\_\+management.\+c.
+
+
+
+References pid\+\_\+ctrl\+\_\+t\+::\+Kd, pid\+\_\+ctrl\+\_\+t\+::\+Ki, and pid\+\_\+ctrl\+\_\+t\+::\+Kp.
+
+
+
+Referenced by P\+I\+D\+\_\+\+From\+Ziegler\+Nichols().
+
+\mbox{\Hypertarget{fan__management_8c_ad102f4c209aa19f20823c13e7ef40bc7}\label{fan__management_8c_ad102f4c209aa19f20823c13e7ef40bc7}} 
+\index{fan\_management.c@{fan\_management.c}!PID\_Update@{PID\_Update}}
+\index{PID\_Update@{PID\_Update}!fan\_management.c@{fan\_management.c}}
+\doxysubsubsection{\texorpdfstring{PID\_Update()}{PID\_Update()}}
+{\footnotesize\ttfamily float P\+I\+D\+\_\+\+Update (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structpid__ctrl__t}{pid\+\_\+ctrl\+\_\+t}} $\ast$}]{pid,  }\item[{float}]{measurement }\end{DoxyParamCaption})}
+
+
+
+Definition at line 111 of file fan\+\_\+management.\+c.
+
+
+
+References pid\+\_\+ctrl\+\_\+t\+::integrator, pid\+\_\+ctrl\+\_\+t\+::\+Kd, pid\+\_\+ctrl\+\_\+t\+::\+Ki, pid\+\_\+ctrl\+\_\+t\+::\+Kp, pid\+\_\+ctrl\+\_\+t\+::out\+\_\+max, pid\+\_\+ctrl\+\_\+t\+::out\+\_\+min, pid\+\_\+ctrl\+\_\+t\+::prev\+\_\+error, pid\+\_\+ctrl\+\_\+t\+::prev\+\_\+measurement, pid\+\_\+ctrl\+\_\+t\+::setpoint, and pid\+\_\+ctrl\+\_\+t\+::\+Ts.
+
+
+
+Referenced by Fan\+Mgr\+\_\+\+Update\+P\+W\+M().
+

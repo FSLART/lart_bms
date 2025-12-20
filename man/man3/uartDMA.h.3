@@ -1,0 +1,50 @@
+.TH "Core/Inc/uartDMA.h" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Core/Inc/uartDMA.h
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBprintfDma\fP (const char *format,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "void \fBprintConsole\fP (const char *format,\&.\&.\&.)"
+.br
+.ti -1c
+.RI "int \fBprintfDmaBT\fP (const char *format,\&.\&.\&.)"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void printConsole (const char * format,  \&.\&.\&.)"
+
+.PP
+Definition at line 215 of file uartDMA\&.c\&.
+.PP
+References jsonSendEscaped(), and printfDma()\&.
+.PP
+Referenced by bms_checkRxFault(), bms_openWireCheck(), bms_printRawData(), bms_readSid(), brain_loop(), brain_start(), IVT_CAN_Config(), IVT_CAN_Setup(), IVT_CAN_Setup_AllMessages(), IVT_FAULT_CHECK(), IVT_PROCESS_MEASURERRORS(), IVT_PROCESS_SYSERRORS(), and IVT_SET_BITRATE()\&.
+.SS "int printfDma (const char * format,  \&.\&.\&.)"
+
+.PP
+Definition at line 116 of file uartDMA\&.c\&.
+.PP
+References buffer, BUFFER_SIZE, Error_Handler(), getDataLen(), head, isWrapped, LED_BLUE_GPIO_Port, LED_BLUE_Pin, startUartDmaTx(), tail, and uartHandle\&.
+.PP
+Referenced by bms_printRthTempsJson(), bms_printTemps(), bms_printVoltage(), bms_readVB(), bms_startDischarge(), bms_stopDischarge(), jsonSendEscaped(), printConsole(), Read_EEPROM(), send_ad68_ui(), send_ivt_ui(), startUI(), and Write_EEPROM()\&.
+.SS "int printfDmaBT (const char * format,  \&.\&.\&.)"
+HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
+.PP
+Definition at line 163 of file uartDMA\&.c\&.
+.PP
+References buffer2, BUFFER_SIZE, Error_Handler(), getDataLen2(), head2, isWrapped2, startUart2DmaTx(), tail2, and uart2Handle\&.
+.PP
+Referenced by ad68_dump_csv_bt(), bms_printVoltage(), and brain_start()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

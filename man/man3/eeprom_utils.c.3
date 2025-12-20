@@ -1,0 +1,103 @@
+.TH "Core/Src/eeprom_utils.c" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Core/Src/eeprom_utils.c
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'eeprom_utils\&.h'\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBUART_BUFFER_SIZE\fP   64"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "bool \fBWrite_EEPROM\fP (\fBEEPROM_Comms\fP *comms, uint8_t type, uint16_t value, bool debug)"
+.br
+.ti -1c
+.RI "int \fBRead_EEPROM\fP (\fBEEPROM_Comms\fP *comms, uint8_t type, bool debug)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "static \fBEE24_HandleTypeDef\fP \fBee24fc08\fP"
+.br
+.ti -1c
+.RI "uint8_t \fBuart_rx_buffer\fP [1]"
+.br
+.ti -1c
+.RI "uint8_t \fBuart_message\fP [\fBUART_BUFFER_SIZE\fP]"
+.br
+.ti -1c
+.RI "volatile uint8_t \fBuart_index\fP = 0"
+.br
+.ti -1c
+.RI "volatile bool \fBuart_message_ready\fP = false"
+.br
+.ti -1c
+.RI "static UART_HandleTypeDef * \fBglobal_uart\fP = NULL"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define UART_BUFFER_SIZE   64"
+
+.PP
+Definition at line 3 of file eeprom_utils\&.c\&.
+.SH "Function Documentation"
+.PP 
+.SS "int Read_EEPROM (\fBEEPROM_Comms\fP * comms, uint8_t type, bool debug)"
+
+.PP
+Definition at line 130 of file eeprom_utils\&.c\&.
+.PP
+References EE24_ADDRESS_DEFAULT, EE24_Init(), EE24_Read(), ee24fc08, global_uart, EEPROM_Comms::hi2c, EEPROM_Comms::huart, and printfDma()\&.
+.SS "bool Write_EEPROM (\fBEEPROM_Comms\fP * comms, uint8_t type, uint16_t value, bool debug)"
+
+.PP
+Definition at line 15 of file eeprom_utils\&.c\&.
+.PP
+References EE24_ADDRESS_DEFAULT, EE24_Init(), EE24_Read(), EE24_Write(), ee24fc08, global_uart, EEPROM_Comms::hi2c, EEPROM_Comms::huart, and printfDma()\&.
+.SH "Variable Documentation"
+.PP 
+.SS "\fBEE24_HandleTypeDef\fP ee24fc08\fC [static]\fP"
+
+.PP
+Definition at line 6 of file eeprom_utils\&.c\&.
+.PP
+Referenced by Read_EEPROM(), and Write_EEPROM()\&.
+.SS "UART_HandleTypeDef* global_uart = NULL\fC [static]\fP"
+
+.PP
+Definition at line 13 of file eeprom_utils\&.c\&.
+.PP
+Referenced by Read_EEPROM(), and Write_EEPROM()\&.
+.SS "volatile uint8_t uart_index = 0"
+
+.PP
+Definition at line 10 of file eeprom_utils\&.c\&.
+.SS "uint8_t uart_message[\fBUART_BUFFER_SIZE\fP]"
+
+.PP
+Definition at line 9 of file eeprom_utils\&.c\&.
+.SS "volatile bool uart_message_ready = false"
+
+.PP
+Definition at line 11 of file eeprom_utils\&.c\&.
+.SS "uint8_t uart_rx_buffer[1]"
+
+.PP
+Definition at line 8 of file eeprom_utils\&.c\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.

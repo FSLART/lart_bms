@@ -1,0 +1,165 @@
+.TH "Core/Src/precharge.c" 3 "Sat Dec 20 2025" "lart_bms" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Core/Src/precharge.c
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'precharge\&.h'\fP
+.br
+\fC#include <stdbool\&.h>\fP
+.br
+\fC#include 'contactors\&.h'\fP
+.br
+\fC#include 'can\&.h'\fP
+.br
+\fC#include 'dbc/ams\&.h'\fP
+.br
+\fC#include 'uartDMA\&.h'\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBPRECHARGE_DELAY_MS\fP   200u"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBPrecharge_Init\fP (void)"
+.br
+.ti -1c
+.RI "void \fBPrecharge_CAN_Init\fP (void)"
+.br
+.ti -1c
+.RI "\fBPrechargeState_t\fP \fBPrecharge_GetState\fP (void)"
+.br
+.ti -1c
+.RI "void \fBPrecharge_Update\fP (void)"
+.br
+.ti -1c
+.RI "bool \fBVerifyHVNEG_HVPOS_States\fP (void)"
+.br
+.ti -1c
+.RI "bool \fBIsBusVoltageOK\fP (void)"
+.br
+.ti -1c
+.RI "bool \fBIsCurrentOK\fP (void)"
+.br
+.ti -1c
+.RI "void \fBPreCharge_CAN_Rx\fP (const CAN_RxHeaderTypeDef *hdr, const uint8_t *data)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "\fBPrechargeState_t\fP \fBstate\fP = \fBWRONG\fP"
+.br
+.ti -1c
+.RI "uint32_t \fBtimer\fP"
+.br
+.ti -1c
+.RI "uint32_t \fBdelayStart\fP = 0"
+.br
+.ti -1c
+.RI "bool \fBbypassChecks\fP = true"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define PRECHARGE_DELAY_MS   200u"
+
+.PP
+Definition at line 19 of file precharge\&.c\&.
+.SH "Function Documentation"
+.PP 
+.SS "bool IsBusVoltageOK (void)"
+
+.PP
+Definition at line 159 of file precharge\&.c\&.
+.PP
+Referenced by Precharge_Update()\&.
+.SS "bool IsCurrentOK (void)"
+
+.PP
+Definition at line 163 of file precharge\&.c\&.
+.PP
+Referenced by Precharge_Update()\&.
+.SS "void Precharge_CAN_Init (void)"
+
+.PP
+Definition at line 35 of file precharge\&.c\&.
+.PP
+References CAN_RegisterRxCallback(), and PreCharge_CAN_Rx()\&.
+.PP
+Referenced by brain_start()\&.
+.SS "void PreCharge_CAN_Rx (const CAN_RxHeaderTypeDef * hdr, const uint8_t * data)"
+
+.PP
+Definition at line 167 of file precharge\&.c\&.
+.PP
+References AMS_START_PRE_CHARGE_FRAME_ID, ams_start_pre_charge_unpack(), KILL, ams_start_pre_charge_t::precharge_request, Precharge_Update(), RX_CAN, and state\&.
+.PP
+Referenced by Precharge_CAN_Init()\&.
+.SS "\fBPrechargeState_t\fP Precharge_GetState (void)"
+
+.PP
+Definition at line 40 of file precharge\&.c\&.
+.PP
+References state\&.
+.PP
+Referenced by brain_loop()\&.
+.SS "void Precharge_Init (void)"
+
+.PP
+Definition at line 30 of file precharge\&.c\&.
+.PP
+References delayStart, START, and state\&.
+.PP
+Referenced by brain_loop(), and Precharge_Update()\&.
+.SS "void Precharge_Update (void)"
+
+.PP
+Definition at line 44 of file precharge\&.c\&.
+.PP
+References bypassChecks, CloseAIR_negativo(), CloseAIR_positivo(), ClosePreCarga(), DELAY1, DELAY2, DELAY3, delayStart, END, IsBusVoltageOK(), IsCurrentOK(), KILL, OPEN_ALL, OpenAllContactors(), OpenPreCarga(), PRECHARGE_DELAY_MS, Precharge_Init(), START, state, SWITCH_HVNEG, SWITCH_HVPOS, SWITCH_PRECHARGE, TURN_OFF_PRECHARGE, VERIFY1, VERIFY2, VERIFY3, VERIFY4, VERIFY_BUS_VOLT, VERIFY_CURRENT, VerifyHVNEG_HVPOS_States(), and WRONG\&.
+.PP
+Referenced by brain_loop(), and PreCharge_CAN_Rx()\&.
+.SS "bool VerifyHVNEG_HVPOS_States (void)"
+
+.PP
+Definition at line 155 of file precharge\&.c\&.
+.PP
+Referenced by Precharge_Update()\&.
+.SH "Variable Documentation"
+.PP 
+.SS "bool bypassChecks = true"
+
+.PP
+Definition at line 27 of file precharge\&.c\&.
+.PP
+Referenced by Precharge_Update()\&.
+.SS "uint32_t delayStart = 0"
+
+.PP
+Definition at line 24 of file precharge\&.c\&.
+.PP
+Referenced by Precharge_Init(), and Precharge_Update()\&.
+.SS "\fBPrechargeState_t\fP state = \fBWRONG\fP"
+
+.PP
+Definition at line 22 of file precharge\&.c\&.
+.PP
+Referenced by PreCharge_CAN_Rx(), Precharge_GetState(), Precharge_Init(), and Precharge_Update()\&.
+.SS "uint32_t timer"
+
+.PP
+Definition at line 23 of file precharge\&.c\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for lart_bms from the source code\&.
