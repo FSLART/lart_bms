@@ -94,6 +94,8 @@ void Error_Handler(void);
 #define BT_USART2_RX_GPIO_Port GPIOA
 #define BMS_CS_Pin GPIO_PIN_4
 #define BMS_CS_GPIO_Port GPIOA
+#define FAN_SIGNAL_Pin GPIO_PIN_6
+#define FAN_SIGNAL_GPIO_Port GPIOA
 #define CONTACT_DSCH_Pin GPIO_PIN_4
 #define CONTACT_DSCH_GPIO_Port GPIOC
 #define CONTACT_PRE_Pin GPIO_PIN_5
