@@ -42,8 +42,7 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
  ../Core/Inc/eeprom_utils.h ../Core/Inc/ee24.h ../Core/Inc/uartDMA.h \
  ../Core/Inc/isa_ivt-s.h ../Core/Inc/time_rtc.h ../Core/Inc/contactors.h \
  ../Core/Inc/uartDMA.h ../Core/Inc/version.h ../Core/Inc/temperatures.h \
- ../Core/Inc/precharge.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/dbc/ams.h
+ ../Core/Inc/precharge.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -99,4 +98,3 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
 ../Core/Inc/version.h:
 ../Core/Inc/temperatures.h:
 ../Core/Inc/precharge.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/dbc/ams.h:

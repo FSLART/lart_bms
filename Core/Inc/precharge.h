@@ -13,8 +13,7 @@
 
 typedef enum
 {
-    RX_CAN,
-	START = 0,
+    START = 0,
     OPEN_ALL,
     SWITCH_HVNEG,
     DELAY1,
@@ -30,17 +29,12 @@ typedef enum
     TURN_OFF_PRECHARGE,
     VERIFY4,
     END,
-    WRONG,
-	KILL
+    WRONG
 } PrechargeState_t;
 
 void Precharge_Init(void);
-void Precharge_CAN_Init(void);
-
 PrechargeState_t Precharge_GetState(void);
 void Precharge_Update(void);
-
-void PreCharge_CAN_Rx(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data);
 
 bool VerifyHVNEG_HVPOS_States(void);
 bool IsBusVoltageOK(void);

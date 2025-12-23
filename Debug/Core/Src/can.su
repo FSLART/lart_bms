@@ -1,6 +1,0 @@
-../Core/Src/can.c:18:19:CAN_RegisterRxCallback	16	static
-../Core/Src/can.c:27:6:HAL_CAN_RxFifo0MsgPendingCallback	56	static
-../Core/Src/can.c:61:9:CanTx_IsEmpty	4	static
-../Core/Src/can.c:66:9:CanTx_IsFull	16	static
-../Core/Src/can.c:72:6:CanTx_ProcessQueue	40	static
-../Core/Src/can.c:107:19:CAN_TX_Add_To_Queue	40	static

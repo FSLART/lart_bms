@@ -34,10 +34,6 @@
 
 #include "precharge.h"
 
-#include "ams.h"
-
-#define BYPASS_CAN_ISA
-
 /* ================== LOCAL DEFINES / TYPES ================== */
 
 #define STEERING_MAX 0xA1
@@ -81,7 +77,6 @@ void brain_start(void) {
 
 	//printfDma("bad \r");
 	printConsole("Start Program \n\r");
-	printfDmaBT("Bluetooth, u up?");
 	//OpenAllContactors();
 	startUI();
 
@@ -103,24 +98,22 @@ void brain_start(void) {
 	 printfDma("bad2 \n");
 	 }*/
 
-	bms_stopDischarge();
-	HAL_Delay(200);         // Initialisation delay
-	bms_wakeupChain();
-	bms_init();             // Initialise BMS configs and send them
-	bms_readSid();
+	/*bms_stopDischarge();
+	 HAL_Delay(200);         // Initialisation delay
+	 bms_wakeupChain();
+	 bms_init();             // Initialise BMS configs and send them
+	 bms_readSid();
 
-	bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-	bms_delayMsActive(12);
-	bms_readAvgCellVoltage();
-	bms_getAuxMeasurement();
-	bms_delayMsActive(12);
-	bms_readSVoltage();
+	 bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
+	 bms_delayMsActive(12);
+	 bms_readAvgCellVoltage();
+	 bms_getAuxMeasurement();
+	 bms_delayMsActive(12);
+	 bms_readSVoltage();*/
 
-	IVT_CAN_Setup_AllMessages(&hcan1);
-	#ifndef BYPASS_CAN_ISA
-	IVT_CAN_Config();
-	IVT_SET_BITRATE();
-	#endif
+	//IVT_CAN_Setup_AllMessages(&hcan1);
+	//IVT_CAN_Config();
+	//IVT_SET_BITRATE();
 	/*bms_startTimer();
 	 HAL_Delay(200);
 
@@ -129,18 +122,13 @@ void brain_start(void) {
 
 	 printfDma("gay: %ld us\n", time);*/
 
-	//inicializar o can pra receber a mensagem de precarga
-	Precharge_CAN_Init();
-
 	// Start Timer11 for falut check
 	HAL_TIM_Base_Start_IT(&htim11);
 
-	OpenAllContactors();
-
-	//bmsState = INACTIVE;
-	bmsState = IDLE;
-	bmsPrevState = INACTIVE;
-	bmsCurrState = INACTIVE;
+	bmsState = STARTUP;
+	//bmsState = IDLE;
+	bmsPrevState = IDLE;
+	bmsCurrState = IDLE;
 }
 
 void brain_loop(void) {
@@ -148,11 +136,6 @@ void brain_loop(void) {
 	bmsCurrState = bmsState;        // Copy value to ensure value is not changed throughout the loop
 
 	//if (bmsPrevState != bmsCurrState) {
-
-	//check if there are can messages to send
-	CanTx_ProcessQueue();
-
-	//wakeup slavews
 	bms_wakeupChain();
 
 	switch (bmsCurrState) {
@@ -202,11 +185,6 @@ void brain_loop(void) {
 		break;
 
 	case INACTIVE:
-
-		if (Precharge_GetState() == RX_CAN) {
-			bmsState = STARTUP;
-		}
-
 		//printConsole("	INACTIVE \n\n");
 
 		//bms_stopDischarge();
@@ -219,7 +197,7 @@ void brain_loop(void) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
-			bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
+			//bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
 			bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
 			bms_delayMsActive(12);
 			bms_readAvgCellVoltage();
@@ -275,7 +253,6 @@ void brain_loop(void) {
 	if (faultCheck) {
 		//IVT_FAULT_CHECK();
 		//bms_openWireCheck(&ow_status);
-		CAN_Send_AD68_All(&hcan1);
 		faultCheck = false;
 		//ClosePreCarga();
 		read_mcu_temp();
@@ -283,7 +260,7 @@ void brain_loop(void) {
 	}
 
 	if (updateUI) {
-		//send_ivt_ui();
+		send_ivt_ui();
 		send_ad68_ui();
 		updateUI = false;
 		//OpenPreCarga();
@@ -301,11 +278,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	//Timer to check on errors - 300ms
 	if (htim->Instance == TIM11) {
 		faultCheck = true;
+		//printfDma("	gay 100ms\n");
 	}
 
 	//Timer to update ui - 800ms
 	if (htim->Instance == TIM8) {
 		updateUI = true;
+		//printfDma("	gay 800ms\n");
 	}
 }
 

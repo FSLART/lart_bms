@@ -66,7 +66,7 @@ extern CAN_HandleTypeDef hcan2;
 //#define TOTAL_AD68      (TOTAL_IC - 1)
 #define TOTAL_AD68      1
 
-#define RTH_PER_MODULE 6
+#define RTH_PER_MODULE 5
 
 #define OW_RATIO_MIN      0.85f   // intact lower bound (S-ADC OW path)
 #define OW_RATIO_MAX      0.95f   // intact upper bound (S-ADC OW path)
