@@ -60,7 +60,6 @@ TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim8;
 TIM_HandleTypeDef htim10;
 TIM_HandleTypeDef htim11;
-TIM_HandleTypeDef htim13;
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
@@ -89,7 +88,6 @@ static void MX_CAN1_Init(void);
 static void MX_RTC_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C3_Init(void);
-static void MX_TIM13_Init(void);
 /* USER CODE BEGIN PFP */
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
 
@@ -145,7 +143,6 @@ int main(void)
   MX_RTC_Init();
   MX_USART2_UART_Init();
   MX_I2C3_Init();
-  MX_TIM13_Init();
   /* USER CODE BEGIN 2 */
 
 	brain_start();
@@ -696,52 +693,6 @@ static void MX_TIM11_Init(void)
 }
 
 /**
-  * @brief TIM13 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM13_Init(void)
-{
-
-  /* USER CODE BEGIN TIM13_Init 0 */
-
-  /* USER CODE END TIM13_Init 0 */
-
-  TIM_OC_InitTypeDef sConfigOC = {0};
-
-  /* USER CODE BEGIN TIM13_Init 1 */
-
-  /* USER CODE END TIM13_Init 1 */
-  htim13.Instance = TIM13;
-  htim13.Init.Prescaler = 1;
-  htim13.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim13.Init.Period = 2559;
-  htim13.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim13.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim13) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_TIM_PWM_Init(&htim13) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim13, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM13_Init 2 */
-
-  /* USER CODE END TIM13_Init 2 */
-  HAL_TIM_MspPostInit(&htim13);
-
-}
-
-/**
   * @brief USART1 Initialization Function
   * @param None
   * @retval None
@@ -855,7 +806,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, CONTACT_DSCH_Pin|CONTACT_PRE_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, CONTACT_AIR_positivo_Pin|CONTACT_AIR_negativo_Pin|GPIO_PIN_2|LED_RED_Pin
+  HAL_GPIO_WritePin(GPIOB, CONTACT_AIR_positivo_Pin|CONTACT_AIR_negativo_Pin|LED_BLUE_Pin|LED_RED_Pin
                           |BMS_MSTR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
@@ -885,8 +836,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB2 LED_RED_Pin BMS_MSTR_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_2|LED_RED_Pin|BMS_MSTR_Pin;
+  /*Configure GPIO pins : LED_BLUE_Pin LED_RED_Pin BMS_MSTR_Pin */
+  GPIO_InitStruct.Pin = LED_BLUE_Pin|LED_RED_Pin|BMS_MSTR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
