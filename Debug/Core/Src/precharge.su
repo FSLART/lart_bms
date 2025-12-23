@@ -1,6 +1,8 @@
-../Core/Src/precharge.c:24:6:Precharge_Init	4	static
-../Core/Src/precharge.c:31:18:Precharge_GetState	4	static
-../Core/Src/precharge.c:36:6:Precharge_Update	16	static
-../Core/Src/precharge.c:145:6:VerifyHVNEG_HVPOS_States	4	static
-../Core/Src/precharge.c:149:6:IsBusVoltageOK	4	static
-../Core/Src/precharge.c:153:6:IsCurrentOK	4	static
+../Core/Src/precharge.c:30:6:Precharge_Init	4	static
+../Core/Src/precharge.c:35:6:Precharge_CAN_Init	8	static
+../Core/Src/precharge.c:40:18:Precharge_GetState	4	static
+../Core/Src/precharge.c:44:6:Precharge_Update	16	static
+../Core/Src/precharge.c:155:6:VerifyHVNEG_HVPOS_States	4	static
+../Core/Src/precharge.c:159:6:IsBusVoltageOK	4	static
+../Core/Src/precharge.c:163:6:IsCurrentOK	4	static
+../Core/Src/precharge.c:167:6:PreCharge_CAN_Rx	32	static

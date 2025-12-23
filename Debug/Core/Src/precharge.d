@@ -36,7 +36,8 @@ Core/Src/precharge.o: ../Core/Src/precharge.c ../Core/Inc/precharge.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/contactors.h
+ ../Core/Inc/contactors.h ../Core/Inc/can.h ../Core/Inc/dbc/ams.h \
+ ../Core/Inc/uartDMA.h
 ../Core/Inc/precharge.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -77,3 +78,6 @@ Core/Src/precharge.o: ../Core/Src/precharge.c ../Core/Inc/precharge.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/contactors.h:
+../Core/Inc/can.h:
+../Core/Inc/dbc/ams.h:
+../Core/Inc/uartDMA.h:
