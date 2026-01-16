@@ -137,8 +137,8 @@ void brain_start(void) {
 	// Start Timer11 for falut check
 	HAL_TIM_Base_Start_IT(&htim11);
 
-	bmsState = INACTIVE;
-	//bmsState = IDLE;
+	//bmsState = INACTIVE;
+	bmsState = IDLE;
 	bmsPrevState = INACTIVE;
 	bmsCurrState = INACTIVE;
 }
@@ -199,9 +199,9 @@ void brain_loop(void) {
 
 	case INACTIVE:
 
-		if (Precharge_GetState() == RX_CAN) {
+		/*if (Precharge_GetState() == RX_CAN) {
 			bmsState = STARTUP;
-		}
+		}*/
 
 		if ((getRuntimeMsDiff(timeStart) > 800) || (bmsPrevState != bmsCurrState)) {
 			//printfDma("	IDLE \n\n");
@@ -261,7 +261,7 @@ void brain_loop(void) {
 			//ad68_dump_csv_bt();
 		}
 
-		while (Precharge_GetState() != END) {
+		/*while (Precharge_GetState() != END) {
 			if (Precharge_GetState() == START) {
 				Precharge_Init();
 				Precharge_Update();
@@ -270,7 +270,7 @@ void brain_loop(void) {
 			}
 		}
 
-		bmsState = IDLE;
+		bmsState = IDLE;*/
 		break;
 
 	default:
@@ -307,6 +307,9 @@ void brain_loop(void) {
 		updateUI = false;
 		//OpenPreCarga();
 	}
+
+	//update precharge state machine if necessary
+	Precharge_Update();
 
 	//check if there are can messages to send
 	CanTx_ProcessQueue();

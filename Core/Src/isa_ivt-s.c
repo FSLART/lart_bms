@@ -419,7 +419,7 @@ void IVT_CAN_OnMessage(const CAN_RxHeaderTypeDef *pRxHeader, const uint8_t *RxDa
     lastTime = HAL_GetTick();
 
     uint32_t id  = pRxHeader->StdId;
-    uint32_t dlc = pRxHeader->DLC;
+    //uint32_t dlc = pRxHeader->DLC;
 
     switch (id) {
     case IVT_RESPONSE_CANID:

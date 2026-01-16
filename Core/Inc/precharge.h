@@ -13,7 +13,6 @@
 
 typedef enum
 {
-    RX_CAN,
 	START = 0,
     OPEN_ALL,
     SWITCH_HVNEG,
@@ -31,7 +30,9 @@ typedef enum
     VERIFY4,
     END,
     WRONG,
-	KILL
+	KILL,
+	RX_CAN
+
 } PrechargeState_t;
 
 void Precharge_Init(void);

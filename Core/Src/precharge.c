@@ -45,6 +45,12 @@ void Precharge_Update(void) {
 	uint32_t now = HAL_GetTick();
 
 	switch (state) {
+
+	case RX_CAN:
+		state = START;
+		delayStart = 0;
+		break;
+
 	case START:
 		state = OPEN_ALL;
 		break;
@@ -139,7 +145,8 @@ void Precharge_Update(void) {
 		break;
 
 	case WRONG:
-		Precharge_Init();
+		delayStart = 0;
+		state = KILL;
 		break;
 
 	case KILL:
@@ -147,7 +154,7 @@ void Precharge_Update(void) {
 		break;
 	default:
 		//OnPrechargeError();
-		Precharge_Init();
+		state = WRONG;
 		break;
 	}
 }
@@ -176,19 +183,18 @@ void PreCharge_CAN_Rx(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data) {
 		struct ams_start_pre_charge_t prechargeInit;
 		ams_start_pre_charge_unpack(&prechargeInit, data, dlc);
 
-		if(prechargeInit.precharge_request > 0){
+		if (prechargeInit.precharge_request > 0) {
 			state = RX_CAN;
-		}else if(prechargeInit.precharge_request == 0){
+		} else if (prechargeInit.precharge_request == 0) {
 			state = KILL;
-			Precharge_Update();
 		}
 
 	default:
 		/*printConsole("Unknown CAN ID 0x%03lX, DLC=%lu, Data:", id, dlc);
-		for (uint32_t i = 0; i < dlc; i++) {
-			printConsole(" %02X", data[i]);
-		}
-		printConsole("\r\n");*/
+		 for (uint32_t i = 0; i < dlc; i++) {
+		 printConsole(" %02X", data[i]);
+		 }
+		 printConsole("\r\n");*/
 		break;
 	}
 }
