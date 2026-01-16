@@ -1,8 +1,8 @@
 ../Core/Src/bms_utility.c:67:10:bms_calcPec15	24	static
 ../Core/Src/bms_utility.c:80:10:bms_calcPec10	32	static
 ../Core/Src/bms_utility.c:117:6:bms_spiTransmitCmd	24	static
-../Core/Src/bms_utility.c:135:6:bms_spiTransmitData	40	static
-../Core/Src/bms_utility.c:158:6:bms_spiReceiveData	40	static
+../Core/Src/bms_utility.c:135:6:bms_spiTransmitData	48	static
+../Core/Src/bms_utility.c:158:6:bms_spiReceiveData	48	static
 ../Core/Src/bms_utility.c:179:6:bms_checkRxPec	40	static
 ../Core/Src/bms_utility.c:198:6:bms_transmitCmd	16	static
 ../Core/Src/bms_utility.c:206:6:bms_transmitPoll	24	static

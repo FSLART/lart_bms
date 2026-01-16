@@ -60,6 +60,7 @@ TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim8;
 TIM_HandleTypeDef htim10;
 TIM_HandleTypeDef htim11;
+TIM_HandleTypeDef htim12;
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
@@ -88,6 +89,7 @@ static void MX_CAN1_Init(void);
 static void MX_RTC_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C3_Init(void);
+static void MX_TIM12_Init(void);
 /* USER CODE BEGIN PFP */
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
 
@@ -143,6 +145,7 @@ int main(void)
   MX_RTC_Init();
   MX_USART2_UART_Init();
   MX_I2C3_Init();
+  MX_TIM12_Init();
   /* USER CODE BEGIN 2 */
 
 	brain_start();
@@ -693,6 +696,48 @@ static void MX_TIM11_Init(void)
 }
 
 /**
+  * @brief TIM12 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM12_Init(void)
+{
+
+  /* USER CODE BEGIN TIM12_Init 0 */
+
+  /* USER CODE END TIM12_Init 0 */
+
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  /* USER CODE BEGIN TIM12_Init 1 */
+
+  /* USER CODE END TIM12_Init 1 */
+  htim12.Instance = TIM12;
+  htim12.Init.Prescaler = 0;
+  htim12.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim12.Init.Period = 2559;
+  htim12.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim12.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_PWM_Init(&htim12) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim12, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM12_Init 2 */
+
+  /* USER CODE END TIM12_Init 2 */
+  HAL_TIM_MspPostInit(&htim12);
+
+}
+
+/**
   * @brief USART1 Initialization Function
   * @param None
   * @retval None
@@ -798,16 +843,25 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(BMS_CS_GPIO_Port, BMS_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, CONTACT_DSCH_Pin|CONTACT_PRE_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, CONTACT_DSCH_Pin|CONTACT_PRE_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, CONTACT_AIR_positivo_Pin|CONTACT_AIR_negativo_Pin|LED_BLUE_Pin|LED_RED_Pin
-                          |BMS_MSTR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, CONTACT_AIR_positivo_Pin|CONTACT_AIR_negativo_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, LED_BLUE_Pin|LED_RED_Pin|LED_isoSPI_STATUS_Pin|BMS_MSTR_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LED_CAN_STATUS_GPIO_Port, LED_CAN_STATUS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -836,12 +890,44 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_BLUE_Pin LED_RED_Pin BMS_MSTR_Pin */
-  GPIO_InitStruct.Pin = LED_BLUE_Pin|LED_RED_Pin|BMS_MSTR_Pin;
+  /*Configure GPIO pins : LED_BLUE_Pin LED_RED_Pin LED_isoSPI_STATUS_Pin BMS_MSTR_Pin */
+  GPIO_InitStruct.Pin = LED_BLUE_Pin|LED_RED_Pin|LED_isoSPI_STATUS_Pin|BMS_MSTR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CURRENT_SENS_Pin */
+  GPIO_InitStruct.Pin = CURRENT_SENS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(CURRENT_SENS_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : MCU_SDC_FB_Pin MCU_AIR__FB_Pin MCU_AIR__FBC11_Pin MCU_DISCH_FB_Pin */
+  GPIO_InitStruct.Pin = MCU_SDC_FB_Pin|MCU_AIR__FB_Pin|MCU_AIR__FBC11_Pin|MCU_DISCH_FB_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : AMS_ERROR_Pin */
+  GPIO_InitStruct.Pin = AMS_ERROR_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(AMS_ERROR_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : MCU_PRE_FB_Pin */
+  GPIO_InitStruct.Pin = MCU_PRE_FB_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(MCU_PRE_FB_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LED_CAN_STATUS_Pin */
+  GPIO_InitStruct.Pin = LED_CAN_STATUS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LED_CAN_STATUS_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : BMS_INT_Pin BMS_WAKE_Pin */
   GPIO_InitStruct.Pin = BMS_INT_Pin|BMS_WAKE_Pin;

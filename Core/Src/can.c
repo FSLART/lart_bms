@@ -106,7 +106,8 @@ void CanTx_ProcessQueue(void) {
 //Add message to queue
 HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, uint8_t dlc, const uint8_t *data) {
 	if (dlc > 8U) {
-		return HAL_ERROR;
+		// TODO: return error cauz message too big
+		//return HAL_ERROR;
 	}
 
 	if (CanTx_IsFull()) {

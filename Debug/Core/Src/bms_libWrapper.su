@@ -32,7 +32,7 @@
 ../Core/Src/bms_libWrapper.c:1019:6:bms_balancingMeasureVoltage	8	static
 ../Core/Src/bms_libWrapper.c:1036:6:bms_startBalancing	24	static
 ../Core/Src/bms_libWrapper.c:1044:6:ad68_dump_csv_bt	24	static
-../Core/Src/bms_libWrapper.c:1116:6:bms_openWireCheck	400	static
+../Core/Src/bms_libWrapper.c:1116:6:bms_openWireCheck	704	static
 ../Core/Src/bms_libWrapper.c:1269:19:Slaves_CAN_SendMessage	24	static
 ../Core/Src/bms_libWrapper.c:1284:10:conv_voltage	24	static
 ../Core/Src/bms_libWrapper.c:1293:19:CAN_Send_AD68_Voltages_Module	328	static

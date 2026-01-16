@@ -61,10 +61,10 @@ extern CAN_HandleTypeDef hcan2;
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
 
-#define TOTAL_IC        1
+#define TOTAL_IC        2
 #define TOTAL_CELL      12
 //#define TOTAL_AD68      (TOTAL_IC - 1)
-#define TOTAL_AD68      1
+//#define TOTAL_AD68      1
 
 #define RTH_PER_MODULE 6
 
@@ -74,6 +74,8 @@ extern CAN_HandleTypeDef hcan2;
 #define OW_OPEN_EDGE         0.80f   // clearly open if below this
 
 /* USER CODE END EM */
+
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
@@ -108,6 +110,15 @@ void Error_Handler(void);
 #define CHARGER_CAN_RX_GPIO_Port GPIOB
 #define CHARGER_CAN_TX_Pin GPIO_PIN_13
 #define CHARGER_CAN_TX_GPIO_Port GPIOB
+#define FAN_CONTROL_Pin GPIO_PIN_14
+#define FAN_CONTROL_GPIO_Port GPIOB
+#define CURRENT_SENS_Pin GPIO_PIN_15
+#define CURRENT_SENS_GPIO_Port GPIOB
+#define CURRENT_SENS_EXTI_IRQn EXTI15_10_IRQn
+#define MCU_SDC_FB_Pin GPIO_PIN_7
+#define MCU_SDC_FB_GPIO_Port GPIOC
+#define AMS_ERROR_Pin GPIO_PIN_8
+#define AMS_ERROR_GPIO_Port GPIOC
 #define AUX_SENS_SDA_Pin GPIO_PIN_9
 #define AUX_SENS_SDA_GPIO_Port GPIOC
 #define AUX_SENS_SCL_Pin GPIO_PIN_8
@@ -116,6 +127,18 @@ void Error_Handler(void);
 #define BMS_CAN_RX_GPIO_Port GPIOA
 #define BMS_CAN_TX_Pin GPIO_PIN_12
 #define BMS_CAN_TX_GPIO_Port GPIOA
+#define MCU_PRE_FB_Pin GPIO_PIN_15
+#define MCU_PRE_FB_GPIO_Port GPIOA
+#define MCU_AIR__FB_Pin GPIO_PIN_10
+#define MCU_AIR__FB_GPIO_Port GPIOC
+#define MCU_AIR__FBC11_Pin GPIO_PIN_11
+#define MCU_AIR__FBC11_GPIO_Port GPIOC
+#define MCU_DISCH_FB_Pin GPIO_PIN_12
+#define MCU_DISCH_FB_GPIO_Port GPIOC
+#define LED_CAN_STATUS_Pin GPIO_PIN_2
+#define LED_CAN_STATUS_GPIO_Port GPIOD
+#define LED_isoSPI_STATUS_Pin GPIO_PIN_3
+#define LED_isoSPI_STATUS_GPIO_Port GPIOB
 #define BMS_INT_Pin GPIO_PIN_5
 #define BMS_INT_GPIO_Port GPIOB
 #define BMS_WAKE_Pin GPIO_PIN_6

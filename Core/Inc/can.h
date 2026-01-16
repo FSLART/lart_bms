@@ -12,6 +12,8 @@
 
 typedef void (*CanRxCallback_t)(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data);
 
+HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, uint8_t dlc, const uint8_t *data);
+
 /**
  * Register a callback that will be called on every received CAN message on FIFO0.
  * Returns HAL_OK on success, HAL_ERROR if the callback list is full.

@@ -56,7 +56,7 @@ void bms_balancingMeasureVoltage(void);
 void ad68_dump_csv_bt(void);
 
 
-void bms_openWireCheck(bms_ow_status_t *ow_status[TOTAL_AD68][TOTAL_CELL]);
+void bms_openWireCheck(bms_ow_status_t *ow_status[TOTAL_IC][TOTAL_CELL]);
 
 
 HAL_StatusTypeDef Slaves_CAN_SendMessage(CAN_HandleTypeDef *hcan, uint32_t canID, uint32_t dataLength, const uint8_t *TxData);

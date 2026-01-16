@@ -44,7 +44,7 @@
 const float deltaThreshold = 0.010f; // volts
 
 /* Open-wire status buffer */
-bms_ow_status_t ow_status[TOTAL_AD68][TOTAL_CELL];
+bms_ow_status_t ow_status[TOTAL_IC][TOTAL_CELL];
 
 /* EEPROM comms instance */
 //static EEPROM_Comms eeprom_comms = { .hi2c = &hi2c1, .huart = &huart1 };
@@ -64,6 +64,8 @@ static uint32_t timeStart = 0;
 static uint32_t timeCmmd = 0;
 
 void brain_start(void) {
+
+	OpenAllContactors();
 
 	// Set CS2 Pin to HIGH to disable second SPI on 6822 + MSTR should be high by default
 	HAL_GPIO_WritePin(BMS_MSTR_GPIO_Port, BMS_MSTR_Pin, GPIO_PIN_SET);
@@ -117,7 +119,7 @@ void brain_start(void) {
 	bms_readSVoltage();
 
 	IVT_CAN_Setup_AllMessages(&hcan1);
-	#ifndef BYPASS_CAN_ISA
+#ifndef BYPASS_CAN_ISA
 	IVT_CAN_Config();
 	IVT_SET_BITRATE();
 	#endif
@@ -135,10 +137,8 @@ void brain_start(void) {
 	// Start Timer11 for falut check
 	HAL_TIM_Base_Start_IT(&htim11);
 
-	OpenAllContactors();
-
-	//bmsState = INACTIVE;
-	bmsState = IDLE;
+	bmsState = INACTIVE;
+	//bmsState = IDLE;
 	bmsPrevState = INACTIVE;
 	bmsCurrState = INACTIVE;
 }
@@ -148,10 +148,6 @@ void brain_loop(void) {
 	bmsCurrState = bmsState;        // Copy value to ensure value is not changed throughout the loop
 
 	//if (bmsPrevState != bmsCurrState) {
-
-	//check if there are can messages to send
-	CanTx_ProcessQueue();
-
 	//wakeup slavews
 	bms_wakeupChain();
 
@@ -207,6 +203,18 @@ void brain_loop(void) {
 			bmsState = STARTUP;
 		}
 
+		if ((getRuntimeMsDiff(timeStart) > 800) || (bmsPrevState != bmsCurrState)) {
+			//printfDma("	IDLE \n\n");
+			timeStart = getRuntimeMs();
+
+			bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
+			bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
+			bms_delayMsActive(12);
+			bms_readAvgCellVoltage();
+			bms_getAuxMeasurement();
+			//ad68_dump_csv_bt();
+		}
+
 		//printConsole("	INACTIVE \n\n");
 
 		//bms_stopDischarge();
@@ -241,6 +249,17 @@ void brain_loop(void) {
 		 HAL_Delay(3000);
 		 CloseDescarga();
 		 HAL_Delay(1000);*/
+		if ((getRuntimeMsDiff(timeStart) > 800) || (bmsPrevState != bmsCurrState)) {
+			//printfDma("	IDLE \n\n");
+			timeStart = getRuntimeMs();
+
+			bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
+			bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
+			bms_delayMsActive(12);
+			bms_readAvgCellVoltage();
+			bms_getAuxMeasurement();
+			//ad68_dump_csv_bt();
+		}
 
 		while (Precharge_GetState() != END) {
 			if (Precharge_GetState() == START) {
@@ -288,6 +307,9 @@ void brain_loop(void) {
 		updateUI = false;
 		//OpenPreCarga();
 	}
+
+	//check if there are can messages to send
+	CanTx_ProcessQueue();
 }
 
 /// Timer interrupt callback
