@@ -1,4 +1,6 @@
-Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
+Core/Src/adbms/mcuWrapper.o: ../Core/Src/adbms/mcuWrapper.c \
+ ../Core/Inc/adbms/common.h ../Core/Inc/adbms/mcuWrapper.h \
+ ../Core/Inc/adbms/common.h ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -36,19 +38,10 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/brain.h ../Core/Inc/adbms/common.h \
- ../Core/Inc/adbms/adBms_Application.h ../Core/Inc/adbms/adbms_main.h \
- ../Core/Inc/adbms/common.h ../Core/Inc/adbms/adBms6830Data.h \
- ../Core/Inc/adbms/adBms6830GenericType.h \
- ../Core/Inc/adbms/adBms6830ParseCreate.h ../Core/Inc/adbms/mcuWrapper.h \
- ../Core/Inc/stm32f4xx_it.h ../Core/Inc/adbms/adBms6830CmdList.h \
- ../Core/Inc/adbms/adBms6830GenericType.h \
- ../Core/Inc/adbms/serialPrintResult.h ../Core/Inc/adbms/mcuWrapper.h \
- ../Core/Inc/eeprom_utils.h ../Core/Inc/main.h ../Core/Inc/ee24.h \
- ../Core/Inc/uartDMA.h ../Core/Inc/isa_ivt-s.h ../Core/Inc/time_rtc.h \
- ../Core/Inc/contactors.h ../Core/Inc/uartDMA.h ../Core/Inc/version.h \
- ../Core/Inc/temperatures.h ../Core/Inc/precharge.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/dbc/ams.h
+ ../Core/Inc/stm32f4xx_it.h
+../Core/Inc/adbms/common.h:
+../Core/Inc/adbms/mcuWrapper.h:
+../Core/Inc/adbms/common.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -87,29 +80,4 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
-../Core/Inc/brain.h:
-../Core/Inc/adbms/common.h:
-../Core/Inc/adbms/adBms_Application.h:
-../Core/Inc/adbms/adbms_main.h:
-../Core/Inc/adbms/common.h:
-../Core/Inc/adbms/adBms6830Data.h:
-../Core/Inc/adbms/adBms6830GenericType.h:
-../Core/Inc/adbms/adBms6830ParseCreate.h:
-../Core/Inc/adbms/mcuWrapper.h:
 ../Core/Inc/stm32f4xx_it.h:
-../Core/Inc/adbms/adBms6830CmdList.h:
-../Core/Inc/adbms/adBms6830GenericType.h:
-../Core/Inc/adbms/serialPrintResult.h:
-../Core/Inc/adbms/mcuWrapper.h:
-../Core/Inc/eeprom_utils.h:
-../Core/Inc/main.h:
-../Core/Inc/ee24.h:
-../Core/Inc/uartDMA.h:
-../Core/Inc/isa_ivt-s.h:
-../Core/Inc/time_rtc.h:
-../Core/Inc/contactors.h:
-../Core/Inc/uartDMA.h:
-../Core/Inc/version.h:
-../Core/Inc/temperatures.h:
-../Core/Inc/precharge.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/dbc/ams.h:

@@ -1,8 +1,0 @@
-../Core/Src/brain.c:66:6:brain_start	8	static
-../Core/Src/brain.c:146:6:brain_loop	16	static
-../Core/Src/brain.c:319:6:HAL_TIM_PeriodElapsedCallback	16	static
-../Core/Src/brain.c:338:6:HAL_SYSTICK_Callback	8	static
-../Core/Src/brain.c:357:10:getRuntimeMs	8	static
-../Core/Src/brain.c:361:10:getRuntimeMsDiff	16	static
-../Core/Src/brain.c:365:6:HAL_GPIO_EXTI_Callback	16	static
-../Core/Src/brain.c:375:6:RaiseError	16	static

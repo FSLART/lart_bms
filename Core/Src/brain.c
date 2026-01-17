@@ -12,11 +12,12 @@
 #include "stdio.h"
 #include <stdbool.h>
 
-#include "bms_cmdlist.h"
-#include "bms_datatypes.h"
-#include "bms_utility.h"
-#include "bms_mcuWrapper.h"
-#include "bms_libWrapper.h"
+#include "adbms/common.h"
+#include "adbms/adBms_Application.h"
+#include "adbms/adBms6830CmdList.h"
+#include "adbms/adBms6830GenericType.h"
+#include "adbms/serialPrintResult.h"
+#include "adbms/mcuWrapper.h"
 
 #include "eeprom_utils.h"
 
@@ -41,10 +42,7 @@
 /* ================== LOCAL DEFINES / TYPES ================== */
 
 #define STEERING_MAX 0xA1
-const float deltaThreshold = 0.010f; // volts
 
-/* Open-wire status buffer */
-bms_ow_status_t ow_status[TOTAL_IC][TOTAL_CELL];
 
 /* EEPROM comms instance */
 //static EEPROM_Comms eeprom_comms = { .hi2c = &hi2c1, .huart = &huart1 };
@@ -86,6 +84,7 @@ void brain_start(void) {
 	printfDmaBT("Bluetooth, u up?");
 	//OpenAllContactors();
 	startUI();
+	adBms6830_init_config(TOTAL_IC, &IC[0]);
 
 	//char ts[20];
 	//RTC_Time_Get(ts, sizeof(ts));
@@ -105,31 +104,12 @@ void brain_start(void) {
 	 printfDma("bad2 \n");
 	 }*/
 
-	bms_stopDischarge();
-	HAL_Delay(200);         // Initialisation delay
-	bms_wakeupChain();
-	bms_init();             // Initialise BMS configs and send them
-	bms_readSid();
-
-	bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-	bms_delayMsActive(12);
-	bms_readAvgCellVoltage();
-	bms_getAuxMeasurement();
-	bms_delayMsActive(12);
-	bms_readSVoltage();
-
 	IVT_CAN_Setup_AllMessages(&hcan1);
-#ifndef BYPASS_CAN_ISA
+
+	#ifndef BYPASS_CAN_ISA
 	IVT_CAN_Config();
 	IVT_SET_BITRATE();
 	#endif
-	/*bms_startTimer();
-	 HAL_Delay(200);
-
-	 uint32_t time = bms_getTimCount();
-	 bms_stopTimer();
-
-	 printfDma("gay: %ld us\n", time);*/
 
 	//inicializar o can pra receber a mensagem de precarga
 	Precharge_CAN_Init();
@@ -147,53 +127,9 @@ void brain_loop(void) {
 
 	bmsCurrState = bmsState;        // Copy value to ensure value is not changed throughout the loop
 
-	//if (bmsPrevState != bmsCurrState) {
-	//wakeup slavews
-	bms_wakeupChain();
-
 	switch (bmsCurrState) {
 	case BALANCING:
 
-		//if it has been minimum balancing time, can check again on balancing
-		if ((getRuntimeMsDiff(timeCmmd) > 60000) || (bmsPrevState != bmsCurrState)) {
-			printConsole("	ACTIVE %d \n\n", getRuntimeMsDiff(timeCmmd));
-
-			timeCmmd = getRuntimeMs();
-
-			printConsole("Measuring Cell Voltage: \n");
-			bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
-			bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-			bms_delayMsActive(12);
-			bms_readAvgCellVoltage();
-
-			printConsole("Temp Measurements: \n");
-			bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
-			bms_getAuxMeasurement();
-
-			// Calculate the discharge threshold
-			float discharge_threshold = bms_calculateBalancing(deltaThreshold);
-
-			// Check if need to balance the cells
-			if (discharge_threshold > 0) {
-				printConsole("Start Discharge: sqn kk\n");
-				bms_wakeupChain();
-				//bms_startDischarge(discharge_threshold);
-
-				bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
-				bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-				bms_delayMsActive(12);
-			}
-
-			timeDiff = getRuntimeMsDiff(timeCmmd);
-			printConsole("Runtime: %ld ms, CommandTime: %ld ms \n\n", getRuntimeMs(), timeDiff);
-
-		} else if (getRuntimeMsDiff(timeStart) > 200) {
-
-			bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
-			bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-			bms_delayMsActive(12);
-			bms_readAvgCellVoltage();
-		}
 
 		break;
 
@@ -207,12 +143,23 @@ void brain_loop(void) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
-			bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
-			bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-			bms_delayMsActive(12);
-			bms_readAvgCellVoltage();
-			bms_getAuxMeasurement();
-			//ad68_dump_csv_bt();
+		    loop_count = 0;
+		    adBmsWakeupIc(TOTAL_IC);
+		    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
+		    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
+		    adBmsWakeupIc(TOTAL_IC);
+		    adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+		    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+		    adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+		    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+		    adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
+		    Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
+		    while(loop_count < LOOP_MEASUREMENT_COUNT)
+		    {
+		      measurement_loop();
+		      Delay_ms(MEASUREMENT_LOOP_TIME);
+		      loop_count = loop_count + 1;
+		    }
 		}
 
 		//printConsole("	INACTIVE \n\n");
@@ -227,12 +174,23 @@ void brain_loop(void) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
-			bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
-			bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-			bms_delayMsActive(12);
-			bms_readAvgCellVoltage();
-			bms_getAuxMeasurement();
-			//ad68_dump_csv_bt();
+		    loop_count = 0;
+		    adBmsWakeupIc(TOTAL_IC);
+		    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
+		    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
+		    adBmsWakeupIc(TOTAL_IC);
+		    adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+		    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+		    adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+		    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+		    adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
+		    Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
+		    while(loop_count < LOOP_MEASUREMENT_COUNT)
+		    {
+		      measurement_loop();
+		      Delay_ms(MEASUREMENT_LOOP_TIME);
+		      loop_count = loop_count + 1;
+		    }
 		}
 
 		break;
@@ -253,12 +211,23 @@ void brain_loop(void) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
-			bms_wakeupChain();              // Wakeup needed every 4ms of Inactivity
-			bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-			bms_delayMsActive(12);
-			bms_readAvgCellVoltage();
-			bms_getAuxMeasurement();
-			//ad68_dump_csv_bt();
+		    loop_count = 0;
+		    adBmsWakeupIc(TOTAL_IC);
+		    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
+		    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
+		    adBmsWakeupIc(TOTAL_IC);
+		    adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+		    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+		    adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+		    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+		    adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
+		    Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
+		    while(loop_count < LOOP_MEASUREMENT_COUNT)
+		    {
+		      measurement_loop();
+		      Delay_ms(MEASUREMENT_LOOP_TIME);
+		      loop_count = loop_count + 1;
+		    }
 		}
 
 		/*while (Precharge_GetState() != END) {
