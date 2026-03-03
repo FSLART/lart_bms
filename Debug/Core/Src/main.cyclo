@@ -17,5 +17,5 @@
 ../Core/Src/main.c:778:13:MX_USART2_UART_Init	2
 ../Core/Src/main.c:809:13:MX_DMA_Init	1
 ../Core/Src/main.c:834:13:MX_GPIO_Init	1
-../Core/Src/main.c:949:1:__io_putchar	2
-../Core/Src/main.c:964:6:Error_Handler	1
+../Core/Src/main.c:955:1:__io_putchar	2
+../Core/Src/main.c:970:6:Error_Handler	1

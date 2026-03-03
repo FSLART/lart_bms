@@ -128,7 +128,29 @@ void bms_spiTransmitCmd(uint8_t cmd[CMD_LEN])
     txBuff_cmd[3] = (uint8_t)(cmd_pec);
 
     // Transmit the buffer to SPI
-    HAL_SPI_Transmit(hspi, txBuff_cmd, CMDPKT_LEN, HAL_MAX_DELAY);
+    HAL_StatusTypeDef status = HAL_SPI_Transmit(hspi, txBuff_cmd, CMDPKT_LEN, HAL_MAX_DELAY);
+
+    if (status != HAL_OK)
+       {
+           switch (status)
+           {
+               case HAL_ERROR:
+                   printConsole("SPI ERROR\r\n");
+                   break;
+
+               case HAL_BUSY:
+                   printConsole("SPI BUSY\r\n");
+                   break;
+
+               case HAL_TIMEOUT:
+                   printConsole("SPI TIMEOUT\r\n");
+                   break;
+
+               default:
+                   printConsole("SPI UNKNOWN ERROR\r\n");
+                   break;
+           }
+       }
 }
 
 
@@ -159,10 +181,26 @@ void bms_spiReceiveData(uint8_t rxData[TOTAL_IC][DATA_LEN], uint16_t rxPec[TOTAL
 {
     uint8_t rawRxData[TOTAL_IC][DATAPKT_LEN];
 
-    HAL_SPI_Receive(hspi, (uint8_t *)rawRxData, DATAPKT_LEN * TOTAL_IC, HAL_MAX_DELAY);
+    HAL_StatusTypeDef status = HAL_SPI_Receive(hspi, (uint8_t *)rawRxData, DATAPKT_LEN * TOTAL_IC, HAL_MAX_DELAY);
+
+    if (status != HAL_OK) {
+            uint32_t err = HAL_SPI_GetError(hspi);   // SPI error flags (OVR, MODF, FRE, CRCERR, etc)
+            printConsole("SPI RX failed: status=%d err=0x%08lX state=%d\r\n", (int)status, (unsigned long)err, (int)hspi->State);
+            //return;
+        }
 
     for (int ic = 0; ic < TOTAL_IC; ic++)     /* executes for each ic in the daisy chain and packs the data */
     {
+    	//Quick comms test
+    	bool allFF = true, all00 = true;
+    	    for (int i = 0; i < DATA_LEN; i++) {
+    	        if (rxData[ic][i] != 0xFF) allFF = false;
+    	        if (rxData[ic][i] != 0x00) all00 = false;
+    	    }
+    	    if (allFF || all00) {
+    	        printConsole("[6822] IC%d RX suspicious: %s\r\n", ic+1, allFF ? "ALL_FF" : "ALL_00");
+    	    }
+
         // Store recieved data bytes to rxData
         memcpy(rxData[ic], rawRxData[ic], DATA_LEN);
 
@@ -210,9 +248,18 @@ void bms_transmitPoll(uint8_t cmd[CMD_LEN])
 
     // Wait until receive 0xFF
     uint8_t buff = 0;
+    uint32_t start = HAL_GetTick();
+
     while (buff == 0x00)
     {
-        HAL_SPI_Receive(hspi, &buff, 1, HAL_MAX_DELAY);
+        if (HAL_GetTick() - start > 100) {
+            printConsole("[6822] BMS Poll timeout >100ms\r\n");
+
+            //TODO: RaiseError()
+
+            break;
+        }
+        HAL_SPI_Receive(hspi, &buff, 1, 1);   // 1ms timeout, not blocking forever
     }
 
     bms_csHigh();

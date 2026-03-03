@@ -141,6 +141,8 @@ void brain_start(void) {
 	bmsState = IDLE;
 	bmsPrevState = INACTIVE;
 	bmsCurrState = INACTIVE;
+
+	printConsole("Start LOOP \n\r");
 }
 
 void brain_loop(void) {
