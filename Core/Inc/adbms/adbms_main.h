@@ -22,14 +22,14 @@ and its licensor.
 #define _ADBMS6830_MAIN_H
 
 #include "main.h"
-#include "common.h"
-#include "adBms6830Data.h"
-#include "adBms6830GenericType.h"
-#include "adBms6830ParseCreate.h"
-#include "mcuWrapper.h"
+#include "adbms/common.h"
+#include "adbms/adBms6830Data.h"
+#include "adbms/adBms6830GenericType.h"
+#include "adbms/adBms6830ParseCreate.h"
+#include "adbms/mcuWrapper.h"
 
 
-void adbms_main(void);
+void adbms_init(void);
 
 #endif
 /** @}*/

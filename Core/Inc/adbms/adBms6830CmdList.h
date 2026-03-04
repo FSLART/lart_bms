@@ -22,7 +22,7 @@ and its licensor.
 #ifndef __ADBMSCOMMAND_H
 #define __ADBMSCOMMAND_H
 
-#include "common.h"
+#include "adbms/common.h"
 
 /* configuration registers commands */
 uint8_t WRCFGA[2]        = { 0x00, 0x01 };

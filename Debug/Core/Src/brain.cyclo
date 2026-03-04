@@ -1,0 +1,8 @@
+../Core/Src/brain.c:65:6:brain_start	1
+../Core/Src/brain.c:129:6:brain_loop	12
+../Core/Src/brain.c:291:6:HAL_TIM_PeriodElapsedCallback	4
+../Core/Src/brain.c:310:6:HAL_SYSTICK_Callback	4
+../Core/Src/brain.c:329:10:getRuntimeMs	1
+../Core/Src/brain.c:333:10:getRuntimeMsDiff	1
+../Core/Src/brain.c:337:6:HAL_GPIO_EXTI_Callback	3
+../Core/Src/brain.c:347:6:RaiseError	1

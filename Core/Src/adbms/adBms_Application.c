@@ -65,25 +65,30 @@ LOOP_MEASURMENT MEASURE_AUX             = DISABLED;        /*   This is ENABLED 
 LOOP_MEASURMENT MEASURE_RAUX            = DISABLED;        /*   This is ENABLED or DISABLED       */
 LOOP_MEASURMENT MEASURE_STAT            = DISABLED;        /*   This is ENABLED or DISABLED       */
 
-/*void adbms_main()
+void adbms_init()
 {
-  printMenu();
-  adBms6830_init_config(TOTAL_IC, &IC[0]);
-  while(1)
+  //printMenu();
+
+	adBms6830_init_config(TOTAL_IC, &IC[0]);
+
+
+  /*while(1)
   {
     int user_command;
-#ifdef MBED
-    pc.scanf("%d", &user_command);
-    pc.printf("Enter cmd:%d\n", user_command);
-#else
-    scanf("%d", &user_command);
-    printf("Enter cmd:%d\n", user_command);
-#endif
-    run_command(user_command);
-  }
+
+
+	#ifdef MBED
+		pc.scanf("%d", &user_command);
+		pc.printf("Enter cmd:%d\n", user_command);
+	#else
+		scanf("%d", &user_command);
+		printf("Enter cmd:%d\n", user_command);
+	#endif
+		run_command(user_command);
+	  }*/
 }
 
-void run_command(int cmd)
+/*void run_command(int cmd)
 {
   switch(cmd)
   {

@@ -1,0 +1,9 @@
+../Core/Src/uartDMA.c:33:5:getDataLen	16	static
+../Core/Src/uartDMA.c:43:5:getDataLen2	16	static
+../Core/Src/uartDMA.c:53:6:startUartDmaTx	16	static
+../Core/Src/uartDMA.c:68:6:startUart2DmaTx	16	static
+../Core/Src/uartDMA.c:83:6:HAL_UART_TxCpltCallback	16	static
+../Core/Src/uartDMA.c:116:5:printfDma	48	dynamic
+../Core/Src/uartDMA.c:163:5:printfDmaBT	48	dynamic
+../Core/Src/uartDMA.c:215:6:printConsole	272	static
+../Core/Src/uartDMA.c:243:13:jsonSendEscaped	24	static

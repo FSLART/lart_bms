@@ -37,15 +37,16 @@
 
 #include "ams.h"
 
+
 #define BYPASS_CAN_ISA
 
 /* ================== LOCAL DEFINES / TYPES ================== */
 
 #define STEERING_MAX 0xA1
 
-
 /* EEPROM comms instance */
 //static EEPROM_Comms eeprom_comms = { .hi2c = &hi2c1, .huart = &huart1 };
+
 /* ================== MODULE STATE ================== */
 volatile BmsStates bmsState = IDLE;
 volatile BmsStates bmsCurrState = IDLE;
@@ -84,7 +85,9 @@ void brain_start(void) {
 	printfDmaBT("Bluetooth, u up?");
 	//OpenAllContactors();
 	startUI();
-	adBms6830_init_config(TOTAL_IC, &IC[0]);
+
+	//initilize slave comms
+	adbms_init();
 
 	//char ts[20];
 	//RTC_Time_Get(ts, sizeof(ts));
@@ -143,23 +146,23 @@ void brain_loop(void) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
-		    loop_count = 0;
-		    adBmsWakeupIc(TOTAL_IC);
-		    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
-		    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-		    adBmsWakeupIc(TOTAL_IC);
-		    adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-		    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-		    adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-		    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-		    adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
-		    Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
-		    while(loop_count < LOOP_MEASUREMENT_COUNT)
-		    {
-		      measurement_loop();
-		      Delay_ms(MEASUREMENT_LOOP_TIME);
-		      loop_count = loop_count + 1;
-		    }
+		    //loop_count = 0;
+		    //adBmsWakeupIc(TOTAL_IC);
+		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
+		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
+		    //adBmsWakeupIc(TOTAL_IC);
+		    //adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+		   // Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+		   // adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+		    //Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+		   // adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
+		    //Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
+		   // while(loop_count < LOOP_MEASUREMENT_COUNT)
+		    //{
+		      //measurement_loop();
+		      //Delay_ms(MEASUREMENT_LOOP_TIME);
+		     // loop_count = loop_count + 1;
+		    //}
 		}
 
 		//printConsole("	INACTIVE \n\n");
@@ -174,23 +177,23 @@ void brain_loop(void) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
-		    loop_count = 0;
-		    adBmsWakeupIc(TOTAL_IC);
-		    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
-		    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-		    adBmsWakeupIc(TOTAL_IC);
-		    adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-		    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-		    adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-		    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-		    adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
-		    Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
-		    while(loop_count < LOOP_MEASUREMENT_COUNT)
+		    //loop_count = 0;
+		    //adBmsWakeupIc(TOTAL_IC);
+		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
+		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
+		   // adBmsWakeupIc(TOTAL_IC);
+		    //adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+		    //Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+		    //adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+		    //Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+		    //adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
+		    //Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
+		    /*while(loop_count < LOOP_MEASUREMENT_COUNT)
 		    {
-		      measurement_loop();
-		      Delay_ms(MEASUREMENT_LOOP_TIME);
+		     // measurement_loop();
+		      //Delay_ms(MEASUREMENT_LOOP_TIME);
 		      loop_count = loop_count + 1;
-		    }
+		    }*/
 		}
 
 		break;
@@ -211,23 +214,23 @@ void brain_loop(void) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
-		    loop_count = 0;
-		    adBmsWakeupIc(TOTAL_IC);
-		    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
-		    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-		    adBmsWakeupIc(TOTAL_IC);
-		    adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-		    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-		    adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-		    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-		    adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
-		    Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
-		    while(loop_count < LOOP_MEASUREMENT_COUNT)
+		    //loop_count = 0;
+		    //adBmsWakeupIc(TOTAL_IC);
+		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
+		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
+		    //adBmsWakeupIc(TOTAL_IC);
+		    //adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+		    //Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+		    //adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+		    //Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+		    //adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
+		    //Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
+		    /*while(loop_count < LOOP_MEASUREMENT_COUNT)
 		    {
-		      measurement_loop();
-		      Delay_ms(MEASUREMENT_LOOP_TIME);
+		      //measurement_loop();
+		      //Delay_ms(MEASUREMENT_LOOP_TIME);
 		      loop_count = loop_count + 1;
-		    }
+		    }*/
 		}
 
 		/*while (Precharge_GetState() != END) {

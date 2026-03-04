@@ -61,7 +61,7 @@ extern CAN_HandleTypeDef hcan2;
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
 
-#define TOTAL_IC        2
+//#define TOTAL_IC        2
 #define TOTAL_CELL      12
 //#define TOTAL_AD68      (TOTAL_IC - 1)
 //#define TOTAL_AD68      1

@@ -23,7 +23,7 @@ and its licensor.
 #define __APPLICATION_H
 
 #include <stdint.h>
-#include "adbms_main.h"
+#include "adbms/adbms_main.h"
 
 void app_main(void);
 void run_command(int cmd);
