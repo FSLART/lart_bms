@@ -17,8 +17,8 @@ and its licensor.
 *  @{
 */
 
-#include "adbms/common.h"
-#include "adbms/adbms_main.h"
+#include "common.h"
+#include "adbms_main.h"
 #ifdef MBED
 extern Serial pc;
 #endif

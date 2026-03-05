@@ -16,8 +16,8 @@ and its licensor.
 /*! @addtogroup Mcu Driver
 *  @{
 */
-#include "adbms/common.h"
-#include "adbms/mcuWrapper.h"
+#include "common.h"
+#include "mcuWrapper.h"
 #define WAKEUP_DELAY 4                          /* BMS ic wakeup delay  */
 
 #ifdef MBED

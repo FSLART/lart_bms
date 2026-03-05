@@ -12,12 +12,7 @@
 #include "stdio.h"
 #include <stdbool.h>
 
-#include "adbms/common.h"
-#include "adbms/adBms_Application.h"
-#include "adbms/adBms6830CmdList.h"
-#include "adbms/adBms6830GenericType.h"
-#include "adbms/serialPrintResult.h"
-#include "adbms/mcuWrapper.h"
+#include "adbms_main.h"
 
 #include "eeprom_utils.h"
 
@@ -87,7 +82,7 @@ void brain_start(void) {
 	startUI();
 
 	//initilize slave comms
-	adbms_init();
+	adbms_main();
 
 	//char ts[20];
 	//RTC_Time_Get(ts, sizeof(ts));
@@ -266,7 +261,7 @@ void brain_loop(void) {
 	if (faultCheck) {
 		//IVT_FAULT_CHECK();
 		//bms_openWireCheck(&ow_status);
-		CAN_Send_AD68_All(&hcan1);
+		//CAN_Send_AD68_All(&hcan1);
 		faultCheck = false;
 		//ClosePreCarga();
 		read_mcu_temp();
@@ -275,7 +270,7 @@ void brain_loop(void) {
 
 	if (updateUI) {
 		//send_ivt_ui();
-		send_ad68_ui();
+		//send_ad68_ui();
 		updateUI = false;
 		//OpenPreCarga();
 	}
@@ -284,7 +279,7 @@ void brain_loop(void) {
 	Precharge_Update();
 
 	//check if there are can messages to send
-	CanTx_ProcessQueue();
+	//CanTx_ProcessQueue();
 }
 
 /// Timer interrupt callback

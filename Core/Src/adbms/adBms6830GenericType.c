@@ -22,8 +22,8 @@ Using the BMS Driver Application can:
 - Send commands and Read the Cell Voltages, Aux Voltages and Status registers (Sum of cells, Internal Die temperature etc.)
 
 */
-#include "adbms/common.h"
-#include "adbms/adbms_main.h"
+#include "common.h"
+#include "adbms_main.h"
 #ifdef MBED
 extern Serial pc;
 #endif

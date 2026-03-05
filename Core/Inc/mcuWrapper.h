@@ -20,7 +20,7 @@ and its licensor.
 */
 #ifndef __ADBMSWRAPPER_H
 #define __ADBMSWRAPPER_H
-#include "adbms/common.h"
+#include "common.h"
 
 #ifdef MBED
 

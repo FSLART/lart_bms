@@ -16,12 +16,12 @@ and its licensor.
 /*! @addtogroup Application
 *  @{
 */
-#include "adbms/common.h"
-#include "adbms/adBms_Application.h"
-#include "adbms/adBms6830CmdList.h"
-#include "adbms/adBms6830GenericType.h"
-#include "adbms/serialPrintResult.h"
-#include "adbms/mcuWrapper.h"
+#include "common.h"
+#include "adBms_Application.h"
+#include "adBms6830CmdList.h"
+#include "adBms6830GenericType.h"
+#include "serialPrintResult.h"
+#include "mcuWrapper.h"
 #ifdef MBED
 extern Serial pc;
 #endif
@@ -65,30 +65,25 @@ LOOP_MEASURMENT MEASURE_AUX             = DISABLED;        /*   This is ENABLED 
 LOOP_MEASURMENT MEASURE_RAUX            = DISABLED;        /*   This is ENABLED or DISABLED       */
 LOOP_MEASURMENT MEASURE_STAT            = DISABLED;        /*   This is ENABLED or DISABLED       */
 
-void adbms_init()
+void adbms_main()
 {
   //printMenu();
-
-	adBms6830_init_config(TOTAL_IC, &IC[0]);
-
-
+  adBms6830_init_config(TOTAL_IC, &IC[0]);
   /*while(1)
   {
     int user_command;
-
-
-	#ifdef MBED
-		pc.scanf("%d", &user_command);
-		pc.printf("Enter cmd:%d\n", user_command);
-	#else
-		scanf("%d", &user_command);
-		printf("Enter cmd:%d\n", user_command);
-	#endif
-		run_command(user_command);
-	  }*/
+#ifdef MBED
+    pc.scanf("%d", &user_command);
+    pc.printf("Enter cmd:%d\n", user_command);
+#else
+    scanf("%d", &user_command);
+    printf("Enter cmd:%d\n", user_command);
+#endif
+    run_command(user_command);
+  }*/
 }
 
-/*void run_command(int cmd)
+void run_command(int cmd)
 {
   switch(cmd)
   {
@@ -206,7 +201,7 @@ void adbms_init()
 #endif
     break;
   }
-}*/
+}
 
 /**
 *******************************************************************************

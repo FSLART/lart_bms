@@ -21,8 +21,8 @@ and its licensor.
 #ifndef __ADBMSPARSECREATE_H
 #define __ADBMSPARSECREATE_H
 
-#include "adbms/common.h"
-#include "adbms/adBms6830Data.h"
+#include "common.h"
+#include "adBms6830Data.h"
 
 uint16_t SetOverVoltageThreshold(float volt);
 uint16_t SetUnderVoltageThreshold(float voltage);

@@ -1,0 +1,10 @@
+../Core/Src/mcuWrapper.c:239:6:Delay_ms	1
+../Core/Src/mcuWrapper.c:255:6:adBmsCsLow	1
+../Core/Src/mcuWrapper.c:271:6:adBmsCsHigh	1
+../Core/Src/mcuWrapper.c:291:6:spiWriteBytes	1
+../Core/Src/mcuWrapper.c:317:6:spiWriteReadBytes	1
+../Core/Src/mcuWrapper.c:343:6:spiReadBytes	1
+../Core/Src/mcuWrapper.c:359:6:startTimer	1
+../Core/Src/mcuWrapper.c:375:6:stopTimer	1
+../Core/Src/mcuWrapper.c:391:10:getTimCount	1
+../Core/Src/mcuWrapper.c:414:6:adBmsWakeupIc	2

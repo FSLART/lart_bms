@@ -1,6 +1,7 @@
-Core/Src/adbms/mcuWrapper.o: ../Core/Src/adbms/mcuWrapper.c \
- ../Core/Inc/adbms/common.h ../Core/Inc/adbms/mcuWrapper.h \
- ../Core/Inc/main.h ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+Core/Src/serialPrintResult.o: ../Core/Src/serialPrintResult.c \
+ ../Core/Inc/common.h ../Core/Inc/serialPrintResult.h \
+ ../Core/Inc/adbms_main.h ../Core/Inc/main.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -37,9 +38,16 @@ Core/Src/adbms/mcuWrapper.o: ../Core/Src/adbms/mcuWrapper.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/stm32f4xx_it.h
-../Core/Inc/adbms/common.h:
-../Core/Inc/adbms/mcuWrapper.h:
+ ../Core/Inc/common.h \
+ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h \
+ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830GenericType.h \
+ ../Core/Inc/adbms_main.h \
+ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830ParseCreate.h \
+ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h \
+ ../Core/Inc/mcuWrapper.h ../Core/Inc/stm32f4xx_it.h
+../Core/Inc/common.h:
+../Core/Inc/serialPrintResult.h:
+../Core/Inc/adbms_main.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -78,4 +86,11 @@ Core/Src/adbms/mcuWrapper.o: ../Core/Src/adbms/mcuWrapper.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
+../Core/Inc/common.h:
+C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
+C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830GenericType.h:
+../Core/Inc/adbms_main.h:
+C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830ParseCreate.h:
+C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
+../Core/Inc/mcuWrapper.h:
 ../Core/Inc/stm32f4xx_it.h:
