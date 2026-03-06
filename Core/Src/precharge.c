@@ -19,7 +19,8 @@
 #define PRECHARGE_DELAY_MS   200u  // tempo de chekagewm da atracagem do contactor
 
 //Internal variables
-PrechargeState_t state = WRONG;
+PrechargeState_t state = RX_CAN;
+//PrechargeState_t state = WRONG;
 uint32_t timer;
 uint32_t delayStart = 0;
 
@@ -176,6 +177,7 @@ void PreCharge_CAN_Rx(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data) {
 
 	uint32_t id = hdr->StdId;
 	uint32_t dlc = hdr->DLC;
+	bool start_initiated = false;
 
 	switch (id) {
 
@@ -183,10 +185,12 @@ void PreCharge_CAN_Rx(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data) {
 		struct ams_start_pre_charge_t prechargeInit;
 		ams_start_pre_charge_unpack(&prechargeInit, data, dlc);
 
-		if (prechargeInit.precharge_request > 0) {
+		if (prechargeInit.precharge_request > 0 && start_initiated == false && state == KILL) {
 			state = RX_CAN;
+			start_initiated = true;
 		} else if (prechargeInit.precharge_request == 0) {
 			state = KILL;
+			start_initiated = false;
 		}
 
 	default:
