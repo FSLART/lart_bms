@@ -3,7 +3,7 @@
 #include "uartDMA.h"
 
 #define SOFTWARE_CODENAME bms_lart
-#define SOFTWARE_VERSION alpha-v2
+#define SOFTWARE_VERSION alpha-v3.1
 
 #define HARDWARE_VERSION "????"
 #define HARDWARE_CODENAME chicote

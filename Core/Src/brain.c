@@ -63,12 +63,16 @@ static uint32_t timeDiff = 0;
 static uint32_t timeStart = 0;
 static uint32_t timeCmmd = 0;
 
+
 void brain_start(void) {
 
 	OpenAllContactors();
 
 	// Set CS2 Pin to HIGH to disable second SPI on 6822 + MSTR should be high by default
 	HAL_GPIO_WritePin(BMS_MSTR_GPIO_Port, BMS_MSTR_Pin, GPIO_PIN_SET);
+
+	//Set ams error high
+	//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
 
 	// Start Timers
 	HAL_TIM_Base_Start_IT(&htim8);
@@ -83,7 +87,7 @@ void brain_start(void) {
 
 	//printfDma("bad \r");
 	printConsole("Start Program \n\r");
-	printfDmaBT("Bluetooth, u up?");
+	printfDmaBT("Bluetooth, u up? \r\n");
 	//OpenAllContactors();
 	startUI();
 
@@ -308,6 +312,16 @@ void brain_loop(void) {
 		send_ad68_ui();
 		updateUI = false;
 		//OpenPreCarga();
+
+		static uint8_t temp_counter = 0;
+		if(temp_counter >= 10){
+
+		//HAL_GPIO_TogglePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin);
+		temp_counter = 0;
+		}else{
+
+			temp_counter++;
+		}
 	}
 
 	//update precharge state machine if necessary
@@ -372,6 +386,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			bmsState = ONMISSION;
 		}
 	}
+
+	Feedback_EXTI_Callback(GPIO_Pin);
 }
 
 void RaiseError(ErrorCode_t errorcode) {

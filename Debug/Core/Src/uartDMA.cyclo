@@ -6,4 +6,4 @@
 ../Core/Src/uartDMA.c:116:5:printfDma	8
 ../Core/Src/uartDMA.c:163:5:printfDmaBT	8
 ../Core/Src/uartDMA.c:215:6:printConsole	4
-../Core/Src/uartDMA.c:243:13:jsonSendEscaped	12
+../Core/Src/uartDMA.c:245:13:jsonSendEscaped	12
