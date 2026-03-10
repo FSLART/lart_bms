@@ -77,12 +77,12 @@ void brain_start(void) {
 
 	//printfDma("bad \r");
 	printConsole("Start Program \n\r");
-	printfDmaBT("Bluetooth, u up?");
+	printfDmaBT("Bluetooth, u up? \r\n");
 	//OpenAllContactors();
 	startUI();
 
 	//initilize slave comms
-	adbms_main();
+	//adbms_main();
 
 	//char ts[20];
 	//RTC_Time_Get(ts, sizeof(ts));
@@ -172,6 +172,8 @@ void brain_loop(void) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
+			adbms_main();
+
 		    //loop_count = 0;
 		    //adBmsWakeupIc(TOTAL_IC);
 		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
@@ -259,9 +261,10 @@ void brain_loop(void) {
 	// send_ivt_ui();
 
 	if (faultCheck) {
+		//printfDma("FAULT CHECK \r\n");
 		//IVT_FAULT_CHECK();
 		//bms_openWireCheck(&ow_status);
-		//CAN_Send_AD68_All(&hcan1);
+		ADBMS_CAN_SendAll(&hcan1);
 		faultCheck = false;
 		//ClosePreCarga();
 		read_mcu_temp();
@@ -279,7 +282,7 @@ void brain_loop(void) {
 	Precharge_Update();
 
 	//check if there are can messages to send
-	//CanTx_ProcessQueue();
+	CanTx_ProcessQueue();
 }
 
 /// Timer interrupt callback
@@ -337,6 +340,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			bmsState = ONMISSION;
 		}
 	}
+
+	Feedback_EXTI_Callback(GPIO_Pin);
 }
 
 void RaiseError(ErrorCode_t errorcode) {

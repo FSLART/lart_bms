@@ -1,5 +1,6 @@
 "./Core/Inc/dbc/ams.o"
 "./Core/Src/adBms_Application.o"
+"./Core/Src/adbms_to_CAN.o"
 "./Core/Src/brain.o"
 "./Core/Src/can.o"
 "./Core/Src/contactors.o"

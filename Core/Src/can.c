@@ -9,7 +9,7 @@
 #include "brain.h"
 
 #ifndef MAX_CAN_RX_CALLBACKS
-#define MAX_CAN_RX_CALLBACKS 4
+#define MAX_CAN_RX_CALLBACKS 10 //Número de callbacks registados, tipo CAN_RegisterRxCallback(PreCharge_CAN_Rx);
 #endif
 
 static CanRxCallback_t s_rxCallbacks[MAX_CAN_RX_CALLBACKS];
@@ -29,7 +29,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	uint8_t rxData[8];
 
 	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rxHeader, rxData) != HAL_OK) {
-		//Error_Handler();
+		//TODO: RaiseError();
 		//FUDEU
 		return;
 	}

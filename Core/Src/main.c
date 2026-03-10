@@ -511,12 +511,13 @@ static void MX_TIM2_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_IC_InitTypeDef sConfigIC = {0};
 
   /* USER CODE BEGIN TIM2_Init 1 */
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 64-1;
+  htim2.Init.Prescaler = 0;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 0xffffffff;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -530,9 +531,21 @@ static void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_IC_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
+  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
+  sConfigIC.ICFilter = 0;
+  if (HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -897,17 +910,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : CURRENT_SENS_Pin */
-  GPIO_InitStruct.Pin = CURRENT_SENS_Pin;
+  /*Configure GPIO pin : MCU_SDC_FB_Pin */
+  GPIO_InitStruct.Pin = MCU_SDC_FB_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(CURRENT_SENS_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : MCU_SDC_FB_Pin MCU_AIR__FB_Pin MCU_AIR__FBC11_Pin MCU_DISCH_FB_Pin */
-  GPIO_InitStruct.Pin = MCU_SDC_FB_Pin|MCU_AIR__FB_Pin|MCU_AIR__FBC11_Pin|MCU_DISCH_FB_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(MCU_SDC_FB_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : AMS_ERROR_Pin */
   GPIO_InitStruct.Pin = AMS_ERROR_Pin;
@@ -918,9 +925,15 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : MCU_PRE_FB_Pin */
   GPIO_InitStruct.Pin = MCU_PRE_FB_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(MCU_PRE_FB_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : MCU_AIR__FB_Pin MCU_AIR__FBC11_Pin MCU_DISCH_FB_Pin */
+  GPIO_InitStruct.Pin = MCU_AIR__FB_Pin|MCU_AIR__FBC11_Pin|MCU_DISCH_FB_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LED_CAN_STATUS_Pin */
   GPIO_InitStruct.Pin = LED_CAN_STATUS_Pin;

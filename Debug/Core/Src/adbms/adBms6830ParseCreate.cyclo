@@ -4,7 +4,7 @@
 ../Core/Src/adbms/adBms6830ParseCreate.c:126:10:ConfigA_Gpo	2
 ../Core/Src/adbms/adBms6830ParseCreate.c:157:10:ConfigB_DccBit	2
 ../Core/Src/adbms/adBms6830ParseCreate.c:192:6:SetConfigB_DischargeTimeOutValue	4
-../Core/Src/adbms/adBms6830ParseCreate.c:227:6:SetPwmDutyCycle	4
+../Core/Src/adbms/adBms6830ParseCreate.c:227:6:SetPwmDutyCycle	3
 ../Core/Src/adbms/adBms6830ParseCreate.c:262:6:adBms6830ParseConfiga	2
 ../Core/Src/adbms/adBms6830ParseCreate.c:307:6:adBms6830ParseConfigb	2
 ../Core/Src/adbms/adBms6830ParseCreate.c:345:6:adBms6830ParseConfig	3

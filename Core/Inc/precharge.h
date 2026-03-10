@@ -27,6 +27,7 @@ typedef enum
     DELAY3,
     VERIFY3,
     TURN_OFF_PRECHARGE,
+	DELAY4,
     VERIFY4,
     END,
     WRONG,
@@ -39,13 +40,17 @@ void Precharge_Init(void);
 void Precharge_CAN_Init(void);
 
 PrechargeState_t Precharge_GetState(void);
+
 void Precharge_Update(void);
 
 void PreCharge_CAN_Rx(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data);
 
-bool VerifyHVNEG_HVPOS_States(void);
+bool IsTheStateOK(PrechargeState_t check_state);
 bool IsBusVoltageOK(void);
 bool IsCurrentOK(void);
+
+//feebacks interrupt callbacks
+void Feedback_EXTI_Callback(uint16_t GPIO_Pin);
 
 
 #endif /* INC_PRECHARGE_H_ */

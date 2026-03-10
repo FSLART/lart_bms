@@ -25,12 +25,12 @@ and its licensor.
 
 #include "common.h"
 
-#define CELL 16                 /* Bms ic number of cell              */
-#define AUX  12                 /* Bms ic number of Aux               */
-#define RAUX 10                 /* Bms ic number of RAux              */
+#define CELL 12                 /* Bms ic number of cell              */
+#define AUX  6                 /* Bms ic number of Aux               */
+#define RAUX 6                 /* Bms ic number of RAux              */
 #define PWMA 12                 /* Bms ic number of PWMA              */
-#define PWMB 4                  /* Bms ic number of PWMB              */
-#define COMM 3                  /* GPIO communication comm reg        */
+#define PWMB 0                  /* Bms ic number of PWMB              */
+#define COMM 0                  /* GPIO communication comm reg        */
 #define RSID 6                  /* Bms ic number of SID byte          */
 #define TX_DATA 6               /* Bms tx data byte                   */
 #define RX_DATA 8               /* Bms rx data byte                   */

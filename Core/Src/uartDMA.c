@@ -22,13 +22,13 @@ volatile int head2 = 0;
 volatile int tail2 = 0;
 
 bool isFull = false;
-bool isWrapped = false;
+volatile bool isWrapped = false;
 
 bool isFull2 = false;
 bool isWrapped2 = false;
 
 int tailDma = 0; // Stores the tail index of the buffer being sent
-int tailDma2 = 0; // Stores the tail index of the buffer being sent
+volatile int tailDma2 = 0; // Stores the tail index of the buffer being sent
 
 int getDataLen(void) {
 	int tempTail = tail;
@@ -90,26 +90,26 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 		}
 
 		// If there is ANY data pending, start next DMA
-		if (head != tail)        // <— instead of (head > tail)
-				{
+		if (head != tail){        // instead of (head > tail)
+
 			startUartDmaTx();
 		}
 	}
 
 	if (huart == &uart2Handle) {
-			tail2 = tailDma2;
+		tail2 = tailDma2;
 
-			if (tail2 == BUFFER_SIZE) {
-				tail2 = 0;
-				isWrapped2 = false;   // we've just flushed the end segment
-			}
-
-			// If there is ANY data pending, start next DMA
-			if (head2 != tail2)        // <— instead of (head > tail)
-					{
-				startUart2DmaTx();
-			}
+		if (tail2 == BUFFER_SIZE) {
+			tail2 = 0;
+			isWrapped2 = false;   // we've just flushed the end segment
 		}
+
+		// If there is ANY data pending, start next DMA
+		if (head2 != tail2){        // <— instead of (head > tail)
+
+			startUart2DmaTx();
+		}
+	}
 }
 
 // Function to append formatted data to the ring buffer
@@ -212,52 +212,67 @@ int printfDmaBT(const char *format, ...) {
  * Emits: [{"console":"..."}]\n
  * (change "console" to "cossole" if you need that exact key)
  */
-void printConsole(const char *format, ...)
-{
-    if (!format) format = "";
+void printConsole(const char *format, ...) {
+	if (!format)
+		format = "";
 
-    enum { TEMP_SZ = 256 };       // tune if you need longer messages
-    char tmp[TEMP_SZ];
+	enum {
+		TEMP_SZ = 256
+	};
+	// tune if you need longer messages
+	char tmp[TEMP_SZ];
 
-    va_list args;
-    va_start(args, format);
-    int n = vsnprintf(tmp, TEMP_SZ, format, args);
-    va_end(args);
+	va_list args;
+	va_start(args, format);
+	int n = vsnprintf(tmp, TEMP_SZ, format, args);
+	va_end(args);
 
-    if (n < 0) {
-        tmp[0] = '\0';            // formatting error -> empty
-    } else if (n >= TEMP_SZ) {
-        tmp[TEMP_SZ - 1] = '\0';  // truncated but valid
-    }
+	if (n < 0) {
+		tmp[0] = '\0';            // formatting error -> empty
+	} else if (n >= TEMP_SZ) {
+		tmp[TEMP_SZ - 1] = '\0';  // truncated but valid
+	}
 
-    printfDma("[");
-    printfDma("{\"console\":\"");
-    jsonSendEscaped(tmp);
-    printfDma("\"}");
-    printfDma("]\n\r");
+	printfDma("[");
+	printfDma("{\"console\":\"");
+	jsonSendEscaped(tmp);
+	printfDma("\"}");
+	printfDma("]\n\r");
 }
 
-
 /* Stream a JSON-escaped string through printfDma
-   Prevenir que a mensagem termine por emissão de caracteres especiais */
-static void jsonSendEscaped(const char *s)
-{
-    while (*s) {
-        unsigned char c = (unsigned char)*s++;
-        switch (c) {
-            case '\"': printfDma("\\\""); break;
-            case '\\': printfDma("\\\\"); break;
-            case '\b': printfDma("\\b");  break;
-            case '\f': printfDma("\\f");  break;
-            case '\n': printfDma("\\n");  break;
-            case '\r': printfDma("\\r");  break;
-            case '\t': printfDma("\\t");  break;
-            default:
-                if (c < 0x20) {
-                    printfDma("\\u%04X", (unsigned)c);
-                } else {
-                    printfDma("%c", c);
-                }
-        }
-    }
+ Prevenir que a mensagem termine por emissão de caracteres especiais */
+static void jsonSendEscaped(const char *s) {
+	while (*s) {
+		unsigned char c = (unsigned char) *s++;
+		switch (c) {
+		case '\"':
+			printfDma("\\\"");
+			break;
+		case '\\':
+			printfDma("\\\\");
+			break;
+		case '\b':
+			printfDma("\\b");
+			break;
+		case '\f':
+			printfDma("\\f");
+			break;
+		case '\n':
+			printfDma("\\n");
+			break;
+		case '\r':
+			printfDma("\\r");
+			break;
+		case '\t':
+			printfDma("\\t");
+			break;
+		default:
+			if (c < 0x20) {
+				printfDma("\\u%04X", (unsigned) c);
+			} else {
+				printfDma("%c", c);
+			}
+		}
+	}
 }
