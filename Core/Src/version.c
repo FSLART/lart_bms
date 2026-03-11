@@ -24,6 +24,6 @@ void startUI(void) {
 	"\"project_link\":\"" PROJECT_LINK "\""
 	"}}]";
 
-	printfDma("%s", info_json);
-	printfDma("\r\n");
+	printfUI("%s", info_json);
+	printfUI("\r\n");
 }

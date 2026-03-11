@@ -74,7 +74,10 @@ void adbms_main() {
 	} else if (stupidCounter == 1){
 		stupidCounter++;
 		adBms6830_read_cell_voltages(TOTAL_IC, &IC[0]);
+		adBms6830_read_raux_voltages(TOTAL_IC, &IC[0]);
+		//adBms6830_read_status_registers(TOTAL_IC, &IC[0]);
 		adBms6830_start_avgcell_voltage_measurment(TOTAL_IC);
+		adBms6830_start_raux_voltage_measurment(TOTAL_IC, &IC[0]);
 
 	} else if(stupidCounter > 1){
 		stupidCounter = 1;

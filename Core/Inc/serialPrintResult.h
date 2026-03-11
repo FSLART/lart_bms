@@ -37,6 +37,7 @@ void printDiagnosticTestResult(uint8_t tIC, cell_asic *IC, DIAGNOSTIC_TYPE type)
 void diagnosticTestResultPrint(uint8_t result);
 void printOpenWireTestResult(uint8_t tIC, cell_asic *IC, TYPE type);
 void openWireResultPrint(uint8_t result);
+float getTemperature(int data);
 float getVoltage(int data);
 void printPollAdcConvTime(int count);
 void printMenu();

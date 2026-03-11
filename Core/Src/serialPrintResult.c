@@ -16,6 +16,7 @@
 /*! @addtogroup RESULT PRINT
  *  @{
  */
+#include <math.h>
 #include "common.h"
 #include "serialPrintResult.h"
 #include "uartDMA.h"
@@ -42,42 +43,42 @@
  */
 void printWriteConfig(uint8_t tIC, cell_asic *IC, TYPE type, GRP grp) {
 	for (uint8_t ic = 0; ic < tIC; ic++) {
-		printfDma("IC%d:\r\n", (ic + 1));
+		printfUI("IC%d:\r\n", (ic + 1));
 		if (type == Config) {
 			if (grp == A) {
-				printfDma("Write Config A:\r\n");
-				printfDma("0x%X, ", IC[ic].configa.tx_data[0]);
-				printfDma("0x%X, ", IC[ic].configa.tx_data[1]);
-				printfDma("0x%X, ", IC[ic].configa.tx_data[2]);
-				printfDma("0x%X, ", IC[ic].configa.tx_data[3]);
-				printfDma("0x%X, ", IC[ic].configa.tx_data[4]);
-				printfDma("0x%X\r\n\r\n", IC[ic].configa.tx_data[5]);
+				printfUI("Write Config A:\r\n");
+				printfUI("0x%X, ", IC[ic].configa.tx_data[0]);
+				printfUI("0x%X, ", IC[ic].configa.tx_data[1]);
+				printfUI("0x%X, ", IC[ic].configa.tx_data[2]);
+				printfUI("0x%X, ", IC[ic].configa.tx_data[3]);
+				printfUI("0x%X, ", IC[ic].configa.tx_data[4]);
+				printfUI("0x%X\r\n\r\n", IC[ic].configa.tx_data[5]);
 			} else if (grp == B) {
-				printfDma("Write Config B:\r\n");
-				printfDma("0x%X, ", IC[ic].configb.tx_data[0]);
-				printfDma("0x%X, ", IC[ic].configb.tx_data[1]);
-				printfDma("0x%X, ", IC[ic].configb.tx_data[2]);
-				printfDma("0x%X, ", IC[ic].configb.tx_data[3]);
-				printfDma("0x%X, ", IC[ic].configb.tx_data[4]);
-				printfDma("0x%X\r\n\r\n", IC[ic].configb.tx_data[5]);
+				printfUI("Write Config B:\r\n");
+				printfUI("0x%X, ", IC[ic].configb.tx_data[0]);
+				printfUI("0x%X, ", IC[ic].configb.tx_data[1]);
+				printfUI("0x%X, ", IC[ic].configb.tx_data[2]);
+				printfUI("0x%X, ", IC[ic].configb.tx_data[3]);
+				printfUI("0x%X, ", IC[ic].configb.tx_data[4]);
+				printfUI("0x%X\r\n\r\n", IC[ic].configb.tx_data[5]);
 			} else if (grp == ALL_GRP) {
-				printfDma("Write Config A:\r\n");
-				printfDma("0x%X, ", IC[ic].configa.tx_data[0]);
-				printfDma("0x%X, ", IC[ic].configa.tx_data[1]);
-				printfDma("0x%X, ", IC[ic].configa.tx_data[2]);
-				printfDma("0x%X, ", IC[ic].configa.tx_data[3]);
-				printfDma("0x%X, ", IC[ic].configa.tx_data[4]);
-				printfDma("0x%X\r\n\r\n", IC[ic].configa.tx_data[5]);
+				printfUI("Write Config A:\r\n");
+				printfUI("0x%X, ", IC[ic].configa.tx_data[0]);
+				printfUI("0x%X, ", IC[ic].configa.tx_data[1]);
+				printfUI("0x%X, ", IC[ic].configa.tx_data[2]);
+				printfUI("0x%X, ", IC[ic].configa.tx_data[3]);
+				printfUI("0x%X, ", IC[ic].configa.tx_data[4]);
+				printfUI("0x%X\r\n\r\n", IC[ic].configa.tx_data[5]);
 
-				printfDma("Write Config B:\r\n");
-				printfDma("0x%X, ", IC[ic].configb.tx_data[0]);
-				printfDma("0x%X, ", IC[ic].configb.tx_data[1]);
-				printfDma("0x%X, ", IC[ic].configb.tx_data[2]);
-				printfDma("0x%X, ", IC[ic].configb.tx_data[3]);
-				printfDma("0x%X, ", IC[ic].configb.tx_data[4]);
-				printfDma("0x%X\r\n\r\n", IC[ic].configb.tx_data[5]);
+				printfUI("Write Config B:\r\n");
+				printfUI("0x%X, ", IC[ic].configb.tx_data[0]);
+				printfUI("0x%X, ", IC[ic].configb.tx_data[1]);
+				printfUI("0x%X, ", IC[ic].configb.tx_data[2]);
+				printfUI("0x%X, ", IC[ic].configb.tx_data[3]);
+				printfUI("0x%X, ", IC[ic].configb.tx_data[4]);
+				printfUI("0x%X\r\n\r\n", IC[ic].configb.tx_data[5]);
 			} else {
-				printfDma("Wrong Register Group Select\r\n");
+				printfUI("Wrong Register Group Select\r\n");
 			}
 		}
 	}
@@ -105,72 +106,72 @@ void printWriteConfig(uint8_t tIC, cell_asic *IC, TYPE type, GRP grp) {
  */
 void printReadConfig(uint8_t tIC, cell_asic *IC, TYPE type, GRP grp) {
 	for (uint8_t ic = 0; ic < tIC; ic++) {
-		printfDma("IC%d:\r\n", (ic + 1));
+		printfUI("IC%d:\r\n", (ic + 1));
 		if (type == Config) {
 			if (grp == A) {
-				printfDma("Read Config A:\r\n");
-				printfDma("REFON:0x%X, ", IC[ic].rx_cfga.refon);
-				printfDma("CTH:0x%X\r\n", IC[ic].rx_cfga.cth & 0x07);
-				printfDma("FLAG_D[0]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x01));
-				printfDma("FLAG_D[1]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x02) >> 1);
-				printfDma("FLAG_D[2]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x04) >> 2);
-				printfDma("FLAG_D[3]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x08) >> 3);
-				printfDma("FLAG_D[4]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x10) >> 4);
-				printfDma("FLAG_D[5]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x20) >> 5);
-				printfDma("FLAG_D[6]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x40) >> 6);
-				printfDma("FLAG_D[7]:0x%X\r\n", (IC[ic].rx_cfga.flag_d & 0x80) >> 7);
-				printfDma("OWA[2:0]:0x%X, ", (IC[ic].rx_cfga.owa));
-				printfDma("OWRNG:0x%X, ", (IC[ic].rx_cfga.owrng));
-				printfDma("SOAKON:0x%X, ", (IC[ic].rx_cfga.soakon));
-				printfDma("GPO:0x%X, ", (IC[ic].rx_cfga.gpo));
-				printfDma("FC:0x%X, ", (IC[ic].rx_cfga.fc));
-				printfDma("COMM_BK:0x%X, ", (IC[ic].rx_cfga.comm_bk));
-				printfDma("MUTE_ST:0x%X, ", (IC[ic].rx_cfga.mute_st));
-				printfDma("SNAP:0x%X\r\n\r\n", (IC[ic].rx_cfga.snap));
-				printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-				printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.cfgr_pec);
+				printfUI("Read Config A:\r\n");
+				printfUI("REFON:0x%X, ", IC[ic].rx_cfga.refon);
+				printfUI("CTH:0x%X\r\n", IC[ic].rx_cfga.cth & 0x07);
+				printfUI("FLAG_D[0]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x01));
+				printfUI("FLAG_D[1]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x02) >> 1);
+				printfUI("FLAG_D[2]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x04) >> 2);
+				printfUI("FLAG_D[3]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x08) >> 3);
+				printfUI("FLAG_D[4]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x10) >> 4);
+				printfUI("FLAG_D[5]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x20) >> 5);
+				printfUI("FLAG_D[6]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x40) >> 6);
+				printfUI("FLAG_D[7]:0x%X\r\n", (IC[ic].rx_cfga.flag_d & 0x80) >> 7);
+				printfUI("OWA[2:0]:0x%X, ", (IC[ic].rx_cfga.owa));
+				printfUI("OWRNG:0x%X, ", (IC[ic].rx_cfga.owrng));
+				printfUI("SOAKON:0x%X, ", (IC[ic].rx_cfga.soakon));
+				printfUI("GPO:0x%X, ", (IC[ic].rx_cfga.gpo));
+				printfUI("FC:0x%X, ", (IC[ic].rx_cfga.fc));
+				printfUI("COMM_BK:0x%X, ", (IC[ic].rx_cfga.comm_bk));
+				printfUI("MUTE_ST:0x%X, ", (IC[ic].rx_cfga.mute_st));
+				printfUI("SNAP:0x%X\r\n\r\n", (IC[ic].rx_cfga.snap));
+				printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+				printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.cfgr_pec);
 			} else if (grp == B) {
-				printfDma("Read Config B:\r\n");
-				printfDma("VUV:0x%X, ", IC[ic].rx_cfgb.vuv);
-				printfDma("VOV:0x%X, ", IC[ic].rx_cfgb.vov);
-				printfDma("DCTO:0x%X, ", IC[ic].rx_cfgb.dcto);
-				printfDma("DTRNG:0x%X, ", IC[ic].rx_cfgb.dtrng);
-				printfDma("DTMEN:0x%X, ", IC[ic].rx_cfgb.dtmen);
-				printfDma("DCC:0x%X\r\n\r\n", IC[ic].rx_cfgb.dcc);
-				printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-				printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.cfgr_pec);
+				printfUI("Read Config B:\r\n");
+				printfUI("VUV:0x%X, ", IC[ic].rx_cfgb.vuv);
+				printfUI("VOV:0x%X, ", IC[ic].rx_cfgb.vov);
+				printfUI("DCTO:0x%X, ", IC[ic].rx_cfgb.dcto);
+				printfUI("DTRNG:0x%X, ", IC[ic].rx_cfgb.dtrng);
+				printfUI("DTMEN:0x%X, ", IC[ic].rx_cfgb.dtmen);
+				printfUI("DCC:0x%X\r\n\r\n", IC[ic].rx_cfgb.dcc);
+				printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+				printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.cfgr_pec);
 			} else if (grp == ALL_GRP) {
-				printfDma("Read Config A:\r\n");
-				printfDma("REFON:0x%X, ", IC[ic].rx_cfga.refon);
-				printfDma("CTH:0x%X\r\n", IC[ic].rx_cfga.cth & 0x07);
-				printfDma("FLAG_D[0]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x01));
-				printfDma("FLAG_D[1]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x02) >> 1);
-				printfDma("FLAG_D[2]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x04) >> 2);
-				printfDma("FLAG_D[3]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x08) >> 3);
-				printfDma("FLAG_D[4]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x10) >> 4);
-				printfDma("FLAG_D[5]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x20) >> 5);
-				printfDma("FLAG_D[6]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x40) >> 6);
-				printfDma("FLAG_D[7]:0x%X\r\n", (IC[ic].rx_cfga.flag_d & 0x80) >> 7);
-				printfDma("OWA[2:0]:0x%X, ", (IC[ic].rx_cfga.owa));
-				printfDma("OWRNG:0x%X, ", (IC[ic].rx_cfga.owrng));
-				printfDma("SOAKON:0x%X, ", (IC[ic].rx_cfga.soakon));
-				printfDma("GPO:0x%X, ", (IC[ic].rx_cfga.gpo));
-				printfDma("FC:0x%X, ", (IC[ic].rx_cfga.fc));
-				printfDma("COMM_BK:0x%X, ", (IC[ic].rx_cfga.comm_bk));
-				printfDma("MUTE_ST:0x%X, ", (IC[ic].rx_cfga.mute_st));
-				printfDma("SNAP:0x%X\r\n\r\n", (IC[ic].rx_cfga.snap));
+				printfUI("Read Config A:\r\n");
+				printfUI("REFON:0x%X, ", IC[ic].rx_cfga.refon);
+				printfUI("CTH:0x%X\r\n", IC[ic].rx_cfga.cth & 0x07);
+				printfUI("FLAG_D[0]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x01));
+				printfUI("FLAG_D[1]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x02) >> 1);
+				printfUI("FLAG_D[2]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x04) >> 2);
+				printfUI("FLAG_D[3]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x08) >> 3);
+				printfUI("FLAG_D[4]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x10) >> 4);
+				printfUI("FLAG_D[5]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x20) >> 5);
+				printfUI("FLAG_D[6]:0x%X, ", (IC[ic].rx_cfga.flag_d & 0x40) >> 6);
+				printfUI("FLAG_D[7]:0x%X\r\n", (IC[ic].rx_cfga.flag_d & 0x80) >> 7);
+				printfUI("OWA[2:0]:0x%X, ", (IC[ic].rx_cfga.owa));
+				printfUI("OWRNG:0x%X, ", (IC[ic].rx_cfga.owrng));
+				printfUI("SOAKON:0x%X, ", (IC[ic].rx_cfga.soakon));
+				printfUI("GPO:0x%X, ", (IC[ic].rx_cfga.gpo));
+				printfUI("FC:0x%X, ", (IC[ic].rx_cfga.fc));
+				printfUI("COMM_BK:0x%X, ", (IC[ic].rx_cfga.comm_bk));
+				printfUI("MUTE_ST:0x%X, ", (IC[ic].rx_cfga.mute_st));
+				printfUI("SNAP:0x%X\r\n\r\n", (IC[ic].rx_cfga.snap));
 
-				printfDma("Read Config B:\r\n");
-				printfDma("VUV:0x%X, ", IC[ic].rx_cfgb.vuv);
-				printfDma("VOV:0x%X, ", IC[ic].rx_cfgb.vov);
-				printfDma("DCTO:0x%X, ", IC[ic].rx_cfgb.dcto);
-				printfDma("DTRNG:0x%X, ", IC[ic].rx_cfgb.dtrng);
-				printfDma("DTMEN:0x%X, ", IC[ic].rx_cfgb.dtmen);
-				printfDma("DCC:0x%X\r\n\r\n", IC[ic].rx_cfgb.dcc);
-				printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-				printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.cfgr_pec);
+				printfUI("Read Config B:\r\n");
+				printfUI("VUV:0x%X, ", IC[ic].rx_cfgb.vuv);
+				printfUI("VOV:0x%X, ", IC[ic].rx_cfgb.vov);
+				printfUI("DCTO:0x%X, ", IC[ic].rx_cfgb.dcto);
+				printfUI("DTRNG:0x%X, ", IC[ic].rx_cfgb.dtrng);
+				printfUI("DTMEN:0x%X, ", IC[ic].rx_cfgb.dtmen);
+				printfUI("DCC:0x%X\r\n\r\n", IC[ic].rx_cfgb.dcc);
+				printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+				printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.cfgr_pec);
 			} else {
-				printfDma("Wrong Register Group Select\r\n");
+				printfUI("Wrong Register Group Select\r\n");
 			}
 		}
 	}
@@ -206,7 +207,7 @@ void printVoltages(uint8_t tIC, cell_asic *IC, TYPE type) {
 		channel = RAUX;
 	}
 	for (uint8_t ic = 0; ic < tIC; ic++) {
-		printfDma("IC%d:", (ic + 1));
+		printfUI("IC%d:", (ic + 1));
 		for (uint8_t index = 0; index < channel; index++) {
 			if (type == Cell) {
 				temp = IC[ic].cell.c_codes[index];
@@ -223,50 +224,54 @@ void printVoltages(uint8_t tIC, cell_asic *IC, TYPE type) {
 			}
 			voltage = getVoltage(temp);
 			if (type == Cell) {
-				printfDma("C%d=%fV,", (index + 1), voltage);
+				printfUI("C%d=%.4fV,", (index + 1), voltage);
 				if (index == (channel - 1)) {
-					printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-					printfDma("PECError:%d", IC[ic].cccrc.cell_pec);
+					printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+					printfUI("PECError:%d", IC[ic].cccrc.cell_pec);
 				}
 			} else if (type == AvgCell) {
-				printfDma("AC%d=%fV,", (index + 1), voltage);
+				printfUI("AC%d=%.4fV,", (index + 1), voltage);
 				if (index == (channel - 1)) {
-					printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-					printfDma("PECError:%d", IC[ic].cccrc.acell_pec);
+					printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+					printfUI("PECError:%d", IC[ic].cccrc.acell_pec);
 				}
 			} else if (type == F_volt) {
-				printfDma("FC%d=%fV,", (index + 1), voltage);
+				printfUI("FC%d=%.4fV,", (index + 1), voltage);
 				if (index == (channel - 1)) {
-					printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-					printfDma("PECError:%d", IC[ic].cccrc.fcell_pec);
+					printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+					printfUI("PECError:%d", IC[ic].cccrc.fcell_pec);
 				}
 			} else if (type == S_volt) {
-				printfDma("S%d=%fV,", (index + 1), voltage);
+				printfUI("S%d=%.4fV,", (index + 1), voltage);
 				if (index == (channel - 1)) {
-					printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-					printfDma("PECError:%d", IC[ic].cccrc.scell_pec);
+					printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+					printfUI("PECError:%d", IC[ic].cccrc.scell_pec);
 				}
 			} else if (type == Aux) {
-				if (index <= 9) {
-					printfDma("AUX%d=%fV,", (index + 1), voltage);
-				} else if (index == 10) {
-					printfDma("VMV:%fV,", (20 * voltage));
-				} else if (index == 11) {
-					printfDma("V+:%fV,", (20 * voltage));
-					printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-					printfDma("PECError:%d", IC[ic].cccrc.aux_pec);
-				}
+			    if (index <= 9) {
+			        printfUI("AUX%d=%.4fV,", (index + 1), voltage);
+			    } else if (index == 10) {
+			        printfUI("VMV:%.4fV,", (20 * voltage));
+			    } else if (index == 11) {
+			        printfUI("V+:%.4fV,", (20 * voltage));
+			        printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+			        printfUI("PECError:%d", IC[ic].cccrc.aux_pec);
+			    }
 			} else if (type == RAux) {
-				printfDma("RAUX%d=%fV,", (index + 1), voltage);
-				if (index == (channel - 1)) {
-					printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-					printfDma("PECError:%d", IC[ic].cccrc.raux_pec);
-				}
+				//NOTE: Added printing temperatures along aux voltage readings
+			    float temperature = getTemperature(temp);
+			    printfUI("RAUX%d=%.4fV,", (index + 1), voltage);
+			    printfUI("RT%d=%.2fC,", (index + 1), temperature);
+
+			    if (index == (channel - 1)) {
+			        printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+			        printfUI("PECError:%d", IC[ic].cccrc.raux_pec);
+			    }
 			} else {
-				printfDma("Wrong Register Group Select\r\n");
+				printfUI("Wrong Register Group Select\r\n");
 			}
 		}
-		printfDma("\r\n\r\n");
+		printfUI("\r\n\r\n");
 	}
 }
 
@@ -293,187 +298,187 @@ void printVoltages(uint8_t tIC, cell_asic *IC, TYPE type) {
 void printStatus(uint8_t tIC, cell_asic *IC, TYPE type, GRP grp) {
 	float voltage;
 	for (uint8_t ic = 0; ic < tIC; ic++) {
-		printfDma("IC%d:\r\n", (ic + 1));
+		printfUI("IC%d:\r\n", (ic + 1));
 		if (type == Status) {
 			if (grp == A) {
-				printfDma("Status A:\r\n");
+				printfUI("Status A:\r\n");
 				voltage = getVoltage(IC[ic].stata.vref2);
-				printfDma("VREF2:%fV, ", voltage);
+				printfUI("VREF2:%fV, ", voltage);
 				voltage = getVoltage(IC[ic].stata.vref3);
-				printfDma("VREF3:%fV, ", voltage);
+				printfUI("VREF3:%fV, ", voltage);
 				voltage = getVoltage(IC[ic].stata.itmp);
-				printfDma("ITMP:%f�C\r\n", (voltage / 0.0075) - 273);
+				printfUI("ITMP:%f�C\r\n", (voltage / 0.0075) - 273);
 
-				printfDma("CCount:%d, ", IC[ic].cccrc.cmd_cntr);
-				printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.stat_pec);
+				printfUI("CCount:%d, ", IC[ic].cccrc.cmd_cntr);
+				printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.stat_pec);
 			} else if (grp == B) {
-				printfDma("Status B:\r\n");
+				printfUI("Status B:\r\n");
 				voltage = getVoltage(IC[ic].statb.va);
-				printfDma("VA:%fV, ", voltage);
+				printfUI("VA:%fV, ", voltage);
 				voltage = getVoltage(IC[ic].statb.vd);
-				printfDma("VD:%fV, ", voltage);
+				printfUI("VD:%fV, ", voltage);
 				voltage = getVoltage(IC[ic].statb.vr4k);
-				printfDma("VR4K:%fV\r\n", voltage);
+				printfUI("VR4K:%fV\r\n", voltage);
 
-				printfDma("CCount:%d, ", IC[ic].cccrc.cmd_cntr);
-				printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.stat_pec);
+				printfUI("CCount:%d, ", IC[ic].cccrc.cmd_cntr);
+				printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.stat_pec);
 			} else if (grp == C) {
-				printfDma("Status C:\r\n");
-				printfDma("CSFLT:0x%X, ", IC[ic].statc.cs_flt);
+				printfUI("Status C:\r\n");
+				printfUI("CSFLT:0x%X, ", IC[ic].statc.cs_flt);
 
-				printfDma("OTP2_MED:0x%X, ", IC[ic].statc.otp2_med);
-				printfDma("OTP2_ED:0x%X, ", IC[ic].statc.otp2_ed);
-				printfDma("OTP1_MED:0x%X ", IC[ic].statc.otp1_med);
-				printfDma("OTP1_ED:0x%X, ", IC[ic].statc.otp1_ed);
-				printfDma("VD_UV:0x%X, ", IC[ic].statc.vd_uv);
-				printfDma("VD_OV:0x%X, ", IC[ic].statc.vd_ov);
-				printfDma("VA_UV:0x%X, ", IC[ic].statc.va_uv);
-				printfDma("VA_OV:0x%X\r\n", IC[ic].statc.va_ov);
+				printfUI("OTP2_MED:0x%X, ", IC[ic].statc.otp2_med);
+				printfUI("OTP2_ED:0x%X, ", IC[ic].statc.otp2_ed);
+				printfUI("OTP1_MED:0x%X ", IC[ic].statc.otp1_med);
+				printfUI("OTP1_ED:0x%X, ", IC[ic].statc.otp1_ed);
+				printfUI("VD_UV:0x%X, ", IC[ic].statc.vd_uv);
+				printfUI("VD_OV:0x%X, ", IC[ic].statc.vd_ov);
+				printfUI("VA_UV:0x%X, ", IC[ic].statc.va_uv);
+				printfUI("VA_OV:0x%X\r\n", IC[ic].statc.va_ov);
 
-				printfDma("OSCCHK:0x%X, ", IC[ic].statc.oscchk);
-				printfDma("TMODCHK:0x%X, ", IC[ic].statc.tmodchk);
-				printfDma("THSD:0x%X, ", IC[ic].statc.thsd);
-				printfDma("SLEEP:0x%X, ", IC[ic].statc.sleep);
-				printfDma("SPIFLT:0x%X, ", IC[ic].statc.spiflt);
-				printfDma("COMP:0x%X, ", IC[ic].statc.comp);
-				printfDma("VDEL:0x%X, ", IC[ic].statc.vdel);
-				printfDma("VDE:0x%X\r\n", IC[ic].statc.vde);
+				printfUI("OSCCHK:0x%X, ", IC[ic].statc.oscchk);
+				printfUI("TMODCHK:0x%X, ", IC[ic].statc.tmodchk);
+				printfUI("THSD:0x%X, ", IC[ic].statc.thsd);
+				printfUI("SLEEP:0x%X, ", IC[ic].statc.sleep);
+				printfUI("SPIFLT:0x%X, ", IC[ic].statc.spiflt);
+				printfUI("COMP:0x%X, ", IC[ic].statc.comp);
+				printfUI("VDEL:0x%X, ", IC[ic].statc.vdel);
+				printfUI("VDE:0x%X\r\n", IC[ic].statc.vde);
 
-				printfDma("CCount:%d, ", IC[ic].cccrc.cmd_cntr);
-				printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.stat_pec);
+				printfUI("CCount:%d, ", IC[ic].cccrc.cmd_cntr);
+				printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.stat_pec);
 			} else if (grp == D) {
-				printfDma("Status D:\r\n");
-				printfDma("C1UV:0x%X, ", IC[ic].statd.c_uv[0]);
-				printfDma("C2UV:0x%X, ", IC[ic].statd.c_uv[1]);
-				printfDma("C3UV:0x%X, ", IC[ic].statd.c_uv[2]);
-				printfDma("C4UV:0x%X, ", IC[ic].statd.c_uv[3]);
-				printfDma("C5UV:0x%X, ", IC[ic].statd.c_uv[4]);
-				printfDma("C6UV:0x%X, ", IC[ic].statd.c_uv[5]);
-				printfDma("C7UV:0x%X, ", IC[ic].statd.c_uv[6]);
-				printfDma("C8UV:0x%X, ", IC[ic].statd.c_uv[7]);
-				printfDma("C9UV:0x%X, ", IC[ic].statd.c_uv[8]);
-				printfDma("C10UV:0x%X, ", IC[ic].statd.c_uv[9]);
-				printfDma("C11UV:0x%X, ", IC[ic].statd.c_uv[10]);
-				printfDma("C12UV:0x%X, ", IC[ic].statd.c_uv[11]);
-				printfDma("C13UV:0x%X, ", IC[ic].statd.c_uv[12]);
-				printfDma("C14UV:0x%X, ", IC[ic].statd.c_uv[13]);
-				printfDma("C15UV:0x%X, ", IC[ic].statd.c_uv[14]);
-				printfDma("C16UV:0x%X\r\n", IC[ic].statd.c_uv[15]);
+				printfUI("Status D:\r\n");
+				printfUI("C1UV:0x%X, ", IC[ic].statd.c_uv[0]);
+				printfUI("C2UV:0x%X, ", IC[ic].statd.c_uv[1]);
+				printfUI("C3UV:0x%X, ", IC[ic].statd.c_uv[2]);
+				printfUI("C4UV:0x%X, ", IC[ic].statd.c_uv[3]);
+				printfUI("C5UV:0x%X, ", IC[ic].statd.c_uv[4]);
+				printfUI("C6UV:0x%X, ", IC[ic].statd.c_uv[5]);
+				printfUI("C7UV:0x%X, ", IC[ic].statd.c_uv[6]);
+				printfUI("C8UV:0x%X, ", IC[ic].statd.c_uv[7]);
+				printfUI("C9UV:0x%X, ", IC[ic].statd.c_uv[8]);
+				printfUI("C10UV:0x%X, ", IC[ic].statd.c_uv[9]);
+				printfUI("C11UV:0x%X, ", IC[ic].statd.c_uv[10]);
+				printfUI("C12UV:0x%X, ", IC[ic].statd.c_uv[11]);
+				printfUI("C13UV:0x%X, ", IC[ic].statd.c_uv[12]);
+				printfUI("C14UV:0x%X, ", IC[ic].statd.c_uv[13]);
+				printfUI("C15UV:0x%X, ", IC[ic].statd.c_uv[14]);
+				printfUI("C16UV:0x%X\r\n", IC[ic].statd.c_uv[15]);
 
-				printfDma("C1OV:0x%X, ", IC[ic].statd.c_ov[0]);
-				printfDma("C2OV:0x%X, ", IC[ic].statd.c_ov[1]);
-				printfDma("C3OV:0x%X, ", IC[ic].statd.c_ov[2]);
-				printfDma("C4OV:0x%X, ", IC[ic].statd.c_ov[3]);
-				printfDma("C5OV:0x%X, ", IC[ic].statd.c_ov[4]);
-				printfDma("C6OV:0x%X, ", IC[ic].statd.c_ov[5]);
-				printfDma("C7OV:0x%X, ", IC[ic].statd.c_ov[6]);
-				printfDma("C8OV:0x%X, ", IC[ic].statd.c_ov[7]);
-				printfDma("C9OV:0x%X, ", IC[ic].statd.c_ov[8]);
-				printfDma("C10OV:0x%X, ", IC[ic].statd.c_ov[9]);
-				printfDma("C11OV:0x%X, ", IC[ic].statd.c_ov[10]);
-				printfDma("C12OV:0x%X, ", IC[ic].statd.c_ov[11]);
-				printfDma("C13OV:0x%X, ", IC[ic].statd.c_ov[12]);
-				printfDma("C14OV:0x%X, ", IC[ic].statd.c_ov[13]);
-				printfDma("C15OV:0x%X, ", IC[ic].statd.c_ov[14]);
-				printfDma("C16OV:0x%X\r\n", IC[ic].statd.c_ov[15]);
+				printfUI("C1OV:0x%X, ", IC[ic].statd.c_ov[0]);
+				printfUI("C2OV:0x%X, ", IC[ic].statd.c_ov[1]);
+				printfUI("C3OV:0x%X, ", IC[ic].statd.c_ov[2]);
+				printfUI("C4OV:0x%X, ", IC[ic].statd.c_ov[3]);
+				printfUI("C5OV:0x%X, ", IC[ic].statd.c_ov[4]);
+				printfUI("C6OV:0x%X, ", IC[ic].statd.c_ov[5]);
+				printfUI("C7OV:0x%X, ", IC[ic].statd.c_ov[6]);
+				printfUI("C8OV:0x%X, ", IC[ic].statd.c_ov[7]);
+				printfUI("C9OV:0x%X, ", IC[ic].statd.c_ov[8]);
+				printfUI("C10OV:0x%X, ", IC[ic].statd.c_ov[9]);
+				printfUI("C11OV:0x%X, ", IC[ic].statd.c_ov[10]);
+				printfUI("C12OV:0x%X, ", IC[ic].statd.c_ov[11]);
+				printfUI("C13OV:0x%X, ", IC[ic].statd.c_ov[12]);
+				printfUI("C14OV:0x%X, ", IC[ic].statd.c_ov[13]);
+				printfUI("C15OV:0x%X, ", IC[ic].statd.c_ov[14]);
+				printfUI("C16OV:0x%X\r\n", IC[ic].statd.c_ov[15]);
 
-				printfDma("CTS:0x%X, ", IC[ic].statd.cts);
-				printfDma("CT:0x%X, ", IC[ic].statd.ct);
-				printfDma("OC_CNTR:0x%X\r\n", IC[ic].statd.oc_cntr);
+				printfUI("CTS:0x%X, ", IC[ic].statd.cts);
+				printfUI("CT:0x%X, ", IC[ic].statd.ct);
+				printfUI("OC_CNTR:0x%X\r\n", IC[ic].statd.oc_cntr);
 
-				printfDma("CCount:%d, ", IC[ic].cccrc.cmd_cntr);
-				printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.stat_pec);
+				printfUI("CCount:%d, ", IC[ic].cccrc.cmd_cntr);
+				printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.stat_pec);
 			} else if (grp == E) {
-				printfDma("Status E:\r\n");
-				printfDma("GPI:0x%X, ", IC[ic].state.gpi);
-				printfDma("REV_ID:0x%X\r\n", IC[ic].state.rev);
+				printfUI("Status E:\r\n");
+				printfUI("GPI:0x%X, ", IC[ic].state.gpi);
+				printfUI("REV_ID:0x%X\r\n", IC[ic].state.rev);
 
-				printfDma("CCount:%d, ", IC[ic].cccrc.cmd_cntr);
-				printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.stat_pec);
+				printfUI("CCount:%d, ", IC[ic].cccrc.cmd_cntr);
+				printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.stat_pec);
 			} else if (grp == ALL_GRP) {
-				printfDma("Status A:\r\n");
+				printfUI("Status A:\r\n");
 				voltage = getVoltage(IC[ic].stata.vref2);
-				printfDma("VREF2:%fV, ", voltage);
+				printfUI("VREF2:%fV, ", voltage);
 				voltage = getVoltage(IC[ic].stata.vref3);
-				printfDma("VREF3:%fV, ", voltage);
+				printfUI("VREF3:%fV, ", voltage);
 				voltage = getVoltage(IC[ic].stata.itmp);
-				printfDma("ITMP:%f�C\r\n\r\n", (voltage / 0.0075) - 273);
+				printfUI("ITMP:%f�C\r\n\r\n", (voltage / 0.0075) - 273);
 
-				printfDma("Status B:\r\n");
+				printfUI("Status B:\r\n");
 				voltage = getVoltage(IC[ic].statb.va);
-				printfDma("VA:%fV, ", voltage);
+				printfUI("VA:%fV, ", voltage);
 				voltage = getVoltage(IC[ic].statb.vd);
-				printfDma("VD:%fV, ", voltage);
+				printfUI("VD:%fV, ", voltage);
 				voltage = getVoltage(IC[ic].statb.vr4k);
-				printfDma("VR4K:%fV\r\n\r\n", voltage);
+				printfUI("VR4K:%fV\r\n\r\n", voltage);
 
-				printfDma("Status C:\r\n");
-				printfDma("CSFLT:0x%X, ", IC[ic].statc.cs_flt);
+				printfUI("Status C:\r\n");
+				printfUI("CSFLT:0x%X, ", IC[ic].statc.cs_flt);
 
-				printfDma("OTP2_MED:0x%X, ", IC[ic].statc.otp2_med);
-				printfDma("OTP2_ED:0x%X, ", IC[ic].statc.otp2_ed);
-				printfDma("OTP1_MED:0x%X, ", IC[ic].statc.otp1_med);
-				printfDma("OTP1_ED:0x%X, ", IC[ic].statc.otp1_ed);
-				printfDma("VD_UV:0x%X, ", IC[ic].statc.vd_uv);
-				printfDma("VD_OV:0x%X, ", IC[ic].statc.vd_ov);
-				printfDma("VA_UV:0x%X, ", IC[ic].statc.va_uv);
-				printfDma("VA_OV:0x%X\r\n", IC[ic].statc.va_ov);
+				printfUI("OTP2_MED:0x%X, ", IC[ic].statc.otp2_med);
+				printfUI("OTP2_ED:0x%X, ", IC[ic].statc.otp2_ed);
+				printfUI("OTP1_MED:0x%X, ", IC[ic].statc.otp1_med);
+				printfUI("OTP1_ED:0x%X, ", IC[ic].statc.otp1_ed);
+				printfUI("VD_UV:0x%X, ", IC[ic].statc.vd_uv);
+				printfUI("VD_OV:0x%X, ", IC[ic].statc.vd_ov);
+				printfUI("VA_UV:0x%X, ", IC[ic].statc.va_uv);
+				printfUI("VA_OV:0x%X\r\n", IC[ic].statc.va_ov);
 
-				printfDma("OSCCHK:0x%X, ", IC[ic].statc.oscchk);
-				printfDma("TMODCHK:0x%X, ", IC[ic].statc.tmodchk);
-				printfDma("THSD:0x%X, ", IC[ic].statc.thsd);
-				printfDma("SLEEP:0x%X, ", IC[ic].statc.sleep);
-				printfDma("SPIFLT:0x%X, ", IC[ic].statc.spiflt);
-				printfDma("COMP:0x%X, ", IC[ic].statc.comp);
-				printfDma("VDEL:0x%X, ", IC[ic].statc.vdel);
-				printfDma("VDE:0x%X\r\n\r\n", IC[ic].statc.vde);
+				printfUI("OSCCHK:0x%X, ", IC[ic].statc.oscchk);
+				printfUI("TMODCHK:0x%X, ", IC[ic].statc.tmodchk);
+				printfUI("THSD:0x%X, ", IC[ic].statc.thsd);
+				printfUI("SLEEP:0x%X, ", IC[ic].statc.sleep);
+				printfUI("SPIFLT:0x%X, ", IC[ic].statc.spiflt);
+				printfUI("COMP:0x%X, ", IC[ic].statc.comp);
+				printfUI("VDEL:0x%X, ", IC[ic].statc.vdel);
+				printfUI("VDE:0x%X\r\n\r\n", IC[ic].statc.vde);
 
-				printfDma("Status D:\r\n");
-				printfDma("C1UV:0x%X, ", IC[ic].statd.c_uv[0]);
-				printfDma("C2UV:0x%X, ", IC[ic].statd.c_uv[1]);
-				printfDma("C3UV:0x%X, ", IC[ic].statd.c_uv[2]);
-				printfDma("C4UV:0x%X, ", IC[ic].statd.c_uv[3]);
-				printfDma("C5UV:0x%X, ", IC[ic].statd.c_uv[4]);
-				printfDma("C6UV:0x%X, ", IC[ic].statd.c_uv[5]);
-				printfDma("C7UV:0x%X, ", IC[ic].statd.c_uv[6]);
-				printfDma("C8UV:0x%X, ", IC[ic].statd.c_uv[7]);
-				printfDma("C9UV:0x%X, ", IC[ic].statd.c_uv[8]);
-				printfDma("C10UV:0x%X, ", IC[ic].statd.c_uv[9]);
-				printfDma("C11UV:0x%X, ", IC[ic].statd.c_uv[10]);
-				printfDma("C12UV:0x%X, ", IC[ic].statd.c_uv[11]);
-				printfDma("C13UV:0x%X, ", IC[ic].statd.c_uv[12]);
-				printfDma("C14UV:0x%X, ", IC[ic].statd.c_uv[13]);
-				printfDma("C15UV:0x%X, ", IC[ic].statd.c_uv[14]);
-				printfDma("C16UV:0x%X\r\n", IC[ic].statd.c_uv[15]);
+				printfUI("Status D:\r\n");
+				printfUI("C1UV:0x%X, ", IC[ic].statd.c_uv[0]);
+				printfUI("C2UV:0x%X, ", IC[ic].statd.c_uv[1]);
+				printfUI("C3UV:0x%X, ", IC[ic].statd.c_uv[2]);
+				printfUI("C4UV:0x%X, ", IC[ic].statd.c_uv[3]);
+				printfUI("C5UV:0x%X, ", IC[ic].statd.c_uv[4]);
+				printfUI("C6UV:0x%X, ", IC[ic].statd.c_uv[5]);
+				printfUI("C7UV:0x%X, ", IC[ic].statd.c_uv[6]);
+				printfUI("C8UV:0x%X, ", IC[ic].statd.c_uv[7]);
+				printfUI("C9UV:0x%X, ", IC[ic].statd.c_uv[8]);
+				printfUI("C10UV:0x%X, ", IC[ic].statd.c_uv[9]);
+				printfUI("C11UV:0x%X, ", IC[ic].statd.c_uv[10]);
+				printfUI("C12UV:0x%X, ", IC[ic].statd.c_uv[11]);
+				printfUI("C13UV:0x%X, ", IC[ic].statd.c_uv[12]);
+				printfUI("C14UV:0x%X, ", IC[ic].statd.c_uv[13]);
+				printfUI("C15UV:0x%X, ", IC[ic].statd.c_uv[14]);
+				printfUI("C16UV:0x%X\r\n", IC[ic].statd.c_uv[15]);
 
-				printfDma("C1OV:0x%X, ", IC[ic].statd.c_ov[0]);
-				printfDma("C2OV:0x%X, ", IC[ic].statd.c_ov[1]);
-				printfDma("C3OV:0x%X, ", IC[ic].statd.c_ov[2]);
-				printfDma("C4OV:0x%X, ", IC[ic].statd.c_ov[3]);
-				printfDma("C5OV:0x%X, ", IC[ic].statd.c_ov[4]);
-				printfDma("C6OV:0x%X, ", IC[ic].statd.c_ov[5]);
-				printfDma("C7OV:0x%X, ", IC[ic].statd.c_ov[6]);
-				printfDma("C8OV:0x%X, ", IC[ic].statd.c_ov[7]);
-				printfDma("C9OV:0x%X, ", IC[ic].statd.c_ov[8]);
-				printfDma("C10OV:0x%X, ", IC[ic].statd.c_ov[9]);
-				printfDma("C11OV:0x%X, ", IC[ic].statd.c_ov[10]);
-				printfDma("C12OV:0x%X, ", IC[ic].statd.c_ov[11]);
-				printfDma("C13OV:0x%X, ", IC[ic].statd.c_ov[12]);
-				printfDma("C14OV:0x%X, ", IC[ic].statd.c_ov[13]);
-				printfDma("C15OV:0x%X, ", IC[ic].statd.c_ov[14]);
-				printfDma("C16OV:0x%X\r\n", IC[ic].statd.c_ov[15]);
+				printfUI("C1OV:0x%X, ", IC[ic].statd.c_ov[0]);
+				printfUI("C2OV:0x%X, ", IC[ic].statd.c_ov[1]);
+				printfUI("C3OV:0x%X, ", IC[ic].statd.c_ov[2]);
+				printfUI("C4OV:0x%X, ", IC[ic].statd.c_ov[3]);
+				printfUI("C5OV:0x%X, ", IC[ic].statd.c_ov[4]);
+				printfUI("C6OV:0x%X, ", IC[ic].statd.c_ov[5]);
+				printfUI("C7OV:0x%X, ", IC[ic].statd.c_ov[6]);
+				printfUI("C8OV:0x%X, ", IC[ic].statd.c_ov[7]);
+				printfUI("C9OV:0x%X, ", IC[ic].statd.c_ov[8]);
+				printfUI("C10OV:0x%X, ", IC[ic].statd.c_ov[9]);
+				printfUI("C11OV:0x%X, ", IC[ic].statd.c_ov[10]);
+				printfUI("C12OV:0x%X, ", IC[ic].statd.c_ov[11]);
+				printfUI("C13OV:0x%X, ", IC[ic].statd.c_ov[12]);
+				printfUI("C14OV:0x%X, ", IC[ic].statd.c_ov[13]);
+				printfUI("C15OV:0x%X, ", IC[ic].statd.c_ov[14]);
+				printfUI("C16OV:0x%X\r\n", IC[ic].statd.c_ov[15]);
 
-				printfDma("CTS:0x%X, ", IC[ic].statd.cts);
-				printfDma("CT:0x%X\r\n\r\n", IC[ic].statd.ct);
+				printfUI("CTS:0x%X, ", IC[ic].statd.cts);
+				printfUI("CT:0x%X\r\n\r\n", IC[ic].statd.ct);
 
-				printfDma("Status E:\r\n");
-				printfDma("GPI:0x%X, ", IC[ic].state.gpi);
-				printfDma("REV_ID:0x%X\r\n\r\n", IC[ic].state.rev);
+				printfUI("Status E:\r\n");
+				printfUI("GPI:0x%X, ", IC[ic].state.gpi);
+				printfUI("REV_ID:0x%X\r\n\r\n", IC[ic].state.rev);
 
-				printfDma("CCount:%d, ", IC[ic].cccrc.cmd_cntr);
-				printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.stat_pec);
+				printfUI("CCount:%d, ", IC[ic].cccrc.cmd_cntr);
+				printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.stat_pec);
 			} else {
-				printfDma("Wrong Register Group Select\r\n");
+				printfUI("Wrong Register Group Select\r\n");
 			}
 		}
 	}
@@ -499,19 +504,19 @@ void printStatus(uint8_t tIC, cell_asic *IC, TYPE type, GRP grp) {
  */
 void printDeviceSID(uint8_t tIC, cell_asic *IC, TYPE type) {
 	for (uint8_t ic = 0; ic < tIC; ic++) {
-		printfDma("IC%d:\r\n", (ic + 1));
+		printfUI("IC%d:\r\n", (ic + 1));
 		if (type == Sid) {
-			printfDma("Read Device SID:\r\n");
-			printfDma("0x%X, ", IC[ic].sid.sid[0]);
-			printfDma("0x%X, ", IC[ic].sid.sid[1]);
-			printfDma("0x%X, ", IC[ic].sid.sid[2]);
-			printfDma("0x%X, ", IC[ic].sid.sid[3]);
-			printfDma("0x%X, ", IC[ic].sid.sid[4]);
-			printfDma("0x%X, ", IC[ic].sid.sid[5]);
-			printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-			printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.sid_pec);
+			printfUI("Read Device SID:\r\n");
+			printfUI("0x%X, ", IC[ic].sid.sid[0]);
+			printfUI("0x%X, ", IC[ic].sid.sid[1]);
+			printfUI("0x%X, ", IC[ic].sid.sid[2]);
+			printfUI("0x%X, ", IC[ic].sid.sid[3]);
+			printfUI("0x%X, ", IC[ic].sid.sid[4]);
+			printfUI("0x%X, ", IC[ic].sid.sid[5]);
+			printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+			printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.sid_pec);
 		} else {
-			printfDma("Wrong Register Type Select\r\n");
+			printfUI("Wrong Register Type Select\r\n");
 		}
 	}
 }
@@ -538,33 +543,33 @@ void printDeviceSID(uint8_t tIC, cell_asic *IC, TYPE type) {
  */
 void printWritePwmDutyCycle(uint8_t tIC, cell_asic *IC, TYPE type, GRP grp) {
 	for (uint8_t ic = 0; ic < tIC; ic++) {
-		printfDma("IC%d:\r\n", (ic + 1));
+		printfUI("IC%d:\r\n", (ic + 1));
 		if (grp == A) {
-			printfDma("Write Pwma Duty Cycle:\r\n");
-			printfDma("0x%X, ", IC[ic].pwma.tx_data[0]);
-			printfDma("0x%X, ", IC[ic].pwma.tx_data[1]);
-			printfDma("0x%X, ", IC[ic].pwma.tx_data[2]);
-			printfDma("0x%X, ", IC[ic].pwma.tx_data[3]);
-			printfDma("0x%X, ", IC[ic].pwma.tx_data[4]);
-			printfDma("0x%X\r\n\r\n", IC[ic].pwma.tx_data[5]);
+			printfUI("Write Pwma Duty Cycle:\r\n");
+			printfUI("0x%X, ", IC[ic].pwma.tx_data[0]);
+			printfUI("0x%X, ", IC[ic].pwma.tx_data[1]);
+			printfUI("0x%X, ", IC[ic].pwma.tx_data[2]);
+			printfUI("0x%X, ", IC[ic].pwma.tx_data[3]);
+			printfUI("0x%X, ", IC[ic].pwma.tx_data[4]);
+			printfUI("0x%X\r\n\r\n", IC[ic].pwma.tx_data[5]);
 		} else if (grp == B) {
-			printfDma("Write Pwmb Duty Cycle:\r\n");
-			printfDma("0x%X, ", IC[ic].pwmb.tx_data[0]);
-			printfDma("0x%X\r\n\r\n", IC[ic].pwmb.tx_data[1]);
+			printfUI("Write Pwmb Duty Cycle:\r\n");
+			printfUI("0x%X, ", IC[ic].pwmb.tx_data[0]);
+			printfUI("0x%X\r\n\r\n", IC[ic].pwmb.tx_data[1]);
 		} else if (grp == ALL_GRP) {
-			printfDma("Write Pwma Duty Cycle:\r\n");
-			printfDma("0x%X, ", IC[ic].pwma.tx_data[0]);
-			printfDma("0x%X, ", IC[ic].pwma.tx_data[1]);
-			printfDma("0x%X, ", IC[ic].pwma.tx_data[2]);
-			printfDma("0x%X, ", IC[ic].pwma.tx_data[3]);
-			printfDma("0x%X, ", IC[ic].pwma.tx_data[4]);
-			printfDma("0x%X\r\n", IC[ic].pwma.tx_data[5]);
+			printfUI("Write Pwma Duty Cycle:\r\n");
+			printfUI("0x%X, ", IC[ic].pwma.tx_data[0]);
+			printfUI("0x%X, ", IC[ic].pwma.tx_data[1]);
+			printfUI("0x%X, ", IC[ic].pwma.tx_data[2]);
+			printfUI("0x%X, ", IC[ic].pwma.tx_data[3]);
+			printfUI("0x%X, ", IC[ic].pwma.tx_data[4]);
+			printfUI("0x%X\r\n", IC[ic].pwma.tx_data[5]);
 
-			printfDma("Write Pwmb Duty Cycle:\r\n");
-			printfDma("0x%X, ", IC[ic].pwmb.tx_data[0]);
-			printfDma("0x%X\r\n\r\n", IC[ic].pwmb.tx_data[1]);
+			printfUI("Write Pwmb Duty Cycle:\r\n");
+			printfUI("0x%X, ", IC[ic].pwmb.tx_data[0]);
+			printfUI("0x%X\r\n\r\n", IC[ic].pwmb.tx_data[1]);
 		} else {
-			printfDma("Wrong Register Group Select\r\n");
+			printfUI("Wrong Register Group Select\r\n");
 		}
 	}
 }
@@ -591,55 +596,55 @@ void printWritePwmDutyCycle(uint8_t tIC, cell_asic *IC, TYPE type, GRP grp) {
  */
 void printReadPwmDutyCycle(uint8_t tIC, cell_asic *IC, TYPE type, GRP grp) {
 	for (uint8_t ic = 0; ic < tIC; ic++) {
-		printfDma("IC%d:\r\n", (ic + 1));
+		printfUI("IC%d:\r\n", (ic + 1));
 		if (grp == A) {
-			printfDma("Read PWMA Duty Cycle:\r\n");
-			printfDma("PWM1:0x%X, ", IC[ic].PwmA.pwma[0]);
-			printfDma("PWM2:0x%X, ", IC[ic].PwmA.pwma[1]);
-			printfDma("PWM3:0x%X, ", IC[ic].PwmA.pwma[2]);
-			printfDma("PWM4:0x%X, ", IC[ic].PwmA.pwma[3]);
-			printfDma("PWM5:0x%X, ", IC[ic].PwmA.pwma[4]);
-			printfDma("PWM6:0x%X, ", IC[ic].PwmA.pwma[5]);
-			printfDma("PWM7:0x%X, ", IC[ic].PwmA.pwma[6]);
-			printfDma("PWM8:0x%X, ", IC[ic].PwmA.pwma[7]);
-			printfDma("PWM9:0x%X, ", IC[ic].PwmA.pwma[8]);
-			printfDma("PWM10:0x%X, ", IC[ic].PwmA.pwma[9]);
-			printfDma("PWM11:0x%X, ", IC[ic].PwmA.pwma[10]);
-			printfDma("PWM12:0x%X, ", IC[ic].PwmA.pwma[11]);
-			printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-			printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.pwm_pec);
+			printfUI("Read PWMA Duty Cycle:\r\n");
+			printfUI("PWM1:0x%X, ", IC[ic].PwmA.pwma[0]);
+			printfUI("PWM2:0x%X, ", IC[ic].PwmA.pwma[1]);
+			printfUI("PWM3:0x%X, ", IC[ic].PwmA.pwma[2]);
+			printfUI("PWM4:0x%X, ", IC[ic].PwmA.pwma[3]);
+			printfUI("PWM5:0x%X, ", IC[ic].PwmA.pwma[4]);
+			printfUI("PWM6:0x%X, ", IC[ic].PwmA.pwma[5]);
+			printfUI("PWM7:0x%X, ", IC[ic].PwmA.pwma[6]);
+			printfUI("PWM8:0x%X, ", IC[ic].PwmA.pwma[7]);
+			printfUI("PWM9:0x%X, ", IC[ic].PwmA.pwma[8]);
+			printfUI("PWM10:0x%X, ", IC[ic].PwmA.pwma[9]);
+			printfUI("PWM11:0x%X, ", IC[ic].PwmA.pwma[10]);
+			printfUI("PWM12:0x%X, ", IC[ic].PwmA.pwma[11]);
+			printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+			printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.pwm_pec);
 		} else if (grp == B) {
-			printfDma("Read PWMB Duty Cycle:\r\n");
-			printfDma("PWM13:0x%X, ", IC[ic].PwmB.pwmb[0]);
-			printfDma("PWM14:0x%X, ", IC[ic].PwmB.pwmb[1]);
-			printfDma("PWM15:0x%X, ", IC[ic].PwmB.pwmb[2]);
-			printfDma("PWM16:0x%X, ", IC[ic].PwmB.pwmb[3]);
-			printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-			printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.pwm_pec);
+			printfUI("Read PWMB Duty Cycle:\r\n");
+			printfUI("PWM13:0x%X, ", IC[ic].PwmB.pwmb[0]);
+			printfUI("PWM14:0x%X, ", IC[ic].PwmB.pwmb[1]);
+			printfUI("PWM15:0x%X, ", IC[ic].PwmB.pwmb[2]);
+			printfUI("PWM16:0x%X, ", IC[ic].PwmB.pwmb[3]);
+			printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+			printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.pwm_pec);
 		} else if (grp == ALL_GRP) {
-			printfDma("Read PWMA Duty Cycle:\r\n");
-			printfDma("PWM1:0x%X, ", IC[ic].PwmA.pwma[0]);
-			printfDma("PWM2:0x%X, ", IC[ic].PwmA.pwma[1]);
-			printfDma("PWM3:0x%X, ", IC[ic].PwmA.pwma[2]);
-			printfDma("PWM4:0x%X, ", IC[ic].PwmA.pwma[3]);
-			printfDma("PWM5:0x%X, ", IC[ic].PwmA.pwma[4]);
-			printfDma("PWM6:0x%X, ", IC[ic].PwmA.pwma[5]);
-			printfDma("PWM7:0x%X, ", IC[ic].PwmA.pwma[6]);
-			printfDma("PWM8:0x%X, ", IC[ic].PwmA.pwma[7]);
-			printfDma("PWM9:0x%X, ", IC[ic].PwmA.pwma[8]);
-			printfDma("PWM10:0x%X, ", IC[ic].PwmA.pwma[9]);
-			printfDma("PWM11:0x%X, ", IC[ic].PwmA.pwma[10]);
-			printfDma("PWM12:0x%X\r\n", IC[ic].PwmA.pwma[11]);
+			printfUI("Read PWMA Duty Cycle:\r\n");
+			printfUI("PWM1:0x%X, ", IC[ic].PwmA.pwma[0]);
+			printfUI("PWM2:0x%X, ", IC[ic].PwmA.pwma[1]);
+			printfUI("PWM3:0x%X, ", IC[ic].PwmA.pwma[2]);
+			printfUI("PWM4:0x%X, ", IC[ic].PwmA.pwma[3]);
+			printfUI("PWM5:0x%X, ", IC[ic].PwmA.pwma[4]);
+			printfUI("PWM6:0x%X, ", IC[ic].PwmA.pwma[5]);
+			printfUI("PWM7:0x%X, ", IC[ic].PwmA.pwma[6]);
+			printfUI("PWM8:0x%X, ", IC[ic].PwmA.pwma[7]);
+			printfUI("PWM9:0x%X, ", IC[ic].PwmA.pwma[8]);
+			printfUI("PWM10:0x%X, ", IC[ic].PwmA.pwma[9]);
+			printfUI("PWM11:0x%X, ", IC[ic].PwmA.pwma[10]);
+			printfUI("PWM12:0x%X\r\n", IC[ic].PwmA.pwma[11]);
 
-			printfDma("Read PWMB Duty Cycle:\r\n");
-			printfDma("PWM13:0x%X, ", IC[ic].PwmB.pwmb[0]);
-			printfDma("PWM14:0x%X, ", IC[ic].PwmB.pwmb[1]);
-			printfDma("PWM15:0x%X, ", IC[ic].PwmB.pwmb[2]);
-			printfDma("PWM16:0x%X, ", IC[ic].PwmB.pwmb[3]);
-			printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-			printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.pwm_pec);
+			printfUI("Read PWMB Duty Cycle:\r\n");
+			printfUI("PWM13:0x%X, ", IC[ic].PwmB.pwmb[0]);
+			printfUI("PWM14:0x%X, ", IC[ic].PwmB.pwmb[1]);
+			printfUI("PWM15:0x%X, ", IC[ic].PwmB.pwmb[2]);
+			printfUI("PWM16:0x%X, ", IC[ic].PwmB.pwmb[3]);
+			printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+			printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.pwm_pec);
 		} else {
-			printfDma("Wrong Register Type Select\r\n");
+			printfUI("Wrong Register Type Select\r\n");
 		}
 	}
 }
@@ -664,17 +669,17 @@ void printReadPwmDutyCycle(uint8_t tIC, cell_asic *IC, TYPE type, GRP grp) {
  */
 void printWriteCommData(uint8_t tIC, cell_asic *IC, TYPE type) {
 	for (uint8_t ic = 0; ic < tIC; ic++) {
-		printfDma("IC%d:\r\n", (ic + 1));
+		printfUI("IC%d:\r\n", (ic + 1));
 		if (type == Comm) {
-			printfDma("Write Comm Data:\r\n");
-			printfDma("0x%X, ", IC[ic].com.tx_data[0]);
-			printfDma("0x%X, ", IC[ic].com.tx_data[1]);
-			printfDma("0x%X, ", IC[ic].com.tx_data[2]);
-			printfDma("0x%X, ", IC[ic].com.tx_data[3]);
-			printfDma("0x%X, ", IC[ic].com.tx_data[4]);
-			printfDma("0x%X\r\n\r\n", IC[ic].com.tx_data[5]);
+			printfUI("Write Comm Data:\r\n");
+			printfUI("0x%X, ", IC[ic].com.tx_data[0]);
+			printfUI("0x%X, ", IC[ic].com.tx_data[1]);
+			printfUI("0x%X, ", IC[ic].com.tx_data[2]);
+			printfUI("0x%X, ", IC[ic].com.tx_data[3]);
+			printfUI("0x%X, ", IC[ic].com.tx_data[4]);
+			printfUI("0x%X\r\n\r\n", IC[ic].com.tx_data[5]);
 		} else {
-			printfDma("Wrong Register Group Select\r\n");
+			printfUI("Wrong Register Group Select\r\n");
 		}
 	}
 }
@@ -699,22 +704,22 @@ void printWriteCommData(uint8_t tIC, cell_asic *IC, TYPE type) {
  */
 void printReadCommData(uint8_t tIC, cell_asic *IC, TYPE type) {
 	for (uint8_t ic = 0; ic < tIC; ic++) {
-		printfDma("IC%d:\r\n", (ic + 1));
+		printfUI("IC%d:\r\n", (ic + 1));
 		if (type == Comm) {
-			printfDma("Read Comm Data:\r\n");
-			printfDma("ICOM0:0x%X, ", IC[ic].comm.icomm[0]);
-			printfDma("ICOM1:0x%X, ", IC[ic].comm.icomm[1]);
-			printfDma("ICOM2:0x%X\r\n", IC[ic].comm.icomm[2]);
-			printfDma("FCOM0:0x%X, ", IC[ic].comm.fcomm[0]);
-			printfDma("FCOM1:0x%X, ", IC[ic].comm.fcomm[1]);
-			printfDma("FCOM2:0x%X\r\n", IC[ic].comm.fcomm[2]);
-			printfDma("DATA0:0x%X, ", IC[ic].comm.data[0]);
-			printfDma("DATA1:0x%X, ", IC[ic].comm.data[1]);
-			printfDma("DATA2:0x%X\r\n", IC[ic].comm.data[2]);
-			printfDma("CCount:%d,", IC[ic].cccrc.cmd_cntr);
-			printfDma("PECError:%d\r\n\r\n", IC[ic].cccrc.comm_pec);
+			printfUI("Read Comm Data:\r\n");
+			printfUI("ICOM0:0x%X, ", IC[ic].comm.icomm[0]);
+			printfUI("ICOM1:0x%X, ", IC[ic].comm.icomm[1]);
+			printfUI("ICOM2:0x%X\r\n", IC[ic].comm.icomm[2]);
+			printfUI("FCOM0:0x%X, ", IC[ic].comm.fcomm[0]);
+			printfUI("FCOM1:0x%X, ", IC[ic].comm.fcomm[1]);
+			printfUI("FCOM2:0x%X\r\n", IC[ic].comm.fcomm[2]);
+			printfUI("DATA0:0x%X, ", IC[ic].comm.data[0]);
+			printfUI("DATA1:0x%X, ", IC[ic].comm.data[1]);
+			printfUI("DATA2:0x%X\r\n", IC[ic].comm.data[2]);
+			printfUI("CCount:%d,", IC[ic].cccrc.cmd_cntr);
+			printfUI("PECError:%d\r\n\r\n", IC[ic].cccrc.comm_pec);
 		} else {
-			printfDma("Wrong Register Type Select\r\n");
+			printfUI("Wrong Register Type Select\r\n");
 		}
 	}
 }
@@ -739,59 +744,59 @@ void printReadCommData(uint8_t tIC, cell_asic *IC, TYPE type) {
  */
 void printDiagnosticTestResult(uint8_t tIC, cell_asic *IC, DIAGNOSTIC_TYPE type) {
 	if (type == OSC_MISMATCH) {
-		printfDma("OSC Diagnostic Test:\r\n");
+		printfUI("OSC Diagnostic Test:\r\n");
 		for (uint8_t ic = 0; ic < tIC; ic++) {
-			printfDma("IC%d:", (ic + 1));
+			printfUI("IC%d:", (ic + 1));
 			diagnosticTestResultPrint(IC[ic].diag_result.osc_mismatch);
 		}
-		printfDma("\r\n\r\n");
+		printfUI("\r\n\r\n");
 	}
 
 	else if (type == SUPPLY_ERROR) {
-		printfDma("Force Supply Error Detection Test:\r\n");
+		printfUI("Force Supply Error Detection Test:\r\n");
 		for (uint8_t ic = 0; ic < tIC; ic++) {
-			printfDma("IC%d:", (ic + 1));
+			printfUI("IC%d:", (ic + 1));
 			diagnosticTestResultPrint(IC[ic].diag_result.supply_error);
 		}
-		printfDma("\r\n\r\n");
+		printfUI("\r\n\r\n");
 	}
 
 	else if (type == THSD) {
-		printfDma("Thsd Diagnostic Test:\r\n");
+		printfUI("Thsd Diagnostic Test:\r\n");
 		for (uint8_t ic = 0; ic < tIC; ic++) {
-			printfDma("IC%d:", (ic + 1));
+			printfUI("IC%d:", (ic + 1));
 			diagnosticTestResultPrint(IC[ic].diag_result.thsd);
 		}
-		printfDma("\r\n\r\n");
+		printfUI("\r\n\r\n");
 	}
 
 	else if (type == FUSE_ED) {
-		printfDma("Fuse_ed Diagnostic Test:\r\n");
+		printfUI("Fuse_ed Diagnostic Test:\r\n");
 		for (uint8_t ic = 0; ic < tIC; ic++) {
-			printfDma("IC%d:", (ic + 1));
+			printfUI("IC%d:", (ic + 1));
 			diagnosticTestResultPrint(IC[ic].diag_result.fuse_ed);
 		}
-		printfDma("\r\n\r\n");
+		printfUI("\r\n\r\n");
 	}
 
 	else if (type == FUSE_MED) {
-		printfDma("Fuse_med Diagnostic Test:\r\n");
+		printfUI("Fuse_med Diagnostic Test:\r\n");
 		for (uint8_t ic = 0; ic < tIC; ic++) {
-			printfDma("IC%d:", (ic + 1));
+			printfUI("IC%d:", (ic + 1));
 			diagnosticTestResultPrint(IC[ic].diag_result.fuse_med);
 		}
-		printfDma("\r\n\r\n");
+		printfUI("\r\n\r\n");
 	}
 
 	else if (type == TMODCHK) {
-		printfDma("TMODCHK Diagnostic Test:\r\n");
+		printfUI("TMODCHK Diagnostic Test:\r\n");
 		for (uint8_t ic = 0; ic < tIC; ic++) {
-			printfDma("IC%d:", (ic + 1));
+			printfUI("IC%d:", (ic + 1));
 			diagnosticTestResultPrint(IC[ic].diag_result.tmodchk);
 		}
-		printfDma("\r\n\r\n");
+		printfUI("\r\n\r\n");
 	} else {
-		printfDma("Wrong Diagnostic Selected\r\n");
+		printfUI("Wrong Diagnostic Selected\r\n");
 	}
 }
 
@@ -811,9 +816,9 @@ void printDiagnosticTestResult(uint8_t tIC, cell_asic *IC, DIAGNOSTIC_TYPE type)
  */
 void diagnosticTestResultPrint(uint8_t result) {
 	if (result == 1) {
-		printfDma("PASS\r\n");
+		printfUI("PASS\r\n");
 	} else {
-		printfDma("FAIL\r\n");
+		printfUI("FAIL\r\n");
 	}
 }
 
@@ -837,37 +842,37 @@ void diagnosticTestResultPrint(uint8_t result) {
  */
 void printOpenWireTestResult(uint8_t tIC, cell_asic *IC, TYPE type) {
 	if (type == Cell) {
-		printfDma("Cell Open Wire Test\r\n");
+		printfUI("Cell Open Wire Test\r\n");
 		for (uint8_t ic = 0; ic < tIC; ic++) {
-			printfDma("IC%d:\r\n", (ic + 1));
+			printfUI("IC%d:\r\n", (ic + 1));
 			for (uint8_t cell = 0; cell < CELL; cell++) {
-				printfDma("CELL%d:", (cell + 1));
+				printfUI("CELL%d:", (cell + 1));
 				openWireResultPrint(IC[ic].diag_result.cell_ow[cell]);
 			}
-			printfDma("\r\n\r\n");
+			printfUI("\r\n\r\n");
 		}
 	} else if (type == S_volt) {
-		printfDma("Cell redundant Open Wire Test\r\n");
+		printfUI("Cell redundant Open Wire Test\r\n");
 		for (uint8_t ic = 0; ic < tIC; ic++) {
-			printfDma("IC%d:\r\n", (ic + 1));
+			printfUI("IC%d:\r\n", (ic + 1));
 			for (uint8_t cell = 0; cell < CELL; cell++) {
-				printfDma("CELL%d:", (cell + 1));
+				printfUI("CELL%d:", (cell + 1));
 				openWireResultPrint(IC[ic].diag_result.cellred_ow[cell]);
 			}
-			printfDma("\r\n\r\n");
+			printfUI("\r\n\r\n");
 		}
 	} else if (type == Aux) {
-		printfDma("Aux Open Wire Test\r\n");
+		printfUI("Aux Open Wire Test\r\n");
 		for (uint8_t ic = 0; ic < tIC; ic++) {
-			printfDma("IC%d:\r\n", (ic + 1));
+			printfUI("IC%d:\r\n", (ic + 1));
 			for (uint8_t gpio = 0; gpio < (AUX - 2); gpio++) {
-				printfDma("GPIO%d:", (gpio + 1));
+				printfUI("GPIO%d:", (gpio + 1));
 				openWireResultPrint(IC[ic].diag_result.aux_ow[gpio]);
 			}
-			printfDma("\r\n\r\n");
+			printfUI("\r\n\r\n");
 		}
 	} else {
-		printfDma("Wrong Resistor Type Selected\r\n");
+		printfUI("Wrong Resistor Type Selected\r\n");
 	}
 }
 
@@ -887,9 +892,9 @@ void printOpenWireTestResult(uint8_t tIC, cell_asic *IC, TYPE type) {
  */
 void openWireResultPrint(uint8_t result) {
 	if (result == 1) {
-		printfDma(" OPEN\r\n");
+		printfUI(" OPEN\r\n");
 	} else {
-		printfDma(" CLOSE\r\n");
+		printfUI(" CLOSE\r\n");
 	}
 }
 
@@ -905,7 +910,7 @@ void openWireResultPrint(uint8_t result) {
  *******************************************************************************
  */
 void printPollAdcConvTime(int count) {
-	printfDma("Adc Conversion Time = %fms\r\n", (float) (count / 64000.0));
+	printfUI("Adc Conversion Time = %fms\r\n", (float) (count / 64000.0));
 }
 
 /**
@@ -920,33 +925,33 @@ void printPollAdcConvTime(int count) {
  *******************************************************************************
  */
 void printMenu() {
-	printfDma("List of ADBMS6830 Command:\r\n");
-	printfDma("Write and Read Configuration: 1 \r\n");
-	printfDma("Read Configuration: 2 \r\n");
-	printfDma("Start Cell Voltage Conversion: 3 \r\n");
-	printfDma("Read Cell Voltages: 4 \r\n");
-	printfDma("Start S-Voltage Conversion: 5 \r\n");
-	printfDma("Read S-Voltages: 6 \r\n");
-	printfDma("Start Avg Cell Voltage Conversion: 7 \r\n");
-	printfDma("Read Avg Cell Voltages: 8 \r\n");
-	printfDma("Start F-Cell Voltage Conversion: 9 \r\n");
-	printfDma("Read F-Cell Voltages: 10 \r\n");
-	printfDma("Start Aux Voltage Conversion: 11 \r\n");
-	printfDma("Read Aux Voltages: 12 \r\n");
-	printfDma("Start RAux Voltage Conversion: 13 \r\n");
-	printfDma("Read RAux Voltages: 14 \r\n");
-	printfDma("Read Status Registers: 15 \r\n");
-	printfDma("Loop Measurements: 16 \r\n");
-	printfDma("Clear Cell registers: 17 \r\n");
-	printfDma("Clear Aux registers: 18 \r\n");
-	printfDma("Clear Spin registers: 19 \r\n");
-	printfDma("Clear Fcell registers: 20 \r\n");
-	printfDma("Write Configuration: 21 \r\n");
+	printfUI("List of ADBMS6830 Command:\r\n");
+	printfUI("Write and Read Configuration: 1 \r\n");
+	printfUI("Read Configuration: 2 \r\n");
+	printfUI("Start Cell Voltage Conversion: 3 \r\n");
+	printfUI("Read Cell Voltages: 4 \r\n");
+	printfUI("Start S-Voltage Conversion: 5 \r\n");
+	printfUI("Read S-Voltages: 6 \r\n");
+	printfUI("Start Avg Cell Voltage Conversion: 7 \r\n");
+	printfUI("Read Avg Cell Voltages: 8 \r\n");
+	printfUI("Start F-Cell Voltage Conversion: 9 \r\n");
+	printfUI("Read F-Cell Voltages: 10 \r\n");
+	printfUI("Start Aux Voltage Conversion: 11 \r\n");
+	printfUI("Read Aux Voltages: 12 \r\n");
+	printfUI("Start RAux Voltage Conversion: 13 \r\n");
+	printfUI("Read RAux Voltages: 14 \r\n");
+	printfUI("Read Status Registers: 15 \r\n");
+	printfUI("Loop Measurements: 16 \r\n");
+	printfUI("Clear Cell registers: 17 \r\n");
+	printfUI("Clear Aux registers: 18 \r\n");
+	printfUI("Clear Spin registers: 19 \r\n");
+	printfUI("Clear Fcell registers: 20 \r\n");
+	printfUI("Write Configuration: 21 \r\n");
 
-	printfDma("\r\n");
-	printfDma("Print '0' for menu\r\n");
-	printfDma("Please enter command: \r\n");
-	printfDma("\r\n");
+	printfUI("\r\n");
+	printfUI("Print '0' for menu\r\n");
+	printfUI("Please enter command: \r\n");
+	printfUI("\r\n");
 }
 
 /**
@@ -967,6 +972,39 @@ float getVoltage(int data) {
 	float voltage_float; //voltage in Volts
 	voltage_float = ((data + 10000) * 0.000150);
 	return voltage_float;
+}
+
+/**
+ *******************************************************************************
+ * Function: getTemperature
+ * @brief Convert raw ADC thermistor data to temperature in ºC.
+ *
+ * @details Uses getVoltage() to obtain the divider voltage and then applies
+ * the Beta equation for a 10k NTC thermistor.
+ *
+ * Parameters:
+ * @param [in] data    Raw measurement (uint16_t / int)
+ *
+ * @return temperature (float) in ºC
+ *******************************************************************************
+ */
+float getTemperature(int data) {
+	float VREF2 = 3.0f;      // Reference voltage
+	float R1 = 10000.0f;     // Fixed resistor (10k)
+	float R0 = 10000.0f;     // Thermistor nominal resistance at 25°C
+	float BETA = 3977.0f;    // Beta constant
+	float T0_K = 298.15f;    // 25°C in Kelvin
+
+	float voltage = getVoltage(data);
+
+	// Calculate thermistor resistance from divider
+	float Rt = R1 * voltage / (VREF2 - voltage);
+
+	// Beta equation
+	float tempK = 1.0f / ((1.0f / T0_K) + (1.0f / BETA) * logf(Rt / R0));
+
+	// Convert Kelvin to Celsius
+	return tempK - 273.15f;
 }
 
 /** @}*/

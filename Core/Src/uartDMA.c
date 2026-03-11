@@ -113,7 +113,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 }
 
 // Function to append formatted data to the ring buffer
-int printfDma(const char *format, ...) {
+int printfUI(const char *format, ...) {
 	const int TEMP_BUFF_SIZE = 256;
 
 	char temp_buffer[TEMP_BUFF_SIZE];
@@ -160,7 +160,7 @@ int printfDma(const char *format, ...) {
 }
 
 // Function to append formatted data to the ring buffer for BT
-int printfDmaBT(const char *format, ...) {
+int printfDebug(const char *format, ...) {
 	const int TEMP_BUFF_SIZE = 256;
 
 	char temp_buffer[TEMP_BUFF_SIZE];
@@ -212,7 +212,7 @@ int printfDmaBT(const char *format, ...) {
  * Emits: [{"console":"..."}]\n
  * (change "console" to "cossole" if you need that exact key)
  */
-void printConsole(const char *format, ...) {
+void printfConsole(const char *format, ...) {
 	if (!format)
 		format = "";
 
@@ -233,11 +233,11 @@ void printConsole(const char *format, ...) {
 		tmp[TEMP_SZ - 1] = '\0';  // truncated but valid
 	}
 
-	printfDma("[");
-	printfDma("{\"console\":\"");
+	printfUI("[");
+	printfUI("{\"console\":\"");
 	jsonSendEscaped(tmp);
-	printfDma("\"}");
-	printfDma("]\n\r");
+	printfUI("\"}");
+	printfUI("]\n\r");
 }
 
 /* Stream a JSON-escaped string through printfDma
@@ -247,31 +247,31 @@ static void jsonSendEscaped(const char *s) {
 		unsigned char c = (unsigned char) *s++;
 		switch (c) {
 		case '\"':
-			printfDma("\\\"");
+			printfUI("\\\"");
 			break;
 		case '\\':
-			printfDma("\\\\");
+			printfUI("\\\\");
 			break;
 		case '\b':
-			printfDma("\\b");
+			printfUI("\\b");
 			break;
 		case '\f':
-			printfDma("\\f");
+			printfUI("\\f");
 			break;
 		case '\n':
-			printfDma("\\n");
+			printfUI("\\n");
 			break;
 		case '\r':
-			printfDma("\\r");
+			printfUI("\\r");
 			break;
 		case '\t':
-			printfDma("\\t");
+			printfUI("\\t");
 			break;
 		default:
 			if (c < 0x20) {
-				printfDma("\\u%04X", (unsigned) c);
+				printfUI("\\u%04X", (unsigned) c);
 			} else {
-				printfDma("%c", c);
+				printfUI("%c", c);
 			}
 		}
 	}

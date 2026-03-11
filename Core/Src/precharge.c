@@ -198,7 +198,7 @@ bool IsTheStateOK(PrechargeState_t check_state) {
 	const bool air_pos_on = (fb_air_pos == 1);
 	const bool pre_on = (fb_pre == 1);
 
-	printfDmaBT(
+	printfDebug(
 	 "STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n",
 	 check_state,
 	 fb_dsch,
@@ -207,7 +207,7 @@ bool IsTheStateOK(PrechargeState_t check_state) {
 	 fb_pre
 	 );
 
-	/*printfDmaBT(
+	/*printfDebug(
 	 "STATE %d | DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n",
 	 check_state,
 	 dsch_on,
@@ -222,58 +222,58 @@ bool IsTheStateOK(PrechargeState_t check_state) {
 		// after closing AIR-
 		//return (!dsch_on && air_neg_on && !air_pos_on && !pre_on);
 
-		printfDmaBT("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:0 PRE:0\r\n", check_state);
+		printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:0 PRE:0\r\n", check_state);
 		ok = ((dsch_on || bypassDischarge) && air_neg_on && !air_pos_on && !pre_on);
-		printfDmaBT("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
 		return ok;
 
 	case VERIFY2:
 		// after closing PRE
 		//return (!dsch_on && air_neg_on && !air_pos_on && pre_on);
 
-		printfDmaBT("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:0 PRE:1\r\n", check_state);
+		printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:0 PRE:1\r\n", check_state);
 		ok = ((dsch_on || bypassDischarge) && air_neg_on && !air_pos_on && pre_on);
-		printfDmaBT("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
 		return ok;
 
 	case VERIFY3:
 		// after closing AIR+
 		//return (!dsch_on && air_neg_on && air_pos_on && pre_on);
 
-		printfDmaBT("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:1\r\n", check_state);
+		printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:1\r\n", check_state);
 		ok = ((dsch_on || bypassDischarge) && air_neg_on && air_pos_on && pre_on);
-		printfDmaBT("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
 		return ok;
 
 	case VERIFY4:
 		// after opening PRE again
 		//return (!dsch_on && air_neg_on && air_pos_on && !pre_on);
 
-		printfDmaBT("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:0\r\n", check_state);
+		printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:0\r\n", check_state);
 		ok = ((dsch_on || bypassDischarge) && air_neg_on && air_pos_on && !pre_on);
-		printfDmaBT("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
 		return ok;
 
 	case WRONG:
 		// wrong all off
 		//return (!dsch_on && !air_neg_on && !air_pos_on && !pre_on);
 
-		printfDmaBT("STATE %d | EXPECT DSCH:0 AIR-:0 AIR+:0 PRE:0\r\n", check_state);
+		printfDebug("STATE %d | EXPECT DSCH:0 AIR-:0 AIR+:0 PRE:0\r\n", check_state);
 		ok = ((!dsch_on || bypassDischarge) && !air_neg_on && !air_pos_on && !pre_on);
-		printfDmaBT("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
 		return ok;
 
 	case OPEN_ALL:
 		// first check if all off
 		//return (!dsch_on && !air_neg_on && !air_pos_on && !pre_on);
 
-		printfDmaBT("STATE %d | EXPECT DSCH:0 AIR-:0 AIR+:0 PRE:0\r\n", check_state);
+		printfDebug("STATE %d | EXPECT DSCH:0 AIR-:0 AIR+:0 PRE:0\r\n", check_state);
 		ok = ((!dsch_on || bypassDischarge) && !air_neg_on && !air_pos_on && !pre_on);
-		printfDmaBT("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
 		return ok;
 
 	default:
-		printfDmaBT("STATE %d | UNKNOWN STATE\r\n", check_state);
+		printfDebug("STATE %d | UNKNOWN STATE\r\n", check_state);
 		return false;
 	}
 }
@@ -293,25 +293,25 @@ void Feedback_EXTI_Callback(uint16_t GPIO_Pin) {
 	case GPIO_PIN_12:   // PC12 = MCU_DISCH_FB
 		pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12);
 		fb_dsch += (pin_state == GPIO_PIN_SET) ? 1 : -1;
-		printfDmaBT("MCU_DISCH_FB triggered\r\n");
+		printfDebug("MCU_DISCH_FB triggered\r\n");
 		break;
 
 	case GPIO_PIN_11:   // PC11 = MCU_AIR-_FB
 		pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11);
 		fb_air_neg += (pin_state == GPIO_PIN_SET) ? 1 : -1;
-		printfDmaBT("MCU_AIR-_FB triggered\r\n");
+		printfDebug("MCU_AIR-_FB triggered\r\n");
 		break;
 
 	case GPIO_PIN_10:   // PC10 = MCU_AIR+_FB
 		pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10);
 		fb_air_pos += (pin_state == GPIO_PIN_SET) ? 1 : -1;
-		printfDmaBT("MCU_AIR+_FB triggered\r\n");
+		printfDebug("MCU_AIR+_FB triggered\r\n");
 		break;
 
 	case GPIO_PIN_15:   // PA15 = MCU_PRE_FB
 		pin_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15);
 		fb_pre += (pin_state == GPIO_PIN_SET) ? 1 : -1;
-		printfDmaBT("MCU_PRE_FB triggered\r\n");
+		printfDebug("MCU_PRE_FB triggered\r\n");
 		break;
 
 	default:

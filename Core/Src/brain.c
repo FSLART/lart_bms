@@ -76,8 +76,8 @@ void brain_start(void) {
 	//uint32_t timeCmmd;
 
 	//printfDma("bad \r");
-	printConsole("Start Program \n\r");
-	printfDmaBT("Bluetooth, u up? \r\n");
+	printfConsole("Start Program \n\r");
+	printfDebug("Bluetooth, u up? \r\n");
 	//OpenAllContactors();
 	startUI();
 

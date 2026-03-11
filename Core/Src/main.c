@@ -959,14 +959,14 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-PUTCHAR_PROTOTYPE {
+/*PUTCHAR_PROTOTYPE {
 	if (ch == '\n') {
 		uint8_t cr = '\r';
 		HAL_UART_Transmit(&huart1, &cr, 1, HAL_MAX_DELAY);
 	}
 	HAL_UART_Transmit(&huart1, (uint8_t*) &ch, 1, HAL_MAX_DELAY);
 	return ch;
-}
+}*/
 
 /* USER CODE END 4 */
 

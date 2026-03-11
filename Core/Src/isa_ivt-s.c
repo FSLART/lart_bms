@@ -84,20 +84,20 @@ void IVT_CAN_Setup_AllMessages(CAN_HandleTypeDef *hcan) {
 	sFilterConfig.SlaveStartFilterBank = 14; // if dual CAN, adjust; otherwise leave default
 
 	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
-		printConsole("Error setting wildcard filter\n");
+		printfConsole("Error setting wildcard filter\n");
 	}
 
 	/* --- 3) Activate the RX FIFO0 “new message” interrupt --- */
 	if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
-		printConsole("Error activating RX notification\n");
+		printfConsole("Error activating RX notification\n");
 	}
 
 	/* --- 4) Start the FDCAN controller --- */
 	HAL_StatusTypeDef st = HAL_CAN_Start(&hcan1);
 	if (st != HAL_OK) {
-		printConsole("CAN start failed: %ld\r\n", (long) st);
+		printfConsole("CAN start failed: %ld\r\n", (long) st);
 	}else{
-		printConsole("CAN has started\r\n");
+		printfConsole("CAN has started\r\n");
 	}
 }
 
@@ -137,7 +137,7 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
 	sFilterConfig.FilterIdLow = 0x0000;
 
 	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
-		printConsole("Error configuring CAN filter for U1 (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
+		printfConsole("Error configuring CAN filter for U1 (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
 	// Filter for IVT-S U2 voltage data
@@ -145,7 +145,7 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESULTU2_CANID << 5) & 0xFFFF);
 
 	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
-		printConsole("Error configuring CAN filter for U2 (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
+		printfConsole("Error configuring CAN filter for U2 (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
 	// Filter for IVT-S U3 voltage data
@@ -153,7 +153,7 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESULTU3_CANID << 5) & 0xFFFF); // IVT-S U3 voltage CAN ID
 
 	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
-		printConsole("Error configuring CAN filter for U3 (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
+		printfConsole("Error configuring CAN filter for U3 (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
 	// Filter for IVT-S Current data
@@ -161,7 +161,7 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESULTI_CANID << 5) & 0xFFFF); // IVT-S U3 voltage CAN ID
 
 	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
-		printConsole("Error configuring CAN filter for I (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
+		printfConsole("Error configuring CAN filter for I (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
 	// Filter for IVT-S Temperature data
@@ -169,7 +169,7 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESULTT_CANID << 5) & 0xFFFF); // IVT-S U3 voltage CAN ID
 
 	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
-		printConsole("Error configuring CAN filter for T (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
+		printfConsole("Error configuring CAN filter for T (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
 	// Filter for IVT-S Power data
@@ -177,7 +177,7 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESULTW_CANID << 5) & 0xFFFF); // IVT-S U3 voltage CAN ID
 
 	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
-		printConsole("Error configuring CAN filter for W (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
+		printfConsole("Error configuring CAN filter for W (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
 	// Filter for command acknowledgement
@@ -185,17 +185,17 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
 	sFilterConfig.FilterIdHigh = (uint16_t) ((IVT_RESPONSE_CANID << 5) & 0xFFFF); // IVT-S U3 voltage CAN ID
 
 	if (HAL_CAN_ConfigFilter(hcan, &sFilterConfig) != HAL_OK) {
-		printConsole("Error configuring CAN filter for ACK (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
+		printfConsole("Error configuring CAN filter for ACK (bank %lu)\r\n", (unsigned long) sFilterConfig.FilterBank);
 	}
 
 	/* Enable "message pending" notification for RX FIFO 0 */
 	if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
-	 printConsole("Error activating CAN RX FIFO0 notification\r\n");
+	 printfConsole("Error activating CAN RX FIFO0 notification\r\n");
 	 }
 
 	/* Start CAN peripheral */
 	/*if (HAL_CAN_Start(&hcan1) != HAL_OK) {
-	 printConsole("Error starting CAN peripheral\r\n");
+	 printfConsole("Error starting CAN peripheral\r\n");
 	 }*/
 
 }
@@ -242,14 +242,14 @@ void IVT_CAN_Config(void) {
 	// Configure IVT. Take response delays into account, if response time is too long --> raise CAN error
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STOP_CMD) != HAL_OK) { // Stop measurement to configure results
 
-		printConsole("Fudeu CAN - IVT_STOP_CMD\n\n");
+		printfConsole("Fudeu CAN - IVT_STOP_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
 			commsCheck = false; // send UI Can error
-			printConsole("Fudeu CAN \n\n");
+			printfConsole("Fudeu CAN \n\n");
 			IVT_CAN_Config();
 			return;
 		}
@@ -259,13 +259,13 @@ void IVT_CAN_Config(void) {
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_CURRENT_CMD) != HAL_OK) { // Configure current result command
 
-		printConsole("Fudeu CAN - IVT_CONFIG_CURRENT_CMD\n\n");
+		printfConsole("Fudeu CAN - IVT_CONFIG_CURRENT_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
-			printConsole("Fudeu CAN \n\n");
+			printfConsole("Fudeu CAN \n\n");
 			return;
 		}
 	}
@@ -273,14 +273,14 @@ void IVT_CAN_Config(void) {
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_U1_CMD) != HAL_OK) { // Configure voltage U1 command
 
-		printConsole("Fudeu CAN - IVT_CONFIG_U1_CMD\n\n");
+		printfConsole("Fudeu CAN - IVT_CONFIG_U1_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
 
-			printConsole("Fudeu CAN \n\n");
+			printfConsole("Fudeu CAN \n\n");
 			return;
 		}
 	}
@@ -288,14 +288,14 @@ void IVT_CAN_Config(void) {
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_U2_CMD) != HAL_OK) { // Configure voltage U2 command
 
-		printConsole("Fudeu CAN - IVT_CONFIG_U2_CMD\n\n");
+		printfConsole("Fudeu CAN - IVT_CONFIG_U2_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
 
-			printConsole("Fudeu CAN \n\n");
+			printfConsole("Fudeu CAN \n\n");
 			return;
 		}
 	}
@@ -303,14 +303,14 @@ void IVT_CAN_Config(void) {
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_U3_CMD) != HAL_OK) { // Configure voltage U3 command
 
-		printConsole("Fudeu CAN - IVT_CONFIG_U3_CMD\n\n");
+		printfConsole("Fudeu CAN - IVT_CONFIG_U3_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
 
-			printConsole("Fudeu CAN \n\n");
+			printfConsole("Fudeu CAN \n\n");
 			return;
 		}
 	}
@@ -318,14 +318,14 @@ void IVT_CAN_Config(void) {
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_T_CMD) != HAL_OK) { // Configure voltage U3 command
 
-		printConsole("Fudeu CAN - IVT_CONFIG_T_CMD\n\n");
+		printfConsole("Fudeu CAN - IVT_CONFIG_T_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
 
-			printConsole("Fudeu CAN - IVT_CONFIG_T_CMD\n\n");
+			printfConsole("Fudeu CAN - IVT_CONFIG_T_CMD\n\n");
 			return;
 		}
 	}
@@ -333,14 +333,14 @@ void IVT_CAN_Config(void) {
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_W_CMD) != HAL_OK) { // Configure voltage U3 command
 
-		printConsole("Fudeu CAN - IVT_CONFIG_W_CMD\n\n");
+		printfConsole("Fudeu CAN - IVT_CONFIG_W_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
 
-			printConsole("Fudeu CAN - IVT_CONFIG_W_CMD\n\n");
+			printfConsole("Fudeu CAN - IVT_CONFIG_W_CMD\n\n");
 			return;
 		}
 	}
@@ -348,14 +348,14 @@ void IVT_CAN_Config(void) {
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STORE_CMD) != HAL_OK) { // Store config results command
 
-		printConsole("Fudeu CAN - IVT_STORE_CMD\n\n");
+		printfConsole("Fudeu CAN - IVT_STORE_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
 
-			printConsole("Fudeu CAN - IVT_STORE_CMD\n\n");
+			printfConsole("Fudeu CAN - IVT_STORE_CMD\n\n");
 			return;
 		}
 	}
@@ -363,14 +363,14 @@ void IVT_CAN_Config(void) {
 
 	/*if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_RESET_SYSERROR_CMD) == HAL_OK) { // Store config results command
 
-		printConsole("Command sent\r\n");
+		printfConsole("Command sent\r\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 10))) {
 
 		if ((HAL_GetTick() - startTime) > 5000) {
 
-			printConsole("Fudeu CAN - IVT_RESET_SYSERROR_CMD\n\n");
+			printfConsole("Fudeu CAN - IVT_RESET_SYSERROR_CMD\n\n");
 			return;
 		}
 	}
@@ -378,14 +378,14 @@ void IVT_CAN_Config(void) {
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_RESET_MEASURERROR_CMD) == HAL_OK) { // Store config results command
 
-		printConsole("Command sent\r\n");
+		printfConsole("Command sent\r\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 4000) {
 
-			printConsole("Fudeu CAN - IVT_RESET_MEASURERROR_CMD\n\n");
+			printfConsole("Fudeu CAN - IVT_RESET_MEASURERROR_CMD\n\n");
 			return;
 		}
 	}
@@ -393,7 +393,7 @@ void IVT_CAN_Config(void) {
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_START_CMD) != HAL_OK) { // Start command
 
-		printConsole("Fudeu CAN - IVT_START_CMD\n\n");
+		printfConsole("Fudeu CAN - IVT_START_CMD\n\n");
 	}
 	IVT_commandReceivedFlag = 0;
 
@@ -409,7 +409,7 @@ void IVT_CAN_Config(void) {
 	ivt.conf_maxU3 = -1;
 	ivt.conf_minU3 = -1;
 
-	printConsole("IVT-S config success\r\n");
+	printfConsole("IVT-S config success\r\n");
 
 }
 
@@ -470,11 +470,11 @@ void IVT_CAN_OnMessage(const CAN_RxHeaderTypeDef *pRxHeader, const uint8_t *RxDa
         break;
 
     default:
-        /*printConsole("Unknown CAN ID 0x%03lX, DLC=%lu, Data:", id, dlc);
+        /*printfConsole("Unknown CAN ID 0x%03lX, DLC=%lu, Data:", id, dlc);
         for (uint32_t i = 0; i < dlc; i++) {
-            printConsole(" %02X", RxData[i]);
+            printfConsole(" %02X", RxData[i]);
         }
-        printConsole("\r\n");*/
+        printfConsole("\r\n");*/
         break;
     }
 }
@@ -498,11 +498,11 @@ void IVT_FAULT_CHECK(void) {
 	}
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_SYSERROR_CMD) != HAL_OK) {
-		printConsole("Error sending SYSERROR_CMD\r\n");
+		printfConsole("Error sending SYSERROR_CMD\r\n");
 	}
 
 	/*if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_MEASURERROR_CMD) != HAL_OK) {
-	 printConsole("Error sending IVT_MEASURERROR_CMD\r\n");
+	 printfConsole("Error sending IVT_MEASURERROR_CMD\r\n");
 	 }*/
 }
 
@@ -513,26 +513,26 @@ void IVT_FAULT_CHECK(void) {
  */
 void IVT_PROCESS_SYSERRORS(uint8_t *RxData) {
 	if (RxData[1] != 0x00) {
-		printConsole("Error getting SYSERRORS\r\n");
+		printfConsole("Error getting SYSERRORS\r\n");
 		return;  // not the bitmask response
 	}
 
 	uint8_t low = RxData[2];  // bits 0–7
 	uint8_t high = RxData[3];  // bits 8–15
 
-	printConsole("		SYSERRORS low:  ");
+	printfConsole("		SYSERRORS low:  ");
 	for (int i = 7; i >= 0; i--) {
 		// Test bit i and print '1' or '0'
-		printConsole("%c", (low & (1 << i)) ? '1' : '0');
+		printfConsole("%c", (low & (1 << i)) ? '1' : '0');
 	}
-	printConsole("\r\n");
+	printfConsole("\r\n");
 
-	printConsole("		SYSERRORS high: ");
+	printfConsole("		SYSERRORS high: ");
 	for (int i = 7; i >= 0; i--) {
 		// Test bit i and print '1' or '0'
-		printConsole("%c", (high & (1 << i)) ? '1' : '0');
+		printfConsole("%c", (high & (1 << i)) ? '1' : '0');
 	}
-	printConsole("\r\n");
+	printfConsole("\r\n");
 
 // Clear all system-error flags before updating
 	ivt.faults.CAN = false;
@@ -571,7 +571,7 @@ void IVT_PROCESS_SYSERRORS(uint8_t *RxData) {
 
 // Finally, ask for measurement errors if desired:
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_MEASURERROR_CMD) != HAL_OK) {
-		printConsole("Error sending IVT_MEASURERROR_CMD\r\n");
+		printfConsole("Error sending IVT_MEASURERROR_CMD\r\n");
 	}
 }
 
@@ -582,26 +582,26 @@ void IVT_PROCESS_SYSERRORS(uint8_t *RxData) {
  */
 void IVT_PROCESS_MEASURERRORS(uint8_t *RxData) {
 	if (RxData[1] != 0x00) {
-		printConsole("Error getting MEASURERRORS\r\n");
+		printfConsole("Error getting MEASURERRORS\r\n");
 		return;
 	}
 
 	uint8_t low = RxData[2];  // bits 0–7
 	uint8_t high = RxData[3];  // bits 8–15
 
-	printConsole("		MEASURERRORS low:  ");
+	printfConsole("		MEASURERRORS low:  ");
 	for (int i = 7; i >= 0; i--) {
 		// Test bit i and print '1' or '0'
-		printConsole("%c", (low & (1 << i)) ? '1' : '0');
+		printfConsole("%c", (low & (1 << i)) ? '1' : '0');
 	}
-	printConsole("\r\n");
+	printfConsole("\r\n");
 
-	printConsole("		MEASURERRORS high: ");
+	printfConsole("		MEASURERRORS high: ");
 	for (int i = 7; i >= 0; i--) {
 		// Test bit i and print '1' or '0'
-		printConsole("%c", (high & (1 << i)) ? '1' : '0');
+		printfConsole("%c", (high & (1 << i)) ? '1' : '0');
 	}
-	printConsole("\r\n");
+	printfConsole("\r\n");
 
 // Clear all measurement-error flags before updating
 	ivt.faults.U1_oc = false;
@@ -650,14 +650,14 @@ void IVT_SET_BITRATE(void) {
 // Configure IVT. Take response delays into account, if response time is too long --> raise CAN error
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STOP_CMD) != HAL_OK) { // Stop measurement to configure results
 
-		printConsole("Fudeu CAN - IVT_STOP_CMD\n\n");
+		printfConsole("Fudeu CAN - IVT_STOP_CMD\n\n");
 	}
 	startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
 			commsCheck = false; // send UI Can error
-			printConsole("Fudeu CAN - stop\n\n");
+			printfConsole("Fudeu CAN - stop\n\n");
 			IVT_SET_BITRATE();
 			return;
 		}
@@ -666,7 +666,7 @@ void IVT_SET_BITRATE(void) {
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_CANRATE_CMD) != HAL_OK) { // Configure current result command
 
-		printConsole("Fudeu CAN - IVT_CONFIG_CANRATE_CMD\n\n");
+		printfConsole("Fudeu CAN - IVT_CONFIG_CANRATE_CMD\n\n");
 	}
 	IVT_commandReceivedFlag = 0; // Reset flag
 
@@ -674,57 +674,57 @@ void IVT_SET_BITRATE(void) {
 
 /**
  * @brief  Serializes the global `ivt` structure to JSON and sends it over UART.
- * @note   Uses printfDma() for all output. Produces a single JSON object.
+ * @note   Uses printfUI() for all output. Produces a single JSON object.
  */
 void send_ivt_ui(void) {
 // Start JSON array with one object
-	printfDma("[");
+	printfUI("[");
 
 // Start the ivt object with index = 0
-	printfDma("{\"ivt\":0,");
+	printfUI("{\"ivt\":0,");
 
 // --- Real-time values ---
-	printfDma("\"vBatt\":%ld,", ivt.vBatt);
-	printfDma("\"iBatt\":%ld,", ivt.iBatt);
-	printfDma("\"power\":%ld,", ivt.power);
-	printfDma("\"temp\":%ld,", ivt.temp);
-	printfDma("\"SOH\":%ld,", ivt.SOH);
-	printfDma("\"SOC\":%ld,", ivt.SOC);
+	printfUI("\"vBatt\":%ld,", ivt.vBatt);
+	printfUI("\"iBatt\":%ld,", ivt.iBatt);
+	printfUI("\"power\":%ld,", ivt.power);
+	printfUI("\"temp\":%ld,", ivt.temp);
+	printfUI("\"SOH\":%ld,", ivt.SOH);
+	printfUI("\"SOC\":%ld,", ivt.SOC);
 
 // --- Configuration parameters ---
-	printfDma("\"conf_CANbit\":%.0f,", ivt.conf_CANbit);
-	printfDma("\"conf_maxTemp\":%.2f,", ivt.conf_maxTemp);
-	printfDma("\"conf_minTemp\":%.2f,", ivt.conf_minTemp);
-	printfDma("\"conf_minCurrent\":%.2f,", ivt.conf_minCurrent);
-	printfDma("\"conf_maxCurrent\":%.2f,", ivt.conf_maxCurrent);
-	printfDma("\"conf_maxU1\":%.2f,", ivt.conf_maxU1);
-	printfDma("\"conf_minU1\":%.2f,", ivt.conf_minU1);
-	printfDma("\"conf_maxU2\":%.2f,", ivt.conf_maxU2);
-	printfDma("\"conf_minU2\":%.2f,", ivt.conf_minU2);
-	printfDma("\"conf_maxU3\":%.2f,", ivt.conf_maxU3);
-	printfDma("\"conf_minU3\":%.2f,", ivt.conf_minU3);
+	printfUI("\"conf_CANbit\":%.0f,", ivt.conf_CANbit);
+	printfUI("\"conf_maxTemp\":%.2f,", ivt.conf_maxTemp);
+	printfUI("\"conf_minTemp\":%.2f,", ivt.conf_minTemp);
+	printfUI("\"conf_minCurrent\":%.2f,", ivt.conf_minCurrent);
+	printfUI("\"conf_maxCurrent\":%.2f,", ivt.conf_maxCurrent);
+	printfUI("\"conf_maxU1\":%.2f,", ivt.conf_maxU1);
+	printfUI("\"conf_minU1\":%.2f,", ivt.conf_minU1);
+	printfUI("\"conf_maxU2\":%.2f,", ivt.conf_maxU2);
+	printfUI("\"conf_minU2\":%.2f,", ivt.conf_minU2);
+	printfUI("\"conf_maxU3\":%.2f,", ivt.conf_maxU3);
+	printfUI("\"conf_minU3\":%.2f,", ivt.conf_minU3);
 
 // --- Fault flags ---
-	printfDma("\"faults\":{");
-	printfDma("\"CAN\":%s,", ivt.faults.CAN ? "true" : "false");
-	printfDma("\"power\":%s,", ivt.faults.power ? "true" : "false");
-	printfDma("\"current\":%s,", ivt.faults.current ? "true" : "false");
-	printfDma("\"vRef\":%s,", ivt.faults.vRef ? "true" : "false");
-	printfDma("\"U3_oc\":%s,", ivt.faults.U3_oc ? "true" : "false");
-	printfDma("\"U2_oc\":%s,", ivt.faults.U2_oc ? "true" : "false");
-	printfDma("\"U1_oc\":%s,", ivt.faults.U1_oc ? "true" : "false");
-	printfDma("\"current_oc\":%s,", ivt.faults.current_oc ? "true" : "false");
-	printfDma("\"ntc_l_oc\":%s,", ivt.faults.ntc_l_oc ? "true" : "false");
-	printfDma("\"ntc_h_oc\":%s,", ivt.faults.ntc_h_oc ? "true" : "false");
-	printfDma("\"adc\":%s,", ivt.faults.adc ? "true" : "false");
-	printfDma("\"temp\":%s", ivt.faults.temp ? "true" : "false");
-	printfDma("}");
+	printfUI("\"faults\":{");
+	printfUI("\"CAN\":%s,", ivt.faults.CAN ? "true" : "false");
+	printfUI("\"power\":%s,", ivt.faults.power ? "true" : "false");
+	printfUI("\"current\":%s,", ivt.faults.current ? "true" : "false");
+	printfUI("\"vRef\":%s,", ivt.faults.vRef ? "true" : "false");
+	printfUI("\"U3_oc\":%s,", ivt.faults.U3_oc ? "true" : "false");
+	printfUI("\"U2_oc\":%s,", ivt.faults.U2_oc ? "true" : "false");
+	printfUI("\"U1_oc\":%s,", ivt.faults.U1_oc ? "true" : "false");
+	printfUI("\"current_oc\":%s,", ivt.faults.current_oc ? "true" : "false");
+	printfUI("\"ntc_l_oc\":%s,", ivt.faults.ntc_l_oc ? "true" : "false");
+	printfUI("\"ntc_h_oc\":%s,", ivt.faults.ntc_h_oc ? "true" : "false");
+	printfUI("\"adc\":%s,", ivt.faults.adc ? "true" : "false");
+	printfUI("\"temp\":%s", ivt.faults.temp ? "true" : "false");
+	printfUI("}");
 
 // Close the ivt object
-	printfDma("}");
+	printfUI("}");
 
 // End JSON array
-	printfDma("]\n");  // End of JSON array
+	printfUI("]\n");  // End of JSON array
 }
 
 /*void send_ivt_ui(void) {
