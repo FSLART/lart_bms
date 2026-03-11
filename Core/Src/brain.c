@@ -32,7 +32,6 @@
 
 #include "ams.h"
 
-
 #define BYPASS_CAN_ISA
 
 /* ================== LOCAL DEFINES / TYPES ================== */
@@ -41,7 +40,6 @@
 
 /* EEPROM comms instance */
 //static EEPROM_Comms eeprom_comms = { .hi2c = &hi2c1, .huart = &huart1 };
-
 /* ================== MODULE STATE ================== */
 volatile BmsStates bmsState = IDLE;
 volatile BmsStates bmsCurrState = IDLE;
@@ -53,9 +51,9 @@ static volatile bool faultCheck = false;
 static volatile bool updateUI = false;
 
 /* timing helpers for state machine */
-static uint32_t timeDiff = 0;
+//static uint32_t timeDiff = 0;
 static uint32_t timeStart = 0;
-static uint32_t timeCmmd = 0;
+//static uint32_t timeCmmd = 0;
 
 void brain_start(void) {
 
@@ -104,7 +102,7 @@ void brain_start(void) {
 
 	IVT_CAN_Setup_AllMessages(&hcan1);
 
-	#ifndef BYPASS_CAN_ISA
+#ifndef BYPASS_CAN_ISA
 	IVT_CAN_Config();
 	IVT_SET_BITRATE();
 	#endif
@@ -128,36 +126,35 @@ void brain_loop(void) {
 	switch (bmsCurrState) {
 	case BALANCING:
 
-
 		break;
 
 	case INACTIVE:
 
 		/*if (Precharge_GetState() == RX_CAN) {
-			bmsState = STARTUP;
-		}*/
+		 bmsState = STARTUP;
+		 }*/
 
 		if ((getRuntimeMsDiff(timeStart) > 800) || (bmsPrevState != bmsCurrState)) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
-		    //loop_count = 0;
-		    //adBmsWakeupIc(TOTAL_IC);
-		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
-		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-		    //adBmsWakeupIc(TOTAL_IC);
-		    //adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-		   // Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-		   // adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-		    //Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-		   // adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
-		    //Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
-		   // while(loop_count < LOOP_MEASUREMENT_COUNT)
-		    //{
-		      //measurement_loop();
-		      //Delay_ms(MEASUREMENT_LOOP_TIME);
-		     // loop_count = loop_count + 1;
-		    //}
+			//loop_count = 0;
+			//adBmsWakeupIc(TOTAL_IC);
+			//adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
+			//adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
+			//adBmsWakeupIc(TOTAL_IC);
+			//adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+			// Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+			// adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+			//Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+			// adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
+			//Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
+			// while(loop_count < LOOP_MEASUREMENT_COUNT)
+			//{
+			//measurement_loop();
+			//Delay_ms(MEASUREMENT_LOOP_TIME);
+			// loop_count = loop_count + 1;
+			//}
 		}
 
 		//printConsole("	INACTIVE \n\n");
@@ -174,23 +171,23 @@ void brain_loop(void) {
 
 			adbms_main();
 
-		    //loop_count = 0;
-		    //adBmsWakeupIc(TOTAL_IC);
-		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
-		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-		   // adBmsWakeupIc(TOTAL_IC);
-		    //adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-		    //Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-		    //adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-		    //Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-		    //adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
-		    //Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
-		    /*while(loop_count < LOOP_MEASUREMENT_COUNT)
-		    {
-		     // measurement_loop();
-		      //Delay_ms(MEASUREMENT_LOOP_TIME);
-		      loop_count = loop_count + 1;
-		    }*/
+			//loop_count = 0;
+			//adBmsWakeupIc(TOTAL_IC);
+			//adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
+			//adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
+			// adBmsWakeupIc(TOTAL_IC);
+			//adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+			//Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+			//adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+			//Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+			//adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
+			//Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
+			/*while(loop_count < LOOP_MEASUREMENT_COUNT)
+			 {
+			 // measurement_loop();
+			 //Delay_ms(MEASUREMENT_LOOP_TIME);
+			 loop_count = loop_count + 1;
+			 }*/
 		}
 
 		break;
@@ -211,35 +208,35 @@ void brain_loop(void) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
-		    //loop_count = 0;
-		    //adBmsWakeupIc(TOTAL_IC);
-		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
-		    //adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-		    //adBmsWakeupIc(TOTAL_IC);
-		    //adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-		    //Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-		    //adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-		    //Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-		    //adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
-		    //Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
-		    /*while(loop_count < LOOP_MEASUREMENT_COUNT)
-		    {
-		      //measurement_loop();
-		      //Delay_ms(MEASUREMENT_LOOP_TIME);
-		      loop_count = loop_count + 1;
-		    }*/
+			//loop_count = 0;
+			//adBmsWakeupIc(TOTAL_IC);
+			//adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
+			//adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
+			//adBmsWakeupIc(TOTAL_IC);
+			//adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+			//Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+			//adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+			//Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
+			//adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
+			//Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
+			/*while(loop_count < LOOP_MEASUREMENT_COUNT)
+			 {
+			 //measurement_loop();
+			 //Delay_ms(MEASUREMENT_LOOP_TIME);
+			 loop_count = loop_count + 1;
+			 }*/
 		}
 
 		/*while (Precharge_GetState() != END) {
-			if (Precharge_GetState() == START) {
-				Precharge_Init();
-				Precharge_Update();
-			} else {
-				Precharge_Update();
-			}
-		}
+		 if (Precharge_GetState() == START) {
+		 Precharge_Init();
+		 Precharge_Update();
+		 } else {
+		 Precharge_Update();
+		 }
+		 }
 
-		bmsState = IDLE;*/
+		 bmsState = IDLE;*/
 		break;
 
 	default:
@@ -307,21 +304,45 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 // Called each SysTick interrupt for HEARTBEAT LED
 void HAL_SYSTICK_Callback(void) {
 
+	heartbeat();
+}
+
+void heartbeat(void) {
+
+    static uint16_t ticks = 0;
+    static uint16_t period = 1000;   // start period
+
+    if (++ticks >= period) {
+
+        ticks = 0;
+
+        HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+
+        // halve the period
+        period >>= 1;
+
+        // reset when reaching 0 or 1
+        if (period < 1) {
+            period = 1000;
+        }
+    }
+
 	/* HEARTBEAT*/
-	static uint16_t ticks = 0;
-	static uint16_t beat_ticks = 0;
+	/**static uint16_t ticks = 0;
+	 static uint16_t beat_ticks = 0;
 
-	if (++ticks >= 800) {
+	 if (++ticks >= 800) {
 
-		ticks = 0;
-		beat_ticks = 1;
-		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+	 ticks = 0;
+	 beat_ticks = 1;
+	 HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 
-	} else if (beat_ticks == 1 && ticks >= 50) {
+	 } else if (beat_ticks == 1 && ticks >= 50) {
 
-		beat_ticks = 0;
-		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-	}
+	 beat_ticks = 0;
+	 HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+	 }*/
+
 }
 
 uint32_t getRuntimeMs(void) {

@@ -1,4 +1,4 @@
 ../Core/Src/adbms_to_CAN.c:15:19:Slaves_CAN_SendMessage	24	static
-../Core/Src/adbms_to_CAN.c:26:10:adbms_cellCode_to_mV_u16	24	static
+../Core/Src/adbms_to_CAN.c:26:10:data_to_volts	24	static
 ../Core/Src/adbms_to_CAN.c:39:19:ADBMS_CAN_SendAll	24	static
-../Core/Src/adbms_to_CAN.c:53:19:ADBMS_CAN_SendVoltages_Module	88	static
+../Core/Src/adbms_to_CAN.c:53:19:ADBMS_CAN_SendVoltages_Module	328	static

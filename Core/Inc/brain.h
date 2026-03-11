@@ -64,6 +64,8 @@ void brain_loop(void);
 uint32_t getRuntimeMs(void);
 uint32_t getRuntimeMsDiff(uint32_t startTime);
 
+void heartbeat(void);
+
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 void HAL_SYSTICK_Callback(void);
