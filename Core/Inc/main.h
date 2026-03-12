@@ -52,7 +52,6 @@ extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim8;
 extern TIM_HandleTypeDef htim10;
 extern TIM_HandleTypeDef htim11;
-extern RTC_HandleTypeDef hrtc;
 extern ADC_HandleTypeDef hadc1;
 extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
@@ -88,6 +87,8 @@ void Error_Handler(void);
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
 #define B1_EXTI_IRQn EXTI15_10_IRQn
+#define CURRENT_SENSOR_Pin GPIO_PIN_3
+#define CURRENT_SENSOR_GPIO_Port GPIOC
 #define BT_USART2_TX_Pin GPIO_PIN_2
 #define BT_USART2_TX_GPIO_Port GPIOA
 #define BT_USART2_RX_Pin GPIO_PIN_3

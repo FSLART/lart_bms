@@ -989,9 +989,10 @@ float getVoltage(int data) {
  *******************************************************************************
  */
 float getTemperature(int data) {
+	//Thermistor: Amphenol NKA502C1*1C
 	float VREF2 = 3.0f;      // Reference voltage
 	float R1 = 10000.0f;     // Fixed resistor (10k)
-	float R0 = 10000.0f;     // Thermistor nominal resistance at 25°C
+	float R0 = 5000.0f;     // Thermistor nominal resistance at 25°C
 	float BETA = 3977.0f;    // Beta constant
 	float T0_K = 298.15f;    // 25°C in Kelvin
 

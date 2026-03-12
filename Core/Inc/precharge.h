@@ -45,7 +45,8 @@ void Precharge_Update(void);
 
 void PreCharge_CAN_Rx(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data);
 
-bool IsTheStateOK(PrechargeState_t check_state);
+bool OnPrechargeComplete(PrechargeState_t);
+bool IsTheStateOK(PrechargeState_t);
 bool IsBusVoltageOK(void);
 bool IsCurrentOK(void);
 

@@ -1,5 +1,5 @@
-Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/analog_readings.h \
+ ../Core/Inc/main.h ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -30,8 +30,6 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
@@ -44,11 +42,12 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830ParseCreate.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/mcuWrapper.h ../Core/Inc/stm32f4xx_it.h \
+ ../Core/Inc/adbms_to_CAN.h ../Core/Inc/can.h ../Core/Inc/can.h \
  ../Core/Inc/eeprom_utils.h ../Core/Inc/ee24.h ../Core/Inc/uartDMA.h \
- ../Core/Inc/isa_ivt-s.h ../Core/Inc/time_rtc.h ../Core/Inc/contactors.h \
- ../Core/Inc/uartDMA.h ../Core/Inc/version.h ../Core/Inc/temperatures.h \
- ../Core/Inc/precharge.h \
+ ../Core/Inc/isa_ivt-s.h ../Core/Inc/contactors.h ../Core/Inc/uartDMA.h \
+ ../Core/Inc/version.h ../Core/Inc/precharge.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/dbc/ams.h
+../Core/Inc/analog_readings.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -81,8 +80,6 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
-../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc.h:
-../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
@@ -98,14 +95,15 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830ParseCreate.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/mcuWrapper.h:
 ../Core/Inc/stm32f4xx_it.h:
+../Core/Inc/adbms_to_CAN.h:
+../Core/Inc/can.h:
+../Core/Inc/can.h:
 ../Core/Inc/eeprom_utils.h:
 ../Core/Inc/ee24.h:
 ../Core/Inc/uartDMA.h:
 ../Core/Inc/isa_ivt-s.h:
-../Core/Inc/time_rtc.h:
 ../Core/Inc/contactors.h:
 ../Core/Inc/uartDMA.h:
 ../Core/Inc/version.h:
-../Core/Inc/temperatures.h:
 ../Core/Inc/precharge.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/dbc/ams.h:

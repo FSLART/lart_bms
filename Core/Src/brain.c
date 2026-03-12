@@ -5,6 +5,7 @@
  *      Author: jpser
  */
 
+#include <analog_readings.h>
 #include "main.h"
 #include "brain.h"
 
@@ -13,26 +14,16 @@
 #include <stdbool.h>
 
 #include "adbms_main.h"
+#include "adbms_to_CAN.h"
+#include "can.h"
 
 #include "eeprom_utils.h"
-
 #include "isa_ivt-s.h"
-
-#include "time_rtc.h"
-
 #include "contactors.h"
-
 #include "uartDMA.h"
-
 #include "version.h"
-
-#include "temperatures.h"
-
 #include "precharge.h"
-
 #include "ams.h"
-
-#define BYPASS_CAN_ISA
 
 /* ================== LOCAL DEFINES / TYPES ================== */
 
@@ -41,9 +32,9 @@
 /* EEPROM comms instance */
 //static EEPROM_Comms eeprom_comms = { .hi2c = &hi2c1, .huart = &huart1 };
 /* ================== MODULE STATE ================== */
-volatile BmsStates bmsState = IDLE;
-volatile BmsStates bmsCurrState = IDLE;
-volatile BmsStates bmsPrevState = IDLE;
+volatile AMSStates_t AMS_State = FAULT;
+volatile AMSStates_t AMS_Current_State = FAULT;
+volatile AMSStates_t AMS_Previous_State = FAULT;
 
 /* runtime bookkeeping / flags */
 static volatile uint32_t runtime_sec = 0;
@@ -63,17 +54,9 @@ void brain_start(void) {
 	HAL_GPIO_WritePin(BMS_MSTR_GPIO_Port, BMS_MSTR_Pin, GPIO_PIN_SET);
 
 	// Start Timers
-	HAL_TIM_Base_Start_IT(&htim8);
-	HAL_TIM_Base_Start_IT(&htim10);
+	//HAL_TIM_Base_Start_IT(&htim8);
+	//HAL_TIM_Base_Start_IT(&htim10);
 
-	// Initialise BMS configs (No commands sent)
-	//bms_init();
-
-	//uint32_t timeDiff = 0;
-	//uint32_t timeStart;
-	//uint32_t timeCmmd;
-
-	//printfDma("bad \r");
 	printfConsole("Start Program \n\r");
 	printfDebug("Bluetooth, u up? \r\n");
 	//OpenAllContactors();
@@ -85,6 +68,8 @@ void brain_start(void) {
 	//char ts[20];
 	//RTC_Time_Get(ts, sizeof(ts));
 	//printConsole("%s\r\n", ts);
+
+	AnalogReadings_Init();
 
 	//printfDmaBT("hello");
 
@@ -102,70 +87,40 @@ void brain_start(void) {
 
 	IVT_CAN_Setup_AllMessages(&hcan1);
 
-#ifndef BYPASS_CAN_ISA
-	IVT_CAN_Config();
-	IVT_SET_BITRATE();
-	#endif
-
 	//inicializar o can pra receber a mensagem de precarga
 	Precharge_CAN_Init();
 
 	// Start Timer11 for falut check
-	HAL_TIM_Base_Start_IT(&htim11);
+	//HAL_TIM_Base_Start_IT(&htim11);
 
 	//bmsState = INACTIVE;
-	bmsState = IDLE;
-	bmsPrevState = INACTIVE;
-	bmsCurrState = INACTIVE;
+	AMS_State = STARTUP;
+	AMS_Previous_State = FAULT;
+	AMS_Current_State = FAULT;
 }
 
 void brain_loop(void) {
 
-	bmsCurrState = bmsState;        // Copy value to ensure value is not changed throughout the loop
+	AMS_Current_State = AMS_State;        // Copy value to ensure value is not changed throughout the loop
 
-	switch (bmsCurrState) {
+	switch (AMS_Current_State) {
+
+	case RESET_ISA:
+
+		IVT_CAN_Config();
+		IVT_SET_BITRATE();
+
+		AMS_Current_State = AMS_Previous_State;
+
+		break;
+
 	case BALANCING:
 
 		break;
 
-	case INACTIVE:
-
-		/*if (Precharge_GetState() == RX_CAN) {
-		 bmsState = STARTUP;
-		 }*/
-
-		if ((getRuntimeMsDiff(timeStart) > 800) || (bmsPrevState != bmsCurrState)) {
-			//printfDma("	IDLE \n\n");
-			timeStart = getRuntimeMs();
-
-			//loop_count = 0;
-			//adBmsWakeupIc(TOTAL_IC);
-			//adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
-			//adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-			//adBmsWakeupIc(TOTAL_IC);
-			//adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-			// Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-			// adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-			//Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-			// adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
-			//Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
-			// while(loop_count < LOOP_MEASUREMENT_COUNT)
-			//{
-			//measurement_loop();
-			//Delay_ms(MEASUREMENT_LOOP_TIME);
-			// loop_count = loop_count + 1;
-			//}
-		}
-
-		//printConsole("	INACTIVE \n\n");
-
-		//bms_stopDischarge();
-		//bmsState = IDLE;
-		break;
-
 	case IDLE:
 
-		if ((getRuntimeMsDiff(timeStart) > 800) || (bmsPrevState != bmsCurrState)) {
+		if ((getRuntimeMsDiff(timeStart) > 800) || (AMS_Previous_State != AMS_Current_State)) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
@@ -191,88 +146,58 @@ void brain_loop(void) {
 		}
 
 		break;
+
 	case STARTUP:
-		/*OpenAllContactors();
-		 HAL_Delay(2000);
-		 CloseAIR_negativo();
-		 HAL_Delay(200);
-		 ClosePreCarga();
-		 HAL_Delay(2500);
-		 CloseAIR_positivo();
-		 HAL_Delay(500);
-		 OpenPreCarga();
-		 HAL_Delay(3000);
-		 CloseDescarga();
-		 HAL_Delay(1000);*/
-		if ((getRuntimeMsDiff(timeStart) > 800) || (bmsPrevState != bmsCurrState)) {
-			//printfDma("	IDLE \n\n");
-			timeStart = getRuntimeMs();
 
-			//loop_count = 0;
-			//adBmsWakeupIc(TOTAL_IC);
-			//adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
-			//adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-			//adBmsWakeupIc(TOTAL_IC);
-			//adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-			//Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-			//adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-			//Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-			//adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
-			//Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
-			/*while(loop_count < LOOP_MEASUREMENT_COUNT)
-			 {
-			 //measurement_loop();
-			 //Delay_ms(MEASUREMENT_LOOP_TIME);
-			 loop_count = loop_count + 1;
-			 }*/
-		}
+		//TODO: implement startup shit that needs looping i gueess lol
 
-		/*while (Precharge_GetState() != END) {
-		 if (Precharge_GetState() == START) {
-		 Precharge_Init();
-		 Precharge_Update();
-		 } else {
-		 Precharge_Update();
-		 }
-		 }
+		AMS_State = IDLE;
 
-		 bmsState = IDLE;*/
 		break;
 
 	default:
+		AMS_State = FAULT;
+
 		break;
 
 	}
 
-	bmsPrevState = bmsCurrState;
+	AMS_Previous_State = AMS_Current_State;
 
-	//bms_getAuxMeasurement();
-	//bms_delayMsActive(20);
-	//bms_startAdcvCont();            // Need to wait 8ms for the average register to fill up
-	//bms_delayMsActive(12);
-	//bms_readAvgCellVoltage();
-	//bms_delayMsActive(200);
-	// send_ad68_ui();
-	// bms_delayMsActive(200);
-	// bms_delayMsActive(2000);
-	// send_ivt_ui();
-
+	// Fault Check Triggered
 	if (faultCheck) {
 		//printfDma("FAULT CHECK \r\n");
 		//IVT_FAULT_CHECK();
 		//bms_openWireCheck(&ow_status);
 		ADBMS_CAN_SendAll(&hcan1);
+		AnalogReadings_Start();
 		faultCheck = false;
-		//ClosePreCarga();
-		read_mcu_temp();
+
 
 	}
 
+	// ~Update UI Triggered
 	if (updateUI) {
+
+		const AnalogReadings_t *adc = AnalogReadings_Get();
+
+		if (adc->data_ready)
+		{
+			printfDebug("ADC RAW: IN13=%u TEMP=%u VREF=%u\r\n",
+		           adc->raw_ams_master_current,
+		           adc->raw_temp,
+		           adc->raw_vref);
+
+		    printfDebug("VDDA: %.3f V\r\n", adc->vdda);
+
+		    printfDebug("Current: %.3f A\r\n", adc->ams_master_current);
+
+		    printfDebug("MCU Temp: %.2f C\r\n", adc->mcu_temp_c);
+		}
+
 		//send_ivt_ui();
 		//send_ad68_ui();
 		updateUI = false;
-		//OpenPreCarga();
 	}
 
 	//update precharge state machine if necessary
@@ -282,50 +207,78 @@ void brain_loop(void) {
 	CanTx_ProcessQueue();
 }
 
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+    if (hadc->Instance == ADC1) {
+        AnalogReadings_ConvCpltCallback();
+    }
+}
+
 /// Timer interrupt callback
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	// 1s timer
-	if (htim == &htim10) {
-		runtime_sec += 1;
-		//printfDma("	gay 1000ms\n");
-	}
-
-	//Timer to check on errors - 300ms
-	if (htim->Instance == TIM11) {
-		faultCheck = true;
-	}
 
 	//Timer to update ui - 800ms
-	if (htim->Instance == TIM8) {
+	/*if (htim->Instance == TIM8) {
 		updateUI = true;
+	}*/
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	if (GPIO_Pin == B1_Pin) {
+		if (AMS_State == ONMISSION) {
+			AMS_State = IDLE;
+		} else {
+			AMS_State = ONMISSION;
+		}
 	}
+
+	Feedback_EXTI_Callback(GPIO_Pin);
 }
 
 // Called each SysTick interrupt for HEARTBEAT LED
 void HAL_SYSTICK_Callback(void) {
+
+    static int counter_300ms = 0;
+    static int counter_800ms = 0;
+    static int counter_1000ms = 0;
+
+    if (++counter_300ms >= 300) {
+    	counter_300ms = 0;
+        faultCheck = true;
+    }
+
+    if (++counter_800ms >= 800) {
+    	counter_800ms = 0;
+        updateUI = true;
+    }
+
+    if (++counter_1000ms >= 1000) {
+    	counter_1000ms = 0;
+    	runtime_sec += 1;
+    }
 
 	heartbeat();
 }
 
 void heartbeat(void) {
 
-    static uint16_t ticks = 0;
-    static uint16_t period = 1000;   // start period
+	static uint16_t ticks = 0;
+	static uint16_t period = 1000;   // start period
 
-    if (++ticks >= period) {
+	if (++ticks >= period) {
 
-        ticks = 0;
+		ticks = 0;
 
-        HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 
-        // halve the period
-        period >>= 1;
+		// halve the period
+		period >>= 1;
 
-        // reset when reaching 0 or 1
-        if (period < 1) {
-            period = 1000;
-        }
-    }
+		// reset when reaching 0 or 1
+		if (period < 1) {
+			period = 1000;
+		}
+	}
 
 	/* HEARTBEAT*/
 	/**static uint16_t ticks = 0;
@@ -351,18 +304,6 @@ uint32_t getRuntimeMs(void) {
 
 uint32_t getRuntimeMsDiff(uint32_t startTime) {
 	return HAL_GetTick() - startTime;
-}
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	if (GPIO_Pin == B1_Pin) {
-		if (bmsState == ONMISSION) {
-			bmsState = IDLE;
-		} else {
-			bmsState = ONMISSION;
-		}
-	}
-
-	Feedback_EXTI_Callback(GPIO_Pin);
 }
 
 void RaiseError(ErrorCode_t errorcode) {
