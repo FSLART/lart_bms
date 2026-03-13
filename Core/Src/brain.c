@@ -5,7 +5,6 @@
  *      Author: jpser
  */
 
-#include <analog_readings.h>
 #include "main.h"
 #include "brain.h"
 
@@ -15,14 +14,15 @@
 
 #include "adbms_main.h"
 #include "adbms_to_CAN.h"
-#include "can.h"
 
+#include "analog_readings.h"
 #include "eeprom_utils.h"
 #include "isa_ivt-s.h"
 #include "contactors.h"
 #include "uartDMA.h"
 #include "version.h"
 #include "precharge.h"
+#include "can.h"
 #include "ams.h"
 
 /* ================== LOCAL DEFINES / TYPES ================== */
@@ -170,6 +170,7 @@ void brain_loop(void) {
 		//IVT_FAULT_CHECK();
 		//bms_openWireCheck(&ow_status);
 		ADBMS_CAN_SendAll(&hcan1);
+		AnalogReadings_CAN_Send(&hcan1);
 		AnalogReadings_Start();
 		faultCheck = false;
 
@@ -178,22 +179,6 @@ void brain_loop(void) {
 
 	// ~Update UI Triggered
 	if (updateUI) {
-
-		const AnalogReadings_t *adc = AnalogReadings_Get();
-
-		if (adc->data_ready)
-		{
-			printfDebug("ADC RAW: IN13=%u TEMP=%u VREF=%u\r\n",
-		           adc->raw_ams_master_current,
-		           adc->raw_temp,
-		           adc->raw_vref);
-
-		    printfDebug("VDDA: %.3f V\r\n", adc->vdda);
-
-		    printfDebug("Current: %.3f A\r\n", adc->ams_master_current);
-
-		    printfDebug("MCU Temp: %.2f C\r\n", adc->mcu_temp_c);
-		}
 
 		//send_ivt_ui();
 		//send_ad68_ui();

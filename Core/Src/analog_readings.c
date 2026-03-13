@@ -10,6 +10,8 @@
 #include "brain.h"
 #include "math.h"
 #include "uartDMA.h"
+#include "can.h"
+#include "dbc/ams.h"
 
 extern ADC_HandleTypeDef hadc1;
 
@@ -129,3 +131,55 @@ const AnalogReadings_t *AnalogReadings_Get(void)
 {
     return &s_analog;
 }
+
+HAL_StatusTypeDef AnalogReadings_CAN_Send(CAN_HandleTypeDef *hcan)
+{
+    uint8_t data[AMS_MASTER_MSC_ID_1_LENGTH];
+    int len;
+
+    if (hcan == NULL) {
+        return HAL_ERROR;
+    }
+
+    if (!s_analog.data_ready) {
+        return HAL_ERROR;
+    }
+
+    struct ams_master_msc_id_1_t msg = {0};
+
+    msg.mcu_vref = ams_master_msc_id_1_mcu_vref_encode(s_analog.vdda);
+    msg.mcu_temperature = ams_master_msc_id_1_mcu_temperature_encode(s_analog.mcu_temp_c);
+    msg.ams_current_draw = ams_master_msc_id_1_ams_current_draw_encode(s_analog.ams_master_current);
+
+    len = ams_master_msc_id_1_pack(data, &msg, sizeof(data));
+    if (len < 0) {
+        return HAL_ERROR;
+    }
+
+    return CAN_TX_Add_To_Queue(
+        hcan,
+        AMS_MASTER_MSC_ID_1_FRAME_ID,
+        AMS_MASTER_MSC_ID_1_LENGTH,
+        data
+    );
+}
+
+
+/* PERIODICA PRINT OF VALUES
+ * const AnalogReadings_t *adc = AnalogReadings_Get();
+
+		if (adc->data_ready)
+		{
+			printfDebug("ADC RAW: IN13=%u TEMP=%u VREF=%u\r\n",
+		           adc->raw_ams_master_current,
+		           adc->raw_temp,
+		           adc->raw_vref);
+
+		    printfDebug("VDDA: %.3f V\r\n", adc->vdda);
+
+		    printfDebug("Current: %.3f A\r\n", adc->ams_master_current);
+
+		    printfDebug("MCU Temp: %.2f C\r\n", adc->mcu_temp_c);
+		}
+ *
+ */

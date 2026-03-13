@@ -1,7 +1,8 @@
-../Core/Src/analog_readings.c:40:14:AnalogReadings_ComputeVDDA	16	static
-../Core/Src/analog_readings.c:49:14:AnalogReadings_ComputeCurrent	24	static
-../Core/Src/analog_readings.c:58:14:AnalogReadings_ComputeTempC	32	static
-../Core/Src/analog_readings.c:73:6:AnalogReadings_Init	16	static
-../Core/Src/analog_readings.c:89:6:AnalogReadings_Start	8	static
-../Core/Src/analog_readings.c:102:6:AnalogReadings_ConvCpltCallback	24	static
-../Core/Src/analog_readings.c:128:25:AnalogReadings_Get	4	static
+../Core/Src/analog_readings.c:42:14:AnalogReadings_ComputeVDDA	16	static
+../Core/Src/analog_readings.c:51:14:AnalogReadings_ComputeCurrent	24	static
+../Core/Src/analog_readings.c:60:14:AnalogReadings_ComputeTempC	32	static
+../Core/Src/analog_readings.c:75:6:AnalogReadings_Init	16	static
+../Core/Src/analog_readings.c:91:6:AnalogReadings_Start	8	static
+../Core/Src/analog_readings.c:104:6:AnalogReadings_ConvCpltCallback	24	static
+../Core/Src/analog_readings.c:130:25:AnalogReadings_Get	4	static
+../Core/Src/analog_readings.c:135:19:AnalogReadings_CAN_Send	32	static

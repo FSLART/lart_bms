@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "main.h"
 
 #define ADC_CHANNEL_COUNT    3u
 #define ADC_SAMPLES_PER_CH   10u
@@ -33,5 +34,7 @@ void AnalogReadings_Start(void);
 void AnalogReadings_ConvCpltCallback(void);
 
 const AnalogReadings_t *AnalogReadings_Get(void);
+
+HAL_StatusTypeDef AnalogReadings_CAN_Send(CAN_HandleTypeDef *hcan);
 
 #endif /* INC_ANALOG_READINGS_H_ */
