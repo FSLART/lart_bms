@@ -53,5 +53,7 @@ bool IsCurrentOK(void);
 //feebacks interrupt callbacks
 void Feedback_EXTI_Callback(uint16_t GPIO_Pin);
 
+void Feedback_DebounceUpdate(void);
+
 
 #endif /* INC_PRECHARGE_H_ */

@@ -23,6 +23,9 @@ and its licensor.
 
 #include "adbms_main.h"
 
+//For herro handling
+extern uint8_t anyPecError;
+
 /* Calculates and returns the CRC15Table */
 uint16_t Pec15_Calc
 ( 

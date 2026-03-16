@@ -16,8 +16,22 @@
 
 #include "uartDMA.h"
 
-#define PRECHARGE_CAN_LOCKOUT_MS   15000u //esperar este tempo antes de processar uma nova requisição de inicialização de precarga
-#define CONTACTOR_DELAY_MS   100u  // tempo de chekagewm da atracagem do contactor
+#define PRECHARGE_CAN_LOCKOUT_MS   15000 //esperar este tempo antes de processar uma nova requisição de inicialização de precarga
+
+//200 ms devido ao gnd ser partilhado, má projetação da pcb
+#define CONTACTOR_DELAY_MS   250  // tempo de chekagewm da atracagem do contactor
+#define FEEDBACK_DEBOUNCE_MS   250
+
+typedef struct {
+    uint8_t pending;          // waiting for debounce to finish
+    uint32_t start_ms;        // when debounce started
+    GPIO_PinState candidate;  // state seen at interrupt
+} FeedbackDebounce_t;
+
+FeedbackDebounce_t db_air_neg = {0};
+FeedbackDebounce_t db_air_pos = {0};
+FeedbackDebounce_t db_pre     = {0};
+FeedbackDebounce_t db_dsch    = {0};
 
 //Internal variables
 //PrechargeState_t state = RX_CAN;
@@ -124,6 +138,8 @@ PrechargeState_t Precharge_GetState(void) {
  */
 void Precharge_Update(void) {
 	uint32_t now = HAL_GetTick();
+
+	Feedback_DebounceUpdate();
 
 	switch (state) {
 
@@ -500,6 +516,59 @@ bool IsCurrentOK(void) {
  *******************************************************************************
  */
 void Feedback_EXTI_Callback(uint16_t GPIO_Pin) {
+    uint32_t now = HAL_GetTick();
+    GPIO_PinState pin_state;
+
+    switch (GPIO_Pin) {
+    case GPIO_PIN_12:   // PC12 = MCU_DISCH_FB
+        if (!db_dsch.pending) {
+            pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12);
+            fb_dsch = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+            db_dsch.pending = 1U;
+            db_dsch.start_ms = now;
+            db_dsch.candidate = pin_state;
+            printfDebug("MCU_DISCH_FB latched -> %d\r\n", fb_dsch);
+        }
+        break;
+
+    case GPIO_PIN_11:   // PC11 = MCU_AIR-_FB
+        if (!db_air_neg.pending) {
+            pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11);
+            fb_air_neg = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+            db_air_neg.pending = 1U;
+            db_air_neg.start_ms = now;
+            db_air_neg.candidate = pin_state;
+            printfDebug("MCU_AIR-_FB latched -> %d\r\n", fb_air_neg);
+        }
+        break;
+
+    case GPIO_PIN_10:   // PC10 = MCU_AIR+_FB
+        if (!db_air_pos.pending) {
+            pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10);
+            fb_air_pos = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+            db_air_pos.pending = 1U;
+            db_air_pos.start_ms = now;
+            db_air_pos.candidate = pin_state;
+            printfDebug("MCU_AIR+_FB latched -> %d\r\n", fb_air_pos);
+        }
+        break;
+
+    case GPIO_PIN_15:   // PA15 = MCU_PRE_FB
+        if (!db_pre.pending) {
+            pin_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15);
+            fb_pre = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+            db_pre.pending = 1U;
+            db_pre.start_ms = now;
+            db_pre.candidate = pin_state;
+            printfDebug("MCU_PRE_FB latched -> %d\r\n", fb_pre);
+        }
+        break;
+
+    default:
+        break;
+    }
+}
+/*void Feedback_EXTI_Callback(uint16_t GPIO_Pin) {
 	GPIO_PinState pin_state;
 
 	switch (GPIO_Pin) {
@@ -530,7 +599,42 @@ void Feedback_EXTI_Callback(uint16_t GPIO_Pin) {
 	default:
 		break;
 	}
+}*/
+
+
+void Feedback_DebounceUpdate(void) {
+    uint32_t now = HAL_GetTick();
+    GPIO_PinState pin_state;
+
+    if (db_dsch.pending && ((now - db_dsch.start_ms) >= FEEDBACK_DEBOUNCE_MS)) {
+        pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12);
+        fb_dsch = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+        db_dsch.pending = 0U;
+        printfDebug("MCU_DISCH_FB debounce end -> %d\r\n", fb_dsch);
+    }
+
+    if (db_air_neg.pending && ((now - db_air_neg.start_ms) >= FEEDBACK_DEBOUNCE_MS)) {
+        pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11);
+        fb_air_neg = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+        db_air_neg.pending = 0U;
+        printfDebug("MCU_AIR-_FB debounce end -> %d\r\n", fb_air_neg);
+    }
+
+    if (db_air_pos.pending && ((now - db_air_pos.start_ms) >= FEEDBACK_DEBOUNCE_MS)) {
+        pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10);
+        fb_air_pos = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+        db_air_pos.pending = 0U;
+        printfDebug("MCU_AIR+_FB debounce end -> %d\r\n", fb_air_pos);
+    }
+
+    if (db_pre.pending && ((now - db_pre.start_ms) >= FEEDBACK_DEBOUNCE_MS)) {
+        pin_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15);
+        fb_pre = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+        db_pre.pending = 0U;
+        printfDebug("MCU_PRE_FB debounce end -> %d\r\n", fb_pre);
+    }
 }
+
 
 /**
  *******************************************************************************

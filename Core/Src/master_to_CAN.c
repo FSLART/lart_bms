@@ -26,6 +26,8 @@
 #define MASTER_FAN_PWM_DEFAULT    20u
 #endif
 
+extern uint8_t anyPecError;
+
 static uint8_t Master_CAN_GetContactorCommandState(GPIO_TypeDef *port, uint16_t pin)
 {
 
@@ -49,11 +51,22 @@ HAL_StatusTypeDef Master_CAN_Send_MSC_1(CAN_HandleTypeDef *hcan)
     uint8_t data[POWERTRAIN_T26_MASTER_MSC_ID_1_LENGTH];
     int len;
 
+    uint8_t isPecDetected = 1;
+
+    if(anyPecError > 0){
+    	isPecDetected = 1;
+    }else{
+    	isPecDetected = 0;
+    }
+
     msg.mcu_vref = powertrain_t26_master_msc_id_1_mcu_vref_encode(adc->vdda);
     msg.mcu_temperature = powertrain_t26_master_msc_id_1_mcu_temperature_encode(adc->mcu_temp_c);
     msg.ams_current_draw = powertrain_t26_master_msc_id_1_ams_current_draw_encode(adc->ams_master_current);
 
     msg.master_firmware_version = MASTER_FW_VERSION;
+
+    msg.adbms_pec_error = isPecDetected;
+
     msg.master_fan_pwm = MASTER_FAN_PWM_DEFAULT;
     msg.master_state = (uint8_t)AMS_State;
 
@@ -90,8 +103,8 @@ HAL_StatusTypeDef Master_CAN_Send_MSC_2(CAN_HandleTypeDef *hcan)
     msg.master_runtime = (uint16_t)runtime;
 
     /* TODO: replace these temporary values with real aggregated values */
-    //msg.overall_maximum_voltage = powertrain_t26_master_msc_id_2_overall_maximum_voltage_encode(0.0f);
-    //msg.overall_maximum_temperature = powertrain_t26_master_msc_id_2_overall_maximum_temperature_encode(0.0f);
+    msg.overall_maximum_voltage = powertrain_t26_master_msc_id_2_overall_maximum_voltage_encode(0.0f);
+    msg.overall_maximum_temperature = powertrain_t26_master_msc_id_2_overall_maximum_temperature_encode(0.0f);
 
     len = powertrain_t26_master_msc_id_2_pack(data, &msg, sizeof(data));
     if (len < 0) {
@@ -152,7 +165,7 @@ HAL_StatusTypeDef Master_CAN_SendAll(CAN_HandleTypeDef *hcan)
     HAL_StatusTypeDef st3 = Master_CAN_Send_MSC_2(hcan);
     HAL_StatusTypeDef st2 = Master_CAN_SendPrecharge(hcan);
 
-    if (st1 != HAL_OK || st2 != HAL_OK) {
+    if (st1 != HAL_OK || st2 != HAL_OK || st3 != HAL_OK) {
         return HAL_ERROR;
     }
 

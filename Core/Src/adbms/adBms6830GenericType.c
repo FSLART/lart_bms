@@ -26,6 +26,9 @@
 #include "adbms_main.h"
 #include "uartDMA.h"
 
+//Send variable out to CAN Messaging processing
+uint8_t anyPecError = 0;
+
 /**************************************** BMS Driver APIs definitions ********************************************/
 /* Precomputed CRC15 Table */
 const uint16_t Crc15Table[256] = { 0x0000, 0xc599, 0xceab, 0xb32, 0xd8cf, 0x1d56, 0x1664, 0xd3fd, 0xf407, 0x319e, 0x3aac, 0xff35, 0x2cc8, 0xe951, 0xe263, 0x27fa, 0xad97, 0x680e, 0x633c, 0xa6a5, 0x7558, 0xb0c1, 0xbbf3, 0x7e6a, 0x5990, 0x9c09, 0x973b, 0x52a2, 0x815f, 0x44c6, 0x4ff4, 0x8a6d, 0x5b2e, 0x9eb7, 0x9585, 0x501c, 0x83e1, 0x4678, 0x4d4a,
@@ -332,7 +335,9 @@ void adBmsReadData(uint8_t tIC, cell_asic *ic, uint8_t cmd_arg[2], TYPE type, GR
 		spiReadData(tIC, &cmd_arg[0], &read_buffer[0], &pec_error[0], &cmd_count[0], regData_size);
 
 		/* LED OFF when no PEC error, ON when any PEC error */
-		uint8_t anyPecError = 0;
+		//always start at 0
+		anyPecError = 0;
+
 		for (uint8_t cic = 0; cic < tIC; cic++) {
 			if (pec_error[cic] != 0) {
 				anyPecError = 1;
