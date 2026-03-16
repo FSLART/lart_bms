@@ -1,0 +1,44 @@
+{
+  "name": "foxglove-3d-object-viewer",
+  "displayName": "3D Object",
+  "description": "Foxglove custom panel to render GLB CAD models",
+  "publisher": "estang",
+  "homepage": "",
+  "version": "0.0.2",
+  "license": "UNLICENSED",
+  "main": "./dist/extension.js",
+  "preview": "assets/preview.png",
+  "keywords": [
+    "foxglove",
+    "glb",
+    "cad"
+  ],
+  "scripts": {
+  "generate:model": "node scripts/embed-glb.js",
+  "build": "npm run generate:model && foxglove-extension build",
+  "foxglove:prepublish": "npm run generate:model && foxglove-extension build --mode production",
+  "lint": "eslint .",
+  "lint:ci": "eslint .",
+  "lint:fix": "eslint --fix .",
+  "local-install": "foxglove-extension install",
+  "package": "foxglove-extension package",
+  "pretest": "foxglove-extension pretest"
+  },
+  "dependencies": {
+    "@google/model-viewer": "^4.2.0"
+  },
+  "devDependencies": {
+    "@foxglove/eslint-plugin": "2.1.0",
+    "@foxglove/extension": "2.41.0",
+    "@types/react": "18.3.27",
+    "@types/react-dom": "18.3.7",
+    "create-foxglove-extension": "1.1.0",
+    "eslint": "9.39.1",
+    "globals": "16.4.0",
+    "prettier": "3.7.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.46.1"
+  }
+}
