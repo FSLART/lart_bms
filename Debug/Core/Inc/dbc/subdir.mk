@@ -5,13 +5,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Core/Inc/dbc/ams.c 
+../Core/Inc/dbc/powertrain_t26.c 
 
 OBJS += \
-./Core/Inc/dbc/ams.o 
+./Core/Inc/dbc/powertrain_t26.o 
 
 C_DEPS += \
-./Core/Inc/dbc/ams.d 
+./Core/Inc/dbc/powertrain_t26.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -21,7 +21,7 @@ Core/Inc/dbc/%.o Core/Inc/dbc/%.su Core/Inc/dbc/%.cyclo: ../Core/Inc/dbc/%.c Cor
 clean: clean-Core-2f-Inc-2f-dbc
 
 clean-Core-2f-Inc-2f-dbc:
-	-$(RM) ./Core/Inc/dbc/ams.cyclo ./Core/Inc/dbc/ams.d ./Core/Inc/dbc/ams.o ./Core/Inc/dbc/ams.su
+	-$(RM) ./Core/Inc/dbc/powertrain_t26.cyclo ./Core/Inc/dbc/powertrain_t26.d ./Core/Inc/dbc/powertrain_t26.o ./Core/Inc/dbc/powertrain_t26.su
 
 .PHONY: clean-Core-2f-Inc-2f-dbc
 

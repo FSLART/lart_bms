@@ -12,7 +12,7 @@
 
 #include "can.h"
 
-#include "dbc/ams.h"
+#include "dbc/powertrain_t26.h"
 
 #include "uartDMA.h"
 
@@ -133,11 +133,11 @@ void Precharge_Update(void) {
 		break;
 
 	case START:
+		OpenAllContactors();
 		state = OPEN_ALL;
 		break;
 
 	case OPEN_ALL:
-		OpenAllContactors();
 		if (IsTheStateOK(state))
 			state = SWITCH_HVNEG;
 		break;
@@ -566,9 +566,9 @@ void PreCharge_CAN_Rx(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data) {
 
 	switch (id) {
 
-	case AMS_START_PRE_CHARGE_FRAME_ID:
-		struct ams_start_pre_charge_t prechargeInit;
-		ams_start_pre_charge_unpack(&prechargeInit, data, dlc);
+	case POWERTRAIN_T26_START_PRE_CHARGE_FRAME_ID:
+		struct powertrain_t26_start_pre_charge_t prechargeInit;
+		powertrain_t26_start_pre_charge_unpack(&prechargeInit, data, dlc);
 
 		/*if (prechargeInit.precharge_request > 0 && start_initiated == false && state == KILL) {
 		 state = RX_CAN;

@@ -20,10 +20,10 @@
 #include "isa_ivt-s.h"
 #include "contactors.h"
 #include "uartDMA.h"
-#include "version.h"
+#include "master_to_CAN.h"
 #include "precharge.h"
 #include "can.h"
-#include "ams.h"
+#include "powertrain_t26.h"
 
 /* ================== LOCAL DEFINES / TYPES ================== */
 
@@ -60,7 +60,7 @@ void brain_start(void) {
 	printfConsole("Start Program \n\r");
 	printfDebug("Bluetooth, u up? \r\n");
 	//OpenAllContactors();
-	startUI();
+	//startUI();
 
 	//initilize slave comms
 	//adbms_main();
@@ -170,7 +170,8 @@ void brain_loop(void) {
 		//IVT_FAULT_CHECK();
 		//bms_openWireCheck(&ow_status);
 		ADBMS_CAN_SendAll(&hcan1);
-		AnalogReadings_CAN_Send(&hcan1);
+		//AnalogReadings_CAN_Send(&hcan1);
+		Master_CAN_SendAll(&hcan1);
 		AnalogReadings_Start();
 		faultCheck = false;
 
@@ -223,12 +224,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 // Called each SysTick interrupt for HEARTBEAT LED
 void HAL_SYSTICK_Callback(void) {
 
-    static int counter_300ms = 0;
+    static int counter_200ms = 0;
     static int counter_800ms = 0;
     static int counter_1000ms = 0;
 
-    if (++counter_300ms >= 300) {
-    	counter_300ms = 0;
+    if (++counter_200ms >= 200) {
+    	counter_200ms = 0;
         faultCheck = true;
     }
 
@@ -281,6 +282,10 @@ void heartbeat(void) {
 	 HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 	 }*/
 
+}
+
+uint32_t getRuntimeSeconds(void) {
+	return runtime_sec;
 }
 
 uint32_t getRuntimeMs(void) {

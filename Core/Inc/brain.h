@@ -63,6 +63,7 @@ void brain_start(void);
 void brain_loop(void);
 
 
+uint32_t getRuntimeSeconds(void);
 uint32_t getRuntimeMs(void);
 uint32_t getRuntimeMsDiff(uint32_t startTime);
 

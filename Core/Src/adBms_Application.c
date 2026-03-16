@@ -107,6 +107,9 @@ void run_command(int cmd) {
 
 	case 1:
 		adBms6830_write_read_config(TOTAL_IC, &IC[0]);
+		adBms6830_clear_cell_measurement(TOTAL_IC);
+		adBms6830_clear_aux_measurement(TOTAL_IC);
+		adBms6830_clear_spin_measurement(TOTAL_IC);
 		break;
 
 	case 2:

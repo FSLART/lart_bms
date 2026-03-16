@@ -5,4 +5,3 @@
 ../Core/Src/analog_readings.c:91:6:AnalogReadings_Start	2
 ../Core/Src/analog_readings.c:104:6:AnalogReadings_ConvCpltCallback	2
 ../Core/Src/analog_readings.c:130:25:AnalogReadings_Get	1
-../Core/Src/analog_readings.c:135:19:AnalogReadings_CAN_Send	4

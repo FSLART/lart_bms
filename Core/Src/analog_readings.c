@@ -11,7 +11,7 @@
 #include "math.h"
 #include "uartDMA.h"
 #include "can.h"
-#include "dbc/ams.h"
+#include "dbc/powertrain_t26.h"
 
 extern ADC_HandleTypeDef hadc1;
 
@@ -132,9 +132,9 @@ const AnalogReadings_t *AnalogReadings_Get(void)
     return &s_analog;
 }
 
-HAL_StatusTypeDef AnalogReadings_CAN_Send(CAN_HandleTypeDef *hcan)
+/*HAL_StatusTypeDef AnalogReadings_CAN_Send(CAN_HandleTypeDef *hcan)
 {
-    uint8_t data[AMS_MASTER_MSC_ID_1_LENGTH];
+    uint8_t data[POWERTRAIN_T26_MASTER_MSC_ID_1_LENGTH];
     int len;
 
     if (hcan == NULL) {
@@ -145,24 +145,24 @@ HAL_StatusTypeDef AnalogReadings_CAN_Send(CAN_HandleTypeDef *hcan)
         return HAL_ERROR;
     }
 
-    struct ams_master_msc_id_1_t msg = {0};
+    struct powertrain_t26_master_msc_id_1_t msg = {0};
 
-    msg.mcu_vref = ams_master_msc_id_1_mcu_vref_encode(s_analog.vdda);
-    msg.mcu_temperature = ams_master_msc_id_1_mcu_temperature_encode(s_analog.mcu_temp_c);
-    msg.ams_current_draw = ams_master_msc_id_1_ams_current_draw_encode(s_analog.ams_master_current);
+    msg.mcu_vref = powertrain_t26_master_msc_id_1_mcu_vref_encode(s_analog.vdda);
+    msg.mcu_temperature = powertrain_t26_master_msc_id_1_mcu_temperature_encode(s_analog.mcu_temp_c);
+    msg.ams_current_draw = powertrain_t26_master_msc_id_1_ams_current_draw_encode(s_analog.ams_master_current);
 
-    len = ams_master_msc_id_1_pack(data, &msg, sizeof(data));
+    len = powertrain_t26_master_msc_id_1_pack(data, &msg, sizeof(data));
     if (len < 0) {
         return HAL_ERROR;
     }
 
     return CAN_TX_Add_To_Queue(
         hcan,
-        AMS_MASTER_MSC_ID_1_FRAME_ID,
-        AMS_MASTER_MSC_ID_1_LENGTH,
+		POWERTRAIN_T26_MASTER_MSC_ID_1_FRAME_ID,
+		POWERTRAIN_T26_MASTER_MSC_ID_1_LENGTH,
         data
     );
-}
+}*/
 
 
 /* PERIODICA PRINT OF VALUES

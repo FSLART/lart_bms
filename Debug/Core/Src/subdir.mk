@@ -16,6 +16,7 @@ C_SRCS += \
 ../Core/Src/fan_management.c \
 ../Core/Src/isa_ivt-s.c \
 ../Core/Src/main.c \
+../Core/Src/master_to_CAN.c \
 ../Core/Src/mcuWrapper.c \
 ../Core/Src/precharge.c \
 ../Core/Src/serialPrintResult.c \
@@ -24,8 +25,7 @@ C_SRCS += \
 ../Core/Src/syscalls.c \
 ../Core/Src/sysmem.c \
 ../Core/Src/system_stm32f4xx.c \
-../Core/Src/uartDMA.c \
-../Core/Src/version.c 
+../Core/Src/uartDMA.c 
 
 OBJS += \
 ./Core/Src/adBms_Application.o \
@@ -39,6 +39,7 @@ OBJS += \
 ./Core/Src/fan_management.o \
 ./Core/Src/isa_ivt-s.o \
 ./Core/Src/main.o \
+./Core/Src/master_to_CAN.o \
 ./Core/Src/mcuWrapper.o \
 ./Core/Src/precharge.o \
 ./Core/Src/serialPrintResult.o \
@@ -47,8 +48,7 @@ OBJS += \
 ./Core/Src/syscalls.o \
 ./Core/Src/sysmem.o \
 ./Core/Src/system_stm32f4xx.o \
-./Core/Src/uartDMA.o \
-./Core/Src/version.o 
+./Core/Src/uartDMA.o 
 
 C_DEPS += \
 ./Core/Src/adBms_Application.d \
@@ -62,6 +62,7 @@ C_DEPS += \
 ./Core/Src/fan_management.d \
 ./Core/Src/isa_ivt-s.d \
 ./Core/Src/main.d \
+./Core/Src/master_to_CAN.d \
 ./Core/Src/mcuWrapper.d \
 ./Core/Src/precharge.d \
 ./Core/Src/serialPrintResult.d \
@@ -70,8 +71,7 @@ C_DEPS += \
 ./Core/Src/syscalls.d \
 ./Core/Src/sysmem.d \
 ./Core/Src/system_stm32f4xx.d \
-./Core/Src/uartDMA.d \
-./Core/Src/version.d 
+./Core/Src/uartDMA.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -81,7 +81,7 @@ Core/Src/%.o Core/Src/%.su Core/Src/%.cyclo: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/adBms_Application.cyclo ./Core/Src/adBms_Application.d ./Core/Src/adBms_Application.o ./Core/Src/adBms_Application.su ./Core/Src/adbms_to_CAN.cyclo ./Core/Src/adbms_to_CAN.d ./Core/Src/adbms_to_CAN.o ./Core/Src/adbms_to_CAN.su ./Core/Src/analog_readings.cyclo ./Core/Src/analog_readings.d ./Core/Src/analog_readings.o ./Core/Src/analog_readings.su ./Core/Src/brain.cyclo ./Core/Src/brain.d ./Core/Src/brain.o ./Core/Src/brain.su ./Core/Src/can.cyclo ./Core/Src/can.d ./Core/Src/can.o ./Core/Src/can.su ./Core/Src/contactors.cyclo ./Core/Src/contactors.d ./Core/Src/contactors.o ./Core/Src/contactors.su ./Core/Src/ee24.cyclo ./Core/Src/ee24.d ./Core/Src/ee24.o ./Core/Src/ee24.su ./Core/Src/eeprom_utils.cyclo ./Core/Src/eeprom_utils.d ./Core/Src/eeprom_utils.o ./Core/Src/eeprom_utils.su ./Core/Src/fan_management.cyclo ./Core/Src/fan_management.d ./Core/Src/fan_management.o ./Core/Src/fan_management.su ./Core/Src/isa_ivt-s.cyclo ./Core/Src/isa_ivt-s.d ./Core/Src/isa_ivt-s.o ./Core/Src/isa_ivt-s.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/mcuWrapper.cyclo ./Core/Src/mcuWrapper.d ./Core/Src/mcuWrapper.o ./Core/Src/mcuWrapper.su ./Core/Src/precharge.cyclo ./Core/Src/precharge.d ./Core/Src/precharge.o ./Core/Src/precharge.su ./Core/Src/serialPrintResult.cyclo ./Core/Src/serialPrintResult.d ./Core/Src/serialPrintResult.o ./Core/Src/serialPrintResult.su ./Core/Src/stm32f4xx_hal_msp.cyclo ./Core/Src/stm32f4xx_hal_msp.d ./Core/Src/stm32f4xx_hal_msp.o ./Core/Src/stm32f4xx_hal_msp.su ./Core/Src/stm32f4xx_it.cyclo ./Core/Src/stm32f4xx_it.d ./Core/Src/stm32f4xx_it.o ./Core/Src/stm32f4xx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f4xx.cyclo ./Core/Src/system_stm32f4xx.d ./Core/Src/system_stm32f4xx.o ./Core/Src/system_stm32f4xx.su ./Core/Src/uartDMA.cyclo ./Core/Src/uartDMA.d ./Core/Src/uartDMA.o ./Core/Src/uartDMA.su ./Core/Src/version.cyclo ./Core/Src/version.d ./Core/Src/version.o ./Core/Src/version.su
+	-$(RM) ./Core/Src/adBms_Application.cyclo ./Core/Src/adBms_Application.d ./Core/Src/adBms_Application.o ./Core/Src/adBms_Application.su ./Core/Src/adbms_to_CAN.cyclo ./Core/Src/adbms_to_CAN.d ./Core/Src/adbms_to_CAN.o ./Core/Src/adbms_to_CAN.su ./Core/Src/analog_readings.cyclo ./Core/Src/analog_readings.d ./Core/Src/analog_readings.o ./Core/Src/analog_readings.su ./Core/Src/brain.cyclo ./Core/Src/brain.d ./Core/Src/brain.o ./Core/Src/brain.su ./Core/Src/can.cyclo ./Core/Src/can.d ./Core/Src/can.o ./Core/Src/can.su ./Core/Src/contactors.cyclo ./Core/Src/contactors.d ./Core/Src/contactors.o ./Core/Src/contactors.su ./Core/Src/ee24.cyclo ./Core/Src/ee24.d ./Core/Src/ee24.o ./Core/Src/ee24.su ./Core/Src/eeprom_utils.cyclo ./Core/Src/eeprom_utils.d ./Core/Src/eeprom_utils.o ./Core/Src/eeprom_utils.su ./Core/Src/fan_management.cyclo ./Core/Src/fan_management.d ./Core/Src/fan_management.o ./Core/Src/fan_management.su ./Core/Src/isa_ivt-s.cyclo ./Core/Src/isa_ivt-s.d ./Core/Src/isa_ivt-s.o ./Core/Src/isa_ivt-s.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/master_to_CAN.cyclo ./Core/Src/master_to_CAN.d ./Core/Src/master_to_CAN.o ./Core/Src/master_to_CAN.su ./Core/Src/mcuWrapper.cyclo ./Core/Src/mcuWrapper.d ./Core/Src/mcuWrapper.o ./Core/Src/mcuWrapper.su ./Core/Src/precharge.cyclo ./Core/Src/precharge.d ./Core/Src/precharge.o ./Core/Src/precharge.su ./Core/Src/serialPrintResult.cyclo ./Core/Src/serialPrintResult.d ./Core/Src/serialPrintResult.o ./Core/Src/serialPrintResult.su ./Core/Src/stm32f4xx_hal_msp.cyclo ./Core/Src/stm32f4xx_hal_msp.d ./Core/Src/stm32f4xx_hal_msp.o ./Core/Src/stm32f4xx_hal_msp.su ./Core/Src/stm32f4xx_it.cyclo ./Core/Src/stm32f4xx_it.d ./Core/Src/stm32f4xx_it.o ./Core/Src/stm32f4xx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f4xx.cyclo ./Core/Src/system_stm32f4xx.d ./Core/Src/system_stm32f4xx.o ./Core/Src/system_stm32f4xx.su ./Core/Src/uartDMA.cyclo ./Core/Src/uartDMA.d ./Core/Src/uartDMA.o ./Core/Src/uartDMA.su
 
 .PHONY: clean-Core-2f-Src
 

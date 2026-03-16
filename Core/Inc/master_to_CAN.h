@@ -1,0 +1,21 @@
+/*
+ * master_to_CAN.h
+ *
+ *  Created on: Mar 15, 2026
+ *      Author: jpser
+ */
+
+#ifndef INC_MASTER_TO_CAN_H_
+#define INC_MASTER_TO_CAN_H_
+
+#include "main.h"
+#include "brain.h"
+#include "can.h"
+
+HAL_StatusTypeDef Master_CAN_Send_MSC_1(CAN_HandleTypeDef *hcan);
+HAL_StatusTypeDef Master_CAN_Send_MSC_2(CAN_HandleTypeDef *hcan);
+HAL_StatusTypeDef Master_CAN_SendPrecharge(CAN_HandleTypeDef *hcan);
+HAL_StatusTypeDef Master_CAN_SendAll(CAN_HandleTypeDef *hcan);
+
+
+#endif /* INC_MASTER_TO_CAN_H_ */

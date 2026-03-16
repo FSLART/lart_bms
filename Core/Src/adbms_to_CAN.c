@@ -9,7 +9,7 @@
 #include "adBms_Application.h"
 
 #include "can.h"
-#include "dbc/ams.h"
+#include "dbc/powertrain_t26.h"
 
 #include <math.h>
 #include <string.h>
@@ -71,191 +71,191 @@ HAL_StatusTypeDef ADBMS_CAN_SendMSC_Module(CAN_HandleTypeDef *hcan, uint8_t modu
 
 	switch (slave) {
 	case 1: {
-		struct ams_slave_01_msc_id_2_t m2 = { 0 };
+		struct powertrain_t26_slave_01_msc_id_2_t m2 = { 0 };
 		m2.module_voltage_delta = vdelta;
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
 
-		len = ams_slave_01_msc_id_2_pack(data, &m2, sizeof(data));
+		len = powertrain_t26_slave_01_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_01_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_01_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
 
 	case 2: {
-		struct ams_slave_02_msc_id_2_t m2 = { 0 };
+		struct powertrain_t26_slave_02_msc_id_2_t m2 = { 0 };
 		m2.module_voltage_delta = vdelta;
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
 
-		len = ams_slave_02_msc_id_2_pack(data, &m2, sizeof(data));
+		len = powertrain_t26_slave_02_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_02_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_02_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 3: {
-		struct ams_slave_03_msc_id_2_t m2 = { 0 };
+		struct powertrain_t26_slave_03_msc_id_2_t m2 = { 0 };
 		m2.module_voltage_delta = vdelta;
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
 
-		len = ams_slave_03_msc_id_2_pack(data, &m2, sizeof(data));
+		len = powertrain_t26_slave_03_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_03_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_03_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 4: {
-		struct ams_slave_04_msc_id_2_t m2 = { 0 };
+		struct powertrain_t26_slave_04_msc_id_2_t m2 = { 0 };
 		m2.module_voltage_delta = vdelta;
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
 
-		len = ams_slave_04_msc_id_2_pack(data, &m2, sizeof(data));
+		len = powertrain_t26_slave_04_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_04_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_04_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 5: {
-		struct ams_slave_05_msc_id_2_t m2 = { 0 };
+		struct powertrain_t26_slave_05_msc_id_2_t m2 = { 0 };
 		m2.module_voltage_delta = vdelta;
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
 
-		len = ams_slave_05_msc_id_2_pack(data, &m2, sizeof(data));
+		len = powertrain_t26_slave_05_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_05_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_05_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 6: {
-		struct ams_slave_06_msc_id_2_t m2 = { 0 };
+		struct powertrain_t26_slave_06_msc_id_2_t m2 = { 0 };
 		m2.module_voltage_delta = vdelta;
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
 
-		len = ams_slave_06_msc_id_2_pack(data, &m2, sizeof(data));
+		len = powertrain_t26_slave_06_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_06_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_06_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 7: {
-		struct ams_slave_07_msc_id_2_t m2 = { 0 };
+		struct powertrain_t26_slave_07_msc_id_2_t m2 = { 0 };
 		m2.module_voltage_delta = vdelta;
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
 
-		len = ams_slave_07_msc_id_2_pack(data, &m2, sizeof(data));
+		len = powertrain_t26_slave_07_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_07_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_07_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 8: {
-		struct ams_slave_08_msc_id_2_t m2 = { 0 };
+		struct powertrain_t26_slave_08_msc_id_2_t m2 = { 0 };
 		m2.module_voltage_delta = vdelta;
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
 
-		len = ams_slave_08_msc_id_2_pack(data, &m2, sizeof(data));
+		len = powertrain_t26_slave_08_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_08_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_08_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 9: {
-		struct ams_slave_09_msc_id_2_t m2 = { 0 };
+		struct powertrain_t26_slave_09_msc_id_2_t m2 = { 0 };
 		m2.module_voltage_delta = vdelta;
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
 
-		len = ams_slave_09_msc_id_2_pack(data, &m2, sizeof(data));
+		len = powertrain_t26_slave_09_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_09_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_09_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 10: {
-		struct ams_slave_10_msc_id_2_t m2 = { 0 };
+		struct powertrain_t26_slave_10_msc_id_2_t m2 = { 0 };
 		m2.module_voltage_delta = vdelta;
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
 
-		len = ams_slave_10_msc_id_2_pack(data, &m2, sizeof(data));
+		len = powertrain_t26_slave_10_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_10_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_10_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 11: {
-		struct ams_slave_11_msc_id_2_t m2 = { 0 };
+		struct powertrain_t26_slave_11_msc_id_2_t m2 = { 0 };
 		m2.module_voltage_delta = vdelta;
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
 
-		len = ams_slave_11_msc_id_2_pack(data, &m2, sizeof(data));
+		len = powertrain_t26_slave_11_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_11_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_11_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 12: {
-		struct ams_slave_12_msc_id_2_t m2 = { 0 };
+		struct powertrain_t26_slave_12_msc_id_2_t m2 = { 0 };
 		m2.module_voltage_delta = vdelta;
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
 
-		len = ams_slave_12_msc_id_2_pack(data, &m2, sizeof(data));
+		len = powertrain_t26_slave_12_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_12_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_12_MSC_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
@@ -317,325 +317,325 @@ HAL_StatusTypeDef ADBMS_CAN_SendTemperatures_Module(CAN_HandleTypeDef *hcan, uin
 
 	switch (slave) {
 	case 1: {
-		struct ams_slave_01_temperature_id_1_t temp1 = { 0 };
+		struct powertrain_t26_slave_01_temperature_id_1_t temp1 = { 0 };
 		temp1.temperature_value_1 = t1;
 		temp1.temperature_value_2 = t2;
 		temp1.temperature_value_3 = t3;
 		temp1.temperature_value_4 = t4;
 
-		len = ams_slave_01_temperature_id_1_pack(data, &temp1, sizeof(data));
+		len = powertrain_t26_slave_01_temperature_id_1_pack(data, &temp1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_01_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_01_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_01_temperature_id_2_t temp2_msg = { 0 };
+		struct powertrain_t26_slave_01_temperature_id_2_t temp2_msg = { 0 };
 		temp2_msg.temperature_value_5 = t5;
 		temp2_msg.temperature_value_6 = t6;
 		temp2_msg.temperature_maximum = temp_max;
 		temp2_msg.temperature_delta = temp_delta;
 
-		len = ams_slave_01_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
+		len = powertrain_t26_slave_01_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_01_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_01_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
 
 	case 2: {
-		struct ams_slave_02_temperature_id_1_t temp1 = { 0 };
+		struct powertrain_t26_slave_02_temperature_id_1_t temp1 = { 0 };
 		temp1.temperature_value_1 = t1;
 		temp1.temperature_value_2 = t2;
 		temp1.temperature_value_3 = t3;
 		temp1.temperature_value_4 = t4;
 
-		len = ams_slave_02_temperature_id_1_pack(data, &temp1, sizeof(data));
+		len = powertrain_t26_slave_02_temperature_id_1_pack(data, &temp1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_02_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_02_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_02_temperature_id_2_t temp2_msg = { 0 };
+		struct powertrain_t26_slave_02_temperature_id_2_t temp2_msg = { 0 };
 		temp2_msg.temperature_value_5 = t5;
 		temp2_msg.temperature_value_6 = t6;
 		temp2_msg.temperature_maximum = temp_max;
 		temp2_msg.temperature_delta = temp_delta;
 
-		len = ams_slave_02_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
+		len = powertrain_t26_slave_02_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_02_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_02_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
 
 	case 3: {
-		struct ams_slave_03_temperature_id_1_t temp1 = { 0 };
+		struct powertrain_t26_slave_03_temperature_id_1_t temp1 = { 0 };
 		temp1.temperature_value_1 = t1;
 		temp1.temperature_value_2 = t2;
 		temp1.temperature_value_3 = t3;
 		temp1.temperature_value_4 = t4;
 
-		len = ams_slave_03_temperature_id_1_pack(data, &temp1, sizeof(data));
+		len = powertrain_t26_slave_03_temperature_id_1_pack(data, &temp1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_03_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_03_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_03_temperature_id_2_t temp2_msg = { 0 };
+		struct powertrain_t26_slave_03_temperature_id_2_t temp2_msg = { 0 };
 		temp2_msg.temperature_value_5 = t5;
 		temp2_msg.temperature_value_6 = t6;
 		temp2_msg.temperature_maximum = temp_max;
 		temp2_msg.temperature_delta = temp_delta;
 
-		len = ams_slave_03_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
+		len = powertrain_t26_slave_03_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_03_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_03_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
 
 	case 4: {
-		struct ams_slave_04_temperature_id_1_t temp1 = { 0 };
+		struct powertrain_t26_slave_04_temperature_id_1_t temp1 = { 0 };
 		temp1.temperature_value_1 = t1;
 		temp1.temperature_value_2 = t2;
 		temp1.temperature_value_3 = t3;
 		temp1.temperature_value_4 = t4;
 
-		len = ams_slave_04_temperature_id_1_pack(data, &temp1, sizeof(data));
+		len = powertrain_t26_slave_04_temperature_id_1_pack(data, &temp1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_04_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_04_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_04_temperature_id_2_t temp2_msg = { 0 };
+		struct powertrain_t26_slave_04_temperature_id_2_t temp2_msg = { 0 };
 		temp2_msg.temperature_value_5 = t5;
 		temp2_msg.temperature_value_6 = t6;
 		temp2_msg.temperature_maximum = temp_max;
 		temp2_msg.temperature_delta = temp_delta;
 
-		len = ams_slave_04_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
+		len = powertrain_t26_slave_04_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_04_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_04_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
 
 	case 5: {
-		struct ams_slave_05_temperature_id_1_t temp1 = { 0 };
+		struct powertrain_t26_slave_05_temperature_id_1_t temp1 = { 0 };
 		temp1.temperature_value_1 = t1;
 		temp1.temperature_value_2 = t2;
 		temp1.temperature_value_3 = t3;
 		temp1.temperature_value_4 = t4;
 
-		len = ams_slave_05_temperature_id_1_pack(data, &temp1, sizeof(data));
+		len = powertrain_t26_slave_05_temperature_id_1_pack(data, &temp1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_05_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_05_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_05_temperature_id_2_t temp2_msg = { 0 };
+		struct powertrain_t26_slave_05_temperature_id_2_t temp2_msg = { 0 };
 		temp2_msg.temperature_value_5 = t5;
 		temp2_msg.temperature_value_6 = t6;
 		temp2_msg.temperature_maximum = temp_max;
 		temp2_msg.temperature_delta = temp_delta;
 
-		len = ams_slave_05_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
+		len = powertrain_t26_slave_05_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_05_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_05_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
 
 	case 6: {
-		struct ams_slave_06_temperature_id_1_t temp1 = { 0 };
+		struct powertrain_t26_slave_06_temperature_id_1_t temp1 = { 0 };
 		temp1.temperature_value_1 = t1;
 		temp1.temperature_value_2 = t2;
 		temp1.temperature_value_3 = t3;
 		temp1.temperature_value_4 = t4;
 
-		len = ams_slave_06_temperature_id_1_pack(data, &temp1, sizeof(data));
+		len = powertrain_t26_slave_06_temperature_id_1_pack(data, &temp1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_06_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_06_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_06_temperature_id_2_t temp2_msg = { 0 };
+		struct powertrain_t26_slave_06_temperature_id_2_t temp2_msg = { 0 };
 		temp2_msg.temperature_value_5 = t5;
 		temp2_msg.temperature_value_6 = t6;
 		temp2_msg.temperature_maximum = temp_max;
 		temp2_msg.temperature_delta = temp_delta;
 
-		len = ams_slave_06_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
+		len = powertrain_t26_slave_06_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_06_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_06_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
 
 	case 7: {
-		struct ams_slave_07_temperature_id_1_t temp1 = { 0 };
+		struct powertrain_t26_slave_07_temperature_id_1_t temp1 = { 0 };
 		temp1.temperature_value_1 = t1;
 		temp1.temperature_value_2 = t2;
 		temp1.temperature_value_3 = t3;
 		temp1.temperature_value_4 = t4;
 
-		len = ams_slave_07_temperature_id_1_pack(data, &temp1, sizeof(data));
+		len = powertrain_t26_slave_07_temperature_id_1_pack(data, &temp1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_07_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_07_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_07_temperature_id_2_t temp2_msg = { 0 };
+		struct powertrain_t26_slave_07_temperature_id_2_t temp2_msg = { 0 };
 		temp2_msg.temperature_value_5 = t5;
 		temp2_msg.temperature_value_6 = t6;
 		temp2_msg.temperature_maximum = temp_max;
 		temp2_msg.temperature_delta = temp_delta;
 
-		len = ams_slave_07_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
+		len = powertrain_t26_slave_07_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_07_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_07_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
 
 	case 8: {
-		struct ams_slave_08_temperature_id_1_t temp1 = { 0 };
+		struct powertrain_t26_slave_08_temperature_id_1_t temp1 = { 0 };
 		temp1.temperature_value_1 = t1;
 		temp1.temperature_value_2 = t2;
 		temp1.temperature_value_3 = t3;
 		temp1.temperature_value_4 = t4;
 
-		len = ams_slave_08_temperature_id_1_pack(data, &temp1, sizeof(data));
+		len = powertrain_t26_slave_08_temperature_id_1_pack(data, &temp1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_08_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_08_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_08_temperature_id_2_t temp2_msg = { 0 };
+		struct powertrain_t26_slave_08_temperature_id_2_t temp2_msg = { 0 };
 		temp2_msg.temperature_value_5 = t5;
 		temp2_msg.temperature_value_6 = t6;
 		temp2_msg.temperature_maximum = temp_max;
 		temp2_msg.temperature_delta = temp_delta;
 
-		len = ams_slave_08_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
+		len = powertrain_t26_slave_08_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_08_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_08_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
 
 	case 9: {
-		struct ams_slave_09_temperature_id_1_t temp1 = { 0 };
+		struct powertrain_t26_slave_09_temperature_id_1_t temp1 = { 0 };
 		temp1.temperature_value_1 = t1;
 		temp1.temperature_value_2 = t2;
 		temp1.temperature_value_3 = t3;
 		temp1.temperature_value_4 = t4;
 
-		len = ams_slave_09_temperature_id_1_pack(data, &temp1, sizeof(data));
+		len = powertrain_t26_slave_09_temperature_id_1_pack(data, &temp1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_09_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_09_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_09_temperature_id_2_t temp2_msg = { 0 };
+		struct powertrain_t26_slave_09_temperature_id_2_t temp2_msg = { 0 };
 		temp2_msg.temperature_value_5 = t5;
 		temp2_msg.temperature_value_6 = t6;
 		temp2_msg.temperature_maximum = temp_max;
 		temp2_msg.temperature_delta = temp_delta;
 
-		len = ams_slave_09_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
+		len = powertrain_t26_slave_09_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_09_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_09_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
 
 	case 10: {
-		struct ams_slave_10_temperature_id_1_t temp1 = { 0 };
+		struct powertrain_t26_slave_10_temperature_id_1_t temp1 = { 0 };
 		temp1.temperature_value_1 = t1;
 		temp1.temperature_value_2 = t2;
 		temp1.temperature_value_3 = t3;
 		temp1.temperature_value_4 = t4;
 
-		len = ams_slave_10_temperature_id_1_pack(data, &temp1, sizeof(data));
+		len = powertrain_t26_slave_10_temperature_id_1_pack(data, &temp1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_10_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_10_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_10_temperature_id_2_t temp2_msg = { 0 };
+		struct powertrain_t26_slave_10_temperature_id_2_t temp2_msg = { 0 };
 		temp2_msg.temperature_value_5 = t5;
 		temp2_msg.temperature_value_6 = t6;
 		temp2_msg.temperature_maximum = temp_max;
 		temp2_msg.temperature_delta = temp_delta;
 
-		len = ams_slave_10_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
+		len = powertrain_t26_slave_10_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_10_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_10_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
 
 	case 11: {
-		struct ams_slave_11_temperature_id_1_t temp1 = { 0 };
+		struct powertrain_t26_slave_11_temperature_id_1_t temp1 = { 0 };
 		temp1.temperature_value_1 = t1;
 		temp1.temperature_value_2 = t2;
 		temp1.temperature_value_3 = t3;
 		temp1.temperature_value_4 = t4;
 
-		len = ams_slave_11_temperature_id_1_pack(data, &temp1, sizeof(data));
+		len = powertrain_t26_slave_11_temperature_id_1_pack(data, &temp1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_11_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_11_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_11_temperature_id_2_t temp2_msg = { 0 };
+		struct powertrain_t26_slave_11_temperature_id_2_t temp2_msg = { 0 };
 		temp2_msg.temperature_value_5 = t5;
 		temp2_msg.temperature_value_6 = t6;
 		temp2_msg.temperature_maximum = temp_max;
 		temp2_msg.temperature_delta = temp_delta;
 
-		len = ams_slave_11_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
+		len = powertrain_t26_slave_11_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_11_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_11_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
 
 	case 12: {
-		struct ams_slave_12_temperature_id_1_t temp1 = { 0 };
+		struct powertrain_t26_slave_12_temperature_id_1_t temp1 = { 0 };
 		temp1.temperature_value_1 = t1;
 		temp1.temperature_value_2 = t2;
 		temp1.temperature_value_3 = t3;
 		temp1.temperature_value_4 = t4;
 
-		len = ams_slave_12_temperature_id_1_pack(data, &temp1, sizeof(data));
+		len = powertrain_t26_slave_12_temperature_id_1_pack(data, &temp1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_12_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_12_TEMPERATURE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_12_temperature_id_2_t temp2_msg = { 0 };
+		struct powertrain_t26_slave_12_temperature_id_2_t temp2_msg = { 0 };
 		temp2_msg.temperature_value_5 = t5;
 		temp2_msg.temperature_value_6 = t6;
 		temp2_msg.temperature_maximum = temp_max;
 		temp2_msg.temperature_delta = temp_delta;
 
-		len = ams_slave_12_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
+		len = powertrain_t26_slave_12_temperature_id_2_pack(data, &temp2_msg, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_12_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_12_TEMPERATURE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 		break;
 	}
@@ -681,624 +681,624 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 
 	switch (slave) {
 	case 1: {
-		struct ams_slave_01_voltage_id_1_t v1 = { 0 };
+		struct powertrain_t26_slave_01_voltage_id_1_t v1 = { 0 };
 		v1.cell_voltage_1 = cell_voltages[0];
 		v1.cell_voltage_2 = cell_voltages[1];
 		v1.cell_voltage_3 = cell_voltages[2];
 		v1.cell_voltage_4 = cell_voltages[3];
 
-		len = ams_slave_01_voltage_id_1_pack(data, &v1, sizeof(data));
+		len = powertrain_t26_slave_01_voltage_id_1_pack(data, &v1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_01_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_01_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_01_voltage_id_2_t v2 = { 0 };
+		struct powertrain_t26_slave_01_voltage_id_2_t v2 = { 0 };
 		v2.cell_voltage_5 = cell_voltages[4];
 		v2.cell_voltage_6 = cell_voltages[5];
 		v2.cell_voltage_7 = cell_voltages[6];
 		v2.cell_voltage_8 = cell_voltages[7];
 
-		len = ams_slave_01_voltage_id_2_pack(data, &v2, sizeof(data));
+		len = powertrain_t26_slave_01_voltage_id_2_pack(data, &v2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_01_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_01_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_01_voltage_id_3_t v3 = { 0 };
+		struct powertrain_t26_slave_01_voltage_id_3_t v3 = { 0 };
 		v3.cell_voltage_9 = cell_voltages[8];
 		v3.cell_voltage_10 = cell_voltages[9];
 		v3.cell_voltage_11 = cell_voltages[10];
 		v3.cell_voltage_12 = cell_voltages[11];
 
-		len = ams_slave_01_voltage_id_3_pack(data, &v3, sizeof(data));
+		len = powertrain_t26_slave_01_voltage_id_3_pack(data, &v3, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_01_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_01_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_01_msc_id_1_t m1 = { 0 };
+		struct powertrain_t26_slave_01_msc_id_1_t m1 = { 0 };
 		m1.module_voltage_sum = (uint16_t) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
 
-		len = ams_slave_01_msc_id_1_pack(data, &m1, sizeof(data));
+		len = powertrain_t26_slave_01_msc_id_1_pack(data, &m1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_01_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_01_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 2: {
-		struct ams_slave_02_voltage_id_1_t v1 = { 0 };
+		struct powertrain_t26_slave_02_voltage_id_1_t v1 = { 0 };
 		v1.cell_voltage_1 = cell_voltages[0];
 		v1.cell_voltage_2 = cell_voltages[1];
 		v1.cell_voltage_3 = cell_voltages[2];
 		v1.cell_voltage_4 = cell_voltages[3];
 
-		len = ams_slave_02_voltage_id_1_pack(data, &v1, sizeof(data));
+		len = powertrain_t26_slave_02_voltage_id_1_pack(data, &v1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_02_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_02_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_02_voltage_id_2_t v2 = { 0 };
+		struct powertrain_t26_slave_02_voltage_id_2_t v2 = { 0 };
 		v2.cell_voltage_5 = cell_voltages[4];
 		v2.cell_voltage_6 = cell_voltages[5];
 		v2.cell_voltage_7 = cell_voltages[6];
 		v2.cell_voltage_8 = cell_voltages[7];
 
-		len = ams_slave_02_voltage_id_2_pack(data, &v2, sizeof(data));
+		len = powertrain_t26_slave_02_voltage_id_2_pack(data, &v2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_02_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_02_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_02_voltage_id_3_t v3 = { 0 };
+		struct powertrain_t26_slave_02_voltage_id_3_t v3 = { 0 };
 		v3.cell_voltage_9 = cell_voltages[8];
 		v3.cell_voltage_10 = cell_voltages[9];
 		v3.cell_voltage_11 = cell_voltages[10];
 		v3.cell_voltage_12 = cell_voltages[11];
 
-		len = ams_slave_02_voltage_id_3_pack(data, &v3, sizeof(data));
+		len = powertrain_t26_slave_02_voltage_id_3_pack(data, &v3, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_02_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_02_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_02_msc_id_1_t m1 = { 0 };
+		struct powertrain_t26_slave_02_msc_id_1_t m1 = { 0 };
 		m1.module_voltage_sum = (uint16_t) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
 
-		len = ams_slave_02_msc_id_1_pack(data, &m1, sizeof(data));
+		len = powertrain_t26_slave_02_msc_id_1_pack(data, &m1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_02_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_02_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 3: {
-		struct ams_slave_03_voltage_id_1_t v1 = { 0 };
+		struct powertrain_t26_slave_03_voltage_id_1_t v1 = { 0 };
 		v1.cell_voltage_1 = cell_voltages[0];
 		v1.cell_voltage_2 = cell_voltages[1];
 		v1.cell_voltage_3 = cell_voltages[2];
 		v1.cell_voltage_4 = cell_voltages[3];
 
-		len = ams_slave_03_voltage_id_1_pack(data, &v1, sizeof(data));
+		len = powertrain_t26_slave_03_voltage_id_1_pack(data, &v1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_03_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_03_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_03_voltage_id_2_t v2 = { 0 };
+		struct powertrain_t26_slave_03_voltage_id_2_t v2 = { 0 };
 		v2.cell_voltage_5 = cell_voltages[4];
 		v2.cell_voltage_6 = cell_voltages[5];
 		v2.cell_voltage_7 = cell_voltages[6];
 		v2.cell_voltage_8 = cell_voltages[7];
 
-		len = ams_slave_03_voltage_id_2_pack(data, &v2, sizeof(data));
+		len = powertrain_t26_slave_03_voltage_id_2_pack(data, &v2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_03_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_03_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_03_voltage_id_3_t v3 = { 0 };
+		struct powertrain_t26_slave_03_voltage_id_3_t v3 = { 0 };
 		v3.cell_voltage_9 = cell_voltages[8];
 		v3.cell_voltage_10 = cell_voltages[9];
 		v3.cell_voltage_11 = cell_voltages[10];
 		v3.cell_voltage_12 = cell_voltages[11];
 
-		len = ams_slave_03_voltage_id_3_pack(data, &v3, sizeof(data));
+		len = powertrain_t26_slave_03_voltage_id_3_pack(data, &v3, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_03_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_03_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_03_msc_id_1_t m1 = { 0 };
+		struct powertrain_t26_slave_03_msc_id_1_t m1 = { 0 };
 		m1.module_voltage_sum = (uint16_t) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
 
-		len = ams_slave_03_msc_id_1_pack(data, &m1, sizeof(data));
+		len = powertrain_t26_slave_03_msc_id_1_pack(data, &m1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_03_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_03_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 4: {
-		struct ams_slave_04_voltage_id_1_t v1 = { 0 };
+		struct powertrain_t26_slave_04_voltage_id_1_t v1 = { 0 };
 		v1.cell_voltage_1 = cell_voltages[0];
 		v1.cell_voltage_2 = cell_voltages[1];
 		v1.cell_voltage_3 = cell_voltages[2];
 		v1.cell_voltage_4 = cell_voltages[3];
 
-		len = ams_slave_04_voltage_id_1_pack(data, &v1, sizeof(data));
+		len = powertrain_t26_slave_04_voltage_id_1_pack(data, &v1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_04_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_04_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_04_voltage_id_2_t v2 = { 0 };
+		struct powertrain_t26_slave_04_voltage_id_2_t v2 = { 0 };
 		v2.cell_voltage_5 = cell_voltages[4];
 		v2.cell_voltage_6 = cell_voltages[5];
 		v2.cell_voltage_7 = cell_voltages[6];
 		v2.cell_voltage_8 = cell_voltages[7];
 
-		len = ams_slave_04_voltage_id_2_pack(data, &v2, sizeof(data));
+		len = powertrain_t26_slave_04_voltage_id_2_pack(data, &v2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_04_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_04_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_04_voltage_id_3_t v3 = { 0 };
+		struct powertrain_t26_slave_04_voltage_id_3_t v3 = { 0 };
 		v3.cell_voltage_9 = cell_voltages[8];
 		v3.cell_voltage_10 = cell_voltages[9];
 		v3.cell_voltage_11 = cell_voltages[10];
 		v3.cell_voltage_12 = cell_voltages[11];
 
-		len = ams_slave_04_voltage_id_3_pack(data, &v3, sizeof(data));
+		len = powertrain_t26_slave_04_voltage_id_3_pack(data, &v3, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_04_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_04_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_04_msc_id_1_t m1 = { 0 };
+		struct powertrain_t26_slave_04_msc_id_1_t m1 = { 0 };
 		m1.module_voltage_sum = (uint16_t) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
 
-		len = ams_slave_04_msc_id_1_pack(data, &m1, sizeof(data));
+		len = powertrain_t26_slave_04_msc_id_1_pack(data, &m1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_04_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_04_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 5: {
-		struct ams_slave_05_voltage_id_1_t v1 = { 0 };
+		struct powertrain_t26_slave_05_voltage_id_1_t v1 = { 0 };
 		v1.cell_voltage_1 = cell_voltages[0];
 		v1.cell_voltage_2 = cell_voltages[1];
 		v1.cell_voltage_3 = cell_voltages[2];
 		v1.cell_voltage_4 = cell_voltages[3];
 
-		len = ams_slave_05_voltage_id_1_pack(data, &v1, sizeof(data));
+		len = powertrain_t26_slave_05_voltage_id_1_pack(data, &v1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_05_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_05_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_05_voltage_id_2_t v2 = { 0 };
+		struct powertrain_t26_slave_05_voltage_id_2_t v2 = { 0 };
 		v2.cell_voltage_5 = cell_voltages[4];
 		v2.cell_voltage_6 = cell_voltages[5];
 		v2.cell_voltage_7 = cell_voltages[6];
 		v2.cell_voltage_8 = cell_voltages[7];
 
-		len = ams_slave_05_voltage_id_2_pack(data, &v2, sizeof(data));
+		len = powertrain_t26_slave_05_voltage_id_2_pack(data, &v2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_05_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_05_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_05_voltage_id_3_t v3 = { 0 };
+		struct powertrain_t26_slave_05_voltage_id_3_t v3 = { 0 };
 		v3.cell_voltage_9 = cell_voltages[8];
 		v3.cell_voltage_10 = cell_voltages[9];
 		v3.cell_voltage_11 = cell_voltages[10];
 		v3.cell_voltage_12 = cell_voltages[11];
 
-		len = ams_slave_05_voltage_id_3_pack(data, &v3, sizeof(data));
+		len = powertrain_t26_slave_05_voltage_id_3_pack(data, &v3, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_05_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_05_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_05_msc_id_1_t m1 = { 0 };
+		struct powertrain_t26_slave_05_msc_id_1_t m1 = { 0 };
 		m1.module_voltage_sum = (uint16_t) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
 
-		len = ams_slave_05_msc_id_1_pack(data, &m1, sizeof(data));
+		len = powertrain_t26_slave_05_msc_id_1_pack(data, &m1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_05_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_05_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 6: {
-		struct ams_slave_06_voltage_id_1_t v1 = { 0 };
+		struct powertrain_t26_slave_06_voltage_id_1_t v1 = { 0 };
 		v1.cell_voltage_1 = cell_voltages[0];
 		v1.cell_voltage_2 = cell_voltages[1];
 		v1.cell_voltage_3 = cell_voltages[2];
 		v1.cell_voltage_4 = cell_voltages[3];
 
-		len = ams_slave_06_voltage_id_1_pack(data, &v1, sizeof(data));
+		len = powertrain_t26_slave_06_voltage_id_1_pack(data, &v1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_06_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_06_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_06_voltage_id_2_t v2 = { 0 };
+		struct powertrain_t26_slave_06_voltage_id_2_t v2 = { 0 };
 		v2.cell_voltage_5 = cell_voltages[4];
 		v2.cell_voltage_6 = cell_voltages[5];
 		v2.cell_voltage_7 = cell_voltages[6];
 		v2.cell_voltage_8 = cell_voltages[7];
 
-		len = ams_slave_06_voltage_id_2_pack(data, &v2, sizeof(data));
+		len = powertrain_t26_slave_06_voltage_id_2_pack(data, &v2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_06_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_06_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_06_voltage_id_3_t v3 = { 0 };
+		struct powertrain_t26_slave_06_voltage_id_3_t v3 = { 0 };
 		v3.cell_voltage_9 = cell_voltages[8];
 		v3.cell_voltage_10 = cell_voltages[9];
 		v3.cell_voltage_11 = cell_voltages[10];
 		v3.cell_voltage_12 = cell_voltages[11];
 
-		len = ams_slave_06_voltage_id_3_pack(data, &v3, sizeof(data));
+		len = powertrain_t26_slave_06_voltage_id_3_pack(data, &v3, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_06_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_06_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_06_msc_id_1_t m1 = { 0 };
+		struct powertrain_t26_slave_06_msc_id_1_t m1 = { 0 };
 		m1.module_voltage_sum = (uint16_t) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
 
-		len = ams_slave_06_msc_id_1_pack(data, &m1, sizeof(data));
+		len = powertrain_t26_slave_06_msc_id_1_pack(data, &m1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_06_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_06_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 7: {
-		struct ams_slave_07_voltage_id_1_t v1 = { 0 };
+		struct powertrain_t26_slave_07_voltage_id_1_t v1 = { 0 };
 		v1.cell_voltage_1 = cell_voltages[0];
 		v1.cell_voltage_2 = cell_voltages[1];
 		v1.cell_voltage_3 = cell_voltages[2];
 		v1.cell_voltage_4 = cell_voltages[3];
 
-		len = ams_slave_07_voltage_id_1_pack(data, &v1, sizeof(data));
+		len = powertrain_t26_slave_07_voltage_id_1_pack(data, &v1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_07_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_07_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_07_voltage_id_2_t v2 = { 0 };
+		struct powertrain_t26_slave_07_voltage_id_2_t v2 = { 0 };
 		v2.cell_voltage_5 = cell_voltages[4];
 		v2.cell_voltage_6 = cell_voltages[5];
 		v2.cell_voltage_7 = cell_voltages[6];
 		v2.cell_voltage_8 = cell_voltages[7];
 
-		len = ams_slave_07_voltage_id_2_pack(data, &v2, sizeof(data));
+		len = powertrain_t26_slave_07_voltage_id_2_pack(data, &v2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_07_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_07_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_07_voltage_id_3_t v3 = { 0 };
+		struct powertrain_t26_slave_07_voltage_id_3_t v3 = { 0 };
 		v3.cell_voltage_9 = cell_voltages[8];
 		v3.cell_voltage_10 = cell_voltages[9];
 		v3.cell_voltage_11 = cell_voltages[10];
 		v3.cell_voltage_12 = cell_voltages[11];
 
-		len = ams_slave_07_voltage_id_3_pack(data, &v3, sizeof(data));
+		len = powertrain_t26_slave_07_voltage_id_3_pack(data, &v3, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_07_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_07_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_07_msc_id_1_t m1 = { 0 };
+		struct powertrain_t26_slave_07_msc_id_1_t m1 = { 0 };
 		m1.module_voltage_sum = (uint16_t) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
 
-		len = ams_slave_07_msc_id_1_pack(data, &m1, sizeof(data));
+		len = powertrain_t26_slave_07_msc_id_1_pack(data, &m1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_07_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_07_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 8: {
-		struct ams_slave_08_voltage_id_1_t v1 = { 0 };
+		struct powertrain_t26_slave_08_voltage_id_1_t v1 = { 0 };
 		v1.cell_voltage_1 = cell_voltages[0];
 		v1.cell_voltage_2 = cell_voltages[1];
 		v1.cell_voltage_3 = cell_voltages[2];
 		v1.cell_voltage_4 = cell_voltages[3];
 
-		len = ams_slave_08_voltage_id_1_pack(data, &v1, sizeof(data));
+		len = powertrain_t26_slave_08_voltage_id_1_pack(data, &v1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_08_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_08_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_08_voltage_id_2_t v2 = { 0 };
+		struct powertrain_t26_slave_08_voltage_id_2_t v2 = { 0 };
 		v2.cell_voltage_5 = cell_voltages[4];
 		v2.cell_voltage_6 = cell_voltages[5];
 		v2.cell_voltage_7 = cell_voltages[6];
 		v2.cell_voltage_8 = cell_voltages[7];
 
-		len = ams_slave_08_voltage_id_2_pack(data, &v2, sizeof(data));
+		len = powertrain_t26_slave_08_voltage_id_2_pack(data, &v2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_08_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_08_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_08_voltage_id_3_t v3 = { 0 };
+		struct powertrain_t26_slave_08_voltage_id_3_t v3 = { 0 };
 		v3.cell_voltage_9 = cell_voltages[8];
 		v3.cell_voltage_10 = cell_voltages[9];
 		v3.cell_voltage_11 = cell_voltages[10];
 		v3.cell_voltage_12 = cell_voltages[11];
 
-		len = ams_slave_08_voltage_id_3_pack(data, &v3, sizeof(data));
+		len = powertrain_t26_slave_08_voltage_id_3_pack(data, &v3, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_08_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_08_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_08_msc_id_1_t m1 = { 0 };
+		struct powertrain_t26_slave_08_msc_id_1_t m1 = { 0 };
 		m1.module_voltage_sum = (uint16_t) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
 
-		len = ams_slave_08_msc_id_1_pack(data, &m1, sizeof(data));
+		len = powertrain_t26_slave_08_msc_id_1_pack(data, &m1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_08_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_08_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 9: {
-		struct ams_slave_09_voltage_id_1_t v1 = { 0 };
+		struct powertrain_t26_slave_09_voltage_id_1_t v1 = { 0 };
 		v1.cell_voltage_1 = cell_voltages[0];
 		v1.cell_voltage_2 = cell_voltages[1];
 		v1.cell_voltage_3 = cell_voltages[2];
 		v1.cell_voltage_4 = cell_voltages[3];
 
-		len = ams_slave_09_voltage_id_1_pack(data, &v1, sizeof(data));
+		len = powertrain_t26_slave_09_voltage_id_1_pack(data, &v1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_09_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_09_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_09_voltage_id_2_t v2 = { 0 };
+		struct powertrain_t26_slave_09_voltage_id_2_t v2 = { 0 };
 		v2.cell_voltage_5 = cell_voltages[4];
 		v2.cell_voltage_6 = cell_voltages[5];
 		v2.cell_voltage_7 = cell_voltages[6];
 		v2.cell_voltage_8 = cell_voltages[7];
 
-		len = ams_slave_09_voltage_id_2_pack(data, &v2, sizeof(data));
+		len = powertrain_t26_slave_09_voltage_id_2_pack(data, &v2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_09_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_09_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_09_voltage_id_3_t v3 = { 0 };
+		struct powertrain_t26_slave_09_voltage_id_3_t v3 = { 0 };
 		v3.cell_voltage_9 = cell_voltages[8];
 		v3.cell_voltage_10 = cell_voltages[9];
 		v3.cell_voltage_11 = cell_voltages[10];
 		v3.cell_voltage_12 = cell_voltages[11];
 
-		len = ams_slave_09_voltage_id_3_pack(data, &v3, sizeof(data));
+		len = powertrain_t26_slave_09_voltage_id_3_pack(data, &v3, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_09_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_09_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_09_msc_id_1_t m1 = { 0 };
+		struct powertrain_t26_slave_09_msc_id_1_t m1 = { 0 };
 		m1.module_voltage_sum = (uint16_t) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
 
-		len = ams_slave_09_msc_id_1_pack(data, &m1, sizeof(data));
+		len = powertrain_t26_slave_09_msc_id_1_pack(data, &m1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_09_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_09_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 10: {
-		struct ams_slave_10_voltage_id_1_t v1 = { 0 };
+		struct powertrain_t26_slave_10_voltage_id_1_t v1 = { 0 };
 		v1.cell_voltage_1 = cell_voltages[0];
 		v1.cell_voltage_2 = cell_voltages[1];
 		v1.cell_voltage_3 = cell_voltages[2];
 		v1.cell_voltage_4 = cell_voltages[3];
 
-		len = ams_slave_10_voltage_id_1_pack(data, &v1, sizeof(data));
+		len = powertrain_t26_slave_10_voltage_id_1_pack(data, &v1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_10_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_10_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_10_voltage_id_2_t v2 = { 0 };
+		struct powertrain_t26_slave_10_voltage_id_2_t v2 = { 0 };
 		v2.cell_voltage_5 = cell_voltages[4];
 		v2.cell_voltage_6 = cell_voltages[5];
 		v2.cell_voltage_7 = cell_voltages[6];
 		v2.cell_voltage_8 = cell_voltages[7];
 
-		len = ams_slave_10_voltage_id_2_pack(data, &v2, sizeof(data));
+		len = powertrain_t26_slave_10_voltage_id_2_pack(data, &v2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_10_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_10_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_10_voltage_id_3_t v3 = { 0 };
+		struct powertrain_t26_slave_10_voltage_id_3_t v3 = { 0 };
 		v3.cell_voltage_9 = cell_voltages[8];
 		v3.cell_voltage_10 = cell_voltages[9];
 		v3.cell_voltage_11 = cell_voltages[10];
 		v3.cell_voltage_12 = cell_voltages[11];
 
-		len = ams_slave_10_voltage_id_3_pack(data, &v3, sizeof(data));
+		len = powertrain_t26_slave_10_voltage_id_3_pack(data, &v3, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_10_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_10_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_10_msc_id_1_t m1 = { 0 };
+		struct powertrain_t26_slave_10_msc_id_1_t m1 = { 0 };
 		m1.module_voltage_sum = (uint16_t) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
 
-		len = ams_slave_10_msc_id_1_pack(data, &m1, sizeof(data));
+		len = powertrain_t26_slave_10_msc_id_1_pack(data, &m1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_10_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_10_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 11: {
-		struct ams_slave_11_voltage_id_1_t v1 = { 0 };
+		struct powertrain_t26_slave_11_voltage_id_1_t v1 = { 0 };
 		v1.cell_voltage_1 = cell_voltages[0];
 		v1.cell_voltage_2 = cell_voltages[1];
 		v1.cell_voltage_3 = cell_voltages[2];
 		v1.cell_voltage_4 = cell_voltages[3];
 
-		len = ams_slave_11_voltage_id_1_pack(data, &v1, sizeof(data));
+		len = powertrain_t26_slave_11_voltage_id_1_pack(data, &v1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_11_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_11_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_11_voltage_id_2_t v2 = { 0 };
+		struct powertrain_t26_slave_11_voltage_id_2_t v2 = { 0 };
 		v2.cell_voltage_5 = cell_voltages[4];
 		v2.cell_voltage_6 = cell_voltages[5];
 		v2.cell_voltage_7 = cell_voltages[6];
 		v2.cell_voltage_8 = cell_voltages[7];
 
-		len = ams_slave_11_voltage_id_2_pack(data, &v2, sizeof(data));
+		len = powertrain_t26_slave_11_voltage_id_2_pack(data, &v2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_11_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_11_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_11_voltage_id_3_t v3 = { 0 };
+		struct powertrain_t26_slave_11_voltage_id_3_t v3 = { 0 };
 		v3.cell_voltage_9 = cell_voltages[8];
 		v3.cell_voltage_10 = cell_voltages[9];
 		v3.cell_voltage_11 = cell_voltages[10];
 		v3.cell_voltage_12 = cell_voltages[11];
 
-		len = ams_slave_11_voltage_id_3_pack(data, &v3, sizeof(data));
+		len = powertrain_t26_slave_11_voltage_id_3_pack(data, &v3, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_11_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_11_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_11_msc_id_1_t m1 = { 0 };
+		struct powertrain_t26_slave_11_msc_id_1_t m1 = { 0 };
 		m1.module_voltage_sum = (uint16_t) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
 
-		len = ams_slave_11_msc_id_1_pack(data, &m1, sizeof(data));
+		len = powertrain_t26_slave_11_msc_id_1_pack(data, &m1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_11_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_11_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;
 	}
 
 	case 12: {
-		struct ams_slave_12_voltage_id_1_t v1 = { 0 };
+		struct powertrain_t26_slave_12_voltage_id_1_t v1 = { 0 };
 		v1.cell_voltage_1 = cell_voltages[0];
 		v1.cell_voltage_2 = cell_voltages[1];
 		v1.cell_voltage_3 = cell_voltages[2];
 		v1.cell_voltage_4 = cell_voltages[3];
 
-		len = ams_slave_12_voltage_id_1_pack(data, &v1, sizeof(data));
+		len = powertrain_t26_slave_12_voltage_id_1_pack(data, &v1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_12_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_12_VOLTAGE_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_12_voltage_id_2_t v2 = { 0 };
+		struct powertrain_t26_slave_12_voltage_id_2_t v2 = { 0 };
 		v2.cell_voltage_5 = cell_voltages[4];
 		v2.cell_voltage_6 = cell_voltages[5];
 		v2.cell_voltage_7 = cell_voltages[6];
 		v2.cell_voltage_8 = cell_voltages[7];
 
-		len = ams_slave_12_voltage_id_2_pack(data, &v2, sizeof(data));
+		len = powertrain_t26_slave_12_voltage_id_2_pack(data, &v2, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_12_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_12_VOLTAGE_ID_2_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_12_voltage_id_3_t v3 = { 0 };
+		struct powertrain_t26_slave_12_voltage_id_3_t v3 = { 0 };
 		v3.cell_voltage_9 = cell_voltages[8];
 		v3.cell_voltage_10 = cell_voltages[9];
 		v3.cell_voltage_11 = cell_voltages[10];
 		v3.cell_voltage_12 = cell_voltages[11];
 
-		len = ams_slave_12_voltage_id_3_pack(data, &v3, sizeof(data));
+		len = powertrain_t26_slave_12_voltage_id_3_pack(data, &v3, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_12_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_12_VOLTAGE_ID_3_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
-		struct ams_slave_12_msc_id_1_t m1 = { 0 };
+		struct powertrain_t26_slave_12_msc_id_1_t m1 = { 0 };
 		m1.module_voltage_sum = (uint16_t) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
 
-		len = ams_slave_12_msc_id_1_pack(data, &m1, sizeof(data));
+		len = powertrain_t26_slave_12_msc_id_1_pack(data, &m1, sizeof(data));
 		if (len < 0)
 			return HAL_ERROR;
-		if (Slaves_CAN_SendMessage(hcan, AMS_SLAVE_12_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
+		if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_SLAVE_12_MSC_ID_1_FRAME_ID, len, data) != HAL_OK)
 			return HAL_ERROR;
 
 		break;

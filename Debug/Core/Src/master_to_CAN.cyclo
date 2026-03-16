@@ -1,0 +1,5 @@
+../Core/Src/master_to_CAN.c:29:16:Master_CAN_GetContactorCommandState	2
+../Core/Src/master_to_CAN.c:37:19:Master_CAN_Send_MSC_1	5
+../Core/Src/master_to_CAN.c:73:19:Master_CAN_Send_MSC_2	4
+../Core/Src/master_to_CAN.c:109:19:Master_CAN_SendPrecharge	3
+../Core/Src/master_to_CAN.c:149:19:Master_CAN_SendAll	3
