@@ -35,7 +35,7 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Core/Inc/brain.h ../Core/Inc/adbms_main.h ../Core/Inc/main.h \
- ../Core/Inc/common.h \
+ ../Core/Inc/brain.h ../Core/Inc/common.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/common.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830GenericType.h \
@@ -46,8 +46,7 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
  ../Core/Inc/analog_readings.h ../Core/Inc/eeprom_utils.h \
  ../Core/Inc/ee24.h ../Core/Inc/uartDMA.h ../Core/Inc/isa_ivt-s.h \
  ../Core/Inc/contactors.h ../Core/Inc/uartDMA.h \
- ../Core/Inc/master_to_CAN.h ../Core/Inc/brain.h ../Core/Inc/precharge.h \
- ../Core/Inc/can.h \
+ ../Core/Inc/master_to_CAN.h ../Core/Inc/precharge.h ../Core/Inc/can.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/dbc/powertrain_t26.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -88,6 +87,7 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
 ../Core/Inc/brain.h:
 ../Core/Inc/adbms_main.h:
 ../Core/Inc/main.h:
+../Core/Inc/brain.h:
 ../Core/Inc/common.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/common.h:
@@ -106,7 +106,6 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/contactors.h:
 ../Core/Inc/uartDMA.h:
 ../Core/Inc/master_to_CAN.h:
-../Core/Inc/brain.h:
 ../Core/Inc/precharge.h:
 ../Core/Inc/can.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/dbc/powertrain_t26.h:

@@ -23,4 +23,9 @@ HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, u
 HAL_StatusTypeDef CAN_RegisterRxCallback(CanRxCallback_t cb);
 
 
+//CAN housekeeping
+void CAN_Service(CAN_HandleTypeDef *hcan);
+uint8_t CAN_IsStarted(CAN_HandleTypeDef *hcan);
+
+
 #endif /* INC_CAN_H_ */

@@ -14,6 +14,7 @@
 #include "dbc/powertrain_t26.h"
 
 extern ADC_HandleTypeDef hadc1;
+extern TIM_HandleTypeDef htim3;
 
 /* Factory calibration addresses for STM32F412 */
 #define TS_CAL1_ADDR        ((uint16_t*)0x1FFF7A2C)   /* ADC raw @ 30C, VDDA = 3.3V */
@@ -86,6 +87,9 @@ void AnalogReadings_Init(void)
     for (uint32_t i = 0; i < ADC_DMA_BUF_LEN; i++) {
         s_adcDmaBuf[i] = 0u;
     }
+
+    HAL_TIM_Base_Start(&htim3);
+    AnalogReadings_Start();
 }
 
 void AnalogReadings_Start(void)
@@ -113,7 +117,7 @@ void AnalogReadings_ConvCpltCallback(void)
         sum_vref += s_adcDmaBuf[(i * ADC_CHANNEL_COUNT) + 2u];
     }
 
-    HAL_ADC_Stop_DMA(&hadc1);
+    //HAL_ADC_Stop_DMA(&hadc1);
 
     s_analog.raw_ams_master_current = (uint16_t)(sum_ams_master_current / ADC_SAMPLES_PER_CH);
     s_analog.raw_temp = (uint16_t)(sum_temp / ADC_SAMPLES_PER_CH);

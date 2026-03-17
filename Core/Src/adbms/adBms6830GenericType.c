@@ -237,7 +237,8 @@ void spiReadData(uint8_t tIC, uint8_t tx_cmd[2], uint8_t *rx_data, uint8_t *pec_
 		cmd_pec = Pec15_Calc(2, cmd);
 		cmd[2] = (uint8_t) (cmd_pec >> 8);
 		cmd[3] = (uint8_t) (cmd_pec);
-		adBmsWakeupIc(tIC);
+		//Assume chain as already been awoken
+		//adBmsWakeupIc(tIC);
 		adBmsCsLow();
 		spiWriteReadBytes(&cmd[0], &data[0], RX_BUFFER); /* Read the configuration data of all ICs on the daisy chain into readdata array */
 		adBmsCsHigh();
@@ -692,7 +693,8 @@ void adBmsWriteData(uint8_t tIC, cell_asic *ic, uint8_t cmd_arg[2], TYPE type, G
 			break;
 		}
 	}
-	adBmsWakeupIc(tIC);
+	//Assume its has already been awaken
+	//adBmsWakeupIc(tIC);
 	spiWriteData(tIC, cmd_arg, &write_buffer[0]);
 	free(write_buffer);
 }

@@ -31,6 +31,7 @@ extern cell_asic IC[TOTAL_IC];
 
 void app_main(void);
 void run_command(int cmd);
+void adBms6830_idle_readings(uint8_t tIC, cell_asic *ic);
 void adBms6830_init_config(uint8_t tIC, cell_asic *ic);
 void adBms6830_write_read_config(uint8_t tIC, cell_asic *ic);
 void adBms6830_write_config(uint8_t tIC, cell_asic *ic);

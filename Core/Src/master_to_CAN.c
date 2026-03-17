@@ -102,10 +102,6 @@ HAL_StatusTypeDef Master_CAN_Send_MSC_2(CAN_HandleTypeDef *hcan)
 
     msg.master_runtime = (uint16_t)runtime;
 
-    /* TODO: replace these temporary values with real aggregated values */
-    msg.overall_maximum_voltage = powertrain_t26_master_msc_id_2_overall_maximum_voltage_encode(0.0f);
-    msg.overall_maximum_temperature = powertrain_t26_master_msc_id_2_overall_maximum_temperature_encode(0.0f);
-
     len = powertrain_t26_master_msc_id_2_pack(data, &msg, sizeof(data));
     if (len < 0) {
         return HAL_ERROR;

@@ -18,7 +18,7 @@ and its licensor.
 */
 #include "common.h"
 #include "mcuWrapper.h"
-#define WAKEUP_DELAY 4                          /* BMS ic wakeup delay  */
+#define WAKEUP_DELAY 1                          /* BMS ic wakeup delay  */
 
 #ifdef MBED
 extern Serial pc;

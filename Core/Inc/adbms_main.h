@@ -22,6 +22,7 @@ and its licensor.
 #define _ADBMS6830_MAIN_H
 
 #include "main.h"
+#include "brain.h"
 #include "common.h"
 #include "adBms6830Data.h"
 #include "adBms6830GenericType.h"
@@ -29,7 +30,7 @@ and its licensor.
 #include "mcuWrapper.h"
 
 
-void adbms_main(void);
+void adbms_main(AMSStates_t);
 
 #endif
 /** @}*/

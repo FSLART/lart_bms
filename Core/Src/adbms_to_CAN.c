@@ -41,6 +41,57 @@ HAL_StatusTypeDef ADBMS_CAN_SendAll(CAN_HandleTypeDef *hcan) {
 			return HAL_ERROR;
 	}
 
+	// Está ca fora pq tem que ir pelos tdos os slaves para realemnte encontrar o maximo e o minimo antes de enviar a mensagem CAN
+	if (ADBMS_CAN_Send_Master_MSC_3(hcan) != HAL_OK)
+		return HAL_ERROR;
+
+	return HAL_OK;
+}
+
+HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan) {
+	uint8_t data[8];
+	int len;
+
+	uint16_t overall_vmax = 0U;
+	uint16_t overall_vmin = 0xFFFFU;
+	uint16_t overall_tmax = 0U;
+	uint16_t overall_tmin = 0xFFFFU;
+
+	for (uint8_t module = 0; module < TOTAL_IC && module < 12; module++) {
+		const cell_asic *ic = &IC[module];
+
+		for (uint8_t i = 0; i < 12; i++) {
+			uint16_t v = data_to_volts(ic->cell.c_codes[i], ADBMS_CELL);
+
+			if (v > overall_vmax)
+				overall_vmax = v;
+			if (v < overall_vmin)
+				overall_vmin = v;
+		}
+
+		for (uint8_t i = 0; i < 6; i++) {
+			uint16_t t = (uint16_t) getTemperatureCAN(ic->raux.ra_codes[i]);
+
+			if (t > overall_tmax)
+				overall_tmax = t;
+			if (t < overall_tmin)
+				overall_tmin = t;
+		}
+	}
+
+	struct powertrain_t26_master_msc_id_3_t m3 = { 0 };
+	m3.overall_maximum_voltage = overall_vmax;
+	m3.overall_maximum_temperature = overall_tmax;
+	m3.overall_minimum_voltage = overall_vmin;
+	m3.overall_minimum_temperature = overall_tmin;
+
+	len = powertrain_t26_master_msc_id_3_pack(data, &m3, sizeof(data));
+	if (len < 0)
+		return HAL_ERROR;
+
+	if (Slaves_CAN_SendMessage(hcan, POWERTRAIN_T26_MASTER_MSC_ID_3_FRAME_ID, len, data) != HAL_OK)
+		return HAL_ERROR;
+
 	return HAL_OK;
 }
 

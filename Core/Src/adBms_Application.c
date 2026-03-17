@@ -22,6 +22,7 @@
 #include "adBms6830GenericType.h"
 #include "serialPrintResult.h"
 #include "mcuWrapper.h"
+#include "brain.h"
 
 /**
  *******************************************************************************
@@ -62,44 +63,35 @@ LOOP_MEASURMENT MEASURE_AUX = DISABLED; /*   This is ENABLED or DISABLED       *
 LOOP_MEASURMENT MEASURE_RAUX = DISABLED; /*   This is ENABLED or DISABLED       */
 LOOP_MEASURMENT MEASURE_STAT = DISABLED; /*   This is ENABLED or DISABLED       */
 
-void adbms_main() {
+void adbms_main(AMSStates_t ams_state) {
 
-	static int stupidCounter = 0;
+	switch (ams_state) {
 
-	if (stupidCounter == 0) {
-		printMenu();
-		adBms6830_init_config(TOTAL_IC, &IC[0]);
-		stupidCounter++;
+	case BALANCING:
 
-	} else if (stupidCounter == 1){
-		stupidCounter++;
-		adBms6830_read_cell_voltages(TOTAL_IC, &IC[0]);
-		adBms6830_read_raux_voltages(TOTAL_IC, &IC[0]);
-		adBms6830_read_aux_voltages(TOTAL_IC, &IC[0]);
-		adBms6830_read_status_registers(TOTAL_IC, &IC[0]);
+		break;
+
+	case IDLE:
+
+		adBms6830_idle_readings(TOTAL_IC, &IC[0]);
+
+		//adBms6830_read_cell_voltages(TOTAL_IC, &IC[0]);
+		//adBms6830_read_raux_voltages(TOTAL_IC, &IC[0]);
+		//adBms6830_read_aux_voltages(TOTAL_IC, &IC[0]);
+		//adBms6830_read_status_registers(TOTAL_IC, &IC[0]);
 		adBms6830_start_avgcell_voltage_measurment(TOTAL_IC);
 		adBms6830_start_raux_voltage_measurment(TOTAL_IC, &IC[0]);
 		adBms6830_start_aux_voltage_measurment(TOTAL_IC, &IC[0]);
 
+		break;
 
-	} else if(stupidCounter > 1){
-		stupidCounter = 1;
-		//adBms6830_read_cell_voltages(TOTAL_IC, &IC[0]);
+	case STARTUP:
+
+		adBms6830_init_config(TOTAL_IC, &IC[0]);
+
+		break;
 
 	}
-
-	/*while(1)
-	 {
-	 int user_command;
-	 #ifdef MBED
-	 pc.scanf("%d", &user_command);
-	 pc.printf("Enter cmd:%d\n", user_command);
-	 #else
-	 scanf("%d", &user_command);
-	 printf("Enter cmd:%d\n", user_command);
-	 #endif
-	 run_command(user_command);
-	 }*/
 }
 
 void run_command(int cmd) {
@@ -305,6 +297,54 @@ void adBms6830_start_adc_cell_voltage_measurment(uint8_t tIC) {
 	printf("Cell conversion completed\n");
 #endif
 	printPollAdcConvTime(pladc_count);
+}
+
+/**
+ *******************************************************************************
+ * @brief Read Cell Voltages
+ *******************************************************************************
+ */
+void adBms6830_idle_readings(uint8_t tIC, cell_asic *ic) {
+	adBmsWakeupIc(tIC);
+
+	adBmsReadData(tIC, &ic[0], RDCVA, Cell, A);
+	adBmsReadData(tIC, &ic[0], RDCVB, Cell, B);
+	adBmsReadData(tIC, &ic[0], RDCVC, Cell, C);
+	adBmsReadData(tIC, &ic[0], RDCVD, Cell, D);
+	adBmsReadData(tIC, &ic[0], RDCVE, Cell, E);
+	adBmsReadData(tIC, &ic[0], RDCVF, Cell, F);
+
+	adBmsReadData(tIC, &ic[0], RDRAXA, RAux, A);
+	adBmsReadData(tIC, &ic[0], RDRAXB, RAux, B);
+	adBmsReadData(tIC, &ic[0], RDRAXC, RAux, C);
+	adBmsReadData(tIC, &ic[0], RDRAXD, RAux, D);
+
+	adBmsReadData(tIC, &ic[0], RDAUXA, Aux, A);
+	adBmsReadData(tIC, &ic[0], RDAUXB, Aux, B);
+	adBmsReadData(tIC, &ic[0], RDAUXC, Aux, C);
+	adBmsReadData(tIC, &ic[0], RDAUXD, Aux, D);
+
+	//adBmsWriteData(tIC, &ic[0], WRCFGA, Config, A);
+	//adBmsWriteData(tIC, &ic[0], WRCFGB, Config, B);
+
+	//teporarly disable openwire
+	/*adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
+	pladc_count = adBmsPollAdc(PLADC);
+	adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+	pladc_count = pladc_count + adBmsPollAdc(PLADC);*/
+
+	adBmsReadData(tIC, &ic[0], RDSTATA, Status, A);
+	adBmsReadData(tIC, &ic[0], RDSTATB, Status, B);
+	adBmsReadData(tIC, &ic[0], RDSTATC, Status, C);
+	adBmsReadData(tIC, &ic[0], RDSTATD, Status, D);
+	adBmsReadData(tIC, &ic[0], RDSTATE, Status, E);
+
+
+	//printVoltages(tIC, &ic[0], Cell);
+	//printVoltages(tIC, &ic[0], RAux);
+	//printVoltages(tIC, &ic[0], Aux);
+	//printPollAdcConvTime(pladc_count);
+	//printStatus(tIC, &ic[0], Status, ALL_GRP);
 }
 
 /**

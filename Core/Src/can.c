@@ -7,6 +7,7 @@
 
 #include "can.h"
 #include "brain.h"
+#include "uartDMA.h"
 
 #ifndef MAX_CAN_RX_CALLBACKS
 #define MAX_CAN_RX_CALLBACKS 10 //Número de callbacks registados, tipo CAN_RegisterRxCallback(PreCharge_CAN_Rx);
@@ -14,6 +15,11 @@
 
 static CanRxCallback_t s_rxCallbacks[MAX_CAN_RX_CALLBACKS];
 static uint8_t s_numCallbacks = 0;
+
+//CAN housekeeping
+static uint8_t s_can1Started = 0;
+static uint32_t s_lastCanRecoverTryMs = 0;
+
 
 HAL_StatusTypeDef CAN_RegisterRxCallback(CanRxCallback_t cb) {
 	if (s_numCallbacks >= MAX_CAN_RX_CALLBACKS) {
@@ -44,7 +50,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 /* ----------- CAN TX QUEUE ----------- */
 
-#define CAN_TX_QUEUE_SIZE   256  // adjust as needed; must be power-of-2 only if you do bitmask tricks
+#define CAN_TX_QUEUE_SIZE   1024  // adjust as needed; must be power-of-2 only if you do bitmask tricks
 
 typedef struct {
 	CAN_HandleTypeDef *hcan;
@@ -130,5 +136,71 @@ HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, u
 	canTxHead = (uint16_t) ((pos + 1U) % CAN_TX_QUEUE_SIZE);
 
 	return HAL_OK;
+}
+
+uint8_t CAN_IsStarted(CAN_HandleTypeDef *hcan) {
+	if (hcan == &hcan1) {
+		return s_can1Started;
+	}
+	return 0;
+}
+
+static void CAN_MarkStarted(CAN_HandleTypeDef *hcan, uint8_t started) {
+	if (hcan == &hcan1) {
+		s_can1Started = started;
+	}
+}
+
+static HAL_StatusTypeDef CAN_Restart(CAN_HandleTypeDef *hcan) {
+    (void)HAL_CAN_Stop(hcan);
+
+    if (HAL_CAN_Start(hcan) == HAL_OK) {
+        CAN_MarkStarted(hcan, 1);
+        return HAL_OK;
+    }
+
+    CAN_MarkStarted(hcan, 0);
+    return HAL_ERROR;
+}
+
+void CAN_Service(CAN_HandleTypeDef *hcan) {
+	uint32_t now = HAL_GetTick();
+
+	/* avoid hammering restart every single loop */
+	if ((now - s_lastCanRecoverTryMs) < 100U) {
+		return;
+	}
+
+	/* Case 1: not started yet */
+	if (!CAN_IsStarted(hcan)) {
+		if (HAL_CAN_Start(hcan) == HAL_OK) {
+			CAN_MarkStarted(hcan, 1);
+			//printfDebug("CAN started\n\r");
+		} else {
+			CAN_MarkStarted(hcan, 0);
+			//printfDebug("CAN start failed\n\r");
+		}
+		s_lastCanRecoverTryMs = now;
+		return;
+	}
+
+	/* Case 2: bus-off or other fatal CAN state */
+	uint32_t err = HAL_CAN_GetError(hcan);
+
+	if ((err & HAL_CAN_ERROR_BOF) != 0U) {
+		//printfDebug("CAN bus-off, restarting...\n\r");
+		(void)CAN_Restart(hcan);
+		s_lastCanRecoverTryMs = now;
+		return;
+	}
+
+	/* Optional: if peripheral reports not ready/listening, try restart too */
+	HAL_CAN_StateTypeDef st = HAL_CAN_GetState(hcan);
+	if ((st == HAL_CAN_STATE_RESET) || (st == HAL_CAN_STATE_READY)) {
+		//printfDebug("CAN not running, restarting...\n\r");
+		(void)CAN_Restart(hcan);
+		s_lastCanRecoverTryMs = now;
+		return;
+	}
 }
 

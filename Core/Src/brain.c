@@ -116,15 +116,23 @@ void brain_loop(void) {
 
 	case BALANCING:
 
+		if ((getRuntimeMsDiff(timeStart) > 200) || (AMS_Previous_State != AMS_Current_State)) {
+			timeStart = getRuntimeMs();
+
+			adbms_main(AMS_Current_State);
+		}
+
 		break;
 
 	case IDLE:
 
-		if ((getRuntimeMsDiff(timeStart) > 800) || (AMS_Previous_State != AMS_Current_State)) {
+		if ((getRuntimeMsDiff(timeStart) > 600) || (AMS_Previous_State != AMS_Current_State)) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
-			adbms_main();
+			adbms_main(AMS_Current_State);
+
+			printfDebug("IDLE: %d ms \r\n", (int)(getRuntimeMs() - timeStart));
 
 			//loop_count = 0;
 			//adBmsWakeupIc(TOTAL_IC);
@@ -149,6 +157,7 @@ void brain_loop(void) {
 
 	case STARTUP:
 
+		adbms_main(AMS_Current_State);
 		//TODO: implement startup shit that needs looping i gueess lol
 
 		AMS_State = IDLE;
@@ -172,9 +181,8 @@ void brain_loop(void) {
 		ADBMS_CAN_SendAll(&hcan1);
 		//AnalogReadings_CAN_Send(&hcan1);
 		Master_CAN_SendAll(&hcan1);
-		AnalogReadings_Start();
+		//AnalogReadings_Start();
 		faultCheck = false;
-
 
 	}
 
@@ -189,15 +197,17 @@ void brain_loop(void) {
 	//update precharge state machine if necessary
 	Precharge_Update();
 
+	//CAN housekeeping
+	CAN_Service(&hcan1);
+
 	//check if there are can messages to send
 	CanTx_ProcessQueue();
 }
 
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
-{
-    if (hadc->Instance == ADC1) {
-        AnalogReadings_ConvCpltCallback();
-    }
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
+	if (hadc->Instance == ADC1) {
+		AnalogReadings_ConvCpltCallback();
+	}
 }
 
 /// Timer interrupt callback
@@ -205,8 +215,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 	//Timer to update ui - 800ms
 	/*if (htim->Instance == TIM8) {
-		updateUI = true;
-	}*/
+	 updateUI = true;
+	 }*/
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
@@ -224,24 +234,24 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 // Called each SysTick interrupt for HEARTBEAT LED
 void HAL_SYSTICK_Callback(void) {
 
-    static int counter_200ms = 0;
-    static int counter_800ms = 0;
-    static int counter_1000ms = 0;
+	static int counter_200ms = 0;
+	static int counter_800ms = 0;
+	static int counter_1000ms = 0;
 
-    if (++counter_200ms >= 200) {
-    	counter_200ms = 0;
-        faultCheck = true;
-    }
+	if (++counter_200ms >= 10) {
+		counter_200ms = 0;
+		faultCheck = true;
+	}
 
-    if (++counter_800ms >= 800) {
-    	counter_800ms = 0;
-        updateUI = true;
-    }
+	if (++counter_800ms >= 800) {
+		counter_800ms = 0;
+		updateUI = true;
+	}
 
-    if (++counter_1000ms >= 1000) {
-    	counter_1000ms = 0;
-    	runtime_sec += 1;
-    }
+	if (++counter_1000ms >= 1000) {
+		counter_1000ms = 0;
+		runtime_sec += 1;
+	}
 
 	heartbeat();
 }

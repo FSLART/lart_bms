@@ -1,6 +1,10 @@
-../Core/Src/can.c:18:19:CAN_RegisterRxCallback	16	static
-../Core/Src/can.c:27:6:HAL_CAN_RxFifo0MsgPendingCallback	56	static
-../Core/Src/can.c:61:9:CanTx_IsEmpty	4	static
-../Core/Src/can.c:66:9:CanTx_IsFull	16	static
-../Core/Src/can.c:72:6:CanTx_ProcessQueue	40	static
-../Core/Src/can.c:107:19:CAN_TX_Add_To_Queue	40	static
+../Core/Src/can.c:24:19:CAN_RegisterRxCallback	16	static
+../Core/Src/can.c:33:6:HAL_CAN_RxFifo0MsgPendingCallback	56	static
+../Core/Src/can.c:67:9:CanTx_IsEmpty	4	static
+../Core/Src/can.c:72:9:CanTx_IsFull	16	static
+../Core/Src/can.c:78:6:CanTx_ProcessQueue	40	static
+../Core/Src/can.c:113:19:CAN_TX_Add_To_Queue	40	static
+../Core/Src/can.c:141:9:CAN_IsStarted	16	static
+../Core/Src/can.c:148:13:CAN_MarkStarted	16	static
+../Core/Src/can.c:154:26:CAN_Restart	16	static
+../Core/Src/can.c:166:6:CAN_Service	32	static
