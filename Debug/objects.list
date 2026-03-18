@@ -4,6 +4,7 @@
 "./Core/Src/analog_readings.o"
 "./Core/Src/brain.o"
 "./Core/Src/can.o"
+"./Core/Src/cell_balancing.o"
 "./Core/Src/contactors.o"
 "./Core/Src/ee24.o"
 "./Core/Src/eeprom_utils.o"

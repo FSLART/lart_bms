@@ -45,6 +45,7 @@ static volatile bool updateUI = false;
 //static uint32_t timeDiff = 0;
 static uint32_t timeStart = 0;
 //static uint32_t timeCmmd = 0;
+volatile bool toggleHeartbeat = false;
 
 void brain_start(void) {
 
@@ -116,7 +117,7 @@ void brain_loop(void) {
 
 	case BALANCING:
 
-		if ((getRuntimeMsDiff(timeStart) > 200) || (AMS_Previous_State != AMS_Current_State)) {
+		if ((getRuntimeMsDiff(timeStart) > 100) || (AMS_Previous_State != AMS_Current_State)) {
 			timeStart = getRuntimeMs();
 
 			adbms_main(AMS_Current_State);
@@ -126,7 +127,7 @@ void brain_loop(void) {
 
 	case IDLE:
 
-		if ((getRuntimeMsDiff(timeStart) > 600) || (AMS_Previous_State != AMS_Current_State)) {
+		if ((getRuntimeMsDiff(timeStart) > 50) || (AMS_Previous_State != AMS_Current_State)) {
 			//printfDma("	IDLE \n\n");
 			timeStart = getRuntimeMs();
 
@@ -160,7 +161,8 @@ void brain_loop(void) {
 		adbms_main(AMS_Current_State);
 		//TODO: implement startup shit that needs looping i gueess lol
 
-		AMS_State = IDLE;
+		//AMS_State = IDLE;
+		AMS_State = BALANCING;
 
 		break;
 
@@ -178,7 +180,7 @@ void brain_loop(void) {
 		//printfDma("FAULT CHECK \r\n");
 		//IVT_FAULT_CHECK();
 		//bms_openWireCheck(&ow_status);
-		ADBMS_CAN_SendAll(&hcan1);
+		ADBMS_CAN_SendAll(&hcan1, AMS_Current_State);
 		//AnalogReadings_CAN_Send(&hcan1);
 		Master_CAN_SendAll(&hcan1);
 		//AnalogReadings_Start();
@@ -192,6 +194,12 @@ void brain_loop(void) {
 		//send_ivt_ui();
 		//send_ad68_ui();
 		updateUI = false;
+	}
+
+	if (toggleHeartbeat) {
+
+		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+		toggleHeartbeat = false;
 	}
 
 	//update precharge state machine if necessary
@@ -238,7 +246,7 @@ void HAL_SYSTICK_Callback(void) {
 	static int counter_800ms = 0;
 	static int counter_1000ms = 0;
 
-	if (++counter_200ms >= 10) {
+	if (++counter_200ms >= 100) {
 		counter_200ms = 0;
 		faultCheck = true;
 	}
@@ -259,13 +267,14 @@ void HAL_SYSTICK_Callback(void) {
 void heartbeat(void) {
 
 	static uint16_t ticks = 0;
-	static uint16_t period = 1000;   // start period
+	static uint16_t period = 700;   // start period
 
+	//toggleHeartbeat = false;
 	if (++ticks >= period) {
 
 		ticks = 0;
 
-		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+		toggleHeartbeat = true;
 
 		// halve the period
 		period >>= 1;

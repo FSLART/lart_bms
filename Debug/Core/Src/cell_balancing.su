@@ -1,0 +1,8 @@
+../Core/Src/cell_balancing.c:12:10:cell_code_to_mV	24	static
+../Core/Src/cell_balancing.c:27:6:is_cell_odd_or_even	24	static
+../Core/Src/cell_balancing.c:38:9:keep_pwm_within_value	16	static
+../Core/Src/cell_balancing.c:46:10:BatteryPack_FindMinVoltageGlobally	40	static
+../Core/Src/cell_balancing.c:78:6:Balance_InitDefaultConfig	16	static
+../Core/Src/cell_balancing.c:101:6:Balance_ComputeModule	56	static
+../Core/Src/cell_balancing.c:211:6:Balance_ApplyToIc	24	static
+../Core/Src/cell_balancing.c:237:6:Balance_ForceParity	24	static

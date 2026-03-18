@@ -35,10 +35,10 @@ Core/Src/adbms_to_CAN.o: ../Core/Src/adbms_to_CAN.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/can.h \
+ ../Core/Inc/brain.h ../Core/Inc/can.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/common.h ../Core/Inc/adBms_Application.h \
- ../Core/Inc/adbms_main.h ../Core/Inc/brain.h ../Core/Inc/common.h \
+ ../Core/Inc/adbms_main.h ../Core/Inc/common.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830GenericType.h \
  ../Core/Inc/adbms_main.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830ParseCreate.h \
@@ -82,12 +82,12 @@ Core/Src/adbms_to_CAN.o: ../Core/Src/adbms_to_CAN.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
+../Core/Inc/brain.h:
 ../Core/Inc/can.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/common.h:
 ../Core/Inc/adBms_Application.h:
 ../Core/Inc/adbms_main.h:
-../Core/Inc/brain.h:
 ../Core/Inc/common.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830GenericType.h:
 ../Core/Inc/adbms_main.h:

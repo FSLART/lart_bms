@@ -9,6 +9,7 @@
 #define INC_ADBMS_TO_CAN_H_
 
 #include "main.h"
+#include "brain.h"
 #include "can.h"
 #include "adBms6830Data.h"
 
@@ -19,9 +20,9 @@ typedef enum {
 
 HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan);
 HAL_StatusTypeDef ADBMS_CAN_SendMSC_Module(CAN_HandleTypeDef *hcan, uint8_t module);
-HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t module);
+HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t module, AMSStates_t ams_current_state);
 HAL_StatusTypeDef ADBMS_CAN_SendTemperatures_Module(CAN_HandleTypeDef *hcan, uint8_t module);
-HAL_StatusTypeDef ADBMS_CAN_SendAll(CAN_HandleTypeDef *hcan);
+HAL_StatusTypeDef ADBMS_CAN_SendAll(CAN_HandleTypeDef *hcan, AMSStates_t ams_current_state);
 
 uint16_t data_to_volts(int16_t, adbms_data_type_t);
 float getTemperatureCAN(int16_t);

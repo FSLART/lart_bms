@@ -23,6 +23,7 @@
 #include "serialPrintResult.h"
 #include "mcuWrapper.h"
 #include "brain.h"
+#include "cell_balancing.h"
 
 /**
  *******************************************************************************
@@ -30,6 +31,10 @@
  * The following variables can be modified to configure the software.
  *******************************************************************************
  */
+
+typedef enum {
+	ADBMS_IDLE_READ_PREV = 0, ADBMS_IDLE_READ_AVG_START_RAUX, ADBMS_IDLE_READ_RAUX_START_AUX, ADBMS_IDLE_READ_AUX_STATUS
+} adbms_idle_phase_t;
 
 cell_asic IC[TOTAL_IC];
 
@@ -45,8 +50,8 @@ RSTF RESET_FILTER = RSTF_OFF;
 ERR INJECT_ERR_SPI_READ = WITHOUT_ERR;
 
 /* Set Under Voltage and Over Voltage Thresholds */
-const float OV_THRESHOLD = 4.2; /* Volt */
-const float UV_THRESHOLD = 3.0; /* Volt */
+const float OV_THRESHOLD = 4.1; /* Volt */
+const float UV_THRESHOLD = 2.9; /* Volt */
 const int OWC_Threshold = 2000; /* Cell Open wire threshold(mili volt) */
 const int OWA_Threshold = 50000; /* Aux Open wire threshold(mili volt) */
 const uint32_t LOOP_MEASUREMENT_COUNT = 1; /* Loop measurment count */
@@ -63,25 +68,206 @@ LOOP_MEASURMENT MEASURE_AUX = DISABLED; /*   This is ENABLED or DISABLED       *
 LOOP_MEASURMENT MEASURE_RAUX = DISABLED; /*   This is ENABLED or DISABLED       */
 LOOP_MEASURMENT MEASURE_STAT = DISABLED; /*   This is ENABLED or DISABLED       */
 
+adbms_idle_phase_t adbmsPhase = ADBMS_IDLE_READ_PREV;
+uint32_t adbmsPhaseStart = 0;
+static balance_config_t g_balance_cfg;
+static bool g_balance_cfg_initialized = false;
+static balance_parity_t g_balance_forced_parity = BALANCE_PARITY_ODD;
+uint16_t global_min_mV = 0; //tem de ser global a puta, fdss
+
 void adbms_main(AMSStates_t ams_state) {
 
 	switch (ams_state) {
 
 	case BALANCING:
+		static uint8_t xanato_counter = 0;
 
+		if (xanato_counter > 3) {
+			if (!g_balance_cfg_initialized) {
+				Balance_InitDefaultConfig(&g_balance_cfg);
+				g_balance_cfg_initialized = true;
+			}
+
+
+			for (uint8_t module = 0; module < TOTAL_IC; module++) {
+				balance_result_t result;
+
+				Balance_ComputeModule(&IC[module], &g_balance_cfg, &result, global_min_mV);
+
+				if (result.balancing_allowed) {
+					Balance_ForceParity(&result, g_balance_forced_parity);
+				}
+
+				Balance_ApplyToIc(&IC[module], &result);
+			}
+
+			if (g_balance_forced_parity == BALANCE_PARITY_ODD) {
+				g_balance_forced_parity = BALANCE_PARITY_EVEN;
+			} else {
+				g_balance_forced_parity = BALANCE_PARITY_ODD;
+			}
+
+			if (global_min_mV == 0xFFFF) {
+				for (uint8_t module = 0; module < TOTAL_IC; module++) {
+					IC[module].tx_cfgb.dcc = 0;
+
+					for (uint8_t cell = 0; cell < 12; cell++) {
+						IC[module].PwmA.pwma[cell] = 0;
+					}
+				}
+			}
+
+			adBmsWakeupIc(TOTAL_IC);
+			adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
+			adBmsWriteData(TOTAL_IC, &IC[0], WRPWM1, Pwm, A); // Apeans grupo A pq apenas estão 12 células populadas!!!
+
+			//dar reset ao counter
+			xanato_counter = 0;
+
+		} else {
+			xanato_counter++;
+
+			switch (adbmsPhase) {
+
+			case ADBMS_IDLE_READ_PREV:
+				adBmsWakeupIc(TOTAL_IC);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVA, S_volt, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVB, S_volt, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVC, S_volt, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVD, S_volt, D);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVE, S_volt, E);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVF, S_volt, F);
+
+				//printVoltages(TOTAL_IC, &IC[0], S_volt);
+
+				//adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DCP_OFF, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+				adBms6830_Adsv(SINGLE, DCP_ON, OW_OFF_ALL_CH);
+				adbmsPhaseStart = getRuntimeMs();
+				adbmsPhase = ADBMS_IDLE_READ_AVG_START_RAUX;
+				break;
+
+				//not rly average, its the S pin
+			case ADBMS_IDLE_READ_AVG_START_RAUX:
+				if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
+
+					global_min_mV = BatteryPack_FindMinVoltageGlobally(&IC[0], TOTAL_IC, &g_balance_cfg);
+					adBmsWakeupIc(TOTAL_IC);
+					/*adBmsReadData(TOTAL_IC, &IC[0], RDSVA, S_volt, A);
+					adBmsReadData(TOTAL_IC, &IC[0], RDSVB, S_volt, B);
+					adBmsReadData(TOTAL_IC, &IC[0], RDSVC, S_volt, C);
+					adBmsReadData(TOTAL_IC, &IC[0], RDSVD, S_volt, D);
+					adBmsReadData(TOTAL_IC, &IC[0], RDSVE, S_volt, E);
+					adBmsReadData(TOTAL_IC, &IC[0], RDSVF, S_volt, F);*/
+
+					adBms6830_Adax2(AUX_CH_TO_CONVERT);
+					adbmsPhaseStart = getRuntimeMs();
+					adbmsPhase = ADBMS_IDLE_READ_RAUX_START_AUX;
+				}
+				break;
+
+			case ADBMS_IDLE_READ_RAUX_START_AUX:
+				if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
+					adBmsWakeupIc(TOTAL_IC);
+					adBmsReadData(TOTAL_IC, &IC[0], RDRAXA, RAux, A);
+					adBmsReadData(TOTAL_IC, &IC[0], RDRAXB, RAux, B);
+					adBmsReadData(TOTAL_IC, &IC[0], RDRAXC, RAux, C);
+					adBmsReadData(TOTAL_IC, &IC[0], RDRAXD, RAux, D);
+
+					adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
+					adbmsPhaseStart = getRuntimeMs();
+					adbmsPhase = ADBMS_IDLE_READ_AUX_STATUS;
+				}
+				break;
+
+			case ADBMS_IDLE_READ_AUX_STATUS:
+				if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
+					adBmsWakeupIc(TOTAL_IC);
+					adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
+					adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
+					adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
+					adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
+
+					adBmsReadData(TOTAL_IC, &IC[0], RDSTATA, Status, A);
+					adBmsReadData(TOTAL_IC, &IC[0], RDSTATB, Status, B);
+					adBmsReadData(TOTAL_IC, &IC[0], RDSTATC, Status, C);
+					adBmsReadData(TOTAL_IC, &IC[0], RDSTATD, Status, D);
+					adBmsReadData(TOTAL_IC, &IC[0], RDSTATE, Status, E);
+
+					adbmsPhase = ADBMS_IDLE_READ_PREV;
+				}
+				break;
+			}
+			break;
+		}
 		break;
 
 	case IDLE:
 
-		adBms6830_idle_readings(TOTAL_IC, &IC[0]);
+		switch (adbmsPhase) {
 
-		//adBms6830_read_cell_voltages(TOTAL_IC, &IC[0]);
-		//adBms6830_read_raux_voltages(TOTAL_IC, &IC[0]);
-		//adBms6830_read_aux_voltages(TOTAL_IC, &IC[0]);
-		//adBms6830_read_status_registers(TOTAL_IC, &IC[0]);
-		adBms6830_start_avgcell_voltage_measurment(TOTAL_IC);
-		adBms6830_start_raux_voltage_measurment(TOTAL_IC, &IC[0]);
-		adBms6830_start_aux_voltage_measurment(TOTAL_IC, &IC[0]);
+		case ADBMS_IDLE_READ_PREV:
+			adBmsWakeupIc(TOTAL_IC);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVA, Cell, A);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVB, Cell, B);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVC, Cell, C);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVD, Cell, D);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVE, Cell, E);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVF, Cell, F);
+
+			adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+			adbmsPhaseStart = getRuntimeMs();
+			adbmsPhase = ADBMS_IDLE_READ_AVG_START_RAUX;
+			break;
+
+		case ADBMS_IDLE_READ_AVG_START_RAUX:
+			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
+				adBmsWakeupIc(TOTAL_IC);
+				adBmsReadData(TOTAL_IC, &IC[0], RDACA, AvgCell, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDACB, AvgCell, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDACC, AvgCell, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDACD, AvgCell, D);
+				adBmsReadData(TOTAL_IC, &IC[0], RDACE, AvgCell, E);
+				adBmsReadData(TOTAL_IC, &IC[0], RDACF, AvgCell, F);
+
+				adBms6830_Adax2(AUX_CH_TO_CONVERT);
+				adbmsPhaseStart = getRuntimeMs();
+				adbmsPhase = ADBMS_IDLE_READ_RAUX_START_AUX;
+			}
+			break;
+
+		case ADBMS_IDLE_READ_RAUX_START_AUX:
+			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
+				adBmsWakeupIc(TOTAL_IC);
+				adBmsReadData(TOTAL_IC, &IC[0], RDRAXA, RAux, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDRAXB, RAux, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDRAXC, RAux, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDRAXD, RAux, D);
+
+				adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
+				adbmsPhaseStart = getRuntimeMs();
+				adbmsPhase = ADBMS_IDLE_READ_AUX_STATUS;
+			}
+			break;
+
+		case ADBMS_IDLE_READ_AUX_STATUS:
+			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
+				adBmsWakeupIc(TOTAL_IC);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
+
+				adBmsReadData(TOTAL_IC, &IC[0], RDSTATA, Status, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSTATB, Status, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSTATC, Status, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSTATD, Status, D);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSTATE, Status, E);
+
+				adbmsPhase = ADBMS_IDLE_READ_PREV;
+			}
+			break;
+		}
+		break;
 
 		break;
 
@@ -329,16 +515,15 @@ void adBms6830_idle_readings(uint8_t tIC, cell_asic *ic) {
 
 	//teporarly disable openwire
 	/*adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
-	pladc_count = adBmsPollAdc(PLADC);
-	adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-	pladc_count = pladc_count + adBmsPollAdc(PLADC);*/
+	 pladc_count = adBmsPollAdc(PLADC);
+	 adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+	 pladc_count = pladc_count + adBmsPollAdc(PLADC);*/
 
 	adBmsReadData(tIC, &ic[0], RDSTATA, Status, A);
 	adBmsReadData(tIC, &ic[0], RDSTATB, Status, B);
 	adBmsReadData(tIC, &ic[0], RDSTATC, Status, C);
 	adBmsReadData(tIC, &ic[0], RDSTATD, Status, D);
 	adBmsReadData(tIC, &ic[0], RDSTATE, Status, E);
-
 
 	//printVoltages(tIC, &ic[0], Cell);
 	//printVoltages(tIC, &ic[0], RAux);

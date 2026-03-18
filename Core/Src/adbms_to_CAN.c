@@ -28,10 +28,10 @@ HAL_StatusTypeDef Slaves_CAN_SendMessage(CAN_HandleTypeDef *hcan, uint32_t canID
 	return CAN_TX_Add_To_Queue(hcan, canID, (uint8_t) dataLength, TxData);
 }
 
-HAL_StatusTypeDef ADBMS_CAN_SendAll(CAN_HandleTypeDef *hcan) {
+HAL_StatusTypeDef ADBMS_CAN_SendAll(CAN_HandleTypeDef *hcan, AMSStates_t ams_current_state) {
 	for (uint8_t slave = 0; slave < TOTAL_IC && slave < 12; slave++) {
 
-		if (ADBMS_CAN_SendVoltages_Module(hcan, slave) != HAL_OK)
+		if (ADBMS_CAN_SendVoltages_Module(hcan, slave, ams_current_state) != HAL_OK)
 			return HAL_ERROR;
 
 		if (ADBMS_CAN_SendTemperatures_Module(hcan, slave) != HAL_OK)
@@ -105,20 +105,49 @@ HAL_StatusTypeDef ADBMS_CAN_SendMSC_Module(CAN_HandleTypeDef *hcan, uint8_t modu
 	uint8_t slave = module + 1;
 	const cell_asic *ic = &IC[module];
 
+	// IC voltage
 	// do meu antigo código do bms
 	int16_t vpv_raw = ic->aux.a_codes[11];
 	float vpv_v = (vpv_raw * 0.00015f + 1.5f) * 25.0f;   // volts
 	uint16_t ic_voltage = (uint16_t) (vpv_v * 1000.0f + 0.5f); // mV
 
+	// IC internal temperature
 	float itmp_voltage = ((ic->stata.itmp + 10000) * 0.000150f);
 	float ic_temp_c = (itmp_voltage / 0.0075f) - 273.0f;
 	if (ic_temp_c < 0.0f)
 		ic_temp_c = 0.0f;
 	uint16_t ic_temp = (uint16_t) (ic_temp_c + 0.5f);
 
+	// Existing open-wire / diag fault flag
 	uint8_t open_wire = (ic->statc.cs_flt != 0U || ic->statc.vde || ic->statc.vdel) ? 1U : 0U;
 
 	uint16_t vdelta = s_module_voltage_delta[module];
+
+	//check under and over voltage registers
+	uint8_t module_overvoltage = 0U;
+	uint8_t module_undervoltage = 0U;
+	uint8_t module_under_over_identifier = 0U;
+
+	// Check cells first: identifiers 1..12
+	for (uint8_t i = 0; i < 12; i++) {
+		if (ic->statd.c_ov[i]) {
+			module_overvoltage = 1U;
+			module_under_over_identifier = (uint8_t) (i + 1U);
+			break;
+		}
+	}
+
+	for (uint8_t i = 0; i < 12; i++) {
+		if (ic->statd.c_uv[i]) {
+			module_undervoltage = 1U;
+
+			// only set identifier if not already set by OV
+			if (module_under_over_identifier == 0U) {
+				module_under_over_identifier = (uint8_t) (i + 1U);
+			}
+			break;
+		}
+	}
 
 	switch (slave) {
 	case 1: {
@@ -127,6 +156,9 @@ HAL_StatusTypeDef ADBMS_CAN_SendMSC_Module(CAN_HandleTypeDef *hcan, uint8_t modu
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
+		m2.module_overvoltage = module_overvoltage;
+		m2.module_undervoltage = module_undervoltage;
+		m2.module_under_over_identifier = module_under_over_identifier;
 
 		len = powertrain_t26_slave_01_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
@@ -142,6 +174,9 @@ HAL_StatusTypeDef ADBMS_CAN_SendMSC_Module(CAN_HandleTypeDef *hcan, uint8_t modu
 		m2.module_ic_voltage = ic_voltage;
 		m2.module_open_wire = open_wire;
 		m2.module_ic_temperature = ic_temp;
+		m2.module_overvoltage = module_overvoltage;
+		m2.module_undervoltage = module_undervoltage;
+		m2.module_under_over_identifier = module_under_over_identifier;
 
 		len = powertrain_t26_slave_02_msc_id_2_pack(data, &m2, sizeof(data));
 		if (len < 0)
@@ -698,7 +733,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendTemperatures_Module(CAN_HandleTypeDef *hcan, uin
 	return HAL_OK;
 }
 
-HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t module) {
+HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t module, AMSStates_t AMS_Current_State) {
 	if (module >= TOTAL_IC || module >= 12)
 		return HAL_ERROR;
 
@@ -709,10 +744,15 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 
 	//shit for math and conversions
 	uint16_t cell_voltages[12];
-	uint32_t sum = 0U;
+	uint32_t sum = 0;
 
 	for (uint8_t i = 0; i < 12; i++) {
-		cell_voltages[i] = data_to_volts(ic->cell.c_codes[i], ADBMS_CELL);
+		if (AMS_Current_State == BALANCING) {
+			cell_voltages[i] = data_to_volts(ic->scell.sc_codes[i], ADBMS_CELL);
+		} else {
+			cell_voltages[i] = data_to_volts(ic->cell.c_codes[i], ADBMS_CELL);
+		}
+
 		sum += cell_voltages[i];
 	}
 
@@ -1397,7 +1437,7 @@ uint16_t data_to_volts(int16_t code, adbms_data_type_t type) {
 //Thermistor: Amphenol NKA502C1*1C
 float getTemperatureCAN(int16_t code) {
 	const float VREF2 = 3.0f;
-	const float R1 = 10000.0f;
+	const float R1 = 5000.0f;
 	const float R0 = 5000.0f;
 	const float BETA = 3977.0f;
 	const float T0_K = 298.15f;

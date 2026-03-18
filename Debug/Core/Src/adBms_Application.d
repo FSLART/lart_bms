@@ -45,7 +45,7 @@ Core/Src/adBms_Application.o: ../Core/Src/adBms_Application.c \
  ../Core/Inc/mcuWrapper.h ../Core/Inc/stm32f4xx_it.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830CmdList.h \
  ../Core/Inc/serialPrintResult.h ../Core/Inc/mcuWrapper.h \
- ../Core/Inc/brain.h
+ ../Core/Inc/brain.h ../Core/Inc/cell_balancing.h
 ../Core/Inc/common.h:
 ../Core/Inc/adBms_Application.h:
 ../Core/Inc/adbms_main.h:
@@ -98,3 +98,4 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830CmdList.h:
 ../Core/Inc/serialPrintResult.h:
 ../Core/Inc/mcuWrapper.h:
 ../Core/Inc/brain.h:
+../Core/Inc/cell_balancing.h:
