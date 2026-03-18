@@ -4,5 +4,5 @@
 ../Core/Src/cell_balancing.c:46:10:BatteryPack_FindMinVoltageGlobally	40	static
 ../Core/Src/cell_balancing.c:78:6:Balance_InitDefaultConfig	16	static
 ../Core/Src/cell_balancing.c:101:6:Balance_ComputeModule	56	static
-../Core/Src/cell_balancing.c:211:6:Balance_ApplyToIc	24	static
-../Core/Src/cell_balancing.c:237:6:Balance_ForceParity	24	static
+../Core/Src/cell_balancing.c:212:6:Balance_ApplyToIc	24	static
+../Core/Src/cell_balancing.c:238:6:Balance_ForceParity	24	static

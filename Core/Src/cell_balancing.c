@@ -55,7 +55,7 @@ uint16_t BatteryPack_FindMinVoltageGlobally(const cell_asic *ic_array, uint8_t t
 	for (uint8_t m = 0; m < total_ic; m++) {
 		for (uint8_t i = 0; i < BALANCING_CELL_COUNT; i++) {
 			//int16_t code = cfg->use_filtered_cells ? ic_array[m].scell.sc_codes[i] : ic_array[m].scell.sc_codes[i]; // Filtered not implmemnnted
-			int16_t code = ic_array[m].scell.sc_codes[i]; // Filtered not implmemnnted
+			int16_t code = ic_array[m].cell.c_codes[i]; // Filtered not implmemnnted
 
 			uint16_t cell_mV = cell_code_to_mV(code);
 
@@ -116,7 +116,8 @@ void Balance_ComputeModule(const cell_asic *ic, const balance_config_t *cfg, bal
 	for (uint8_t i = 0; i < BALANCING_CELL_COUNT; i++) {
 
 		//ESCOLHER QUE TIPO DE CANAL SE VAI FAZER A LEITURA DAS TENSÕES       nÃO IMPLEMENTADO YET
-		int16_t code = cfg->use_filtered_cells ? ic->scell.sc_codes[i] : ic->scell.sc_codes[i];
+		//int16_t code = cfg->use_filtered_cells ? ic->scell.sc_codes[i] : ic->scell.sc_codes[i];
+		int16_t code = ic->cell.c_codes[i];
 
 		//adc pra mv
 		uint16_t cell_in_mv = cell_code_to_mV(code);

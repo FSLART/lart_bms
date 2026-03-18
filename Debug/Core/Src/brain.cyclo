@@ -1,5 +1,5 @@
 ../Core/Src/brain.c:50:6:brain_start	1
-../Core/Src/brain.c:103:6:brain_loop	12
+../Core/Src/brain.c:103:6:brain_loop	10
 ../Core/Src/brain.c:215:6:HAL_ADC_ConvCpltCallback	2
 ../Core/Src/brain.c:222:6:HAL_TIM_PeriodElapsedCallback	1
 ../Core/Src/brain.c:230:6:HAL_GPIO_EXTI_Callback	3

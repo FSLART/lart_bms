@@ -36,6 +36,10 @@ typedef enum {
 	ADBMS_IDLE_READ_PREV = 0, ADBMS_IDLE_READ_AVG_START_RAUX, ADBMS_IDLE_READ_RAUX_START_AUX, ADBMS_IDLE_READ_AUX_STATUS
 } adbms_idle_phase_t;
 
+typedef enum {
+	BAL_CYCLE_INIT = 0, BAL_CYCLE_APPLY, BAL_CYCLE_ON_TIME, BAL_CYCLE_STOP_DISCHARGE, BAL_CYCLE_SETTLE, BAL_CYCLE_START_AVG, BAL_CYCLE_WAIT_AVG, BAL_CYCLE_READ_AVG, BAL_CYCLE_COMPUTE
+} adbms_balancing_phase_t;
+
 cell_asic IC[TOTAL_IC];
 
 /* ADC Command Configurations */
@@ -75,20 +79,30 @@ static bool g_balance_cfg_initialized = false;
 static balance_parity_t g_balance_forced_parity = BALANCE_PARITY_ODD;
 uint16_t global_min_mV = 0; //tem de ser global a puta, fdss
 
+static adbms_balancing_phase_t balPhase = BAL_CYCLE_INIT;
+static uint32_t balPhaseStart = 0;
+static const uint32_t BALANCE_ON_TIME_MS = 600;
+static const uint32_t BALANCE_SETTLE_MS = 0;
+static const uint32_t AVG_CONV_WAIT_MS = 8;
+
 void adbms_main(AMSStates_t ams_state) {
 
 	switch (ams_state) {
 
 	case BALANCING:
-		static uint8_t xanato_counter = 0;
+		if (!g_balance_cfg_initialized) {
+			Balance_InitDefaultConfig(&g_balance_cfg);
+			g_balance_cfg_initialized = true;
+		}
 
-		if (xanato_counter > 3) {
-			if (!g_balance_cfg_initialized) {
-				Balance_InitDefaultConfig(&g_balance_cfg);
-				g_balance_cfg_initialized = true;
-			}
+		switch (balPhase) {
 
+		case BAL_CYCLE_INIT:
+			global_min_mV = BatteryPack_FindMinVoltageGlobally(&IC[0], TOTAL_IC, &g_balance_cfg);
+			balPhase = BAL_CYCLE_COMPUTE;
+			break;
 
+		case BAL_CYCLE_COMPUTE:
 			for (uint8_t module = 0; module < TOTAL_IC; module++) {
 				balance_result_t result;
 
@@ -110,95 +124,85 @@ void adbms_main(AMSStates_t ams_state) {
 			if (global_min_mV == 0xFFFF) {
 				for (uint8_t module = 0; module < TOTAL_IC; module++) {
 					IC[module].tx_cfgb.dcc = 0;
-
 					for (uint8_t cell = 0; cell < 12; cell++) {
 						IC[module].PwmA.pwma[cell] = 0;
 					}
 				}
 			}
 
+			balPhase = BAL_CYCLE_APPLY;
+			break;
+
+		case BAL_CYCLE_APPLY:
 			adBmsWakeupIc(TOTAL_IC);
 			adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-			adBmsWriteData(TOTAL_IC, &IC[0], WRPWM1, Pwm, A); // Apeans grupo A pq apenas estão 12 células populadas!!!
+			adBmsWriteData(TOTAL_IC, &IC[0], WRPWM1, Pwm, A);   // only 12 populated cells
 
-			//dar reset ao counter
-			xanato_counter = 0;
+			balPhaseStart = getRuntimeMs();
+			balPhase = BAL_CYCLE_ON_TIME;
+			break;
 
-		} else {
-			xanato_counter++;
-
-			switch (adbmsPhase) {
-
-			case ADBMS_IDLE_READ_PREV:
-				adBmsWakeupIc(TOTAL_IC);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVA, S_volt, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVB, S_volt, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVC, S_volt, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVD, S_volt, D);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVE, S_volt, E);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVF, S_volt, F);
-
-				//printVoltages(TOTAL_IC, &IC[0], S_volt);
-
-				//adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DCP_OFF, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-				adBms6830_Adsv(SINGLE, DCP_ON, OW_OFF_ALL_CH);
-				adbmsPhaseStart = getRuntimeMs();
-				adbmsPhase = ADBMS_IDLE_READ_AVG_START_RAUX;
-				break;
-
-				//not rly average, its the S pin
-			case ADBMS_IDLE_READ_AVG_START_RAUX:
-				if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
-
-					global_min_mV = BatteryPack_FindMinVoltageGlobally(&IC[0], TOTAL_IC, &g_balance_cfg);
-					adBmsWakeupIc(TOTAL_IC);
-					/*adBmsReadData(TOTAL_IC, &IC[0], RDSVA, S_volt, A);
-					adBmsReadData(TOTAL_IC, &IC[0], RDSVB, S_volt, B);
-					adBmsReadData(TOTAL_IC, &IC[0], RDSVC, S_volt, C);
-					adBmsReadData(TOTAL_IC, &IC[0], RDSVD, S_volt, D);
-					adBmsReadData(TOTAL_IC, &IC[0], RDSVE, S_volt, E);
-					adBmsReadData(TOTAL_IC, &IC[0], RDSVF, S_volt, F);*/
-
-					adBms6830_Adax2(AUX_CH_TO_CONVERT);
-					adbmsPhaseStart = getRuntimeMs();
-					adbmsPhase = ADBMS_IDLE_READ_RAUX_START_AUX;
-				}
-				break;
-
-			case ADBMS_IDLE_READ_RAUX_START_AUX:
-				if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
-					adBmsWakeupIc(TOTAL_IC);
-					adBmsReadData(TOTAL_IC, &IC[0], RDRAXA, RAux, A);
-					adBmsReadData(TOTAL_IC, &IC[0], RDRAXB, RAux, B);
-					adBmsReadData(TOTAL_IC, &IC[0], RDRAXC, RAux, C);
-					adBmsReadData(TOTAL_IC, &IC[0], RDRAXD, RAux, D);
-
-					adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
-					adbmsPhaseStart = getRuntimeMs();
-					adbmsPhase = ADBMS_IDLE_READ_AUX_STATUS;
-				}
-				break;
-
-			case ADBMS_IDLE_READ_AUX_STATUS:
-				if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
-					adBmsWakeupIc(TOTAL_IC);
-					adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
-					adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
-					adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
-					adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
-
-					adBmsReadData(TOTAL_IC, &IC[0], RDSTATA, Status, A);
-					adBmsReadData(TOTAL_IC, &IC[0], RDSTATB, Status, B);
-					adBmsReadData(TOTAL_IC, &IC[0], RDSTATC, Status, C);
-					adBmsReadData(TOTAL_IC, &IC[0], RDSTATD, Status, D);
-					adBmsReadData(TOTAL_IC, &IC[0], RDSTATE, Status, E);
-
-					adbmsPhase = ADBMS_IDLE_READ_PREV;
-				}
-				break;
+		case BAL_CYCLE_ON_TIME:
+			if (getRuntimeMsDiff(balPhaseStart) >= BALANCE_ON_TIME_MS) {
+				balPhase = BAL_CYCLE_STOP_DISCHARGE;
 			}
 			break;
+
+		case BAL_CYCLE_STOP_DISCHARGE:
+			/*for (uint8_t module = 0; module < TOTAL_IC; module++) {
+				IC[module].tx_cfgb.dcc = 0;
+				for (uint8_t cell = 0; cell < 12; cell++) {
+					IC[module].PwmA.pwma[cell] = 0;
+				}
+			}
+
+			adBmsWakeupIc(TOTAL_IC);
+			adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
+			adBmsWriteData(TOTAL_IC, &IC[0], WRPWM1, Pwm, A);*/
+
+			balPhaseStart = getRuntimeMs();
+			balPhase = BAL_CYCLE_SETTLE;
+			break;
+
+		case BAL_CYCLE_SETTLE:
+			if (getRuntimeMsDiff(balPhaseStart) >= BALANCE_SETTLE_MS) {
+				balPhase = BAL_CYCLE_START_AVG;
+			}
+			break;
+
+		case BAL_CYCLE_START_AVG:
+			adBmsWakeupIc(TOTAL_IC);
+			adBms6830_Adcv(RD_OFF, SINGLE, DCP_OFF, RSTF_OFF, OW_OFF_ALL_CH);
+
+			balPhaseStart = getRuntimeMs();
+			balPhase = BAL_CYCLE_WAIT_AVG;
+			break;
+
+		case BAL_CYCLE_WAIT_AVG:
+			if (getRuntimeMsDiff(balPhaseStart) >= AVG_CONV_WAIT_MS) {
+				balPhase = BAL_CYCLE_READ_AVG;
+			}
+			break;
+
+		case BAL_CYCLE_READ_AVG:
+			adBmsWakeupIc(TOTAL_IC);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVA, Cell, A);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVB, Cell, B);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVC, Cell, C);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVD, Cell, D);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVE, Cell, E);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVF, Cell, F);
+
+			global_min_mV = BatteryPack_FindMinVoltageGlobally(&IC[0], TOTAL_IC, &g_balance_cfg);
+
+			balPhase = BAL_CYCLE_COMPUTE;
+			break;
+
+		default:
+			balPhase = BAL_CYCLE_INIT;
+			break;
 		}
+
 		break;
 
 	case IDLE:

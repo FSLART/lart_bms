@@ -748,7 +748,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 
 	for (uint8_t i = 0; i < 12; i++) {
 		if (AMS_Current_State == BALANCING) {
-			cell_voltages[i] = data_to_volts(ic->scell.sc_codes[i], ADBMS_CELL);
+			cell_voltages[i] = data_to_volts(ic->cell.c_codes[i], ADBMS_CELL);
 		} else {
 			cell_voltages[i] = data_to_volts(ic->cell.c_codes[i], ADBMS_CELL);
 		}

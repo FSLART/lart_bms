@@ -117,11 +117,11 @@ void brain_loop(void) {
 
 	case BALANCING:
 
-		if ((getRuntimeMsDiff(timeStart) > 100) || (AMS_Previous_State != AMS_Current_State)) {
-			timeStart = getRuntimeMs();
+		//if ((getRuntimeMsDiff(timeStart) > 100) || (AMS_Previous_State != AMS_Current_State)) {
+			//timeStart = getRuntimeMs();
 
 			adbms_main(AMS_Current_State);
-		}
+		//}
 
 		break;
 
@@ -161,8 +161,8 @@ void brain_loop(void) {
 		adbms_main(AMS_Current_State);
 		//TODO: implement startup shit that needs looping i gueess lol
 
-		//AMS_State = IDLE;
-		AMS_State = BALANCING;
+		AMS_State = IDLE;
+		//AMS_State = BALANCING;
 
 		break;
 
