@@ -167,7 +167,7 @@ void CAN_Service(CAN_HandleTypeDef *hcan) {
 	uint32_t now = HAL_GetTick();
 
 	/* avoid hammering restart every single loop */
-	if ((now - s_lastCanRecoverTryMs) < 100U) {
+	if ((now - s_lastCanRecoverTryMs) < 100) {
 		return;
 	}
 
@@ -178,10 +178,11 @@ void CAN_Service(CAN_HandleTypeDef *hcan) {
 			//printfDebug("CAN started\n\r");
 		} else {
 			CAN_MarkStarted(hcan, 0);
+			(void)CAN_Restart(hcan);
 			//printfDebug("CAN start failed\n\r");
 		}
 		s_lastCanRecoverTryMs = now;
-		return;
+		//return;
 	}
 
 	/* Case 2: bus-off or other fatal CAN state */

@@ -2415,3 +2415,9 @@
 ../Core/Inc/dbc/powertrain_t26.c:19038:10:powertrain_t26_master_msc_id_3_overall_minimum_temperature_encode	16	static
 ../Core/Inc/dbc/powertrain_t26.c:19043:8:powertrain_t26_master_msc_id_3_overall_minimum_temperature_decode	16	static
 ../Core/Inc/dbc/powertrain_t26.c:19048:6:powertrain_t26_master_msc_id_3_overall_minimum_temperature_is_in_range	16	static
+../Core/Inc/dbc/powertrain_t26.c:19055:5:powertrain_t26_start_balancing_pack	24	static
+../Core/Inc/dbc/powertrain_t26.c:19071:5:powertrain_t26_start_balancing_unpack	24	static
+../Core/Inc/dbc/powertrain_t26.c:19085:5:powertrain_t26_start_balancing_init	16	static
+../Core/Inc/dbc/powertrain_t26.c:19094:9:powertrain_t26_start_balancing_balancing_request_encode	16	static
+../Core/Inc/dbc/powertrain_t26.c:19099:8:powertrain_t26_start_balancing_balancing_request_decode	16	static
+../Core/Inc/dbc/powertrain_t26.c:19104:6:powertrain_t26_start_balancing_balancing_request_is_in_range	16	static

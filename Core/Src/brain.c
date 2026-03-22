@@ -13,6 +13,7 @@
 #include <stdbool.h>
 
 #include "adbms_main.h"
+#include "cell_balancing.h"
 #include "adbms_to_CAN.h"
 
 #include "analog_readings.h"
@@ -48,6 +49,8 @@ static uint32_t timeStart = 0;
 volatile bool toggleHeartbeat = false;
 
 void brain_start(void) {
+
+	HAL_CAN_Start(&hcan1);
 
 	OpenAllContactors();
 
@@ -90,6 +93,7 @@ void brain_start(void) {
 
 	//inicializar o can pra receber a mensagem de precarga
 	Precharge_CAN_Init();
+	CellBalancing_CAN_Init();
 
 	// Start Timer11 for falut check
 	//HAL_TIM_Base_Start_IT(&htim11);

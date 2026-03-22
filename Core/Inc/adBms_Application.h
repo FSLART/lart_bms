@@ -26,7 +26,6 @@ and its licensor.
 #include "adbms_main.h"
 
 #define TOTAL_IC 2
-
 extern cell_asic IC[TOTAL_IC];
 
 void app_main(void);
