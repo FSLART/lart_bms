@@ -190,6 +190,7 @@ void CAN_Service(CAN_HandleTypeDef *hcan) {
 
 	if ((err & HAL_CAN_ERROR_BOF) != 0U) {
 		//printfDebug("CAN bus-off, restarting...\n\r");
+		//TODO: HAL_StatusTypeDef HAL_CAN_ResetError(CAN_HandleTypeDef *hcan)
 		(void)CAN_Restart(hcan);
 		s_lastCanRecoverTryMs = now;
 		return;
@@ -199,6 +200,7 @@ void CAN_Service(CAN_HandleTypeDef *hcan) {
 	HAL_CAN_StateTypeDef st = HAL_CAN_GetState(hcan);
 	if ((st == HAL_CAN_STATE_RESET) || (st == HAL_CAN_STATE_READY)) {
 		//printfDebug("CAN not running, restarting...\n\r");
+		//TODO: HAL_StatusTypeDef HAL_CAN_ResetError(CAN_HandleTypeDef *hcan)
 		(void)CAN_Restart(hcan);
 		s_lastCanRecoverTryMs = now;
 		return;

@@ -33,7 +33,7 @@
  */
 
 typedef enum {
-	ADBMS_IDLE_READ_PREV = 0, ADBMS_IDLE_READ_AVG_START_RAUX, ADBMS_IDLE_READ_RAUX_START_AUX, ADBMS_IDLE_READ_AUX_STATUS
+	ADBMS_IDLE_READ_PREV = 0, ADBMS_IDLE_READ_AVG_START_AUX, ADBMS_IDLE_READ_AUX_START_RAUX, ADBMS_IDLE_READ_RAUX_STATUS
 } adbms_idle_phase_t;
 
 typedef enum {
@@ -41,6 +41,8 @@ typedef enum {
 } adbms_balancing_phase_t;
 
 cell_asic IC[TOTAL_IC];
+
+cell_asic SLAVE[TOTAL_IC];
 
 /* ADC Command Configurations */
 RD REDUNDANT_MEASUREMENT = RD_OFF;
@@ -248,10 +250,10 @@ void adbms_main(AMSStates_t ams_state) {
 
 			adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
 			adbmsPhaseStart = getRuntimeMs();
-			adbmsPhase = ADBMS_IDLE_READ_AVG_START_RAUX;
+			adbmsPhase = ADBMS_IDLE_READ_AVG_START_AUX;
 			break;
 
-		case ADBMS_IDLE_READ_AVG_START_RAUX:
+		case ADBMS_IDLE_READ_AVG_START_AUX:
 			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
 				adBmsWakeupIc(TOTAL_IC);
 				adBmsReadData(TOTAL_IC, &IC[0], RDACA, AvgCell, A);
@@ -261,27 +263,14 @@ void adbms_main(AMSStates_t ams_state) {
 				adBmsReadData(TOTAL_IC, &IC[0], RDACE, AvgCell, E);
 				adBmsReadData(TOTAL_IC, &IC[0], RDACF, AvgCell, F);
 
-				adBms6830_Adax2(AUX_CH_TO_CONVERT);
-				adbmsPhaseStart = getRuntimeMs();
-				adbmsPhase = ADBMS_IDLE_READ_RAUX_START_AUX;
-			}
-			break;
-
-		case ADBMS_IDLE_READ_RAUX_START_AUX:
-			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
-				adBmsWakeupIc(TOTAL_IC);
-				adBmsReadData(TOTAL_IC, &IC[0], RDRAXA, RAux, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDRAXB, RAux, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDRAXC, RAux, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDRAXD, RAux, D);
-
+				//Read AUX
 				adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
 				adbmsPhaseStart = getRuntimeMs();
-				adbmsPhase = ADBMS_IDLE_READ_AUX_STATUS;
+				adbmsPhase = ADBMS_IDLE_READ_AUX_START_RAUX;
 			}
 			break;
 
-		case ADBMS_IDLE_READ_AUX_STATUS:
+		case ADBMS_IDLE_READ_AUX_START_RAUX:
 			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
 				adBmsWakeupIc(TOTAL_IC);
 				adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
@@ -294,6 +283,29 @@ void adbms_main(AMSStates_t ams_state) {
 				adBmsReadData(TOTAL_IC, &IC[0], RDSTATC, Status, C);
 				adBmsReadData(TOTAL_IC, &IC[0], RDSTATD, Status, D);
 				adBmsReadData(TOTAL_IC, &IC[0], RDSTATE, Status, E);
+
+				//Read GPIOS
+				adBms6830_Adax2(AUX_CH_TO_CONVERT);
+				adbmsPhaseStart = getRuntimeMs();
+				adbmsPhase = ADBMS_IDLE_READ_RAUX_STATUS;
+			}
+			break;
+
+		case ADBMS_IDLE_READ_RAUX_STATUS:
+			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
+				adBmsWakeupIc(TOTAL_IC);
+				adBmsReadData(TOTAL_IC, &IC[0], RDRAXA, RAux, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDRAXB, RAux, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDRAXC, RAux, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDRAXD, RAux, D);
+				//printVoltages(TOTAL_IC, &IC[0], Aux);
+
+				/* ── SNAPSHOT ──  */
+				memcpy(SLAVE, IC, sizeof(SLAVE));
+				//printfDebug("After READ Aux\r\n");
+				//printVoltages(TOTAL_IC, &IC[0], RAux);
+				//printfDebug("Copy \r\n");
+				//printVoltages(TOTAL_IC, &SLAVE[0], RAux);
 
 				adbmsPhase = ADBMS_IDLE_READ_PREV;
 			}

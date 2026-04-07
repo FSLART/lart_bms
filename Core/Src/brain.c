@@ -60,6 +60,8 @@ void brain_start(void) {
 	// Start Timers
 	//HAL_TIM_Base_Start_IT(&htim8);
 	//HAL_TIM_Base_Start_IT(&htim10);
+	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1); // start pwm
+	__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, 0);
 
 	printfConsole("Start Program \n\r");
 	printfDebug("Bluetooth, u up? \r\n");
@@ -125,6 +127,7 @@ void brain_loop(void) {
 			//timeStart = getRuntimeMs();
 
 			adbms_main(AMS_Current_State);
+			HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
 		//}
 
 		break;
@@ -137,7 +140,7 @@ void brain_loop(void) {
 
 			adbms_main(AMS_Current_State);
 
-			printfDebug("IDLE: %d ms \r\n", (int)(getRuntimeMs() - timeStart));
+			//printfDebug("IDLE: %d ms \r\n", (int)(getRuntimeMs() - timeStart));
 
 			//loop_count = 0;
 			//adBmsWakeupIc(TOTAL_IC);
@@ -156,6 +159,26 @@ void brain_loop(void) {
 			 //Delay_ms(MEASUREMENT_LOOP_TIME);
 			 loop_count = loop_count + 1;
 			 }*/
+
+		    // --- PWM sweep ---
+		    /*{
+		        static uint8_t pwm_val = 0;
+		        static int8_t  pwm_dir = 1;         // +1 = up, -1 = down
+		        static uint32_t pwm_last = 0;
+
+		        if (getRuntimeMsDiff(pwm_last) >= 10) {  // step every 10ms → full sweep in ~2.5s
+		            pwm_last = getRuntimeMs();
+
+		            pwm_val += pwm_dir;
+
+		            if (pwm_val == 255) pwm_dir = -1;
+		            if (pwm_val == 0)   pwm_dir =  1;
+
+		            __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, pwm_val);
+		        }
+		    }*/
+
+			HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
 		}
 
 		break;

@@ -4,5 +4,5 @@
 ../Core/Src/adbms_to_CAN.c:98:19:ADBMS_CAN_SendMSC_Module	48
 ../Core/Src/adbms_to_CAN.c:357:19:ADBMS_CAN_SendTemperatures_Module	73
 ../Core/Src/adbms_to_CAN.c:736:19:ADBMS_CAN_SendVoltages_Module	116
-../Core/Src/adbms_to_CAN.c:1406:10:data_to_volts	5
-../Core/Src/adbms_to_CAN.c:1438:7:getTemperatureCAN	5
+../Core/Src/adbms_to_CAN.c:1407:7:data_to_volts	5
+../Core/Src/adbms_to_CAN.c:1440:7:getTemperatureCAN	5

@@ -15,7 +15,7 @@
 #include <string.h>
 
 //Cache for the delta, since it is in another message grouped with other adbms stuff
-uint16_t s_module_voltage_delta[12];
+int s_module_voltage_delta[12];
 
 HAL_StatusTypeDef Slaves_CAN_SendMessage(CAN_HandleTypeDef *hcan, uint32_t canID, uint32_t dataLength, const uint8_t *TxData) {
 	if (dataLength > 8U) {
@@ -52,16 +52,16 @@ HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan) {
 	uint8_t data[8];
 	int len;
 
-	uint16_t overall_vmax = 0U;
-	uint16_t overall_vmin = 0xFFFFU;
-	uint16_t overall_tmax = 0U;
-	uint16_t overall_tmin = 0xFFFFU;
+	int overall_vmax = 0U;
+	int overall_vmin = 0xFFFFU;
+	int overall_tmax = 0U;
+	int overall_tmin = 0xFFFFU;
 
 	for (uint8_t module = 0; module < TOTAL_IC && module < 12; module++) {
-		const cell_asic *ic = &IC[module];
+		const cell_asic *ic = &SLAVE[module];   // atualizar para a versão segura
 
 		for (uint8_t i = 0; i < 12; i++) {
-			uint16_t v = data_to_volts(ic->cell.c_codes[i], ADBMS_CELL);
+			int v = data_to_volts(ic->cell.c_codes[i], ADBMS_CELL);
 
 			if (v > overall_vmax)
 				overall_vmax = v;
@@ -70,7 +70,7 @@ HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan) {
 		}
 
 		for (uint8_t i = 0; i < 6; i++) {
-			uint16_t t = (uint16_t) getTemperatureCAN(ic->raux.ra_codes[i]);
+			int t = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[i]));
 
 			if (t > overall_tmax)
 				overall_tmax = t;
@@ -103,25 +103,25 @@ HAL_StatusTypeDef ADBMS_CAN_SendMSC_Module(CAN_HandleTypeDef *hcan, uint8_t modu
 	uint8_t data[8];
 	int len;
 	uint8_t slave = module + 1;
-	const cell_asic *ic = &IC[module];
+	const cell_asic *ic = &SLAVE[module];   // atualizar para a versão segura
 
 	// IC voltage
 	// do meu antigo código do bms
 	int16_t vpv_raw = ic->aux.a_codes[11];
 	float vpv_v = (vpv_raw * 0.00015f + 1.5f) * 25.0f;   // volts
-	uint16_t ic_voltage = (uint16_t) (vpv_v * 1000.0f + 0.5f); // mV
+	int ic_voltage = (int) (vpv_v * 1000.0f + 0.5f); // mV
 
 	// IC internal temperature
 	float itmp_voltage = ((ic->stata.itmp + 10000) * 0.000150f);
 	float ic_temp_c = (itmp_voltage / 0.0075f) - 273.0f;
 	if (ic_temp_c < 0.0f)
 		ic_temp_c = 0.0f;
-	uint16_t ic_temp = (uint16_t) (ic_temp_c + 0.5f);
+	int ic_temp = (int) (ic_temp_c + 0.5f);
 
 	// Existing open-wire / diag fault flag
 	uint8_t open_wire = (ic->statc.cs_flt != 0U || ic->statc.vde || ic->statc.vdel) ? 1U : 0U;
 
-	uint16_t vdelta = s_module_voltage_delta[module];
+	int vdelta = s_module_voltage_delta[module];
 
 	//check under and over voltage registers
 	uint8_t module_overvoltage = 0U;
@@ -362,20 +362,20 @@ HAL_StatusTypeDef ADBMS_CAN_SendTemperatures_Module(CAN_HandleTypeDef *hcan, uin
 	uint8_t data[8];
 	int len;
 	uint8_t slave = module + 1;
-	const cell_asic *ic = &IC[module];
+	const cell_asic *ic = &SLAVE[module];   // atualizar para a versão segura
 
 	/* RAUX has 6 channels: ic->raux.ra_codes[0..5]
-	 * getTemperatureCAN() already returns scaled raw value for DBC factor
+	 * getTemperatureCAN() doesnt account for DBC factor
 	 */
-	uint16_t t1 = (uint16_t) getTemperatureCAN(ic->raux.ra_codes[0]);
-	uint16_t t2 = (uint16_t) getTemperatureCAN(ic->raux.ra_codes[1]);
-	uint16_t t3 = (uint16_t) getTemperatureCAN(ic->raux.ra_codes[2]);
-	uint16_t t4 = (uint16_t) getTemperatureCAN(ic->raux.ra_codes[3]);
-	uint16_t t5 = (uint16_t) getTemperatureCAN(ic->raux.ra_codes[4]);
-	uint16_t t6 = (uint16_t) getTemperatureCAN(ic->raux.ra_codes[5]);
+	int t1 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[0]));
+	int t2 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[1]));
+	int t3 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[2]));
+	int t4 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[3]));
+	int t5 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[4]));
+	int t6 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[5]));
 
-	uint16_t temp_max = t1;
-	uint16_t temp_min = t1;
+	int temp_max = 10;
+	int temp_min = 9999999;
 
 	if (t2 > temp_max)
 		temp_max = t2;
@@ -399,7 +399,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendTemperatures_Module(CAN_HandleTypeDef *hcan, uin
 	if (t6 < temp_min)
 		temp_min = t6;
 
-	uint16_t temp_delta = temp_max - temp_min;
+	int temp_delta = temp_max - temp_min;
 
 	switch (slave) {
 	case 1: {
@@ -740,10 +740,11 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 	uint8_t data[8];
 	int len;
 	uint8_t slave = module + 1;
-	const cell_asic *ic = &IC[module];
+
+	const cell_asic *ic = &SLAVE[module];   // atualizar para a versão segura
 
 	//shit for math and conversions
-	uint16_t cell_voltages[12];
+	int cell_voltages[12];
 	uint32_t sum = 0;
 
 	for (uint8_t i = 0; i < 12; i++) {
@@ -756,8 +757,8 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 		sum += cell_voltages[i];
 	}
 
-	uint16_t vmin = cell_voltages[0];
-	uint16_t vmax = cell_voltages[0];
+	int vmin = cell_voltages[0];
+	int vmax = cell_voltages[0];
 
 	for (uint8_t i = 1; i < 12; i++) {
 		if (cell_voltages[i] < vmin)
@@ -766,8 +767,8 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			vmax = cell_voltages[i];
 	}
 
-	uint16_t vavg = (uint16_t) (sum / 12U);
-	uint16_t vdelta = (uint16_t) (vmax - vmin);
+	int vavg = (int) (sum / 12U);
+	int vdelta = (int) (vmax - vmin);
 	s_module_voltage_delta[module] = vdelta;
 
 	switch (slave) {
@@ -809,7 +810,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			return HAL_ERROR;
 
 		struct powertrain_t26_slave_01_msc_id_1_t m1 = { 0 };
-		m1.module_voltage_sum = (uint16_t) sum;
+		m1.module_voltage_sum = (int) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
@@ -861,7 +862,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			return HAL_ERROR;
 
 		struct powertrain_t26_slave_02_msc_id_1_t m1 = { 0 };
-		m1.module_voltage_sum = (uint16_t) sum;
+		m1.module_voltage_sum = (int) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
@@ -913,7 +914,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			return HAL_ERROR;
 
 		struct powertrain_t26_slave_03_msc_id_1_t m1 = { 0 };
-		m1.module_voltage_sum = (uint16_t) sum;
+		m1.module_voltage_sum = (int) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
@@ -965,7 +966,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			return HAL_ERROR;
 
 		struct powertrain_t26_slave_04_msc_id_1_t m1 = { 0 };
-		m1.module_voltage_sum = (uint16_t) sum;
+		m1.module_voltage_sum = (int) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
@@ -1017,7 +1018,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			return HAL_ERROR;
 
 		struct powertrain_t26_slave_05_msc_id_1_t m1 = { 0 };
-		m1.module_voltage_sum = (uint16_t) sum;
+		m1.module_voltage_sum = (int) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
@@ -1069,7 +1070,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			return HAL_ERROR;
 
 		struct powertrain_t26_slave_06_msc_id_1_t m1 = { 0 };
-		m1.module_voltage_sum = (uint16_t) sum;
+		m1.module_voltage_sum = (int) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
@@ -1121,7 +1122,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			return HAL_ERROR;
 
 		struct powertrain_t26_slave_07_msc_id_1_t m1 = { 0 };
-		m1.module_voltage_sum = (uint16_t) sum;
+		m1.module_voltage_sum = (int) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
@@ -1173,7 +1174,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			return HAL_ERROR;
 
 		struct powertrain_t26_slave_08_msc_id_1_t m1 = { 0 };
-		m1.module_voltage_sum = (uint16_t) sum;
+		m1.module_voltage_sum = (int) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
@@ -1225,7 +1226,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			return HAL_ERROR;
 
 		struct powertrain_t26_slave_09_msc_id_1_t m1 = { 0 };
-		m1.module_voltage_sum = (uint16_t) sum;
+		m1.module_voltage_sum = (int) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
@@ -1277,7 +1278,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			return HAL_ERROR;
 
 		struct powertrain_t26_slave_10_msc_id_1_t m1 = { 0 };
-		m1.module_voltage_sum = (uint16_t) sum;
+		m1.module_voltage_sum = (int) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
@@ -1329,7 +1330,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			return HAL_ERROR;
 
 		struct powertrain_t26_slave_11_msc_id_1_t m1 = { 0 };
-		m1.module_voltage_sum = (uint16_t) sum;
+		m1.module_voltage_sum = (int) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
@@ -1381,7 +1382,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 			return HAL_ERROR;
 
 		struct powertrain_t26_slave_12_msc_id_1_t m1 = { 0 };
-		m1.module_voltage_sum = (uint16_t) sum;
+		m1.module_voltage_sum = (int) sum;
 		m1.module_voltage_avg = vavg;
 		m1.module_voltage_min = vmin;
 		m1.module_voltage_max = vmax;
@@ -1403,8 +1404,8 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 }
 
 // as duas formas de conversoes de adc, dependendo do tipo
-uint16_t data_to_volts(int16_t code, adbms_data_type_t type) {
-	float volts = 0.0f;
+float data_to_volts(int16_t code, adbms_data_type_t type) {
+	float volts = 0;
 
 	switch (type) {
 	case ADBMS_CELL:
@@ -1418,7 +1419,8 @@ uint16_t data_to_volts(int16_t code, adbms_data_type_t type) {
 		/* GPIO / RAUX code -> volts
 		 * (code + 10000) * 150 uV
 		 */
-		volts = ((float) code + 10000.0f) * 0.00015f;
+		//volts = ((float)(unsigned_code + 10000)) * 0.00015;
+		return ((code + 10000) * 0.000150);
 		break;
 
 	default:
@@ -1427,29 +1429,30 @@ uint16_t data_to_volts(int16_t code, adbms_data_type_t type) {
 
 	if (volts < 0.0f)
 		volts = 0.0f;
-	if (volts > 65.535f)
-		volts = 65.535f;
+	if (volts > 65.535)
+		volts = 65.535;
 
 	/* return in mV */
-	return (uint16_t) (volts * 1000.0f + 0.5f);
+	return (int) (volts * 1000.0f + 0.5f);
 }
 
 //Thermistor: Amphenol NKA502C1*1C
 float getTemperatureCAN(int16_t code) {
-	const float VREF2 = 3.0f;
-	const float R1 = 5000.0f;
-	const float R0 = 5000.0f;
-	const float BETA = 3977.0f;
-	const float T0_K = 298.15f;
+	//Thermistor: Amphenol NKA502C1*1C
+	float VREF2 = 3.0f;      // Reference voltage
+	float R1 = 10000.0f;     // Fixed resistor (10k)
+	float R0 = 5000.0f;     // Thermistor nominal resistance at 25°C
+	float BETA = 3977.0f;    // Beta constant
+	float T0_K = 298.15f;    // 25°C in Kelvin
 
-	float voltage = (float) data_to_volts(code, ADBMS_GPIO) / 1000.0f;
+	float gpio_voltage = ((code + 10000) * 0.000150);
 
-	if (voltage <= 0.0f)
-		return -40.0f;
-	if (voltage >= VREF2 - 0.001f)
-		return 150.0f;
+	if (gpio_voltage <= 0.0f)
+		return 1.99;
+	if (gpio_voltage >= VREF2)
+		return 150;
 
-	float Rt = R1 * voltage / (VREF2 - voltage);
+	float Rt = R1 * gpio_voltage / (VREF2 - gpio_voltage);
 	float tempK = 1.0f / ((1.0f / T0_K) + (1.0f / BETA) * logf(Rt / R0));
 	float tempC = tempK - 273.15f;
 
@@ -1458,5 +1461,6 @@ float getTemperatureCAN(int16_t code) {
 	if (tempC > 150.0f)
 		tempC = 150.0f;
 
-	return (tempC * 100.0f + 0.5f);
+	return (tempC);
+	//return (tempC);
 }

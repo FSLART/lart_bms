@@ -27,6 +27,7 @@ and its licensor.
 
 #define TOTAL_IC 2
 extern cell_asic IC[TOTAL_IC];
+extern cell_asic SLAVE[TOTAL_IC];
 
 void app_main(void);
 void run_command(int cmd);

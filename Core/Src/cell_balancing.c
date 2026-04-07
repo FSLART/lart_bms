@@ -13,6 +13,31 @@
 #include "brain.h"
 #include "dbc/powertrain_t26.h"
 
+void Balance_InitDefaultConfig(balance_config_t *cfg) {
+	if (cfg == 0) {
+		return;
+	}
+
+	cfg->min_rough_balacing_mV = 100;  //minimum volts to start a rough balacing, of only high volts cells comapred to minimum cell
+	cfg->deadband_mV = 10; // a deadband é a variação que se ignora, devido as oscilações imprevíosivies na leitua dos adcs
+	cfg->fullscale_mV = 15; // Ganho linear máximo pasra o colocar o pwm ao máximo, define o declive da equação que define o pwm para cada célula
+	cfg->min_cell_mV = 2800; //proteger célulass danificadas, ignorar balanceamento em células abaixo deste valor
+	cfg->max_cell_mV = 4200; //sanity check, acima desta tensão considerar unsafe o balanceamento
+	cfg->min_pwm_to_enable = 1; //mínimo pwm a ser considero, se valor da equação dera valor inferiroir a 1, o pwm vai para 0
+	cfg->use_filtered_cells = false; //utlizar canal de leitura com filtro digital interno do adbms6830, NOT WORKINGGGGGG
+	cfg->output_mode = BALANCE_OUTPUT_DCC; //PWM or just plain old on off
+
+	/* Equação pro PWM (controlo linear proporcional - sem feedback):
+	 *
+	 *   PWM = ((delta_mV - deadband_mV) / (fullscale_mV - deadband_mV)) * 15
+	 *
+	 *   onde:
+	 *   delta_mV = Vcell_mV - Vtarget_mV
+	 *   Vtarget_mV = tensão mínima global do pack
+	 *
+	 */
+}
+
 uint16_t cell_code_to_mV(int16_t code) {
 
 	int32_t mv = ((int32_t) code + 10000) * 150 / 1000;   // same as *0.15 mV
@@ -86,31 +111,6 @@ uint16_t BatteryPack_FindMinVoltageGlobally(const cell_asic *ic_array, uint8_t t
 	}
 
 	return global_min_mV;
-}
-
-void Balance_InitDefaultConfig(balance_config_t *cfg) {
-	if (cfg == 0) {
-		return;
-	}
-
-	cfg->min_rough_balacing_mV = 100;  //minimum volts to start a rough balacing, of only high volts cells comapred to minimum cell
-	cfg->deadband_mV = 10; // a deadband é a variação que se ignora, devido as oscilações imprevíosivies na leitua dos adcs
-	cfg->fullscale_mV = 15; // Ganho linear máximo pasra o colocar o pwm ao máximo, define o declive da equação que define o pwm para cada célula
-	cfg->min_cell_mV = 2900; //proteger célulass danificadas, ignorar balanceamento em células abaixo deste valor
-	cfg->max_cell_mV = 4200; //sanity check, acima desta tensão considerar unsafe o balanceamento
-	cfg->min_pwm_to_enable = 1; //mínimo pwm a ser considero, se valor da equação dera valor inferiroir a 1, o pwm vai para 0
-	cfg->use_filtered_cells = false; //utlizar canal de leitura com filtro digital interno do adbms6830, NOT WORKINGGGGGG
-	cfg->output_mode = BALANCE_OUTPUT_DCC; //PWM or just plain old on off
-
-	/* Equação pro PWM (controlo linear proporcional - sem feedback):
-	 *
-	 *   PWM = ((delta_mV - deadband_mV) / (fullscale_mV - deadband_mV)) * 15
-	 *
-	 *   onde:
-	 *   delta_mV = Vcell_mV - Vtarget_mV
-	 *   Vtarget_mV = tensão mínima global do pack
-	 *
-	 */
 }
 
 balance_stage_t BatteryPack_DetermineBalanceStage(const cell_asic *ic_array, uint8_t total_ic, const balance_config_t *cfg, uint16_t global_min_mV) {

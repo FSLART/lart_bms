@@ -1,4 +1,4 @@
-../Core/Inc/fan_management.h:71:23:FanMgr_ClampPWM	4
+../Core/Inc/fan_management.h:67:23:FanMgr_ClampPWM	4
 ../Core/Src/fan_management.c:14:12:cmp_desc	5
 ../Core/Src/fan_management.c:29:12:cmp_asc	5
 ../Core/Src/fan_management.c:45:6:PID_Init	4
