@@ -55,6 +55,7 @@ extern TIM_HandleTypeDef htim11;
 extern ADC_HandleTypeDef hadc1;
 extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
+extern WWDG_HandleTypeDef hwwdg;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/

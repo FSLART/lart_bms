@@ -35,6 +35,7 @@ Core/Src/mcuWrapper.o: ../Core/Src/mcuWrapper.c ../Core/Inc/common.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
  ../Core/Inc/stm32f4xx_it.h
 ../Core/Inc/common.h:
 ../Core/Inc/mcuWrapper.h:
@@ -75,4 +76,5 @@ Core/Src/mcuWrapper.o: ../Core/Src/mcuWrapper.c ../Core/Inc/common.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h:
 ../Core/Inc/stm32f4xx_it.h:

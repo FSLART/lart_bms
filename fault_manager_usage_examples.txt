@@ -1,0 +1,376 @@
+/*
+ * fault_manager_usage_examples.c
+ *
+ *  Copy-paste reference: how to call RAISE_ERROR / KILL_ERROR
+ *  in each existing BMS module.
+ *
+ *  This file is NOT compiled – it is documentation only.
+ */
+
+/* ═══════════════════════════════════════════════════════════════
+ *  brain.c  –  state machine / orchestrator
+ * ═══════════════════════════════════════════════════════════════ */
+void brain_start_example(void)
+{
+    FaultManager_Init();   /* <-- call this FIRST, before anything else */
+
+    /* If CAN fails to start */
+    if (HAL_CAN_Start(&hcan1) != HAL_OK)
+    {
+        RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = FAULT_CAN_BUS_1);
+    }
+    else
+    {
+        KILL_ERROR(FAULT_CAN_INIT_ERROR);
+    }
+}
+
+void brain_loop_example(void)
+{
+    /* Periodically send faults over CAN (already in faultCheck block) */
+    if (faultCheck)
+    {
+        ADBMS_CAN_SendAll(&hcan1, AMS_Current_State);
+        Master_CAN_SendAll(&hcan1);
+        FaultManager_CAN_Send(&hcan1);   /* <-- add this line */
+        faultCheck = false;
+    }
+
+    /* Optionally dump to UART during debug */
+    // FaultManager_DumpUART();
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+ *  can.c  –  CAN bus layer
+ * ═══════════════════════════════════════════════════════════════ */
+void CanTx_ProcessQueue_example(void)
+{
+    while (!CanTx_IsEmpty())
+    {
+        /* ... */
+        if (HAL_CAN_GetTxMailboxesFreeLevel(item->hcan) == 0U)
+        {
+            RAISE_ERROR(FAULT_CAN_MAILBOX_FULL,
+                        .channel_idx = (item->hcan == &hcan1) ? FAULT_CAN_BUS_1 : FAULT_CAN_BUS_2);
+            break;
+        }
+        else
+        {
+            KILL_ERROR(FAULT_CAN_MAILBOX_FULL);
+        }
+
+        if (HAL_CAN_AddTxMessage(item->hcan, &TxH, item->data, &mailbox) != HAL_OK)
+        {
+            RAISE_ERROR(FAULT_CAN_SEND_ERROR,
+                        .channel_idx = (item->hcan == &hcan1) ? FAULT_CAN_BUS_1 : FAULT_CAN_BUS_2);
+            break;
+        }
+        /* ... */
+    }
+}
+
+void CAN_Service_example(CAN_HandleTypeDef *hcan)
+{
+    uint32_t err = HAL_CAN_GetError(hcan);
+    if ((err & HAL_CAN_ERROR_BOF) != 0U)
+    {
+        RAISE_ERROR(FAULT_CAN_BUS_OFF,
+                    .channel_idx = (hcan == &hcan1) ? FAULT_CAN_BUS_1 : FAULT_CAN_BUS_2);
+        /* attempt restart ... */
+    }
+    else
+    {
+        KILL_ERROR(FAULT_CAN_BUS_OFF);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+ *  adbms_to_CAN.c  (and adbms_application.c)
+ *  Slave voltage / temperature / open-wire checks
+ * ═══════════════════════════════════════════════════════════════ */
+void adbms_check_voltages_example(const cell_asic *IC, uint8_t total_ic,
+                                   float max_cell_v, float min_cell_v)
+{
+    for (uint8_t m = 0; m < total_ic; m++)
+    {
+        for (uint8_t i = 0; i < CELL_COUNT; i++)
+        {
+            float v = cell_code_to_v(IC[m].cell.c_codes[i]);
+
+            if (v > max_cell_v)
+            {
+                RAISE_ERROR(FAULT_OVERVOLTAGE,
+                            .slave_idx       = m,
+                            .cell_idx        = i,
+                            .measured_value  = v,
+                            .threshold_value = max_cell_v);
+            }
+            else
+            {
+                KILL_ERROR(FAULT_OVERVOLTAGE);   /* clears the whole code */
+                /* NOTE: if you want per-cell clearing use a separate fault per cell,
+                   or add a "last faulted cell" field in context and compare. */
+            }
+
+            if (v < min_cell_v)
+            {
+                RAISE_ERROR(FAULT_UNDERVOLTAGE,
+                            .slave_idx       = m,
+                            .cell_idx        = i,
+                            .measured_value  = v,
+                            .threshold_value = min_cell_v);
+            }
+        }
+    }
+}
+
+void adbms_check_temperatures_example(const cell_asic *IC, uint8_t total_ic,
+                                        float max_temp_c, uint8_t ntc_count)
+{
+    for (uint8_t m = 0; m < total_ic; m++)
+    {
+        for (uint8_t ch = 0; ch < ntc_count; ch++)
+        {
+            float t = IC[m].aux.a_codes[ch] * RAUX_SCALE;   /* your conversion */
+
+            if (t > max_temp_c)
+            {
+                RAISE_ERROR(FAULT_OVERTEMPERATURE,
+                            .slave_idx       = m,
+                            .channel_idx     = ch,
+                            .measured_value  = t,
+                            .threshold_value = max_temp_c);
+            }
+            else
+            {
+                KILL_ERROR(FAULT_OVERTEMPERATURE);
+            }
+
+            /* NTC open detection: temperature below physical minimum */
+            if (t < -40.0f)
+            {
+                RAISE_ERROR(FAULT_TEMP_SENSOR_OPEN,
+                            .slave_idx   = m,
+                            .channel_idx = ch);
+            }
+        }
+    }
+}
+
+void adbms_check_slave_detect_example(uint8_t pec_error_for_slave, uint8_t slave_idx)
+{
+    if (pec_error_for_slave)
+    {
+        RAISE_ERROR(FAULT_PEC_ERROR,       .slave_idx = slave_idx);
+        RAISE_ERROR(FAULT_SLAVE_NOT_DETECTED, .slave_idx = slave_idx);
+    }
+    else
+    {
+        KILL_ERROR(FAULT_PEC_ERROR);
+        KILL_ERROR(FAULT_SLAVE_NOT_DETECTED);
+    }
+}
+
+void adbms_check_open_wire_example(bool ow_triggered, uint8_t slave_idx, uint8_t cell_idx)
+{
+    if (ow_triggered)
+    {
+        RAISE_ERROR(FAULT_OPEN_WIRE,
+                    .slave_idx = slave_idx,
+                    .cell_idx  = cell_idx);
+    }
+    else
+    {
+        KILL_ERROR(FAULT_OPEN_WIRE);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+ *  isa_ivt-s.c  –  current sensor watchdog
+ * ═══════════════════════════════════════════════════════════════ */
+#define ISA_TIMEOUT_MS   500u   /* declare a sensible timeout */
+
+static uint32_t s_isa_last_rx_ms = 0u;
+
+void IVT_CAN_RxCallback_example(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data)
+{
+    /* Called every time an IVT-S frame arrives */
+    s_isa_last_rx_ms = HAL_GetTick();
+    KILL_ERROR(FAULT_ISA_IVTS_TIMEOUT);   /* message received → clear timeout fault */
+}
+
+void IVT_Watchdog_Check_example(void)
+{
+    /* Call this from the brain_loop() faultCheck block */
+    if (HAL_GetTick() - s_isa_last_rx_ms > ISA_TIMEOUT_MS)
+    {
+        RAISE_ERROR(FAULT_ISA_IVTS_TIMEOUT);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+ *  contactors.c / precharge.c  –  contactor feedback mismatch
+ * ═══════════════════════════════════════════════════════════════ */
+void Contactors_CheckFeedback_example(void)
+{
+    /* Compare commanded vs actual GPIO states for each contactor.
+       commanded = last HAL_GPIO_WritePin(); actual = HAL_GPIO_ReadPin() */
+
+    uint8_t mismatch = 0u;
+
+    bool cmd_air_pos  = (s_commanded_air_pos  == GPIO_PIN_RESET); /* RESET = closed */
+    bool fbk_air_pos  = (HAL_GPIO_ReadPin(CONTACT_AIR_positivo_GPIO_Port,
+                                           CONTACT_AIR_positivo_Pin) == GPIO_PIN_RESET);
+    if (cmd_air_pos != fbk_air_pos) { mismatch |= FAULT_CTC_AIR_POS; }
+
+    bool cmd_air_neg  = (s_commanded_air_neg  == GPIO_PIN_RESET);
+    bool fbk_air_neg  = (HAL_GPIO_ReadPin(CONTACT_AIR_negativo_GPIO_Port,
+                                           CONTACT_AIR_negativo_Pin) == GPIO_PIN_RESET);
+    if (cmd_air_neg != fbk_air_neg) { mismatch |= FAULT_CTC_AIR_NEG; }
+
+    bool cmd_pre  = (s_commanded_pre == GPIO_PIN_RESET);
+    bool fbk_pre  = (HAL_GPIO_ReadPin(CONTACT_PRE_GPIO_Port, CONTACT_PRE_Pin) == GPIO_PIN_RESET);
+    if (cmd_pre != fbk_pre) { mismatch |= FAULT_CTC_PRE; }
+
+    bool cmd_dsch = (s_commanded_dsch == GPIO_PIN_RESET);
+    bool fbk_dsch = (HAL_GPIO_ReadPin(CONTACT_DSCH_GPIO_Port, CONTACT_DSCH_Pin) == GPIO_PIN_RESET);
+    if (cmd_dsch != fbk_dsch) { mismatch |= FAULT_CTC_DSCH; }
+
+    if (mismatch != 0u)
+    {
+        RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = mismatch);
+    }
+    else
+    {
+        KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+    }
+}
+
+void Precharge_CheckTimeout_example(uint32_t precharge_start_ms, uint32_t timeout_ms,
+                                     float v_measured, float v_expected)
+{
+    if (HAL_GetTick() - precharge_start_ms > timeout_ms)
+    {
+        RAISE_ERROR(FAULT_PRECHARGE_TIMEOUT,
+                    .measured_value  = v_measured,
+                    .threshold_value = v_expected);
+    }
+
+    /* If precharge ends but voltage never reached target */
+    if (!precharge_success && precharge_finished)
+    {
+        RAISE_ERROR(FAULT_PRECHARGE_FAILURE,
+                    .measured_value  = v_measured,
+                    .threshold_value = v_expected);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+ *  cell_balancing.c  –  balancing error
+ * ═══════════════════════════════════════════════════════════════ */
+void CellBalancing_CheckOvertemp_example(float pack_max_temp_during_bal,
+                                          float balancing_temp_limit)
+{
+    if (pack_max_temp_during_bal > balancing_temp_limit)
+    {
+        RAISE_ERROR(FAULT_BALANCING_OVERTEMP,
+                    .measured_value  = pack_max_temp_during_bal,
+                    .threshold_value = balancing_temp_limit);
+
+        /* Stop balancing immediately */
+        AMS_State = IDLE;
+    }
+    else
+    {
+        KILL_ERROR(FAULT_BALANCING_OVERTEMP);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+ *  analog_readings.c  –  ADC / current sensor errors
+ * ═══════════════════════════════════════════════════════════════ */
+void AnalogReadings_Check_example(const AnalogReadings_t *adc)
+{
+    /* Current sensor sanity: MCS1802 outputs VCC/2 at 0A.
+       If reading is rail-to-rail the sensor or wiring has failed. */
+    if ((adc->ams_master_current < -150.0f) || (adc->ams_master_current > 150.0f))
+    {
+        RAISE_ERROR(FAULT_CURRENT_SENSOR_ERROR,
+                    .measured_value = adc->ams_master_current);
+    }
+    else
+    {
+        KILL_ERROR(FAULT_CURRENT_SENSOR_ERROR);
+    }
+
+    /* VDDA sanity: if VREFINT gives a nonsensical VDDA reading */
+    if ((adc->vdda < 2.8f) || (adc->vdda > 3.6f))
+    {
+        RAISE_ERROR(FAULT_ADC_ERROR, .measured_value = adc->vdda);
+    }
+    else
+    {
+        KILL_ERROR(FAULT_ADC_ERROR);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+ *  eeprom_utils.c  –  storage errors
+ * ═══════════════════════════════════════════════════════════════ */
+void EEPROM_RaiseErrors_example(void)
+{
+    if (!Write_EEPROM(&comms, type, value, false))
+    {
+        RAISE_ERROR(FAULT_EEPROM_WRITE_ERROR);
+    }
+    else
+    {
+        KILL_ERROR(FAULT_EEPROM_WRITE_ERROR);
+    }
+
+    int result = Read_EEPROM(&comms, type, false);
+    if (result < 0)
+    {
+        RAISE_ERROR(FAULT_EEPROM_READ_ERROR);
+    }
+    else
+    {
+        KILL_ERROR(FAULT_EEPROM_READ_ERROR);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+ *  Future: acquisition node PCB watchdog (up to 8 nodes)
+ * ═══════════════════════════════════════════════════════════════ */
+#define ACQ_NODE_COUNT       8u
+#define ACQ_NODE_TIMEOUT_MS  200u
+
+static uint32_t s_acq_last_rx_ms[ACQ_NODE_COUNT] = {0};
+
+void AcqNode_RxCallback_example(uint8_t node_idx)
+{
+    if (node_idx < ACQ_NODE_COUNT)
+    {
+        s_acq_last_rx_ms[node_idx] = HAL_GetTick();
+        KILL_ERROR(FAULT_ACQUISITION_NODE_TIMEOUT);
+    }
+}
+
+void AcqNode_Watchdog_Check_example(void)
+{
+    for (uint8_t n = 0u; n < ACQ_NODE_COUNT; n++)
+    {
+        if (HAL_GetTick() - s_acq_last_rx_ms[n] > ACQ_NODE_TIMEOUT_MS)
+        {
+            RAISE_ERROR(FAULT_ACQUISITION_NODE_TIMEOUT, .channel_idx = n);
+        }
+    }
+}

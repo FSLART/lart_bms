@@ -39,6 +39,7 @@ void EE24_UnLock(EE24_HandleTypeDef *Handle);
 
 void EE24_Delay(uint32_t Delay)
 {
+	HAL_WWDG_Refresh(&hwwdg);
 #if EE24_RTOS == EE24_RTOS_DISABLE
   HAL_Delay(Delay);
 #elif (EE24_RTOS == EE24_RTOS_CMSIS_V1) || (EE24_RTOS == EE24_RTOS_CMSIS_V2)
@@ -98,7 +99,7 @@ bool EE24_Init(EE24_HandleTypeDef *Handle, I2C_HandleTypeDef *HI2c, uint8_t I2CA
     }
     Handle->HI2c = HI2c;
     Handle->Address = I2CAddress;
-    if (HAL_I2C_IsDeviceReady(Handle->HI2c, Handle->Address, 2, 100) == HAL_OK)
+    if (HAL_I2C_IsDeviceReady(Handle->HI2c, Handle->Address, 2, 35) == HAL_OK)
     {
       answer = true;
     }
@@ -134,7 +135,7 @@ bool EE24_Init(EE24_HandleTypeDef *Handle, I2C_HandleTypeDef *HI2c, uint8_t I2CA
     Handle->WpGpio = WpGpio;
     Handle->WpPin = WpPin;
     HAL_GPIO_WritePin(Handle->WpGpio, Handle->WpPin, GPIO_PIN_SET);
-    if (HAL_I2C_IsDeviceReady(Handle->HI2c, Handle->Address, 2, 100) == HAL_OK)
+    if (HAL_I2C_IsDeviceReady(Handle->HI2c, Handle->Address, 2, 35) == HAL_OK)
     {
       answer = true;
     }

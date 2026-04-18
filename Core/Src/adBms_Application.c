@@ -78,7 +78,6 @@ adbms_idle_phase_t adbmsPhase = ADBMS_IDLE_READ_PREV;
 uint32_t adbmsPhaseStart = 0;
 static balance_config_t g_balance_cfg;
 static bool g_balance_cfg_initialized = false;
-static balance_parity_t g_balance_forced_parity = BALANCE_PARITY_ODD;
 
 uint16_t global_min_mV = 0; //tem de ser global a puta, fdss
 uint16_t balance_start_min_mV = 0xFFFF;
@@ -97,13 +96,12 @@ void adbms_main(AMSStates_t ams_state) {
 	case BALANCING:
 		if (!g_balance_cfg_initialized) {
 			Balance_InitDefaultConfig(&g_balance_cfg);
-			Balance_SetOutputMode(&g_balance_cfg, BALANCE_OUTPUT_DCC);
 
 			balanceStage = BALANCE_STAGE_ROUGH;
 			balance_start_min_mV = BatteryPack_FindMinVoltageGlobally(&IC[0], TOTAL_IC, &g_balance_cfg);
 
 			global_min_mV = balance_start_min_mV;   // freeze target for stage 1
-			balPhase = BAL_CYCLE_COMPUTE;
+			balPhase = BAL_CYCLE_INIT;
 
 			g_balance_cfg_initialized = true;
 		}
@@ -116,9 +114,6 @@ void adbms_main(AMSStates_t ams_state) {
 			if (balanceStage == BALANCE_END) {
 				for (uint8_t module = 0; module < TOTAL_IC; module++) {
 					IC[module].tx_cfgb.dcc = 0;
-					for (uint8_t cell = 0; cell < 12; cell++) {
-						IC[module].PwmA.pwma[cell] = 0;
-					}
 				}
 
 				g_balance_cfg_initialized = false;
@@ -138,25 +133,12 @@ void adbms_main(AMSStates_t ams_state) {
 
 				Balance_ComputeModule(&IC[module], &g_balance_cfg, &result, global_min_mV, balanceStage);
 
-				if (result.balancing_allowed) {
-					Balance_ForceParity(&result, g_balance_forced_parity, g_balance_cfg.output_mode);
-				}
-
-				Balance_ApplyToIc(&IC[module], &result, g_balance_cfg.output_mode, global_min_mV, module);
-			}
-
-			if (g_balance_forced_parity == BALANCE_PARITY_ODD) {
-				g_balance_forced_parity = BALANCE_PARITY_EVEN;
-			} else {
-				g_balance_forced_parity = BALANCE_PARITY_ODD;
+				Balance_ApplyToIc(&IC[module], &result, global_min_mV, module);
 			}
 
 			if (global_min_mV == 0xFFFF) {
 				for (uint8_t module = 0; module < TOTAL_IC; module++) {
 					IC[module].tx_cfgb.dcc = 0;
-					for (uint8_t cell = 0; cell < 12; cell++) {
-						IC[module].PwmA.pwma[cell] = 0;
-					}
 				}
 			}
 
@@ -166,38 +148,39 @@ void adbms_main(AMSStates_t ams_state) {
 		case BAL_CYCLE_APPLY:
 			adBmsWakeupIc(TOTAL_IC);
 			adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-			adBmsWriteData(TOTAL_IC, &IC[0], WRPWM1, Pwm, A);   // only 12 populated cells
+			//adBmsWriteData(TOTAL_IC, &IC[0], WRPWM1, Pwm, A);   // only 12 populated cells
 
 			balPhaseStart = getRuntimeMs();
 			balPhase = BAL_CYCLE_ON_TIME;
+
 			break;
 
 		case BAL_CYCLE_ON_TIME:
 			if (getRuntimeMsDiff(balPhaseStart) >= BALANCE_ON_TIME_MS) {
 				balPhase = BAL_CYCLE_STOP_DISCHARGE;
 			}
+
 			break;
 
 		case BAL_CYCLE_STOP_DISCHARGE:
 			for (uint8_t module = 0; module < TOTAL_IC; module++) {
 				IC[module].tx_cfgb.dcc = 0;
-				for (uint8_t cell = 0; cell < 12; cell++) {
-					IC[module].PwmA.pwma[cell] = 0;
-				}
 			}
 
 			adBmsWakeupIc(TOTAL_IC);
 			adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-			adBmsWriteData(TOTAL_IC, &IC[0], WRPWM1, Pwm, A);
+			//adBmsWriteData(TOTAL_IC, &IC[0], WRPWM1, Pwm, A);
 
 			balPhaseStart = getRuntimeMs();
 			balPhase = BAL_CYCLE_SETTLE;
+
 			break;
 
 		case BAL_CYCLE_SETTLE:
 			if (getRuntimeMsDiff(balPhaseStart) >= BALANCE_SETTLE_MS) {
 				balPhase = BAL_CYCLE_START_AVG;
 			}
+
 			break;
 
 		case BAL_CYCLE_START_AVG:
@@ -206,6 +189,7 @@ void adbms_main(AMSStates_t ams_state) {
 
 			balPhaseStart = getRuntimeMs();
 			balPhase = BAL_CYCLE_WAIT_AVG;
+
 			break;
 
 		case BAL_CYCLE_WAIT_AVG:
@@ -223,11 +207,13 @@ void adbms_main(AMSStates_t ams_state) {
 			adBmsReadData(TOTAL_IC, &IC[0], RDCVE, Cell, E);
 			adBmsReadData(TOTAL_IC, &IC[0], RDCVF, Cell, F);
 
-			balPhase = BAL_CYCLE_COMPUTE;
+			balPhase = BAL_CYCLE_INIT;
+
 			break;
 
 		default:
 			balPhase = BAL_CYCLE_INIT;
+
 			break;
 		}
 

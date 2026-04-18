@@ -244,7 +244,7 @@ void IVT_CAN_Config(void) {
 
 		printfConsole("Fudeu CAN - IVT_STOP_CMD\n\n");
 	}
-	startTime = HAL_GetTick();
+	/*startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
@@ -253,7 +253,7 @@ void IVT_CAN_Config(void) {
 			IVT_CAN_Config();
 			return;
 		}
-	}
+	}*/
 	IVT_commandReceivedFlag = 0; // Reset flag
 	commsCheck = true; // clear UI Can error
 
@@ -261,21 +261,21 @@ void IVT_CAN_Config(void) {
 
 		printfConsole("Fudeu CAN - IVT_CONFIG_CURRENT_CMD\n\n");
 	}
-	startTime = HAL_GetTick();
+	/*startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
 			printfConsole("Fudeu CAN \n\n");
 			return;
 		}
-	}
+	}*/
 	IVT_commandReceivedFlag = 0; // Reset flag
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_U1_CMD) != HAL_OK) { // Configure voltage U1 command
 
 		printfConsole("Fudeu CAN - IVT_CONFIG_U1_CMD\n\n");
 	}
-	startTime = HAL_GetTick();
+	/*startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
@@ -283,14 +283,14 @@ void IVT_CAN_Config(void) {
 			printfConsole("Fudeu CAN \n\n");
 			return;
 		}
-	}
+	}*/
 	IVT_commandReceivedFlag = 0; // Reset flag
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_U2_CMD) != HAL_OK) { // Configure voltage U2 command
 
 		printfConsole("Fudeu CAN - IVT_CONFIG_U2_CMD\n\n");
 	}
-	startTime = HAL_GetTick();
+	/*startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
@@ -298,14 +298,14 @@ void IVT_CAN_Config(void) {
 			printfConsole("Fudeu CAN \n\n");
 			return;
 		}
-	}
+	}*/
 	IVT_commandReceivedFlag = 0; // Reset flag
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_U3_CMD) != HAL_OK) { // Configure voltage U3 command
 
 		printfConsole("Fudeu CAN - IVT_CONFIG_U3_CMD\n\n");
 	}
-	startTime = HAL_GetTick();
+	/*startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
@@ -313,14 +313,14 @@ void IVT_CAN_Config(void) {
 			printfConsole("Fudeu CAN \n\n");
 			return;
 		}
-	}
+	}*/
 	IVT_commandReceivedFlag = 0; // Reset flag
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_T_CMD) != HAL_OK) { // Configure voltage U3 command
 
 		printfConsole("Fudeu CAN - IVT_CONFIG_T_CMD\n\n");
 	}
-	startTime = HAL_GetTick();
+	/*startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
@@ -328,14 +328,14 @@ void IVT_CAN_Config(void) {
 			printfConsole("Fudeu CAN - IVT_CONFIG_T_CMD\n\n");
 			return;
 		}
-	}
+	}*/
 	IVT_commandReceivedFlag = 0; // Reset flag
 
-	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_W_CMD) != HAL_OK) { // Configure voltage U3 command
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_W_CMD) != HAL_OK) { // Configure voltage W command
 
 		printfConsole("Fudeu CAN - IVT_CONFIG_W_CMD\n\n");
 	}
-	startTime = HAL_GetTick();
+	/*startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
@@ -343,14 +343,44 @@ void IVT_CAN_Config(void) {
 			printfConsole("Fudeu CAN - IVT_CONFIG_W_CMD\n\n");
 			return;
 		}
+	}*/
+	IVT_commandReceivedFlag = 0; // Reset flag
+
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_AS_CMD) != HAL_OK) { // Configure voltage As command
+
+		printfConsole("Fudeu CAN - IVT_CONFIG_AS_CMD\n\n");
 	}
+	/*startTime = HAL_GetTick();
+	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
+
+		if ((HAL_GetTick() - startTime) > 1000) {
+
+			printfConsole("Fudeu CAN - IVT_CONFIG_AS_CMD\n\n");
+			return;
+		}
+	}*/
+	IVT_commandReceivedFlag = 0; // Reset flag
+
+	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_CONFIG_WH_CMD) != HAL_OK) { // Configure voltage wh command
+
+		printfConsole("Fudeu CAN - IVT_CONFIG_WH_CMD\n\n");
+	}
+	/*startTime = HAL_GetTick();
+	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
+
+		if ((HAL_GetTick() - startTime) > 1000) {
+
+			printfConsole("Fudeu CAN - IVT_CONFIG_WH_CMD\n\n");
+			return;
+		}
+	}*/
 	IVT_commandReceivedFlag = 0; // Reset flag
 
 	if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_STORE_CMD) != HAL_OK) { // Store config results command
 
 		printfConsole("Fudeu CAN - IVT_STORE_CMD\n\n");
 	}
-	startTime = HAL_GetTick();
+	/*startTime = HAL_GetTick();
 	while (!(IVT_commandReceivedFlag && ((HAL_GetTick() - startTime) >= 2))) {
 
 		if ((HAL_GetTick() - startTime) > 1000) {
@@ -358,7 +388,7 @@ void IVT_CAN_Config(void) {
 			printfConsole("Fudeu CAN - IVT_STORE_CMD\n\n");
 			return;
 		}
-	}
+	}*/
 	IVT_commandReceivedFlag = 0; // Reset flag
 
 	/*if (IVT_CAN_SendMessage(&hcan1, IVT_COMMAND_CANID, 8, IVT_RESET_SYSERROR_CMD) == HAL_OK) { // Store config results command

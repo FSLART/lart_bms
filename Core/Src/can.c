@@ -8,6 +8,7 @@
 #include "can.h"
 #include "brain.h"
 #include "uartDMA.h"
+#include "fault_manager.h"
 
 #ifndef MAX_CAN_RX_CALLBACKS
 #define MAX_CAN_RX_CALLBACKS 10 //Número de callbacks registados, tipo CAN_RegisterRxCallback(PreCharge_CAN_Rx);
@@ -93,7 +94,10 @@ void CanTx_ProcessQueue(void) {
 
 		// No free mailbox? Stop, will try again next time
 		if (HAL_CAN_GetTxMailboxesFreeLevel(item->hcan) == 0U) {
+			RAISE_ERROR(FAULT_CAN_MAILBOX_FULL, .channel_idx = (item->hcan == &hcan1) ? FAULT_CAN_BUS_1 : FAULT_CAN_BUS_2);
 			break;
+		}else{
+			 KILL_ERROR(FAULT_CAN_MAILBOX_FULL);
 		}
 
 		if (HAL_CAN_AddTxMessage(item->hcan, &TxH, item->data, &mailbox) != HAL_OK) {
@@ -101,7 +105,11 @@ void CanTx_ProcessQueue(void) {
 			// TODO: log error, drop this frame and move on
 			// printConsole("CAN TX ERR ID=0x%03lX\r\n", (unsigned long)item->id);
 
+			 RAISE_ERROR(FAULT_CAN_SEND_ERROR, .channel_idx = (item->hcan == &hcan1) ? FAULT_CAN_BUS_1 : FAULT_CAN_BUS_2);
+
 			break;// Como dou brek, não tento outra vez
+		}else{
+			 KILL_ERROR(FAULT_CAN_SEND_ERROR);
 		}
 
 		// Pop from queue
@@ -175,14 +183,19 @@ void CAN_Service(CAN_HandleTypeDef *hcan) {
 	if (!CAN_IsStarted(hcan)) {
 		if (HAL_CAN_Start(hcan) == HAL_OK) {
 			CAN_MarkStarted(hcan, 1);
+			KILL_ERROR(FAULT_CAN_INIT_ERROR);
 			//printfDebug("CAN started\n\r");
 		} else {
+
+			RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = FAULT_CAN_BUS_1);
 			CAN_MarkStarted(hcan, 0);
 			(void)CAN_Restart(hcan);
 			//printfDebug("CAN start failed\n\r");
 		}
 		s_lastCanRecoverTryMs = now;
 		//return;
+	}else{
+		KILL_ERROR(FAULT_CAN_INIT_ERROR);
 	}
 
 	/* Case 2: bus-off or other fatal CAN state */

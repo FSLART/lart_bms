@@ -1,0 +1,388 @@
+<!-- LART BMS EEPROM Configuration XDF -->
+<!-- For use with TunerPro RT and the eeprom.bin dump -->
+<!-- Generated from 24FC08 EEPROM memory map (1024 bytes) -->
+<!-- All values little-endian (ARM Cortex-M native) -->
+<XDFFORMAT version="1.50">
+  <XDFHEADER>
+    <flags>0x1</flags>
+    <description>LART BMS EEPROM Config - 24FC08 (8Kbit = 1024 bytes)</description>
+    <baseoffset>0</baseoffset>
+    <DEFAULTS datasizeinbits="8" sigdigits="2" outputtype="1" signed="0" lsbfirst="1" float="0" />
+    <REGION type="0xFFFFFFFF" startaddress="0x0" size="0x400" regionflags="0x0" name="BMS EEPROM" desc="LART BMS 24FC08 EEPROM binary dump" />
+  </XDFHEADER>
+
+  <!-- ═══════════════════════════════════════════════
+       PAGE 0  –  Header + Topology
+       0x000–0x00F
+       ═══════════════════════════════════════════════ -->
+
+  <XDFCONSTANT uniqueid="0x0001">
+    <title>Checksum</title>
+    <description>Magic value 0xB007 - present means chip is programmed</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x000" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>-</units>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0002">
+    <title>Config Version</title>
+    <description>Layout version - bump when memory map changes</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x002" mmedelementsizebits="8" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>-</units>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0003">
+    <title>Total IC Count</title>
+    <description>Number of ADBMS6830 ICs in the daisy-chain</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x003" mmedelementsizebits="8" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>ICs</units>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0004">
+    <title>Cell Count per IC</title>
+    <description>Number of cells per ADBMS6830 IC</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x004" mmedelementsizebits="8" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>cells</units>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0005">
+    <title>AUX Count per IC</title>
+    <description>Number of AUX channels per IC</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x005" mmedelementsizebits="8" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>ch</units>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0006">
+    <title>RAUX Count per IC</title>
+    <description>Number of RAUX channels per IC</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x006" mmedelementsizebits="8" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>ch</units>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0007">
+    <title>Use Filtered Cells</title>
+    <description>0 = raw ADC channel, 1 = filtered ADC channel (not working)</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x007" mmedelementsizebits="8" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>bool</units>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0008">
+    <title>Bypass Discharge Feedback</title>
+    <description>0 = check discharge feedback, 1 = skip check</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x008" mmedelementsizebits="8" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>bool</units>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0009">
+    <title>Bypass All Checks</title>
+    <description>0 = normal, 1 = skip all feedback checks</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x009" mmedelementsizebits="8" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>bool</units>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x000A">
+    <title>Output Mode</title>
+    <description>0 = PWM balancing, 1 = DCC (on/off) balancing</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x00A" mmedelementsizebits="8" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>-</units>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x000B">
+    <title>Min PWM to Enable</title>
+    <description>Minimum PWM duty cycle before balancing fires (0-15)</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x00B" mmedelementsizebits="8" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>-</units>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <!-- ═══════════════════════════════════════════════
+       PAGE 1  –  Voltage Thresholds
+       0x010–0x01F  (uint16, stored in millivolts)
+       Equation X/1000 converts mV → V for display
+       ═══════════════════════════════════════════════ -->
+
+  <XDFCONSTANT uniqueid="0x0010">
+    <title>Min Cell Voltage</title>
+    <description>Protect damaged cells - skip balancing below this voltage</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x010" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>V</units>
+    <decimalpl>3</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X/1000">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0011">
+    <title>Max Cell Voltage</title>
+    <description>Sanity check upper limit for cell voltage</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x012" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>V</units>
+    <decimalpl>3</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X/1000">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0012">
+    <title>OV Threshold</title>
+    <description>Over-voltage trip point</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x014" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>V</units>
+    <decimalpl>3</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X/1000">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0013">
+    <title>UV Threshold</title>
+    <description>Under-voltage trip point</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x016" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>V</units>
+    <decimalpl>3</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X/1000">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0014">
+    <title>OWC Threshold (Cell Open Wire)</title>
+    <description>Cell open-wire detection threshold</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x018" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>mV</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0015">
+    <title>Min Rough Balancing Delta</title>
+    <description>Min cell delta to trigger rough balancing stage</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x01A" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>mV</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0016">
+    <title>Balancing Deadband</title>
+    <description>Ignore cell deltas smaller than this (ADC noise floor)</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x01C" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>mV</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0017">
+    <title>PWM Fullscale Delta</title>
+    <description>Cell delta that maps to maximum PWM duty (15)</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x01E" mmedelementsizebits="16" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>mV</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <!-- ═══════════════════════════════════════════════
+       PAGE 2  –  Timing + OWA
+       0x020–0x02F  (uint32, milliseconds)
+       ═══════════════════════════════════════════════ -->
+
+  <XDFCONSTANT uniqueid="0x0020">
+    <title>Balance ON Time</title>
+    <description>How long balancing stays active per cycle</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x020" mmedelementsizebits="32" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>ms</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0021">
+    <title>Balance Settle Time</title>
+    <description>Settle time after balancing before next ADC read</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x024" mmedelementsizebits="32" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>ms</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0022">
+    <title>Avg Conversion Wait</title>
+    <description>Wait time after triggering ADC averaged conversion</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x028" mmedelementsizebits="32" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>ms</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0023">
+    <title>OWA Threshold (Aux Open Wire)</title>
+    <description>Aux open-wire detection threshold</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x02C" mmedelementsizebits="32" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>mV</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <!-- ═══════════════════════════════════════════════
+       PAGE 3  –  More Timing
+       0x030–0x03F  (uint32, milliseconds)
+       ═══════════════════════════════════════════════ -->
+
+  <XDFCONSTANT uniqueid="0x0030">
+    <title>Precharge Lockout Time</title>
+    <description>Cooldown between precharge initialisation requests</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x030" mmedelementsizebits="32" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>ms</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0031">
+    <title>Contactor Delay</title>
+    <description>Delay before checking contactor feedback after command</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x034" mmedelementsizebits="32" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>ms</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+  <XDFCONSTANT uniqueid="0x0032">
+    <title>Feedback Debounce Time</title>
+    <description>Debounce window for contactor feedback signals</description>
+    <EMBEDDEDDATA mmedtypeflags="0x02" mmedaddress="0x038" mmedelementsizebits="32" mmedmajorstridebits="0" mmedminorstridebits="0" />
+    <units>ms</units>
+    <decimalpl>0</decimalpl>
+    <datatype>0</datatype>
+    <unittype>0</unittype>
+    <DALINK index="0" />
+    <MATH equation="X">
+      <VAR id="X" />
+    </MATH>
+  </XDFCONSTANT>
+
+</XDFFORMAT>

@@ -35,6 +35,7 @@ Core/Src/cell_balancing.o: ../Core/Src/cell_balancing.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/common.h ../Core/Inc/uartDMA.h ../Core/Inc/can.h \
  ../Core/Inc/brain.h ../Core/Inc/dbc/powertrain_t26.h
@@ -75,6 +76,7 @@ Core/Src/cell_balancing.o: ../Core/Src/cell_balancing.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/common.h:
 ../Core/Inc/uartDMA.h:

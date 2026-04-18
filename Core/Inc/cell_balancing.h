@@ -34,12 +34,9 @@ typedef enum {
 typedef struct {
 	uint16_t min_rough_balacing_mV; //minimum volts to start a rough balacing, of only high volts cells comapred to minimum cell
 	uint16_t deadband_mV;     // below this delta, no balancing
-	uint16_t fullscale_mV;  // delta that maps to PWM=15
 	uint16_t min_cell_mV;      // minimum allowed cell voltage for balancing
 	uint16_t max_cell_mV;   // maximum sane cell voltage
-	uint8_t min_pwm_to_enable; // qw
 	bool use_filtered_cells;  //wqd
-	balance_output_mode_t output_mode; //PWM or just plain old on off
 } balance_config_t;
 
 typedef struct {
@@ -66,7 +63,7 @@ void Balance_InitDefaultConfig(balance_config_t *cfg);
 
 void Balance_ComputeModule(const cell_asic *ic, const balance_config_t *cfg, balance_result_t *out, uint16_t global_min_mV, balance_stage_t balancing_stage);
 
-void Balance_ApplyToIc(cell_asic *ic, const balance_result_t *result, balance_output_mode_t mode, uint16_t global_min_mV, uint8_t ic_index);
+void Balance_ApplyToIc(cell_asic *ic, const balance_result_t *result, uint16_t global_min_mV, uint8_t ic_index);
 
 void Balance_ForceParity(balance_result_t *result, balance_parity_t forced_parity, balance_output_mode_t mode);
 

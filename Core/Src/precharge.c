@@ -16,6 +16,8 @@
 
 #include "uartDMA.h"
 
+#include "fault_manager.h"
+
 #define PRECHARGE_CAN_LOCKOUT_MS   15000 //esperar este tempo antes de processar uma nova requisição de inicialização de precarga
 
 //200 ms devido ao gnd ser partilhado, má projetação da pcb
@@ -333,6 +335,16 @@ bool OnPrechargeComplete(PrechargeState_t state_guard) {
 	return ok;
 }
 
+/* helper macro builds contactor_bits for the contactors */
+static uint8_t Build_Mismatch_Bits(bool discharge_on, bool air_neg_on, bool air_pos_on, bool precharge_on, bool expect_dsch, bool expect_air_negative, bool expect_air_positive, bool exp_precharge)
+{
+    return (uint8_t)((
+    	( (discharge_on    != expect_dsch) && !bypassDischarge) ? FAULT_CTC_DSCH    : 0u) |
+        ( (air_neg_on != expect_air_negative)                       ? FAULT_CTC_AIR_NEG : 0u) |
+        ( (air_pos_on != expect_air_positive)                       ? FAULT_CTC_AIR_POS : 0u) |
+        ( (precharge_on     != exp_precharge)                       ? FAULT_CTC_PRE     : 0u));
+}
+
 /**
  *******************************************************************************
  * Function: IsTheStateOK
@@ -365,85 +377,121 @@ bool IsTheStateOK(PrechargeState_t check_state) {
 	 if (fb_pre < 0 || fb_pre > 1); //RaiseError(CONTACTOR_STATE)*/
 
 	//o const protege as variaveis aqui para que elas n sejam alteradas durante o processamento desta função
-	const bool dsch_on = (fb_dsch == 1);
+	const bool discharge_on = (fb_dsch == 1);
 	const bool air_neg_on = (fb_air_neg == 1);
 	const bool air_pos_on = (fb_air_pos == 1);
-	const bool pre_on = (fb_pre == 1);
+	const bool precharge_on = (fb_pre == 1);
 
 	printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
 
 	/*printfDebug(
 	 "STATE %d | DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n",
 	 check_state,
-	 dsch_on,
+	 discharge_on,
 	 air_neg_on,
 	 air_pos_on,
-	 pre_on
+	 precharge_on
 	 );*/
 
 	switch (check_state) {
 
 	case VERIFY1:
 		// after closing AIR-
-		//return (!dsch_on && air_neg_on && !air_pos_on && !pre_on);
+		//return (!discharge_on && air_neg_on && !air_pos_on && !precharge_on);
 
 		printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:0 PRE:0\r\n", check_state);
-		ok = ((dsch_on || bypassDischarge) && air_neg_on && !air_pos_on && !pre_on);
+		ok = (((discharge_on || bypassDischarge) && air_neg_on && !air_pos_on && !precharge_on) || bypassChecks);
 		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+        if (!ok) {
+            RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, false, false));
+        } else {
+            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+        }
 		return ok;
 
 	case VERIFY2:
 		// after closing PRE
-		//return (!dsch_on && air_neg_on && !air_pos_on && pre_on);
+		//return (!discharge_on && air_neg_on && !air_pos_on && precharge_on);
 
 		printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:0 PRE:1\r\n", check_state);
-		ok = ((dsch_on || bypassDischarge) && air_neg_on && !air_pos_on && pre_on);
+		ok = (((discharge_on || bypassDischarge) && air_neg_on && !air_pos_on && precharge_on) || bypassChecks);
 		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+        if (!ok) {
+            RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, false, true));
+        } else {
+            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+        }
 		return ok;
 
 	case VERIFY3:
 		// after closing AIR+
-		//return (!dsch_on && air_neg_on && air_pos_on && pre_on);
+		//return (!discharge_on && air_neg_on && air_pos_on && precharge_on);
 
 		printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:1\r\n", check_state);
-		ok = ((dsch_on || bypassDischarge) && air_neg_on && air_pos_on && pre_on);
+		ok = (((discharge_on || bypassDischarge) && air_neg_on && air_pos_on && precharge_on) || bypassChecks);
 		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+        if (!ok) {
+            RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, true, true));
+        } else {
+            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+        }
 		return ok;
 
 	case VERIFY4:
 		// after opening PRE again
-		//return (!dsch_on && air_neg_on && air_pos_on && !pre_on);
+		//return (!discharge_on && air_neg_on && air_pos_on && !precharge_on);
 
 		printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:0\r\n", check_state);
-		ok = ((dsch_on || bypassDischarge) && air_neg_on && air_pos_on && !pre_on);
+		ok = (((discharge_on || bypassDischarge) && air_neg_on && air_pos_on && !precharge_on) || bypassChecks);
 		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+        if (!ok) {
+            RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, true, false));
+        } else {
+            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+        }
 		return ok;
 
 	case END:
 		// after opening PRE again
-		//return (!dsch_on && air_neg_on && air_pos_on && !pre_on);
+		//return (!discharge_on && air_neg_on && air_pos_on && !precharge_on);
 
 		printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:0\r\n", check_state);
-		ok = ((dsch_on || bypassDischarge) && air_neg_on && air_pos_on && !pre_on);
+		ok = (((discharge_on || bypassDischarge) && air_neg_on && air_pos_on && !precharge_on) || bypassChecks);
 		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+        if (!ok) {
+        	RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, true, false));
+        } else {
+            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+        }
 		return ok;
 
 	case WRONG:
 		// wrong all off
-		//return (!dsch_on && !air_neg_on && !air_pos_on && !pre_on);
+		//return (!discharge_on && !air_neg_on && !air_pos_on && !precharge_on);
 
 		printfDebug("STATE %d | EXPECT DSCH:0 AIR-:0 AIR+:0 PRE:0\r\n", check_state);
-		ok = ((!dsch_on || bypassDischarge) && !air_neg_on && !air_pos_on && !pre_on);
+		ok = (((!discharge_on || bypassDischarge) && !air_neg_on && !air_pos_on && !precharge_on) || bypassChecks);
 		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+        /*if (!ok) {
+        	RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, false, false, false, false));
+        } else {
+            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+        }*/
 		return ok;
 
 	case OPEN_ALL:
 		// first check if all off
-		//return (!dsch_on && !air_neg_on && !air_pos_on && !pre_on);
+		//return (!discharge_on && !air_neg_on && !air_pos_on && !precharge_on);
 
 		printfDebug("STATE %d | EXPECT DSCH:0 AIR-:0 AIR+:0 PRE:0\r\n", check_state);
-		ok = ((!dsch_on || bypassDischarge) && !air_neg_on && !air_pos_on && !pre_on);
+		ok = (((!discharge_on || bypassDischarge) && !air_neg_on && !air_pos_on && !precharge_on) || bypassChecks);
 		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+        if (!ok) {
+        	RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, false, false, false, false));
+        } else {
+            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+        }
 		return ok;
 
 	default:

@@ -36,6 +36,7 @@ Core/Src/adBms_Application.o: ../Core/Src/adBms_Application.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
  ../Core/Inc/brain.h ../Core/Inc/common.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830GenericType.h \
@@ -85,6 +86,7 @@ Core/Src/adBms_Application.o: ../Core/Src/adBms_Application.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h:
 ../Core/Inc/brain.h:
 ../Core/Inc/common.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:

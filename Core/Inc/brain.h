@@ -58,6 +58,9 @@ typedef struct {
 
 extern ErrorStatus_t errorStatus;
 
+/* Watchdog reset flag raw RCC->CSR captured before peripherals init */
+extern uint32_t watchdog_flag;
+
 void brain_start(void);
 
 void brain_loop(void);

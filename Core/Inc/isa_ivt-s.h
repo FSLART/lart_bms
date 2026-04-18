@@ -15,6 +15,7 @@
 #define IVT_RESULTU3_CANID ((uint16_t)0x524)
 #define IVT_RESULTT_CANID ((uint16_t)0X525)
 #define IVT_RESULTW_CANID ((uint16_t)0X526)
+#define IVT_RESULTWH_CANID ((uint16_t)0X528)
 
 /* Private variables --------------------------------------------------------*/
 /* IVT-S CAN Command Constants */
@@ -26,6 +27,8 @@ static const uint8_t IVT_CONFIG_U2_CMD[8]      = {0x22, 0x02, 0x00, 0x64, 0x00, 
 static const uint8_t IVT_CONFIG_U3_CMD[8]      = {0x23, 0x02, 0x00, 0x64, 0x00, 0x00, 0x00, 0x00}; // Disable U3
 static const uint8_t IVT_CONFIG_T_CMD[8]       = {0x24, 0x02, 0x00, 0xC8, 0x00, 0x00, 0x00, 0x00}; // temp: cyclic 120 ms
 static const uint8_t IVT_CONFIG_W_CMD[8]       = {0x25, 0x02, 0x00, 0xC8, 0x00, 0x00, 0x00, 0x00}; // power: cyclic 120 ms
+static const uint8_t IVT_CONFIG_WH_CMD[8]      = {0x27, 0x02, 0x00, 0xC8, 0x00, 0x00, 0x00, 0x00}; // Wh: cyclic 120 ms
+static const uint8_t IVT_CONFIG_AS_CMD[8]      = {0x26, 0x02, 0x00, 0xC8, 0x00, 0x00, 0x00, 0x00}; // As: cyclic 120 ms
 static const uint8_t IVT_STORE_CMD[8]          = {0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // Store Config
 static const uint8_t IVT_START_CMD[8]          = {0x34, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00}; // Start Mode
 

@@ -1,5 +1,5 @@
-Core/Src/eeprom_utils.o: ../Core/Src/eeprom_utils.c \
- ../Core/Inc/eeprom_utils.h ../Core/Inc/main.h \
+Core/Src/fault_manager.o: ../Core/Src/fault_manager.c \
+ ../Core/Inc/fault_manager.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -35,9 +35,9 @@ Core/Src/eeprom_utils.o: ../Core/Src/eeprom_utils.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/ee24.h ../Core/Inc/uartDMA.h
-../Core/Inc/eeprom_utils.h:
-../Core/Inc/main.h:
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
+ ../Core/Inc/uartDMA.h ../Core/Inc/can.h ../Core/Inc/main.h
+../Core/Inc/fault_manager.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:
@@ -73,5 +73,7 @@ Core/Src/eeprom_utils.o: ../Core/Src/eeprom_utils.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
-../Core/Inc/ee24.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h:
 ../Core/Inc/uartDMA.h:
+../Core/Inc/can.h:
+../Core/Inc/main.h:

@@ -17,21 +17,22 @@
 #include "adbms_to_CAN.h"
 
 #include "analog_readings.h"
-#include "eeprom_utils.h"
+#include "bms_eeprom_config.h"
 #include "isa_ivt-s.h"
 #include "contactors.h"
 #include "uartDMA.h"
 #include "master_to_CAN.h"
 #include "precharge.h"
 #include "can.h"
+#include "fault_manager.h"
+
 #include "powertrain_t26.h"
 
 /* ================== LOCAL DEFINES / TYPES ================== */
 
-#define STEERING_MAX 0xA1
+/* EEPROM nig init */
+EE24_HandleTypeDef eep24fc08;
 
-/* EEPROM comms instance */
-//static EEPROM_Comms eeprom_comms = { .hi2c = &hi2c1, .huart = &huart1 };
 /* ================== MODULE STATE ================== */
 volatile AMSStates_t AMS_State = FAULT;
 volatile AMSStates_t AMS_Current_State = FAULT;
@@ -49,6 +50,8 @@ static uint32_t timeStart = 0;
 volatile bool toggleHeartbeat = false;
 
 void brain_start(void) {
+
+	FaultManager_Init();
 
 	HAL_CAN_Start(&hcan1);
 
@@ -77,25 +80,26 @@ void brain_start(void) {
 
 	AnalogReadings_Init();
 
-	//printfDmaBT("hello");
+	if (!BmsConfig_Init(&eep24fc08, &hi2c1)) {
+		printfDebug("EEPROM init failed, using code defaults\n");
+		BmsConfig_LoadDefaults();
+	}
 
-	/*if (Write_EEPROM(&eeprom_comms, STEERING_MAX, 2334, true)) {
-	 //printfDma("good \n");
-	 } else {
-	 printfDma("bad \n");
-	 }
-
-	 if (Read_EEPROM(&eeprom_comms, STEERING_MAX, true) > -1) {
-	 printfDma("good \n");
-	 } else {
-	 printfDma("bad2 \n");
-	 }*/
+	BmsConfig_DumpEEPROM(&eep24fc08);
 
 	IVT_CAN_Setup_AllMessages(&hcan1);
+	//IVT_CAN_Setup(&hcan1);
+	//IVT_CAN_Config();
 
-	//inicializar o can pra receber a mensagem de precarga
+	//inicializar as callbakc para o CAN
 	Precharge_CAN_Init();
 	CellBalancing_CAN_Init();
+
+	if (watchdog_flag & RCC_CSR_WWDGRSTF) {
+		RAISE_ERROR(FAULT_WATCHDOG_RESET);
+		HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+		printfDebug("BOOT: WWDG reset detected!\r\n");
+	}
 
 	// Start Timer11 for falut check
 	//HAL_TIM_Base_Start_IT(&htim11);
@@ -124,10 +128,9 @@ void brain_loop(void) {
 	case BALANCING:
 
 		//if ((getRuntimeMsDiff(timeStart) > 100) || (AMS_Previous_State != AMS_Current_State)) {
-			//timeStart = getRuntimeMs();
+		//timeStart = getRuntimeMs();
 
-			adbms_main(AMS_Current_State);
-			HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+		adbms_main(AMS_Current_State);
 		//}
 
 		break;
@@ -160,25 +163,24 @@ void brain_loop(void) {
 			 loop_count = loop_count + 1;
 			 }*/
 
-		    // --- PWM sweep ---
-		    /*{
-		        static uint8_t pwm_val = 0;
-		        static int8_t  pwm_dir = 1;         // +1 = up, -1 = down
-		        static uint32_t pwm_last = 0;
+			// --- PWM sweep ---
+			/*{
+			 static uint8_t pwm_val = 0;
+			 static int8_t  pwm_dir = 1;         // +1 = up, -1 = down
+			 static uint32_t pwm_last = 0;
 
-		        if (getRuntimeMsDiff(pwm_last) >= 10) {  // step every 10ms → full sweep in ~2.5s
-		            pwm_last = getRuntimeMs();
+			 if (getRuntimeMsDiff(pwm_last) >= 10) {  // step every 10ms → full sweep in ~2.5s
+			 pwm_last = getRuntimeMs();
 
-		            pwm_val += pwm_dir;
+			 pwm_val += pwm_dir;
 
-		            if (pwm_val == 255) pwm_dir = -1;
-		            if (pwm_val == 0)   pwm_dir =  1;
+			 if (pwm_val == 255) pwm_dir = -1;
+			 if (pwm_val == 0)   pwm_dir =  1;
 
-		            __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, pwm_val);
-		        }
-		    }*/
+			 __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, pwm_val);
+			 }
+			 }*/
 
-			HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
 		}
 
 		break;
@@ -187,6 +189,8 @@ void brain_loop(void) {
 
 		adbms_main(AMS_Current_State);
 		//TODO: implement startup shit that needs looping i gueess lol
+
+		HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
 
 		AMS_State = IDLE;
 		//AMS_State = BALANCING;
@@ -210,14 +214,14 @@ void brain_loop(void) {
 		ADBMS_CAN_SendAll(&hcan1, AMS_Current_State);
 		//AnalogReadings_CAN_Send(&hcan1);
 		Master_CAN_SendAll(&hcan1);
-		//AnalogReadings_Start();
+		FaultManager_CAN_Send(&hcan1);
 		faultCheck = false;
 
 	}
 
 	// ~Update UI Triggered
 	if (updateUI) {
-
+		FaultManager_DumpUART();
 		//send_ivt_ui();
 		//send_ad68_ui();
 		updateUI = false;
