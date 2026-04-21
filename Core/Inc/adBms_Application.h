@@ -24,10 +24,12 @@ and its licensor.
 
 #include <stdint.h>
 #include "adbms_main.h"
+#include "cell_balancing.h"
 
 #define TOTAL_IC 2
 extern cell_asic IC[TOTAL_IC];
 extern cell_asic SLAVE[TOTAL_IC];
+extern balance_stage_t balanceStage;
 
 void app_main(void);
 void run_command(int cmd);
@@ -94,6 +96,9 @@ void adBms6830_read_rdfcall_voltage(uint8_t tIC, cell_asic *ic);
 void adBms6830_read_rdcsall_voltage(uint8_t tIC, cell_asic *ic);
 void adBms6830_read_rdacsall_voltage(uint8_t tIC, cell_asic *ic);
 void adBms6830_read_rdasall_voltage(uint8_t tIC, cell_asic *ic);
+
+void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic);
+void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic);
 
 #endif
 /** @}*/

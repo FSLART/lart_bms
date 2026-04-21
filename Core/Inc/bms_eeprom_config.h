@@ -20,7 +20,7 @@ extern "C" {
 #endif
 
 /* Page 0  –  Header + topology */
-#define EEPROM_ADDRESS_CHECKSUM              0x000   /* uint16_t  –  0xBEEF means chip is programmed   */
+#define EEPROM_ADDRESS_CHECKSUM              0x000   /* uint16_t  –  0xB007 means chip is programmed   */
 #define EEPROM_ADDRESS_VERSION               0x002   /* uint8_t   –  increment when layout changes      */
 #define EEPROM_ADDRESS_TOTAL_IC              0x003   /* uint8_t   –  number of ADBMS6830 ICs in chain   */
 #define EEPROM_ADDRESS_CELL_COUNT            0x004   /* uint8_t   –  cells per IC                       */

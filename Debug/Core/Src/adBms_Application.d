@@ -44,9 +44,11 @@ Core/Src/adBms_Application.o: ../Core/Src/adBms_Application.c \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830ParseCreate.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/mcuWrapper.h ../Core/Inc/stm32f4xx_it.h \
+ ../Core/Inc/cell_balancing.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830CmdList.h \
  ../Core/Inc/serialPrintResult.h ../Core/Inc/mcuWrapper.h \
- ../Core/Inc/brain.h ../Core/Inc/cell_balancing.h
+ ../Core/Inc/brain.h ../Core/Inc/cell_balancing.h ../Core/Inc/uartDMA.h \
+ ../Core/Inc/fault_manager.h
 ../Core/Inc/common.h:
 ../Core/Inc/adBms_Application.h:
 ../Core/Inc/adbms_main.h:
@@ -96,8 +98,11 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830ParseCreate.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/mcuWrapper.h:
 ../Core/Inc/stm32f4xx_it.h:
+../Core/Inc/cell_balancing.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830CmdList.h:
 ../Core/Inc/serialPrintResult.h:
 ../Core/Inc/mcuWrapper.h:
 ../Core/Inc/brain.h:
 ../Core/Inc/cell_balancing.h:
+../Core/Inc/uartDMA.h:
+../Core/Inc/fault_manager.h:

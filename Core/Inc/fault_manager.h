@@ -60,7 +60,7 @@ typedef enum {
 	FAULT_SDC_TRIGGERED = 24u, /* shutdown circuit opened      */
 
 	/* ── Cell balancing ──────────────────────────────── */
-	FAULT_BALANCING_ERROR = 25u, /* unexpected state in balancer */
+	FAULT_BALANCING_ERROR = 25u, /* unexpected state in balancing */
 	FAULT_BALANCING_OVERTEMP = 26u, /* temperature rose during bal. */
 
 	/* ── Analog / internal ───────────────────────────── */
@@ -78,6 +78,15 @@ typedef enum {
 	FAULT_STARTUP_FAILURE = 34u, /* init sequence failed         */
 	FAULT_WATCHDOG_RESET = 35u, /* system recovered from WDG    */
 	FAULT_STACK_OVERFLOW = 36u, /* stack canary tripped         */
+
+	/* UART */
+	FAULT_UART1_TX = 37u, /* UART1 - ERROR  TX   */
+	FAULT_UART1_RX = 38u, /* UART1 - ERROR  RX   */
+	FAULT_UART2_TX = 39u, /* UART2 - ERROR  TX   */
+	FAULT_UART2_RX = 40u, /* UART2 - ERROR  RX   */
+
+	FAULT_OW_DETECTED_CELL = 41u, /* open wire cell detected */
+	FAULT_OW_DETECTED_RTH = 42u, /* open wire gpio detected */
 
 	/* ── add new codes above this line ─────────────── */
 	FAULT_COUNT /* sentinel – must be ≤ 63      */

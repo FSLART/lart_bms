@@ -12,6 +12,8 @@
 #include "can.h"
 #include "brain.h"
 #include "dbc/powertrain_t26.h"
+#include "adBms_Application.h"
+
 
 void Balance_InitDefaultConfig(balance_config_t *cfg) {
 	if (cfg == 0) {
@@ -19,9 +21,9 @@ void Balance_InitDefaultConfig(balance_config_t *cfg) {
 	}
 
 	cfg->min_rough_balacing_mV = 100;  //minimum volts to start a rough balacing, of only high volts cells comapred to minimum cell
-	cfg->deadband_mV = 5; // a deadband é a variação que se ignora, devido as oscilações imprevíosivies na leitua dos adcs
-	cfg->min_cell_mV = 2800; //proteger célulass danificadas, ignorar balanceamento em células abaixo deste valor
-	cfg->max_cell_mV = 4200; //sanity check, acima desta tensão considerar unsafe o balanceamento
+	cfg->deadband_mV = 8; // a deadband é a variação que se ignora, devido as oscilações imprevíosivies na leitua dos adcs
+	cfg->min_cell_mV = 3000; //proteger célulass danificadas, ignorar balanceamento em células abaixo deste valor
+	cfg->max_cell_mV = 4250; //sanity check, acima desta tensão considerar unsafe o balanceamento
 	cfg->use_filtered_cells = false; //utlizar canal de leitura com filtro digital interno do adbms6830, NOT WORKINGGGGGG
 
 	/*
@@ -308,6 +310,7 @@ void CellBalancing_CAN_Rx(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data) {
 		//AMS_State = CHARGING;
 		AMS_State = BALANCING;
 	} else {
-		AMS_State = IDLE;
+		//AMS_State = STARTUP;
+		balanceStage = BALANCE_END;
 	}
 }

@@ -242,7 +242,7 @@ typedef struct
   uint8_t tmodchk;
   uint8_t cell_ow[CELL];
   uint8_t cellred_ow[CELL];
-  uint8_t aux_ow[(AUX-2)];
+  uint8_t aux_ow[(AUX)];
 } diag_test_;
 
 /* Aux open wire data structure */
@@ -255,8 +255,8 @@ typedef struct
 /* Aux open wire data structure */
 typedef struct
 {
-  int aux_pup_up[(AUX-2)];
-  int aux_pup_down[(AUX-2)];
+  int aux_pup_up[(AUX)];
+  int aux_pup_down[(AUX)];
 } aux_ow_;
 
 /* BMS ic main structure */

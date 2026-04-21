@@ -214,7 +214,7 @@ void brain_loop(void) {
 		ADBMS_CAN_SendAll(&hcan1, AMS_Current_State);
 		//AnalogReadings_CAN_Send(&hcan1);
 		Master_CAN_SendAll(&hcan1);
-		FaultManager_CAN_Send(&hcan1);
+		//FaultManager_CAN_Send(&hcan1);
 		faultCheck = false;
 
 	}

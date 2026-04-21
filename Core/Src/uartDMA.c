@@ -6,6 +6,7 @@
 #include "string.h"
 #include "main.h"
 #include "brain.h"
+#include "fault_manager.h"
 
 #define uartHandle huart1
 #define uart2Handle huart2
@@ -126,10 +127,12 @@ int printfUI(const char *format, ...) {
 		return -1; // Error in formatting
 	} else if (written > TEMP_BUFF_SIZE) {
 		// Over limit of temp buffer
-		Error_Handler();
+		RAISE_ERROR(FAULT_UART1_TX);
+		return 0;
 	} else if (getDataLen() + written > BUFFER_SIZE) {
 		// Buffer full
-		Error_Handler();
+		RAISE_ERROR(FAULT_UART1_TX);
+		return 0;
 	}
 
 	for (int i = 0; i < written; i++) {
@@ -147,7 +150,8 @@ int printfUI(const char *format, ...) {
 //        }
 
 		if (head == tail) {
-			Error_Handler();
+			RAISE_ERROR(FAULT_UART1_TX);
+			return 0;
 		}
 	}
 
@@ -173,10 +177,12 @@ int printfDebug(const char *format, ...) {
 		return -1; // Error in formatting
 	} else if (written >= TEMP_BUFF_SIZE) {
 		// Over limit of temp buffer
-		Error_Handler();
+		RAISE_ERROR(FAULT_UART2_TX);
+		return 0;
 	} else if (getDataLen2() + written > BUFFER_SIZE) {
 		// Buffer full
-		Error_Handler();
+		RAISE_ERROR(FAULT_UART2_TX);
+		return 0;
 	}
 
 	for (int i = 0; i < written; i++) {
@@ -194,7 +200,8 @@ int printfDebug(const char *format, ...) {
 //        }
 
 		if (head2 == tail2) {
-			Error_Handler();
+			RAISE_ERROR(FAULT_UART2_TX);
+			return 0;
 		}
 	}
 

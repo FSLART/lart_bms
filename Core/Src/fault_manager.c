@@ -46,7 +46,45 @@ static uint8_t fault_entry_count; /* number of valid entries             */
 /* ═══════════════════════════════════════════════════════════════
  *  FAULT NAME TABLE  (for UART debug only)
  * ═══════════════════════════════════════════════════════════════ */
-static const char *const fault_names[FAULT_COUNT] = { [FAULT_OVERVOLTAGE] = "OVERVOLTAGE", [FAULT_UNDERVOLTAGE] = "UNDERVOLTAGE", [FAULT_OVERTEMPERATURE] = "OVERTEMPERATURE", [FAULT_UNDERTEMPERATURE] = "UNDERTEMPERATURE", [FAULT_OVERTEMPERATURE_DISCHARGE] = "OVERTEMPERATURE_DISCHARGE", [FAULT_UNDERTEMPERATURE_CHARGE] = "UNDERTEMPERATURE_CHARGE", [FAULT_TEMP_SENSOR_OPEN] = "TEMP_SENSOR_OPEN", [FAULT_SLAVE_NOT_DETECTED] = "SLAVE_NOT_DETECTED", [FAULT_PEC_ERROR] = "PEC_ERROR", [FAULT_OPEN_WIRE] = "OPEN_WIRE", [FAULT_ACQUISITION_TIMEOUT] = "ACQUISITION_TIMEOUT", [FAULT_CAN_SEND_ERROR] = "CAN_SEND_ERROR", [FAULT_CAN_INIT_ERROR] = "CAN_INIT_ERROR", [FAULT_CAN_MAILBOX_FULL] = "CAN_MAILBOX_FULL", [FAULT_CAN_BUS_OFF] = "CAN_BUS_OFF", [FAULT_ISA_IVTS_TIMEOUT] = "ISA_IVTS_TIMEOUT", [FAULT_INVERTER_TIMEOUT] = "INVERTER_TIMEOUT", [FAULT_VCU_TIMEOUT] = "VCU_TIMEOUT", [FAULT_PDM_TIMEOUT] = "PDM_TIMEOUT", [FAULT_CHARGER_TIMEOUT] = "CHARGER_TIMEOUT", [FAULT_ACQUISITION_NODE_TIMEOUT] = "ACQUISITION_NODE_TIMEOUT", [FAULT_CONTACTOR_MISMATCH] = "CONTACTOR_MISMATCH", [FAULT_PRECHARGE_TIMEOUT] = "PRECHARGE_TIMEOUT", [FAULT_PRECHARGE_FAILURE] = "PRECHARGE_FAILURE", [FAULT_SDC_TRIGGERED] = "SDC_TRIGGERED", [FAULT_BALANCING_ERROR] = "BALANCING_ERROR", [FAULT_BALANCING_OVERTEMP] = "BALANCING_OVERTEMP", [FAULT_ADC_ERROR] = "ADC_ERROR", [FAULT_CURRENT_SENSOR_ERROR] = "CURRENT_SENSOR_ERROR", [FAULT_SOC_CRITICAL_LOW] = "SOC_CRITICAL_LOW", [FAULT_PACK_VOLTAGE_MISMATCH] = "PACK_VOLTAGE_MISMATCH", [FAULT_EEPROM_READ_ERROR] = "EEPROM_READ_ERROR", [FAULT_EEPROM_WRITE_ERROR] = "EEPROM_WRITE_ERROR", [FAULT_EEPROM_VALIDATION_ERROR] = "EEPROM_VALIDATION_ERROR", [FAULT_STARTUP_FAILURE] = "STARTUP_FAILURE", [FAULT_WATCHDOG_RESET] = "WATCHDOG_RESET", [FAULT_STACK_OVERFLOW] = "STACK_OVERFLOW", };
+static const char *const fault_names[FAULT_COUNT] = {
+/* Voltage */
+[FAULT_OVERVOLTAGE] = "OVERVOLTAGE", [FAULT_UNDERVOLTAGE] = "UNDERVOLTAGE",
+
+/* Temperature */
+[FAULT_OVERTEMPERATURE] = "OVERTEMPERATURE", [FAULT_UNDERTEMPERATURE] = "UNDERTEMPERATURE", [FAULT_OVERTEMPERATURE_DISCHARGE] = "OVERTEMPERATURE_DISCHARGE", [FAULT_UNDERTEMPERATURE_CHARGE] = "UNDERTEMPERATURE_CHARGE", [FAULT_TEMP_SENSOR_OPEN] = "TEMP_SENSOR_OPEN",
+
+/* ADBMS slave layer */
+[FAULT_SLAVE_NOT_DETECTED] = "SLAVE_NOT_DETECTED", [FAULT_PEC_ERROR] = "PEC_ERROR", [FAULT_OPEN_WIRE] = "OPEN_WIRE", [FAULT_ACQUISITION_TIMEOUT] = "ACQUISITION_TIMEOUT",
+
+/* CAN bus */
+[FAULT_CAN_SEND_ERROR] = "CAN_SEND_ERROR", [FAULT_CAN_INIT_ERROR] = "CAN_INIT_ERROR", [FAULT_CAN_MAILBOX_FULL] = "CAN_MAILBOX_FULL", [FAULT_CAN_BUS_OFF] = "CAN_BUS_OFF",
+
+/* External node heartbeat timeouts */
+[FAULT_ISA_IVTS_TIMEOUT] = "ISA_IVTS_TIMEOUT", [FAULT_INVERTER_TIMEOUT] = "INVERTER_TIMEOUT", [FAULT_VCU_TIMEOUT] = "VCU_TIMEOUT", [FAULT_PDM_TIMEOUT] = "PDM_TIMEOUT", [FAULT_CHARGER_TIMEOUT] = "CHARGER_TIMEOUT", [FAULT_ACQUISITION_NODE_TIMEOUT] = "ACQUISITION_NODE_TIMEOUT",
+
+/* Contactors / precharge */
+[FAULT_CONTACTOR_MISMATCH] = "CONTACTOR_MISMATCH", [FAULT_PRECHARGE_TIMEOUT] = "PRECHARGE_TIMEOUT", [FAULT_PRECHARGE_FAILURE] = "PRECHARGE_FAILURE", [FAULT_SDC_TRIGGERED] = "SDC_TRIGGERED",
+
+/* Cell balancing */
+[FAULT_BALANCING_ERROR] = "BALANCING_ERROR", [FAULT_BALANCING_OVERTEMP] = "BALANCING_OVERTEMP",
+
+/* Analog / internal */
+[FAULT_ADC_ERROR] = "ADC_ERROR", [FAULT_CURRENT_SENSOR_ERROR] = "CURRENT_SENSOR_ERROR",
+
+/* Energy / state */
+[FAULT_SOC_CRITICAL_LOW] = "SOC_CRITICAL_LOW", [FAULT_PACK_VOLTAGE_MISMATCH] = "PACK_VOLTAGE_MISMATCH",
+
+/* EEPROM */
+[FAULT_EEPROM_READ_ERROR] = "EEPROM_READ_ERROR", [FAULT_EEPROM_WRITE_ERROR] = "EEPROM_WRITE_ERROR", [FAULT_EEPROM_VALIDATION_ERROR] = "EEPROM_VALIDATION_ERROR",
+
+/* Startup / internal */
+[FAULT_STARTUP_FAILURE] = "STARTUP_FAILURE", [FAULT_WATCHDOG_RESET] = "WATCHDOG_RESET", [FAULT_STACK_OVERFLOW] = "STACK_OVERFLOW",
+
+/* UART */
+[FAULT_UART1_TX] = "UART1_TX", [FAULT_UART1_RX] = "UART1_RX", [FAULT_UART2_TX] = "UART2_TX", [FAULT_UART2_RX] = "UART2_RX",
+
+/* Open-wire diagnostics */
+[FAULT_OW_DETECTED_CELL] = "OW_DETECTED_CELL", [FAULT_OW_DETECTED_RTH] = "OW_DETECTED_RTH", };
 
 /* ═══════════════════════════════════════════════════════════════
  *  PRIVATE HELPERS
@@ -64,7 +102,7 @@ static void history_push(FaultCode_t code, const FaultContext_t *ctx, bool raise
 		fault_entry_count++;
 	} else {
 		/* Buffer full – advance head so oldest entry is overwritten */
-		oldest_fault_entry= (uint8_t) ((oldest_fault_entry + 1u) % FAULT_HISTORY_SIZE);
+		oldest_fault_entry = (uint8_t) ((oldest_fault_entry + 1u) % FAULT_HISTORY_SIZE);
 	}
 }
 
@@ -295,6 +333,35 @@ void FaultManager_DumpUART(void) {
 			 */
 		case FAULT_SOC_CRITICAL_LOW:
 			printfDebug(" | SoC=%.1f%% (lim %.1f%%)", (double) c->measured_value, (double) c->threshold_value);
+			break;
+
+			/*
+			 * ── UART faults ──────────────────────────────────────────────
+			 * The fault name already identifies the UART and direction.
+			 * No extra context fields are used.
+			 */
+		case FAULT_UART1_TX:
+		case FAULT_UART1_RX:
+		case FAULT_UART2_TX:
+		case FAULT_UART2_RX:
+			break;
+
+			/*
+			 * ── Open-wire cell fault ─────────────────────────────────────
+			 * Shows: slave index, cell index.
+			 * Set cell_idx = 0-based cell number when raising this fault.
+			 */
+		case FAULT_OW_DETECTED_CELL:
+			printfDebug(" | S%u C%u", (unsigned) c->slave_idx, (unsigned) c->cell_idx);
+			break;
+
+			/*
+			 * ── Open-wire thermistor fault ───────────────────────────────
+			 * Shows: slave index, NTC channel index.
+			 * Set channel_idx = 0-based NTC channel when raising this fault.
+			 */
+		case FAULT_OW_DETECTED_RTH:
+			printfDebug(" | S%u NTC%u", (unsigned) c->slave_idx, (unsigned) c->channel_idx);
 			break;
 
 		default:

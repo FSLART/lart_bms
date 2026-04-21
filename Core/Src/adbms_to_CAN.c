@@ -118,8 +118,24 @@ HAL_StatusTypeDef ADBMS_CAN_SendMSC_Module(CAN_HandleTypeDef *hcan, uint8_t modu
 		ic_temp_c = 0.0f;
 	int ic_temp = (int) (ic_temp_c + 0.5f);
 
-	// Existing open-wire / diag fault flag
-	uint8_t open_wire = (ic->statc.cs_flt != 0U || ic->statc.vde || ic->statc.vdel) ? 1U : 0U;
+	// Open wire identifier byte:
+	uint8_t open_wire = 0;
+
+	for (uint8_t cell = 0; cell < CELL; cell++) {
+		if (ic->diag_result.cell_ow[cell]) {
+			open_wire = (uint8_t)(cell + 1);
+			break;
+		}
+	}
+
+	if (open_wire == 0) {
+		for (uint8_t gpio = 0; gpio < AUX; gpio++) {
+			if (ic->diag_result.aux_ow[gpio]) {
+				open_wire = (uint8_t)(gpio + 13);
+				break;
+			}
+		}
+	}
 
 	int vdelta = s_module_voltage_delta[module];
 

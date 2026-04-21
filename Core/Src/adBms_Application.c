@@ -24,6 +24,8 @@
 #include "mcuWrapper.h"
 #include "brain.h"
 #include "cell_balancing.h"
+#include "uartDMA.h"
+#include "fault_manager.h"
 
 /**
  *******************************************************************************
@@ -33,7 +35,7 @@
  */
 
 typedef enum {
-	ADBMS_IDLE_READ_PREV = 0, ADBMS_IDLE_READ_AVG_START_AUX, ADBMS_IDLE_READ_AUX_START_RAUX, ADBMS_IDLE_READ_RAUX_STATUS
+	ADBMS_IDLE_READ_PREV = 0, ADBMS_IDLE_READ_AVG_START_AUX, ADBMS_IDLE_READ_AUX_START_RAUX, ADBMS_IDLE_READ_RAUX_STATUS, ADBMS_IDLE_OW_START_EVEN, ADBMS_IDLE_OW_READ_EVEN_START_ODD, ADBMS_IDLE_OW_READ_ODD_EVALUATE
 } adbms_idle_phase_t;
 
 typedef enum {
@@ -85,9 +87,9 @@ balance_stage_t balanceStage = BALANCE_STAGE_ROUGH;
 
 static adbms_balancing_phase_t balPhase = BAL_CYCLE_INIT;
 static uint32_t balPhaseStart = 0;
-static const uint32_t BALANCE_ON_TIME_MS = 940;
-static const uint32_t BALANCE_SETTLE_MS = 10;
-static const uint32_t AVG_CONV_WAIT_MS = 10;
+static const uint32_t BALANCE_ON_TIME_MS = 1920;
+static const uint32_t BALANCE_SETTLE_MS = 15;
+static const uint32_t AVG_CONV_WAIT_MS = 20;
 
 void adbms_main(AMSStates_t ams_state) {
 
@@ -109,7 +111,6 @@ void adbms_main(AMSStates_t ams_state) {
 		switch (balPhase) {
 
 		case BAL_CYCLE_INIT:
-			balanceStage = BatteryPack_DetermineBalanceStage(&IC[0], TOTAL_IC, &g_balance_cfg, global_min_mV);
 
 			if (balanceStage == BALANCE_END) {
 				for (uint8_t module = 0; module < TOTAL_IC; module++) {
@@ -119,11 +120,14 @@ void adbms_main(AMSStates_t ams_state) {
 				g_balance_cfg_initialized = false;
 				balPhase = BAL_CYCLE_INIT;
 				AMS_State = IDLE;
+				adBms6830_init_config(TOTAL_IC, &IC[0]);
 
 			} else {
 
 				balPhase = BAL_CYCLE_COMPUTE;
 			}
+
+			balanceStage = BatteryPack_DetermineBalanceStage(&IC[0], TOTAL_IC, &g_balance_cfg, global_min_mV);
 
 			break;
 
@@ -168,6 +172,7 @@ void adbms_main(AMSStates_t ams_state) {
 			}
 
 			adBmsWakeupIc(TOTAL_IC);
+			adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
 			adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
 			//adBmsWriteData(TOTAL_IC, &IC[0], WRPWM1, Pwm, A);
 
@@ -185,7 +190,12 @@ void adbms_main(AMSStates_t ams_state) {
 
 		case BAL_CYCLE_START_AVG:
 			adBmsWakeupIc(TOTAL_IC);
-			adBms6830_Adcv(RD_OFF, SINGLE, DCP_OFF, RSTF_OFF, OW_OFF_ALL_CH);
+			adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+			//Read AUX
+			adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
+			//Read GPIOS
+			adBms6830_Adax2(AUX_CH_TO_CONVERT);
+			//adBms6830_Adcv(RD_OFF, SINGLE, DCP_OFF, RSTF_OFF, OW_OFF_ALL_CH);
 
 			balPhaseStart = getRuntimeMs();
 			balPhase = BAL_CYCLE_WAIT_AVG;
@@ -200,12 +210,37 @@ void adbms_main(AMSStates_t ams_state) {
 
 		case BAL_CYCLE_READ_AVG:
 			adBmsWakeupIc(TOTAL_IC);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVA, Cell, A);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVB, Cell, B);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVC, Cell, C);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVD, Cell, D);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVE, Cell, E);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVF, Cell, F);
+			adBmsReadData(TOTAL_IC, &IC[0], RDACA, AvgCell, A);
+			adBmsReadData(TOTAL_IC, &IC[0], RDACB, AvgCell, B);
+			adBmsReadData(TOTAL_IC, &IC[0], RDACC, AvgCell, C);
+			adBmsReadData(TOTAL_IC, &IC[0], RDACD, AvgCell, D);
+			adBmsReadData(TOTAL_IC, &IC[0], RDACE, AvgCell, E);
+			adBmsReadData(TOTAL_IC, &IC[0], RDACF, AvgCell, F);
+
+			adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
+			adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
+			adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
+			adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
+
+			adBmsReadData(TOTAL_IC, &IC[0], RDSTATA, Status, A);
+			adBmsReadData(TOTAL_IC, &IC[0], RDSTATB, Status, B);
+			adBmsReadData(TOTAL_IC, &IC[0], RDSTATC, Status, C);
+			adBmsReadData(TOTAL_IC, &IC[0], RDSTATD, Status, D);
+			adBmsReadData(TOTAL_IC, &IC[0], RDSTATE, Status, E);
+
+			adBmsReadData(TOTAL_IC, &IC[0], RDRAXA, RAux, A);
+			adBmsReadData(TOTAL_IC, &IC[0], RDRAXB, RAux, B);
+			adBmsReadData(TOTAL_IC, &IC[0], RDRAXC, RAux, C);
+			adBmsReadData(TOTAL_IC, &IC[0], RDRAXD, RAux, D);
+
+			/*adBmsReadData(TOTAL_IC, &IC[0], RDCVA, Cell, A);
+			 adBmsReadData(TOTAL_IC, &IC[0], RDCVB, Cell, B);
+			 adBmsReadData(TOTAL_IC, &IC[0], RDCVC, Cell, C);
+			 adBmsReadData(TOTAL_IC, &IC[0], RDCVD, Cell, D);
+			 adBmsReadData(TOTAL_IC, &IC[0], RDCVE, Cell, E);
+			 adBmsReadData(TOTAL_IC, &IC[0], RDCVF, Cell, F);*/
+
+			memcpy(SLAVE, IC, sizeof(SLAVE));
 
 			balPhase = BAL_CYCLE_INIT;
 
@@ -286,20 +321,118 @@ void adbms_main(AMSStates_t ams_state) {
 				adBmsReadData(TOTAL_IC, &IC[0], RDRAXD, RAux, D);
 				//printVoltages(TOTAL_IC, &IC[0], Aux);
 
-				/* ── SNAPSHOT ──  */
+				/*  SNAPSHOT   */
 				memcpy(SLAVE, IC, sizeof(SLAVE));
 				//printfDebug("After READ Aux\r\n");
 				//printVoltages(TOTAL_IC, &IC[0], RAux);
 				//printfDebug("Copy \r\n");
 				//printVoltages(TOTAL_IC, &SLAVE[0], RAux);
 
+				adbmsPhaseStart = getRuntimeMs();
+				adbmsPhase = ADBMS_IDLE_OW_START_EVEN;
+			}
+			break;
+
+		case ADBMS_IDLE_OW_START_EVEN:
+			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
+
+				adBmsWakeupIc(TOTAL_IC);
+				// Start even-channel OW check
+				adBms6830_Adsv(SINGLE, DCP_OFF, OW_ON_EVEN_CH);
+				// Send ADAX with pull-up current and OW enabled
+				adBms6830_Adax(AUX_OW_ON, PUP_UP, AUX_CH_TO_CONVERT);
+
+				adbmsPhaseStart = getRuntimeMs();
+				adbmsPhase = ADBMS_IDLE_OW_READ_EVEN_START_ODD;
+			}
+			break;
+
+		case ADBMS_IDLE_OW_READ_EVEN_START_ODD:
+			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
+
+				// Read S-volt results with even pull active
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVA, S_volt, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVB, S_volt, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVC, S_volt, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVD, S_volt, D);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVE, S_volt, E);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVF, S_volt, F);
+
+				//aux
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
+
+				// Save even-pull readings for even-numbered cells
+				for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
+					for (uint8_t cell = 0; cell < CELL; cell++) {
+						IC[slave].owcell.cell_ow_even[cell] = IC[slave].scell.sc_codes[cell];
+					}
+				}
+
+				// Save pull-up readings
+				for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
+					for (uint8_t g = 0; g < AUX; g++) {
+						IC[slave].gpio.aux_pup_up[g] = IC[slave].aux.a_codes[g];
+					}
+				}
+
+				// Start odd-channel OW check
+				adBms6830_Adsv(SINGLE, DCP_OFF, OW_ON_ODD_CH);
+
+				// Now send ADAX with pull-down current
+				adBms6830_Adax(AUX_OW_ON, PUP_DOWN, AUX_CH_TO_CONVERT);
+
+				adbmsPhaseStart = getRuntimeMs();
+				adbmsPhase = ADBMS_IDLE_OW_READ_ODD_EVALUATE;
+			}
+			break;
+
+		case ADBMS_IDLE_OW_READ_ODD_EVALUATE:
+			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
+
+				// Read S-volt results with odd pull active
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVA, S_volt, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVB, S_volt, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVC, S_volt, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVD, S_volt, D);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVE, S_volt, E);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSVF, S_volt, F);
+
+				//auz
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
+
+				// Save odd-pull readings and check all cells for open wire
+				for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
+					for (uint8_t cell = 0; cell < CELL; cell++) {
+						IC[slave].owcell.cell_ow_odd[cell] = IC[slave].scell.sc_codes[cell];
+					}
+				}
+
+				// Save pull-down readings
+				for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
+					for (uint8_t g = 0; g < AUX; g++) {
+						IC[slave].gpio.aux_pup_down[g] = IC[slave].aux.a_codes[g];
+					}
+				}
+
+				// Now evaluate: fill diag_result.cell_ow[]
+				adBms6830_evaluate_cell_open_wire(TOTAL_IC, IC);
+				// Evaluate aux OW measruments
+				adBms6830_evaluate_aux_open_wire(TOTAL_IC, IC);
+
+				adbmsPhaseStart = getRuntimeMs();
 				adbmsPhase = ADBMS_IDLE_READ_PREV;
 			}
 			break;
 		}
 		break;
 
-		break;
+		//break;
 
 	case STARTUP:
 		g_balance_cfg_initialized = false;
@@ -913,3 +1046,53 @@ void adBms6830_clear_fcell_measurement(uint8_t tIC) {
 
 /** @}*/
 /** @}*/
+
+void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
+
+	for (uint8_t slave = 0; slave < tIC; slave++) {
+		for (uint8_t cell = 0; cell < CELL; cell++) {
+
+			int32_t raw_code;
+			if ((cell % 2) == 0) {
+				raw_code = ic[slave].owcell.cell_ow_even[cell];
+			} else {
+				raw_code = ic[slave].owcell.cell_ow_odd[cell];
+			}
+
+			// Convert raw code to mV
+			int32_t voltage_mV = (raw_code + 10000) * 150 / 1000;
+
+			if (voltage_mV < OWC_Threshold) {
+				ic[slave].diag_result.cell_ow[cell] = 1;
+				printfDebug("OW FAULT: IC%u Cell%u (%ldmV(\r\n", slave, cell + 1, voltage_mV);
+				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave, .cell_idx = cell, .measured_value = (float)voltage_mV);
+			} else {
+				ic[slave].diag_result.cell_ow[cell] = 0;
+			}
+		}
+	}
+}
+
+void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
+
+	for (uint8_t slave = 0; slave < tIC; slave++) {
+		for (uint8_t gpio = 0; gpio < AUX; gpio++) {
+
+			int32_t pup_mV = (ic[slave].gpio.aux_pup_up[gpio] + 10000) * 150 / 1000;
+			int32_t pdown_mV = (ic[slave].gpio.aux_pup_down[gpio] + 10000) * 150 / 1000;
+			int32_t diff_mV = pup_mV - pdown_mV;
+
+			if (diff_mV < 0) {
+				diff_mV = -diff_mV;
+			}
+
+			if (diff_mV > OWA_Threshold) {
+				ic[slave].diag_result.aux_ow[gpio] = 1;
+				printfDebug("AUX OW FAULT: IC%u GPIO%u diff (%ldmV) \r\n", slave, gpio + 1, diff_mV);
+				RAISE_ERROR(FAULT_OW_DETECTED_RTH, .slave_idx = slave, .channel_idx = gpio, .measured_value = (float)diff_mV);
+			} else {
+				ic[slave].diag_result.aux_ow[gpio] = 0;
+			}
+		}
+	}
+}
