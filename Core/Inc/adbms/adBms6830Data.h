@@ -250,6 +250,7 @@ typedef struct
 {
   int cell_ow_even[CELL];
   int cell_ow_odd[CELL];
+  int cell_ow_all[CELL];
 } cell_ow_;
 
 /* Aux open wire data structure */
