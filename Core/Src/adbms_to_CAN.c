@@ -30,7 +30,7 @@ HAL_StatusTypeDef Slaves_CAN_SendMessage(CAN_HandleTypeDef *hcan, uint32_t canID
 }
 
 HAL_StatusTypeDef ADBMS_CAN_SendAll(CAN_HandleTypeDef *hcan, AMSStates_t ams_current_state) {
-	for (uint8_t slave = 0; slave < TOTAL_IC && slave < 12; slave++) {
+	for (uint8_t slave = 0; slave < slaves_found && slave < 12; slave++) {
 
 		if (ADBMS_CAN_SendVoltages_Module(hcan, slave, ams_current_state) != HAL_OK)
 			return HAL_ERROR;
@@ -58,7 +58,7 @@ HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan) {
 	uint16_t overall_tmax = 0U;
 	uint16_t overall_tmin = 0xFFFFU;
 
-	for (uint8_t module = 0; module < TOTAL_IC && module < 12; module++) {
+	for (uint8_t module = 0; module < slaves_found && module < 12; module++) {
 		const cell_asic *ic = &SLAVE[module];   // atualizar para a versão segura
 
 		for (uint8_t i = 0; i < 12; i++) {
@@ -99,7 +99,7 @@ HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan) {
 }
 
 HAL_StatusTypeDef ADBMS_CAN_SendMSC_Module(CAN_HandleTypeDef *hcan, uint8_t module) {
-	if (module >= TOTAL_IC || module >= 12) {
+	if (module >= slaves_found || module >= 12) {
 		return HAL_ERROR;
 	}
 
@@ -374,7 +374,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendMSC_Module(CAN_HandleTypeDef *hcan, uint8_t modu
 }
 
 HAL_StatusTypeDef ADBMS_CAN_SendTemperatures_Module(CAN_HandleTypeDef *hcan, uint8_t module) {
-	if (module >= TOTAL_IC || module >= 12) {
+	if (module >= slaves_found || module >= 12) {
 		return HAL_ERROR;
 	}
 
@@ -753,7 +753,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendTemperatures_Module(CAN_HandleTypeDef *hcan, uin
 }
 
 HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t module, AMSStates_t AMS_Current_State) {
-	if (module >= TOTAL_IC || module >= 12)
+	if (module >= slaves_found || module >= 12)
 		return HAL_ERROR;
 
 	uint8_t data[8];

@@ -26,11 +26,13 @@ and its licensor.
 #include "adbms_main.h"
 #include "cell_balancing.h"
 
+extern uint8_t slaves_found;
+
 //max device counter - initial detection
 #define ADBMS_MAX_DEVICES 63
 #define TOTAL_IC 6
-extern cell_asic IC[TOTAL_IC];
-extern cell_asic SLAVE[TOTAL_IC];
+extern cell_asic IC[ADBMS_MAX_DEVICES];
+extern cell_asic SLAVE[ADBMS_MAX_DEVICES];
 extern balance_stage_t balanceStage;
 
 void app_main(void);

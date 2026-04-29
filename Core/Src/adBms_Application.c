@@ -27,6 +27,8 @@
 #include "uartDMA.h"
 #include "fault_manager.h"
 
+uint8_t slaves_found = 0;
+
 /**
  *******************************************************************************
  * @brief Setup Variables
@@ -46,9 +48,9 @@ typedef enum {
 	STARTUP_START_AVG = 0, STARTUP_READ_AVG_START_AUX, STARTUP_READ_AUX_START_RAUX, STARTUP_READ_RAUX_STATUS, STARTUP_END
 } adbms_startup_phase_t;
 
-cell_asic IC[TOTAL_IC];
+cell_asic IC[ADBMS_MAX_DEVICES];
 
-cell_asic SLAVE[TOTAL_IC];
+cell_asic SLAVE[ADBMS_MAX_DEVICES];
 
 /* ADC Command Configurations */
 RD REDUNDANT_MEASUREMENT = RD_OFF;
@@ -108,7 +110,7 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 			Balance_InitDefaultConfig(&g_balance_cfg);
 
 			balanceStage = BALANCE_STAGE_ROUGH;
-			balance_start_min_mV = BatteryPack_FindMinVoltageGlobally(&IC[0], TOTAL_IC, &g_balance_cfg);
+			balance_start_min_mV = BatteryPack_FindMinVoltageGlobally(&IC[0], slaves_found, &g_balance_cfg);
 
 			global_min_mV = balance_start_min_mV;   // freeze target for stage 1
 			balPhase = BAL_CYCLE_INIT;
@@ -121,26 +123,26 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 		case BAL_CYCLE_INIT:
 
 			if (balanceStage == BALANCE_END) {
-				for (uint8_t module = 0; module < TOTAL_IC; module++) {
+				for (uint8_t module = 0; module < slaves_found; module++) {
 					IC[module].tx_cfgb.dcc = 0;
 				}
 
 				g_balance_cfg_initialized = false;
 				balPhase = BAL_CYCLE_INIT;
 				AMS_State = IDLE;
-				adBms6830_init_config(TOTAL_IC, &IC[0]);
+				adBms6830_init_config(slaves_found, &IC[0]);
 
 			} else {
 
 				balPhase = BAL_CYCLE_COMPUTE;
 			}
 
-			balanceStage = BatteryPack_DetermineBalanceStage(&IC[0], TOTAL_IC, &g_balance_cfg, global_min_mV);
+			balanceStage = BatteryPack_DetermineBalanceStage(&IC[0], slaves_found, &g_balance_cfg, global_min_mV);
 
 			break;
 
 		case BAL_CYCLE_COMPUTE:
-			for (uint8_t module = 0; module < TOTAL_IC; module++) {
+			for (uint8_t module = 0; module < slaves_found; module++) {
 				balance_result_t result;
 
 				Balance_ComputeModule(&IC[module], &g_balance_cfg, &result, global_min_mV, balanceStage);
@@ -149,7 +151,7 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 			}
 
 			if (global_min_mV == 0xFFFF) {
-				for (uint8_t module = 0; module < TOTAL_IC; module++) {
+				for (uint8_t module = 0; module < slaves_found; module++) {
 					IC[module].tx_cfgb.dcc = 0;
 				}
 			}
@@ -158,9 +160,9 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 			break;
 
 		case BAL_CYCLE_APPLY:
-			adBmsWakeupIc(TOTAL_IC);
-			adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-			//adBmsWriteData(TOTAL_IC, &IC[0], WRPWM1, Pwm, A);   // only 12 populated cells
+			adBmsWakeupIc(slaves_found);
+			adBmsWriteData(slaves_found, &IC[0], WRCFGB, Config, B);
+			//adBmsWriteData(slaves_found, &IC[0], WRPWM1, Pwm, A);   // only 12 populated cells
 
 			balPhaseStart = getRuntimeMs();
 			balPhase = BAL_CYCLE_ON_TIME;
@@ -175,14 +177,14 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 			break;
 
 		case BAL_CYCLE_STOP_DISCHARGE:
-			for (uint8_t module = 0; module < TOTAL_IC; module++) {
+			for (uint8_t module = 0; module < slaves_found; module++) {
 				IC[module].tx_cfgb.dcc = 0;
 			}
 
-			adBmsWakeupIc(TOTAL_IC);
-			adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
-			adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-			//adBmsWriteData(TOTAL_IC, &IC[0], WRPWM1, Pwm, A);
+			adBmsWakeupIc(slaves_found);
+			adBmsWriteData(slaves_found, &IC[0], WRCFGA, Config, A);
+			adBmsWriteData(slaves_found, &IC[0], WRCFGB, Config, B);
+			//adBmsWriteData(slaves_found, &IC[0], WRPWM1, Pwm, A);
 
 			balPhaseStart = getRuntimeMs();
 			balPhase = BAL_CYCLE_SETTLE;
@@ -197,7 +199,7 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 			break;
 
 		case BAL_CYCLE_START_AVG:
-			adBmsWakeupIc(TOTAL_IC);
+			adBmsWakeupIc(slaves_found);
 			adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
 			//Read AUX
 			adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
@@ -217,36 +219,36 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 			break;
 
 		case BAL_CYCLE_READ_AVG:
-			adBmsWakeupIc(TOTAL_IC);
-			adBmsReadData(TOTAL_IC, &IC[0], RDACA, AvgCell, A);
-			adBmsReadData(TOTAL_IC, &IC[0], RDACB, AvgCell, B);
-			adBmsReadData(TOTAL_IC, &IC[0], RDACC, AvgCell, C);
-			adBmsReadData(TOTAL_IC, &IC[0], RDACD, AvgCell, D);
-			adBmsReadData(TOTAL_IC, &IC[0], RDACE, AvgCell, E);
-			adBmsReadData(TOTAL_IC, &IC[0], RDACF, AvgCell, F);
+			adBmsWakeupIc(slaves_found);
+			adBmsReadData(slaves_found, &IC[0], RDACA, AvgCell, A);
+			adBmsReadData(slaves_found, &IC[0], RDACB, AvgCell, B);
+			adBmsReadData(slaves_found, &IC[0], RDACC, AvgCell, C);
+			adBmsReadData(slaves_found, &IC[0], RDACD, AvgCell, D);
+			adBmsReadData(slaves_found, &IC[0], RDACE, AvgCell, E);
+			adBmsReadData(slaves_found, &IC[0], RDACF, AvgCell, F);
 
-			adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
-			adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
-			adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
-			adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
+			adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
+			adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
+			adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
+			adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
 
-			adBmsReadData(TOTAL_IC, &IC[0], RDSTATA, Status, A);
-			adBmsReadData(TOTAL_IC, &IC[0], RDSTATB, Status, B);
-			adBmsReadData(TOTAL_IC, &IC[0], RDSTATC, Status, C);
-			adBmsReadData(TOTAL_IC, &IC[0], RDSTATD, Status, D);
-			adBmsReadData(TOTAL_IC, &IC[0], RDSTATE, Status, E);
+			adBmsReadData(slaves_found, &IC[0], RDSTATA, Status, A);
+			adBmsReadData(slaves_found, &IC[0], RDSTATB, Status, B);
+			adBmsReadData(slaves_found, &IC[0], RDSTATC, Status, C);
+			adBmsReadData(slaves_found, &IC[0], RDSTATD, Status, D);
+			adBmsReadData(slaves_found, &IC[0], RDSTATE, Status, E);
 
-			adBmsReadData(TOTAL_IC, &IC[0], RDRAXA, RAux, A);
-			adBmsReadData(TOTAL_IC, &IC[0], RDRAXB, RAux, B);
-			adBmsReadData(TOTAL_IC, &IC[0], RDRAXC, RAux, C);
-			adBmsReadData(TOTAL_IC, &IC[0], RDRAXD, RAux, D);
+			adBmsReadData(slaves_found, &IC[0], RDRAXA, RAux, A);
+			adBmsReadData(slaves_found, &IC[0], RDRAXB, RAux, B);
+			adBmsReadData(slaves_found, &IC[0], RDRAXC, RAux, C);
+			adBmsReadData(slaves_found, &IC[0], RDRAXD, RAux, D);
 
-			/*adBmsReadData(TOTAL_IC, &IC[0], RDCVA, Cell, A);
-			 adBmsReadData(TOTAL_IC, &IC[0], RDCVB, Cell, B);
-			 adBmsReadData(TOTAL_IC, &IC[0], RDCVC, Cell, C);
-			 adBmsReadData(TOTAL_IC, &IC[0], RDCVD, Cell, D);
-			 adBmsReadData(TOTAL_IC, &IC[0], RDCVE, Cell, E);
-			 adBmsReadData(TOTAL_IC, &IC[0], RDCVF, Cell, F);*/
+			/*adBmsReadData(slaves_found, &IC[0], RDCVA, Cell, A);
+			 adBmsReadData(slaves_found, &IC[0], RDCVB, Cell, B);
+			 adBmsReadData(slaves_found, &IC[0], RDCVC, Cell, C);
+			 adBmsReadData(slaves_found, &IC[0], RDCVD, Cell, D);
+			 adBmsReadData(slaves_found, &IC[0], RDCVE, Cell, E);
+			 adBmsReadData(slaves_found, &IC[0], RDCVF, Cell, F);*/
 
 			memcpy(SLAVE, IC, sizeof(SLAVE));
 
@@ -270,13 +272,13 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 
 		case ADBMS_IDLE_READ_PREV:
 
-			adBmsWakeupIc(TOTAL_IC);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVA, Cell, A);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVB, Cell, B);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVC, Cell, C);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVD, Cell, D);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVE, Cell, E);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVF, Cell, F);
+			adBmsWakeupIc(slaves_found);
+			adBmsReadData(slaves_found, &IC[0], RDCVA, Cell, A);
+			adBmsReadData(slaves_found, &IC[0], RDCVB, Cell, B);
+			adBmsReadData(slaves_found, &IC[0], RDCVC, Cell, C);
+			adBmsReadData(slaves_found, &IC[0], RDCVD, Cell, D);
+			adBmsReadData(slaves_found, &IC[0], RDCVE, Cell, E);
+			adBmsReadData(slaves_found, &IC[0], RDCVF, Cell, F);
 
 			adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
 			adbmsPhaseStart = getRuntimeMs();
@@ -287,13 +289,13 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 
 		case ADBMS_IDLE_READ_AVG_START_AUX:
 			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
-				adBmsWakeupIc(TOTAL_IC);
-				adBmsReadData(TOTAL_IC, &IC[0], RDACA, AvgCell, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDACB, AvgCell, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDACC, AvgCell, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDACD, AvgCell, D);
-				adBmsReadData(TOTAL_IC, &IC[0], RDACE, AvgCell, E);
-				adBmsReadData(TOTAL_IC, &IC[0], RDACF, AvgCell, F);
+				adBmsWakeupIc(slaves_found);
+				adBmsReadData(slaves_found, &IC[0], RDACA, AvgCell, A);
+				adBmsReadData(slaves_found, &IC[0], RDACB, AvgCell, B);
+				adBmsReadData(slaves_found, &IC[0], RDACC, AvgCell, C);
+				adBmsReadData(slaves_found, &IC[0], RDACD, AvgCell, D);
+				adBmsReadData(slaves_found, &IC[0], RDACE, AvgCell, E);
+				adBmsReadData(slaves_found, &IC[0], RDACF, AvgCell, F);
 
 				//Read AUX
 				adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
@@ -304,17 +306,17 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 
 		case ADBMS_IDLE_READ_AUX_START_RAUX:
 			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
-				adBmsWakeupIc(TOTAL_IC);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
+				adBmsWakeupIc(slaves_found);
+				adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
+				adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
+				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
+				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
 
-				adBmsReadData(TOTAL_IC, &IC[0], RDSTATA, Status, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSTATB, Status, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSTATC, Status, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSTATD, Status, D);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSTATE, Status, E);
+				adBmsReadData(slaves_found, &IC[0], RDSTATA, Status, A);
+				adBmsReadData(slaves_found, &IC[0], RDSTATB, Status, B);
+				adBmsReadData(slaves_found, &IC[0], RDSTATC, Status, C);
+				adBmsReadData(slaves_found, &IC[0], RDSTATD, Status, D);
+				adBmsReadData(slaves_found, &IC[0], RDSTATE, Status, E);
 
 				//Read GPIOS
 				adBms6830_Adax2(AUX_CH_TO_CONVERT);
@@ -325,19 +327,19 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 
 		case ADBMS_IDLE_READ_RAUX_STATUS:
 			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
-				adBmsWakeupIc(TOTAL_IC);
-				adBmsReadData(TOTAL_IC, &IC[0], RDRAXA, RAux, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDRAXB, RAux, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDRAXC, RAux, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDRAXD, RAux, D);
-				//printVoltages(TOTAL_IC, &IC[0], Aux);
+				adBmsWakeupIc(slaves_found);
+				adBmsReadData(slaves_found, &IC[0], RDRAXA, RAux, A);
+				adBmsReadData(slaves_found, &IC[0], RDRAXB, RAux, B);
+				adBmsReadData(slaves_found, &IC[0], RDRAXC, RAux, C);
+				adBmsReadData(slaves_found, &IC[0], RDRAXD, RAux, D);
+				//printVoltages(slaves_found, &IC[0], Aux);
 
 				/*  SNAPSHOT   */
 				//memcpy(SLAVE, IC, sizeof(SLAVE));
 				//printfDebug("After READ Aux\r\n");
-				//printVoltages(TOTAL_IC, &IC[0], RAux);
+				//printVoltages(slaves_found, &IC[0], RAux);
 				//printfDebug("Copy \r\n");
-				//printVoltages(TOTAL_IC, &SLAVE[0], RAux);
+				//printVoltages(slaves_found, &SLAVE[0], RAux);
 				adbmsPhaseStart = getRuntimeMs();
 				adbmsPhase = ADBMS_IDLE_OW_START_EVEN;
 			}
@@ -348,7 +350,7 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 
 				memcpy(SLAVE, IC, sizeof(SLAVE));
 
-				adBmsWakeupIc(TOTAL_IC);
+				adBmsWakeupIc(slaves_found);
 				// Start even-channel OW check
 				adBms6830_Adsv(SINGLE, DCP_OFF, OW_ON_EVEN_CH);
 				// Send ADAX with pull-up current and OW enabled
@@ -363,29 +365,29 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 			if (getRuntimeMsDiff(adbmsPhaseStart) >= 15) {
 
 				// Read S-volt results with even pull active
-				adBmsWakeupIc(TOTAL_IC);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVA, S_volt, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVB, S_volt, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVC, S_volt, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVD, S_volt, D);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVE, S_volt, E);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVF, S_volt, F);
+				adBmsWakeupIc(slaves_found);
+				adBmsReadData(slaves_found, &IC[0], RDSVA, S_volt, A);
+				adBmsReadData(slaves_found, &IC[0], RDSVB, S_volt, B);
+				adBmsReadData(slaves_found, &IC[0], RDSVC, S_volt, C);
+				adBmsReadData(slaves_found, &IC[0], RDSVD, S_volt, D);
+				adBmsReadData(slaves_found, &IC[0], RDSVE, S_volt, E);
+				adBmsReadData(slaves_found, &IC[0], RDSVF, S_volt, F);
 
 				//aux
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
+				adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
+				adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
+				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
+				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
 
 				// Save even-pull readings for even-numbered cells
-				/*for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
+				/*for (uint8_t slave = 0; slave < slaves_found; slave++) {
 				 for (uint8_t cell = 0; cell < CELL; cell++) {
 				 IC[slave].owcell.cell_ow_all[cell] = IC[slave].scell.sc_codes[cell];
 				 }
 				 }*/
 
 				// Save pull-up readings
-				for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
+				for (uint8_t slave = 0; slave < slaves_found; slave++) {
 					for (uint8_t g = 0; g < AUX; g++) {
 						IC[slave].gpio.aux_pup_up[g] = IC[slave].aux.a_codes[g];
 					}
@@ -406,45 +408,45 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
 
 				// Save even-pull readings for even-numbered cells
-				for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
+				for (uint8_t slave = 0; slave < slaves_found; slave++) {
 					for (uint8_t cell = 0; cell < CELL; cell++) {
 						IC[slave].owcell.cell_ow_even[cell] = IC[slave].scell.sc_codes[cell];
 					}
 				}
 
-				adBmsWakeupIc(TOTAL_IC);
+				adBmsWakeupIc(slaves_found);
 				// Read S-volt results with odd pull active
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVA, S_volt, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVB, S_volt, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVC, S_volt, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVD, S_volt, D);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVE, S_volt, E);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSVF, S_volt, F);
+				adBmsReadData(slaves_found, &IC[0], RDSVA, S_volt, A);
+				adBmsReadData(slaves_found, &IC[0], RDSVB, S_volt, B);
+				adBmsReadData(slaves_found, &IC[0], RDSVC, S_volt, C);
+				adBmsReadData(slaves_found, &IC[0], RDSVD, S_volt, D);
+				adBmsReadData(slaves_found, &IC[0], RDSVE, S_volt, E);
+				adBmsReadData(slaves_found, &IC[0], RDSVF, S_volt, F);
 
 				//auz
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
+				adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
+				adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
+				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
+				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
 
 				// Save odd-pull readings and check all cells for open wire
-				for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
+				for (uint8_t slave = 0; slave < slaves_found; slave++) {
 					for (uint8_t cell = 0; cell < CELL; cell++) {
 						IC[slave].owcell.cell_ow_odd[cell] = IC[slave].scell.sc_codes[cell];
 					}
 				}
 
 				// Save pull-down readings
-				for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
+				for (uint8_t slave = 0; slave < slaves_found; slave++) {
 					for (uint8_t g = 0; g < AUX; g++) {
 						IC[slave].gpio.aux_pup_down[g] = IC[slave].aux.a_codes[g];
 					}
 				}
 
 				// Now evaluate: fill diag_result.cell_ow[]
-				adBms6830_evaluate_cell_open_wire(TOTAL_IC, IC);
+				adBms6830_evaluate_cell_open_wire(slaves_found, IC);
 				// Evaluate aux OW measruments
-				adBms6830_evaluate_aux_open_wire(TOTAL_IC, IC);
+				adBms6830_evaluate_aux_open_wire(slaves_found, IC);
 
 				adbmsPhaseStart = getRuntimeMs();
 				adbmsPhase = ADBMS_IDLE_READ_PREV;
@@ -462,18 +464,18 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 		case STARTUP_START_AVG:
 
 			//find initial slaves in the chain
-			uint8_t slaves_found = adBms6830_daisychain_device_counter();
+			slaves_found = adBms6830_daisychain_device_counter();
 
 			g_balance_cfg_initialized = false;
-			adBms6830_init_config(TOTAL_IC, &IC[0]);
+			adBms6830_init_config(slaves_found, &IC[0]);
 
-			adBmsWakeupIc(TOTAL_IC);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVA, Cell, A);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVB, Cell, B);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVC, Cell, C);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVD, Cell, D);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVE, Cell, E);
-			adBmsReadData(TOTAL_IC, &IC[0], RDCVF, Cell, F);
+			adBmsWakeupIc(slaves_found);
+			adBmsReadData(slaves_found, &IC[0], RDCVA, Cell, A);
+			adBmsReadData(slaves_found, &IC[0], RDCVB, Cell, B);
+			adBmsReadData(slaves_found, &IC[0], RDCVC, Cell, C);
+			adBmsReadData(slaves_found, &IC[0], RDCVD, Cell, D);
+			adBmsReadData(slaves_found, &IC[0], RDCVE, Cell, E);
+			adBmsReadData(slaves_found, &IC[0], RDCVF, Cell, F);
 
 			adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
 
@@ -485,13 +487,13 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 		case STARTUP_READ_AVG_START_AUX:
 			if (getRuntimeMsDiff(startupPhaseStart) >= 10) {
 
-				adBmsWakeupIc(TOTAL_IC);
-				adBmsReadData(TOTAL_IC, &IC[0], RDACA, AvgCell, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDACB, AvgCell, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDACC, AvgCell, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDACD, AvgCell, D);
-				adBmsReadData(TOTAL_IC, &IC[0], RDACE, AvgCell, E);
-				adBmsReadData(TOTAL_IC, &IC[0], RDACF, AvgCell, F);
+				adBmsWakeupIc(slaves_found);
+				adBmsReadData(slaves_found, &IC[0], RDACA, AvgCell, A);
+				adBmsReadData(slaves_found, &IC[0], RDACB, AvgCell, B);
+				adBmsReadData(slaves_found, &IC[0], RDACC, AvgCell, C);
+				adBmsReadData(slaves_found, &IC[0], RDACD, AvgCell, D);
+				adBmsReadData(slaves_found, &IC[0], RDACE, AvgCell, E);
+				adBmsReadData(slaves_found, &IC[0], RDACF, AvgCell, F);
 
 				//Read AUX
 				adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
@@ -504,17 +506,17 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 		case STARTUP_READ_AUX_START_RAUX:
 			if (getRuntimeMsDiff(startupPhaseStart) >= 10) {
 
-				adBmsWakeupIc(TOTAL_IC);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
+				adBmsWakeupIc(slaves_found);
+				adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
+				adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
+				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
+				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
 
-				adBmsReadData(TOTAL_IC, &IC[0], RDSTATA, Status, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSTATB, Status, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSTATC, Status, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSTATD, Status, D);
-				adBmsReadData(TOTAL_IC, &IC[0], RDSTATE, Status, E);
+				adBmsReadData(slaves_found, &IC[0], RDSTATA, Status, A);
+				adBmsReadData(slaves_found, &IC[0], RDSTATB, Status, B);
+				adBmsReadData(slaves_found, &IC[0], RDSTATC, Status, C);
+				adBmsReadData(slaves_found, &IC[0], RDSTATD, Status, D);
+				adBmsReadData(slaves_found, &IC[0], RDSTATE, Status, E);
 
 				//Read GPIOS
 				adBms6830_Adax2(AUX_CH_TO_CONVERT);
@@ -526,11 +528,11 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 		case STARTUP_READ_RAUX_STATUS:
 			if (getRuntimeMsDiff(startupPhaseStart) >= 10) {
 
-				adBmsWakeupIc(TOTAL_IC);
-				adBmsReadData(TOTAL_IC, &IC[0], RDRAXA, RAux, A);
-				adBmsReadData(TOTAL_IC, &IC[0], RDRAXB, RAux, B);
-				adBmsReadData(TOTAL_IC, &IC[0], RDRAXC, RAux, C);
-				adBmsReadData(TOTAL_IC, &IC[0], RDRAXD, RAux, D);
+				adBmsWakeupIc(slaves_found);
+				adBmsReadData(slaves_found, &IC[0], RDRAXA, RAux, A);
+				adBmsReadData(slaves_found, &IC[0], RDRAXB, RAux, B);
+				adBmsReadData(slaves_found, &IC[0], RDRAXC, RAux, C);
+				adBmsReadData(slaves_found, &IC[0], RDRAXD, RAux, D);
 
 				memcpy(SLAVE, IC, sizeof(SLAVE));
 
@@ -1284,7 +1286,7 @@ uint16_t adBms6830_FindMinVoltageGlobally(void) {
 
 	printfDebug("c_codes[0][0]=%d  ac_codes[0][0]=%d\r\n", SLAVE[0].cell.c_codes[0], SLAVE[0].acell.ac_codes[0]);
 
-	for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
+	for (uint8_t slave = 0; slave < slaves_found; slave++) {
 		for (uint8_t cell = 0; cell < CELL; cell++) {
 
 			int16_t raw_value = SLAVE[slave].acell.ac_codes[cell];
