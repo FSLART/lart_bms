@@ -287,7 +287,7 @@ void CellBalancing_CAN_Init(void) {
 	CAN_RegisterRxCallback(CellBalancing_CAN_Rx);
 }
 
-void CellBalancing_CAN_Rx(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data) {
+void CellBalancing_CAN_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 	if ((hdr == 0) || (data == 0)) {
 		return;
 	}

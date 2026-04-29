@@ -26,7 +26,7 @@ and its licensor.
 #include "adbms_main.h"
 #include "cell_balancing.h"
 
-#define TOTAL_IC 2
+#define TOTAL_IC 6
 extern cell_asic IC[TOTAL_IC];
 extern cell_asic SLAVE[TOTAL_IC];
 extern balance_stage_t balanceStage;

@@ -42,6 +42,10 @@ typedef enum {
 	BAL_CYCLE_INIT = 0, BAL_CYCLE_APPLY, BAL_CYCLE_ON_TIME, BAL_CYCLE_STOP_DISCHARGE, BAL_CYCLE_SETTLE, BAL_CYCLE_START_AVG, BAL_CYCLE_WAIT_AVG, BAL_CYCLE_READ_AVG, BAL_CYCLE_COMPUTE
 } adbms_balancing_phase_t;
 
+typedef enum {
+	STARTUP_START_AVG = 0, STARTUP_READ_AVG_START_AUX, STARTUP_READ_AUX_START_RAUX, STARTUP_READ_RAUX_STATUS, STARTUP_END
+} adbms_startup_phase_t;
+
 cell_asic IC[TOTAL_IC];
 
 cell_asic SLAVE[TOTAL_IC];
@@ -59,8 +63,9 @@ ERR INJECT_ERR_SPI_READ = WITHOUT_ERR;
 
 /* Set Under Voltage and Over Voltage Thresholds */
 const float OV_THRESHOLD = 4.1; /* Volt */
-const float UV_THRESHOLD = 2.9; /* Volt */
+const float UV_THRESHOLD = 2.7; /* Volt */
 const int OWC_Threshold = 2000; /* Cell Open wire threshold(mili volt) */
+const int OWC_Threshold_Delta = 350; /* Cell Open wire threshold(mili volt) */
 const int OWA_Threshold = 50000; /* Aux Open wire threshold(mili volt) */
 const uint32_t LOOP_MEASUREMENT_COUNT = 1; /* Loop measurment count */
 const uint16_t MEASUREMENT_LOOP_TIME = 10; /* milliseconds(mS)*/
@@ -75,6 +80,9 @@ LOOP_MEASURMENT MEASURE_S_VOLTAGE = ENABLED; /*   This is ENABLED or DISABLED   
 LOOP_MEASURMENT MEASURE_AUX = DISABLED; /*   This is ENABLED or DISABLED       */
 LOOP_MEASURMENT MEASURE_RAUX = DISABLED; /*   This is ENABLED or DISABLED       */
 LOOP_MEASURMENT MEASURE_STAT = DISABLED; /*   This is ENABLED or DISABLED       */
+
+adbms_startup_phase_t startupPhase = STARTUP_START_AVG;
+uint32_t startupPhaseStart = 0;
 
 adbms_idle_phase_t adbmsPhase = ADBMS_IDLE_READ_PREV;
 uint32_t adbmsPhaseStart = 0;
@@ -91,7 +99,7 @@ static const uint32_t BALANCE_ON_TIME_MS = 1920;
 static const uint32_t BALANCE_SETTLE_MS = 15;
 static const uint32_t AVG_CONV_WAIT_MS = 20;
 
-void adbms_main(AMSStates_t ams_state) {
+adbms_result_state adbms_main(AMSStates_t ams_state) {
 
 	switch (ams_state) {
 
@@ -273,6 +281,8 @@ void adbms_main(AMSStates_t ams_state) {
 			adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
 			adbmsPhaseStart = getRuntimeMs();
 			adbmsPhase = ADBMS_IDLE_READ_AVG_START_AUX;
+
+			return ADBMS_START;
 			break;
 
 		case ADBMS_IDLE_READ_AVG_START_AUX:
@@ -369,17 +379,17 @@ void adbms_main(AMSStates_t ams_state) {
 
 				// Save even-pull readings for even-numbered cells
 				/*for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
-					for (uint8_t cell = 0; cell < CELL; cell++) {
-						IC[slave].owcell.cell_ow_all[cell] = IC[slave].scell.sc_codes[cell];
-					}
-				}*/
+				 for (uint8_t cell = 0; cell < CELL; cell++) {
+				 IC[slave].owcell.cell_ow_all[cell] = IC[slave].scell.sc_codes[cell];
+				 }
+				 }*/
 
 				// Save pull-up readings
-		        for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
-		            for (uint8_t g = 0; g < AUX; g++) {
-		                IC[slave].gpio.aux_pup_up[g] = IC[slave].aux.a_codes[g];
-		            }
-		        }
+				for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
+					for (uint8_t g = 0; g < AUX; g++) {
+						IC[slave].gpio.aux_pup_up[g] = IC[slave].aux.a_codes[g];
+					}
+				}
 
 				// Start odd-channel OW check
 				adBms6830_Adsv(SINGLE, DCP_OFF, OW_ON_ODD_CH);
@@ -446,8 +456,93 @@ void adbms_main(AMSStates_t ams_state) {
 		//break;
 
 	case STARTUP:
-		g_balance_cfg_initialized = false;
-		adBms6830_init_config(TOTAL_IC, &IC[0]);
+
+		switch (startupPhase) {
+
+		case STARTUP_START_AVG:
+
+			g_balance_cfg_initialized = false;
+			adBms6830_init_config(TOTAL_IC, &IC[0]);
+
+			adBmsWakeupIc(TOTAL_IC);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVA, Cell, A);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVB, Cell, B);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVC, Cell, C);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVD, Cell, D);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVE, Cell, E);
+			adBmsReadData(TOTAL_IC, &IC[0], RDCVF, Cell, F);
+
+			adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+
+			startupPhaseStart = getRuntimeMs();
+			startupPhase = STARTUP_READ_AVG_START_AUX;
+
+			break;
+
+		case STARTUP_READ_AVG_START_AUX:
+			if (getRuntimeMsDiff(startupPhaseStart) >= 10) {
+
+				adBmsWakeupIc(TOTAL_IC);
+				adBmsReadData(TOTAL_IC, &IC[0], RDACA, AvgCell, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDACB, AvgCell, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDACC, AvgCell, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDACD, AvgCell, D);
+				adBmsReadData(TOTAL_IC, &IC[0], RDACE, AvgCell, E);
+				adBmsReadData(TOTAL_IC, &IC[0], RDACF, AvgCell, F);
+
+				//Read AUX
+				adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
+
+				startupPhaseStart = getRuntimeMs();
+				startupPhase = STARTUP_READ_AUX_START_RAUX;
+			}
+			break;
+
+		case STARTUP_READ_AUX_START_RAUX:
+			if (getRuntimeMsDiff(startupPhaseStart) >= 10) {
+
+				adBmsWakeupIc(TOTAL_IC);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
+
+				adBmsReadData(TOTAL_IC, &IC[0], RDSTATA, Status, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSTATB, Status, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSTATC, Status, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSTATD, Status, D);
+				adBmsReadData(TOTAL_IC, &IC[0], RDSTATE, Status, E);
+
+				//Read GPIOS
+				adBms6830_Adax2(AUX_CH_TO_CONVERT);
+
+				startupPhaseStart = getRuntimeMs();
+				startupPhase = STARTUP_READ_RAUX_STATUS;
+			}
+			break;
+		case STARTUP_READ_RAUX_STATUS:
+			if (getRuntimeMsDiff(startupPhaseStart) >= 10) {
+
+				adBmsWakeupIc(TOTAL_IC);
+				adBmsReadData(TOTAL_IC, &IC[0], RDRAXA, RAux, A);
+				adBmsReadData(TOTAL_IC, &IC[0], RDRAXB, RAux, B);
+				adBmsReadData(TOTAL_IC, &IC[0], RDRAXC, RAux, C);
+				adBmsReadData(TOTAL_IC, &IC[0], RDRAXD, RAux, D);
+
+				memcpy(SLAVE, IC, sizeof(SLAVE));
+
+				startupPhaseStart = getRuntimeMs();
+				startupPhase = STARTUP_END;
+			}
+			break;
+
+		case STARTUP_END:
+			startupPhase = STARTUP_START_AVG;
+			return ADBMS_END;
+			break;
+
+			return ADBMS_ONGOING;
+		}
 
 		break;
 
@@ -1060,24 +1155,49 @@ void adBms6830_clear_fcell_measurement(uint8_t tIC) {
 
 void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 
+	KILL_ERROR(FAULT_OW_DETECTED_CELL); //Garantir novos erros caso detectados
+
 	for (uint8_t slave = 0; slave < tIC; slave++) {
 		for (uint8_t cell = 0; cell < CELL; cell++) {
 
 			int32_t raw_code;
+			int32_t avg_raw_code;
+			//uint8_t cell_offset = cell + 1;
+
 			if ((cell % 2) == 0) {
 				raw_code = ic[slave].owcell.cell_ow_even[cell];
 			} else {
 				raw_code = ic[slave].owcell.cell_ow_odd[cell];
 			}
 
-			/* sc_codes are raw 150µV/LSB, no offset — unlike a_codes */
+			avg_raw_code = ic[slave].acell.ac_codes[cell];
+
 			//int32_t voltage_mV = raw_code * 150 / 1000;
 			int32_t voltage_mV = (int32_t) ((raw_code + 10000) * 0.150);
 
+			int32_t avg_voltage_mV = (int32_t) ((avg_raw_code + 10000) * 0.150);
+
+			int32_t voltage_delta = (avg_voltage_mV - voltage_mV);
+
+			if (voltage_delta < 0) {
+
+				voltage_delta = voltage_delta * (-1);
+			}
+
+			//printfUI("OW CHECK: IC%u Cell%u (%ldmV)\r\n", slave + 1, cell + 1, voltage_mV);
+
 			if (voltage_mV < OWC_Threshold) {
+
 				ic[slave].diag_result.cell_ow[cell] = 1;
 				printfDebug("OW FAULT: IC%u Cell%u (%ldmV)\r\n", slave + 1, cell + 1, voltage_mV);
-				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave, .cell_idx = cell + 1, .measured_value = (float )voltage_mV);
+				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_mV);
+
+			} else if (voltage_delta > OWC_Threshold_Delta) {
+
+				ic[slave].diag_result.cell_ow[cell] = 1;
+				printfDebug("OW FAULT: IC%u Cell%u DELTA(%ldmV)\r\n", slave + 1, cell + 1, voltage_delta);
+				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_delta);
+
 			} else {
 				ic[slave].diag_result.cell_ow[cell] = 0;
 			}
@@ -1085,29 +1205,98 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 	}
 }
 
+/*void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
+
+ KILL_ERROR(FAULT_OW_DETECTED_CELL);
+
+ for (uint8_t slave = 0; slave < tIC; slave++) {
+ for (uint8_t cell = 0; cell < CELL; cell++) {
+
+ // cell is 0-based, but OWC grouping uses 1-based cell numbers.
+ // Even 1-based cells (2,4,6...) have index 1,3,5... (odd 0-based).
+ // So: odd 0-based index → read from cell_ow_even (even channel pass)
+ //     even 0-based index → read from cell_ow_odd (odd channel pass)
+ int32_t raw_code;
+ uint8_t cell_number = cell + 1;  // convert to 1-based
+
+ if ((cell_number % 2) == 0) {
+ // even cell (1-based): OWC switch was active during the EVEN pass
+ raw_code = ic[slave].owcell.cell_ow_even[cell];
+ } else {
+ // odd cell (1-based): OWC switch was active during the ODD pass
+ raw_code = ic[slave].owcell.cell_ow_odd[cell];
+ }
+
+ // sc_codes have no offset — 150 µV/LSB directly
+ int32_t voltage_mV = raw_code * 150 / 1000;
+
+ printfUI("OW CHECK: IC%u Cell%u (%ldmV)\r\n", slave + 1, cell + 1, voltage_mV);
+
+ if (voltage_mV < OWC_Threshold) {
+
+ ic[slave].diag_result.cell_ow[cell] = 1;
+
+ printfDebug("OW FAULT: IC%u Cell%u (%ldmV)\r\n", slave + 1, cell + 1, voltage_mV);
+
+ RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_mV);
+
+ } else {
+ ic[slave].diag_result.cell_ow[cell] = 0;
+ }
+ }
+ }
+ }*/
+
 void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
+
+	KILL_ERROR(FAULT_OW_DETECTED_RTH); //Garantir novos erros caso detectados
 
 	for (uint8_t slave = 0; slave < tIC; slave++) {
 		for (uint8_t gpio = 0; gpio < AUX; gpio++) {
 
 			/*int32_t pup_mV = (ic[slave].gpio.aux_pup_up[gpio] + 10000) * 150 / 1000;
-			int32_t pdown_mV = (ic[slave].gpio.aux_pup_down[gpio] + 10000) * 150 / 1000;*/
+			 int32_t pdown_mV = (ic[slave].gpio.aux_pup_down[gpio] + 10000) * 150 / 1000;*/
 			//int32_t diff_mV = pup_mV - pdown_mV;
-
 			int32_t pup = ic[slave].gpio.aux_pup_up[gpio];
 			int32_t pdown = ic[slave].gpio.aux_pup_down[gpio];
 
 			/*if (diff_mV < 0) {
-				diff_mV = -diff_mV;
-			}*/
+			 diff_mV = -diff_mV;
+			 }*/
 			//TODO: DEFINIR THESHOLDS PARA OPEN WIRE NO GPIO
 			if (pup > 10000 || pdown > 0) {
 				ic[slave].diag_result.aux_ow[gpio] = 1;
-				printfDebug("AUX OW FAULT: IC%u GPIO%u diff (%ldmV) \r\n", slave, gpio + 1, pdown);
-				RAISE_ERROR(FAULT_OW_DETECTED_RTH, .slave_idx = slave, .channel_idx = gpio, .measured_value = (float )pdown);
+				printfDebug("AUX OW FAULT: IC%u GPIO%u diff (%ldmV) \r\n", slave + 1, gpio + 1, pdown);
+				RAISE_ERROR(FAULT_OW_DETECTED_RTH, .slave_idx = slave + 1, .channel_idx = gpio + 1, .measured_value = (float )pdown);
 			} else {
 				ic[slave].diag_result.aux_ow[gpio] = 0;
 			}
 		}
 	}
 }
+
+uint16_t adBms6830_FindMinVoltageGlobally(void) {
+	//encontrar a celula com menor tensão
+	uint16_t min_cell_mV = 65535;
+
+	printfDebug("c_codes[0][0]=%d  ac_codes[0][0]=%d\r\n", SLAVE[0].cell.c_codes[0], SLAVE[0].acell.ac_codes[0]);
+
+	for (uint8_t slave = 0; slave < TOTAL_IC; slave++) {
+		for (uint8_t cell = 0; cell < CELL; cell++) {
+
+			int16_t raw_value = SLAVE[slave].acell.ac_codes[cell];
+
+			float volts = volts = 1.5 + ((float) raw_value * 0.00015);
+
+			uint16_t mV = (uint16_t) (volts * 1000 + 0.5);
+
+			if (mV < min_cell_mV) {
+				min_cell_mV = mV;
+			}
+		}
+	}
+
+	return min_cell_mV;
+
+}
+

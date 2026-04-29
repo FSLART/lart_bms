@@ -66,7 +66,7 @@ DMA_HandleTypeDef hdma_usart2_tx;
 WWDG_HandleTypeDef hwwdg;
 
 /* USER CODE BEGIN PV */
-uint32_t watchdog_flag = 0u;
+uint32_t watchdog_flag = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -312,7 +312,7 @@ static void MX_CAN1_Init(void) {
 	}
 	/* USER CODE BEGIN CAN1_Init 2 */
 
-	IVT_CAN_Setup(&hcan1);
+	//IVT_CAN_Setup(&hcan1);
 
 	/*// (Optional) TX complete / error callbacks
 	 HAL_CAN_ActivateNotification(&hcan1,

@@ -22,74 +22,77 @@ extern "C" {
  *  Maximum 63 codes (0 … 62).  FAULT_COUNT must stay ≤ 63.
  * ═══════════════════════════════════════════════════════════════ */
 typedef enum {
-	/* ── Voltage ─────────────────────────────────────── */
-	FAULT_OVERVOLTAGE = 0u, /* cell V > max          */
-	FAULT_UNDERVOLTAGE = 1u, /* cell V < min          */
+    /* Voltage */
+    FAULT_OVERVOLTAGE                 = 0,
+    FAULT_UNDERVOLTAGE                = 1,
 
-	/* ── Temperature ─────────────────────────────────── */
-	FAULT_OVERTEMPERATURE = 2u, /* generic OT            */
-	FAULT_UNDERTEMPERATURE = 3u, /* generic UT            */
-	FAULT_OVERTEMPERATURE_DISCHARGE = 4u, /* OT during discharge   */
-	FAULT_UNDERTEMPERATURE_CHARGE = 5u, /* UT during charge      */
-	FAULT_TEMP_SENSOR_OPEN = 6u, /* NTC open / impossible value */
+    /* Temperature */
+    FAULT_OVERTEMPERATURE             = 2,
+    FAULT_UNDERTEMPERATURE            = 3,
+    FAULT_OVERTEMPERATURE_DISCHARGE   = 4,
+    FAULT_UNDERTEMPERATURE_CHARGE     = 5,
+    FAULT_TEMP_SENSOR_OPEN            = 6,
 
-	/* ── ADBMS slave layer ───────────────────────────── */
-	FAULT_SLAVE_NOT_DETECTED = 7u, /* isoSPI no response    */
-	FAULT_PEC_ERROR = 8u, /* CRC/PEC mismatch      */
-	FAULT_OPEN_WIRE = 9u, /* OW diagnostic tripped */
-	FAULT_ACQUISITION_TIMEOUT = 10u, /* data acq. PCB timeout (0-7) */
+    /* ADBMS slave layer */
+    FAULT_SLAVE_NOT_DETECTED          = 7,
+    FAULT_PEC_ERROR                   = 8,
+    FAULT_OPEN_WIRE                   = 9,
+    FAULT_ACQUISITION_TIMEOUT         = 10,
 
-	/* ── CAN bus ─────────────────────────────────────── */
-	FAULT_CAN_SEND_ERROR = 11u, /* HAL_CAN_AddTxMessage failed */
-	FAULT_CAN_INIT_ERROR = 12u, /* HAL_CAN_Start failed        */
-	FAULT_CAN_MAILBOX_FULL = 13u, /* all TX mailboxes occupied   */
-	FAULT_CAN_BUS_OFF = 14u, /* HAL_CAN_ERROR_BOF detected  */
+    /* CAN bus */
+    FAULT_CAN_SEND_ERROR              = 11,
+    FAULT_CAN_INIT_ERROR              = 12,
+    FAULT_CAN_MAILBOX_FULL            = 13,
+    FAULT_CAN_BUS_OFF                 = 14,
+    FAULT_CAN_RECEIVE_ERROR           = 15,
 
-	/* ── External node heartbeat timeouts ───────────── */
-	FAULT_ISA_IVTS_TIMEOUT = 15u, /* no IVT-S message received   */
-	FAULT_INVERTER_TIMEOUT = 16u, /* inverter heartbeat lost      */
-	FAULT_VCU_TIMEOUT = 17u, /* VCU heartbeat lost           */
-	FAULT_PDM_TIMEOUT = 18u, /* PDM heartbeat lost           */
-	FAULT_CHARGER_TIMEOUT = 19u, /* charger heartbeat lost       */
-	FAULT_ACQUISITION_NODE_TIMEOUT = 20u, /* specific acq. node silent    */
+    /* External node heartbeat timeouts */
+    FAULT_ISA_IVTS_TIMEOUT            = 16,
+    FAULT_INVERTER_TIMEOUT            = 17,
+    FAULT_VCU_TIMEOUT                 = 18,
+    FAULT_PDM_TIMEOUT                 = 19,
+    FAULT_CHARGER_TIMEOUT             = 20,
+    FAULT_ACQUISITION_NODE_TIMEOUT    = 21,
 
-	/* ── Contactors / precharge ──────────────────────── */
-	FAULT_CONTACTOR_MISMATCH = 21u, /* feedback ≠ commanded state  */
-	FAULT_PRECHARGE_TIMEOUT = 22u, /* precharge took too long      */
-	FAULT_PRECHARGE_FAILURE = 23u, /* V never reached threshold    */
-	FAULT_SDC_TRIGGERED = 24u, /* shutdown circuit opened      */
+    /* Contactors / precharge */
+    FAULT_CONTACTOR_MISMATCH          = 22,
+    FAULT_PRECHARGE_TIMEOUT           = 23,
+    FAULT_PRECHARGE_FAILURE           = 24,
+    FAULT_SDC_TRIGGERED               = 25,
 
-	/* ── Cell balancing ──────────────────────────────── */
-	FAULT_BALANCING_ERROR = 25u, /* unexpected state in balancing */
-	FAULT_BALANCING_OVERTEMP = 26u, /* temperature rose during bal. */
+    /* Cell balancing */
+    FAULT_BALANCING_ERROR             = 26,
+    FAULT_BALANCING_OVERTEMP          = 27,
 
-	/* ── Analog / internal ───────────────────────────── */
-	FAULT_ADC_ERROR = 27u, /* DMA/ADC peripheral error     */
-	FAULT_CURRENT_SENSOR_ERROR = 28u, /* MCS1802 reading out of range */
+    /* Analog / internal */
+    FAULT_ADC_ERROR                   = 28,
+    FAULT_CURRENT_SENSOR_ERROR        = 29,
 
-	/* ── Energy / state ──────────────────────────────── */
-	FAULT_SOC_CRITICAL_LOW = 29u, /* SoC below hard limit         */
-	FAULT_PACK_VOLTAGE_MISMATCH = 30u, /* sum-of-cells ≠ pack voltage  */
+    /* Energy / state */
+    FAULT_SOC_CRITICAL_LOW            = 30,
+    FAULT_PACK_VOLTAGE_MISMATCH       = 31,
 
-	/* ── EEPROM / non-volatile storage ──────────────── */
-	FAULT_EEPROM_READ_ERROR = 31u, FAULT_EEPROM_WRITE_ERROR = 32u, FAULT_EEPROM_VALIDATION_ERROR = 33u, /* stored checksum mismatch     */
+    /* EEPROM */
+    FAULT_EEPROM_READ_ERROR           = 32,
+    FAULT_EEPROM_WRITE_ERROR          = 33,
+    FAULT_EEPROM_VALIDATION_ERROR     = 34,
 
-	/* ── Startup / internal ──────────────────────────── */
-	FAULT_STARTUP_FAILURE = 34u, /* init sequence failed         */
-	FAULT_WATCHDOG_RESET = 35u, /* system recovered from WDG    */
-	FAULT_STACK_OVERFLOW = 36u, /* stack canary tripped         */
+    /* Startup / internal */
+    FAULT_STARTUP_FAILURE             = 35,
+    FAULT_WATCHDOG_RESET              = 36,
+    FAULT_STACK_OVERFLOW              = 37,
 
-	/* UART */
-	FAULT_UART1_TX = 37u, /* UART1 - ERROR  TX   */
-	FAULT_UART1_RX = 38u, /* UART1 - ERROR  RX   */
-	FAULT_UART2_TX = 39u, /* UART2 - ERROR  TX   */
-	FAULT_UART2_RX = 40u, /* UART2 - ERROR  RX   */
+    /* UART */
+    FAULT_UART1_TX                    = 38,
+    FAULT_UART1_RX                    = 39,
+    FAULT_UART2_TX                    = 40,
+    FAULT_UART2_RX                    = 41,
 
-	FAULT_OW_DETECTED_CELL = 41u, /* open wire cell detected */
-	FAULT_OW_DETECTED_RTH = 42u, /* open wire gpio detected */
+    /* Open-wire diagnostics */
+    FAULT_OW_DETECTED_CELL            = 42,
+    FAULT_OW_DETECTED_RTH             = 43,
 
-	/* ── add new codes above this line ─────────────── */
-	FAULT_COUNT /* sentinel – must be ≤ 63      */
+    FAULT_COUNT   /* sentinel — must stay ≤ 63 */
 } FaultCode_t;
 
 /* Compile-time guard: too many fault codes will silently overflow the mask */
@@ -104,59 +107,59 @@ typedef enum {
  *  per-fault notes in FaultManager_DumpUART() for guidance.
  * ═══════════════════════════════════════════════════════════════ */
 typedef struct {
-	uint32_t timestamp_ms; /* HAL_GetTick() at the moment of RAISE_ERROR()       */
+    uint32_t timestamp_ms;  /* HAL_GetTick() at the moment of RAISE_ERROR()       */
 
-	float measured_value; /* voltage [V], temperature [°C], current [A], …      */
-	float threshold_value; /* the limit that was breached (for quick comparison)  */
+    float measured_value;   /* voltage [V], temperature [°C], current [A], …      */
+    float threshold_value;  /* the limit that was breached (for quick comparison)  */
 
-	uint8_t slave_idx; /* ADBMS6830 daisy-chain index, 0-based (0 = first)   */
-	uint8_t cell_idx; /* cell within a slave, 0-based (0 = C1)              */
+    uint8_t slave_idx;      /* ADBMS6830 daisy-chain index, 0-based (0 = first)   */
+    uint8_t cell_idx;       /* cell within a slave, 0-based (0 = C1)              */
 
-	/* channel_idx is multi-purpose:
-	 *  - CAN faults     → 0 = CAN1, 1 = CAN2
-	 *  - Acq. timeouts  → acquisition node index (0-7)
-	 *  - Temp. faults   → NTC channel index within the slave
-	 *  - External nodes → see enum below (use FAULT_NODE_xxx constants)
-	 */
-	uint8_t channel_idx;
+    /* channel_idx is multi-purpose:
+     *  - CAN faults     → 0 = CAN1, 1 = CAN2
+     *  - Acq. timeouts  → acquisition node index (0-7)
+     *  - Temp. faults   → NTC channel index within the slave
+     *  - External nodes → see enum below (use FAULT_NODE_xxx constants)
+     */
+    uint8_t channel_idx;
 
-	/* contactor_bits  – one bit per contactor, SET = mismatch detected
-	 *   bit 0  AIR+  (CONTACT_AIR_positivo)
-	 *   bit 1  AIR–  (CONTACT_AIR_negativo)
-	 *   bit 2  PRE   (CONTACT_PRE)
-	 *   bit 3  DSCH  (CONTACT_DSCH)
-	 */
-	uint8_t contactor_bits;
+    /* contactor_bits – one bit per contactor, SET = mismatch detected
+     *   bit 0  AIR+  (CONTACT_AIR_positivo)
+     *   bit 1  AIR–  (CONTACT_AIR_negativo)
+     *   bit 2  PRE   (CONTACT_PRE)
+     *   bit 3  DSCH  (CONTACT_DSCH)
+     */
+    uint8_t contactor_bits;
 
 } FaultContext_t;
 
 /* Contactor bit-mask helpers */
-#define FAULT_CTC_AIR_POS    (1u << 0u)
-#define FAULT_CTC_AIR_NEG    (1u << 1u)
-#define FAULT_CTC_PRE        (1u << 2u)
-#define FAULT_CTC_DSCH       (1u << 3u)
+#define FAULT_CTC_AIR_POS    (1 << 0)
+#define FAULT_CTC_AIR_NEG    (1 << 1)
+#define FAULT_CTC_PRE        (1 << 2)
+#define FAULT_CTC_DSCH       (1 << 3)
 
 /* channel_idx constants for external node timeouts */
-#define FAULT_NODE_ISA       0u
-#define FAULT_NODE_INVERTER  1u
-#define FAULT_NODE_VCU       2u
-#define FAULT_NODE_PDM       3u
-#define FAULT_NODE_CHARGER   4u
+#define FAULT_NODE_ISA       0
+#define FAULT_NODE_INVERTER  1
+#define FAULT_NODE_VCU       2
+#define FAULT_NODE_PDM       3
+#define FAULT_NODE_CHARGER   4
 
 /* channel_idx constants for CAN faults */
-#define FAULT_CAN_BUS_1      0u
-#define FAULT_CAN_BUS_2      1u
+#define FAULT_CAN_BUS_1      0
+#define FAULT_CAN_BUS_2      1
 
 /* ═══════════════════════════════════════════════════════════════
  *  HISTORY
  *  A circular log of the last FAULT_HISTORY_SIZE raise/kill events.
  * ═══════════════════════════════════════════════════════════════ */
-#define FAULT_HISTORY_SIZE   32u
+#define FAULT_HISTORY_SIZE   32
 
 typedef struct {
-	FaultCode_t code;
-	FaultContext_t ctx;
-	bool was_raised; /* true = fault raised;  false = fault cleared */
+    FaultCode_t code;
+    FaultContext_t ctx;
+    bool was_raised;  /* true = fault raised;  false = fault cleared */
 } FaultHistoryEntry_t;
 
 /* ═══════════════════════════════════════════════════════════════
@@ -209,13 +212,7 @@ const FaultContext_t* FaultManager_GetContext(FaultCode_t code);
 /** Pretty-print all active faults + context to the debug UART. */
 void FaultManager_DumpUART(void);
 
-/**
- * Pack the 64-bit active-mask into two CAN frames and enqueue them.
- * Frame 1 (ID 0x1B0): bits  0-31 (faults FAULT_OVERVOLTAGE … FAULT_EEPROM_READ_ERROR)
- * Frame 2 (ID 0x1B1): bits 32-63 (faults FAULT_EEPROM_WRITE_ERROR … future)
- * Add these IDs to powertrain_t26.dbc as master_fault_id_1 / master_fault_id_2.
- */
-void FaultManager_CAN_Send(CAN_HandleTypeDef *hcan);
+//void FaultManager_CAN_Send(CAN_HandleTypeDef *hcan);
 
 /* ── History ─────────────────────────────────────── */
 

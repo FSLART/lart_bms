@@ -29,8 +29,13 @@ and its licensor.
 #include "adBms6830ParseCreate.h"
 #include "mcuWrapper.h"
 
+typedef enum {
+	ADBMS_END = 0, ADBMS_ONGOING, ADBMS_START
+} adbms_result_state;
 
-void adbms_main(AMSStates_t);
+adbms_result_state adbms_main(AMSStates_t);
+
+uint16_t adBms6830_FindMinVoltageGlobally(void);
 
 #endif
 /** @}*/

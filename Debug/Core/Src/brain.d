@@ -44,13 +44,15 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/mcuWrapper.h ../Core/Inc/stm32f4xx_it.h \
  ../Core/Inc/cell_balancing.h ../Core/Inc/adbms_to_CAN.h \
- ../Core/Inc/can.h ../Core/Inc/analog_readings.h \
- ../Core/Inc/bms_eeprom_config.h ../Core/Inc/ee24.h \
- ../Core/Inc/cell_balancing.h ../Core/Inc/fault_manager.h \
- ../Core/Inc/uartDMA.h ../Core/Inc/isa_ivt-s.h ../Core/Inc/contactors.h \
- ../Core/Inc/uartDMA.h ../Core/Inc/master_to_CAN.h \
- ../Core/Inc/precharge.h ../Core/Inc/can.h ../Core/Inc/fault_manager.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/dbc/powertrain_t26.h
+ ../Core/Inc/can.h ../Core/Inc/bootloader_jumper.h \
+ ../Core/Inc/analog_readings.h ../Core/Inc/bms_eeprom_config.h \
+ ../Core/Inc/ee24.h ../Core/Inc/cell_balancing.h \
+ ../Core/Inc/fault_manager.h ../Core/Inc/uartDMA.h \
+ ../Core/Inc/isa_ivt-s.h \
+ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/dbc/powertrain_t26.h \
+ ../Core/Inc/contactors.h ../Core/Inc/uartDMA.h \
+ ../Core/Inc/master_to_CAN.h ../Core/Inc/precharge.h ../Core/Inc/can.h \
+ ../Core/Inc/fault_manager.h ../Core/Inc/soc.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -103,6 +105,7 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/cell_balancing.h:
 ../Core/Inc/adbms_to_CAN.h:
 ../Core/Inc/can.h:
+../Core/Inc/bootloader_jumper.h:
 ../Core/Inc/analog_readings.h:
 ../Core/Inc/bms_eeprom_config.h:
 ../Core/Inc/ee24.h:
@@ -110,10 +113,11 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/fault_manager.h:
 ../Core/Inc/uartDMA.h:
 ../Core/Inc/isa_ivt-s.h:
+C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/dbc/powertrain_t26.h:
 ../Core/Inc/contactors.h:
 ../Core/Inc/uartDMA.h:
 ../Core/Inc/master_to_CAN.h:
 ../Core/Inc/precharge.h:
 ../Core/Inc/can.h:
 ../Core/Inc/fault_manager.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/dbc/powertrain_t26.h:
+../Core/Inc/soc.h:

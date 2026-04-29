@@ -43,7 +43,7 @@ PrechargeState_t Precharge_GetState(void);
 
 void Precharge_Update(void);
 
-void PreCharge_CAN_Rx(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data);
+void PreCharge_CAN_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data);
 
 bool OnPrechargeComplete(PrechargeState_t);
 bool IsTheStateOK(PrechargeState_t);

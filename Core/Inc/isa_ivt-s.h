@@ -4,6 +4,8 @@
 #include "main.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include "powertrain_t26.h"
+
 
 /* IVT-S CAN IDs */
 #define IVT_COMMAND_CANID ((uint16_t)0x411)
@@ -16,6 +18,7 @@
 #define IVT_RESULTT_CANID ((uint16_t)0X525)
 #define IVT_RESULTW_CANID ((uint16_t)0X526)
 #define IVT_RESULTWH_CANID ((uint16_t)0X528)
+#define IVT_RESULTAS_CANID ((uint16_t)0x527)
 
 /* Private variables --------------------------------------------------------*/
 /* IVT-S CAN Command Constants */
@@ -28,7 +31,7 @@ static const uint8_t IVT_CONFIG_U3_CMD[8]      = {0x23, 0x02, 0x00, 0x64, 0x00, 
 static const uint8_t IVT_CONFIG_T_CMD[8]       = {0x24, 0x02, 0x00, 0xC8, 0x00, 0x00, 0x00, 0x00}; // temp: cyclic 120 ms
 static const uint8_t IVT_CONFIG_W_CMD[8]       = {0x25, 0x02, 0x00, 0xC8, 0x00, 0x00, 0x00, 0x00}; // power: cyclic 120 ms
 static const uint8_t IVT_CONFIG_WH_CMD[8]      = {0x27, 0x02, 0x00, 0xC8, 0x00, 0x00, 0x00, 0x00}; // Wh: cyclic 120 ms
-static const uint8_t IVT_CONFIG_AS_CMD[8]      = {0x26, 0x02, 0x00, 0xC8, 0x00, 0x00, 0x00, 0x00}; // As: cyclic 120 ms
+static const uint8_t IVT_CONFIG_AS_CMD[8]      = {0x26, 0x02, 0x00, 0x32, 0x00, 0x00, 0x00, 0x00}; // As: cyclic 50 ms
 static const uint8_t IVT_STORE_CMD[8]          = {0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // Store Config
 static const uint8_t IVT_START_CMD[8]          = {0x34, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00}; // Start Mode
 
@@ -62,17 +65,16 @@ typedef struct
 
 //extern void Error_Handler(void);
 void IVT_CAN_Setup(CAN_HandleTypeDef *hcan);
-void IVT_CAN_Setup_AllMessages(CAN_HandleTypeDef *hcan);
-HAL_StatusTypeDef IVT_CAN_SendMessage(CAN_HandleTypeDef *hcan, uint32_t canID, uint32_t dataLength, const uint8_t *TxData);
 void IVT_CAN_Config(void);
-void IVT_FAULT_CHECK(void);
-void IVT_PROCESS_SYSERRORS(uint8_t *RxData);
-void IVT_PROCESS_MEASURERRORS(uint8_t *RxData);
-void send_ivt_ui(void);
 void IVT_SET_BITRATE(void);
 
-void IVT_CAN_OnMessage(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data);
-void IVT_Init(void);  // optional init to register the callback
+void IVT_CAN_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data);
+
+void IVT_FAULT_CHECK(void);
+void IVT_PROCESS_SYSERRORS(const struct powertrain_t26_ivt_msg_response_t *resp);
+void IVT_PROCESS_MEASURERRORS(const struct powertrain_t26_ivt_msg_response_t *resp);
+
+void send_ivt_ui(void);
 
 
 #endif /* INC_PTC_FDCAN_H_ */

@@ -69,7 +69,7 @@ void Balance_ForceParity(balance_result_t *result, balance_parity_t forced_parit
 
 void CellBalancing_CAN_Init(void);
 
-void CellBalancing_CAN_Rx(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data);
+void CellBalancing_CAN_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data);
 
 void Balance_SetOutputMode(balance_config_t *cfg, balance_output_mode_t mode);
 

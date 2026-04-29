@@ -707,7 +707,7 @@ void Feedback_DebounceUpdate(void) {
  *
  *******************************************************************************
  */
-void PreCharge_CAN_Rx(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data) {
+void PreCharge_CAN_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 	//lastTime = HAL_GetTick();
 
 	uint32_t id = hdr->StdId;

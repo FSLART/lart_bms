@@ -1,5 +1,8 @@
-../Core/Src/master_to_CAN.c:31:16:Master_CAN_GetContactorCommandState	24	static
-../Core/Src/master_to_CAN.c:39:19:Master_CAN_Send_MSC_1	48	static
-../Core/Src/master_to_CAN.c:86:19:Master_CAN_Send_MSC_2	40	static
-../Core/Src/master_to_CAN.c:118:19:Master_CAN_SendPrecharge	40	static
-../Core/Src/master_to_CAN.c:158:19:Master_CAN_SendAll	24	static
+../Core/Src/master_to_CAN.c:51:9:read_contactor_state	24	static
+../Core/Src/master_to_CAN.c:64:9:count_active_faults	16	static
+../Core/Src/master_to_CAN.c:81:9:get_fault_index_type	16	static
+../Core/Src/master_to_CAN.c:130:9:get_fault_index_value	24	static
+../Core/Src/master_to_CAN.c:163:19:Master_CAN_Send_MSC_1	48	static
+../Core/Src/master_to_CAN.c:206:19:Master_CAN_Send_MSC_2	56	static
+../Core/Src/master_to_CAN.c:273:19:Master_CAN_SendPrecharge	40	static
+../Core/Src/master_to_CAN.c:300:19:Master_CAN_SendAll	24	static

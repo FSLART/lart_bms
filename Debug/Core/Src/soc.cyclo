@@ -1,0 +1,10 @@
+../Core/Src/soc.c:58:7:CellVoltageToSoc	6
+../Core/Src/soc.c:94:7:ClampPercent	3
+../Core/Src/soc.c:105:6:SOC_Init	1
+../Core/Src/soc.c:120:6:SOC_NotifyAsReading	2
+../Core/Src/soc.c:148:6:SOC_NotifyIVTReset	1
+../Core/Src/soc.c:158:7:SOC_GetPercent	1
+../Core/Src/soc.c:162:9:SOC_GetUsedCharge_As	2
+../Core/Src/soc.c:170:6:SOC_IsReady	3
+../Core/Src/soc.c:174:6:SOC_DumpUART	3
+../Core/Src/soc.c:197:6:SOC_SendCAN	2

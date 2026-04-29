@@ -15,6 +15,7 @@
 #include "adbms_main.h"
 #include "cell_balancing.h"
 #include "adbms_to_CAN.h"
+#include "bootloader_jumper.h"
 
 #include "analog_readings.h"
 #include "bms_eeprom_config.h"
@@ -27,6 +28,8 @@
 #include "fault_manager.h"
 
 #include "powertrain_t26.h"
+
+#include "soc.h"
 
 /* ================== LOCAL DEFINES / TYPES ================== */
 
@@ -53,7 +56,9 @@ void brain_start(void) {
 
 	FaultManager_Init();
 
-	HAL_CAN_Start(&hcan1);
+	//HAL_CAN_Start(&hcan1);
+	CAN_Service(&hcan1);
+	CAN_Init(&hcan1);
 
 	OpenAllContactors();
 
@@ -87,8 +92,8 @@ void brain_start(void) {
 
 	BmsConfig_DumpEEPROM(&eep24fc08);
 
-	IVT_CAN_Setup_AllMessages(&hcan1);
-	//IVT_CAN_Setup(&hcan1);
+	//IVT_CAN_Setup_AllMessages(&hcan1);
+	IVT_CAN_Setup(&hcan1);
 	//IVT_CAN_Config();
 
 	//inicializar as callbakc para o CAN
@@ -103,6 +108,8 @@ void brain_start(void) {
 
 	// Start Timer11 for falut check
 	//HAL_TIM_Base_Start_IT(&htim11);
+
+	CAN_Setup_Bootloader_Jumper();
 
 	//bmsState = INACTIVE;
 	AMS_State = STARTUP;
@@ -187,13 +194,26 @@ void brain_loop(void) {
 
 	case STARTUP:
 
-		adbms_main(AMS_Current_State);
+		//printfDma("	STARTUP \n\n");
 		//TODO: implement startup shit that needs looping i gueess lol
 
-		HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
+		static uint8_t adbmsLoopCounter = 0;
 
-		AMS_State = IDLE;
-		//AMS_State = BALANCING;
+		if (adbms_main(AMS_Current_State) == ADBMS_END && adbmsLoopCounter > 100) {
+
+			//encontrar a celula com menor tensão
+			uint16_t min_cell_mV = adBms6830_FindMinVoltageGlobally();
+
+			//RESET SOC
+			SOC_Init(min_cell_mV);
+
+			AMS_State = IDLE;
+
+		} else if (adbms_main(AMS_Current_State) == ADBMS_END) {
+			adbmsLoopCounter++;
+		}
+
+		HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
 
 		break;
 
@@ -222,6 +242,7 @@ void brain_loop(void) {
 	// ~Update UI Triggered
 	if (updateUI) {
 		FaultManager_DumpUART();
+		SOC_DumpUART();
 		//send_ivt_ui();
 		//send_ad68_ui();
 		updateUI = false;
@@ -231,6 +252,11 @@ void brain_loop(void) {
 
 		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 		toggleHeartbeat = false;
+	}
+
+	if (triggerJumpToBootloader) {
+
+		JumpToBootloader(); //Agora em Thread Mode
 	}
 
 	//update precharge state machine if necessary

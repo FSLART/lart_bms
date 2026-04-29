@@ -10,48 +10,101 @@
 #include "uartDMA.h"
 #include "fault_manager.h"
 
-#ifndef MAX_CAN_RX_CALLBACKS
-#define MAX_CAN_RX_CALLBACKS 10 //Número de callbacks registados, tipo CAN_RegisterRxCallback(PreCharge_CAN_Rx);
-#endif
+#define MAX_CAN_RX_CALLBACKS 15  // Número de callbacks registados, tipo CAN_RegisterRxCallback(PreCharge_CAN_Rx);
+#define CAN_TX_QUEUE_SIZE    1024 //must be power of 2 only when working with bit masks
 
-static CanRxCallback_t s_rxCallbacks[MAX_CAN_RX_CALLBACKS];
-static uint8_t s_numCallbacks = 0;
+CanRxCallback_t rxCallbacks[MAX_CAN_RX_CALLBACKS];
+uint8_t callbackCounter = 0;
 
 //CAN housekeeping
-static uint8_t s_can1Started = 0;
-static uint32_t s_lastCanRecoverTryMs = 0;
+uint8_t can1Started  = 0;
+uint8_t can2Started  = 0;
+uint32_t lastCanRecoverTry_time = 0;
 
+HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan) {
+	CAN_FilterTypeDef filter = { 0 };
 
-HAL_StatusTypeDef CAN_RegisterRxCallback(CanRxCallback_t cb) {
-	if (s_numCallbacks >= MAX_CAN_RX_CALLBACKS) {
+	// ID=0 + Mask=0 -> match everything
+	filter.FilterMode = CAN_FILTERMODE_IDMASK;
+	filter.FilterScale = CAN_FILTERSCALE_32BIT;
+	filter.FilterIdHigh = 0x0000;
+	filter.FilterIdLow = 0x0000;
+	filter.FilterMaskIdHigh = 0x0000;
+	filter.FilterMaskIdLow = 0x0000;
+	filter.FilterFIFOAssignment = CAN_FILTER_FIFO0;
+	filter.FilterActivation = ENABLE;
+	filter.SlaveStartFilterBank = 14;
+
+	// Pick a filter bank in the half that belongs to this CAN
+	if (hcan == &hcan1) {
+		filter.FilterBank = 0;
+	} else {
+		filter.FilterBank = 14;   // CAN2 must use a bank >= SlaveStartFilterBank
+	}
+
+	if (HAL_CAN_ConfigFilter(hcan, &filter) != HAL_OK) {
+		uint8_t busIdx = FAULT_CAN_BUS_2;
+	    if (hcan == &hcan1) {
+	        busIdx = FAULT_CAN_BUS_1;
+	    }
+		RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
 		return HAL_ERROR;
 	}
-	s_rxCallbacks[s_numCallbacks++] = cb;
+
+	// Without this, HAL_CAN_RxFifo0MsgPendingCallback will never fire
+	if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
+		uint8_t busIdx = FAULT_CAN_BUS_2;
+	    if (hcan == &hcan1) {
+	        busIdx = FAULT_CAN_BUS_1;
+	    }
+
+		RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
+		return HAL_ERROR;
+	}
+
 	return HAL_OK;
 }
 
-// This must exist in exactly ONE C file in the project
+HAL_StatusTypeDef CAN_RegisterRxCallback(CanRxCallback_t callback) {
+	if (callbackCounter >= MAX_CAN_RX_CALLBACKS) {
+		return HAL_ERROR;
+	}
+	rxCallbacks[callbackCounter] = callback;
+	callbackCounter++;
+	return HAL_OK;
+}
+
+// HAL calls this when a message lands on FIFO0
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	CAN_RxHeaderTypeDef rxHeader;
 	uint8_t rxData[8];
 
+	uint8_t busIdx = FAULT_CAN_BUS_2;
+    if (hcan == &hcan1) {
+        busIdx = FAULT_CAN_BUS_1;
+    }
+
+	//kill before checking for error
+	KILL_ERROR(FAULT_CAN_RECEIVE_ERROR);
+
 	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rxHeader, rxData) != HAL_OK) {
-		//TODO: RaiseError();
-		//FUDEU
+
+		// FUDEU
+		RAISE_ERROR(FAULT_CAN_RECEIVE_ERROR, .channel_idx = busIdx);
 		return;
 	}
 
-	// Call all registered listeners
-	for (uint8_t i = 0; i < s_numCallbacks; ++i) {
-		if (s_rxCallbacks[i]) {
-			s_rxCallbacks[i](&rxHeader, rxData);
+
+
+	// Send it to everyone who registered
+	for (uint8_t i = 0; i < callbackCounter; i++) {
+		if (rxCallbacks[i] != NULL) {
+			rxCallbacks[i](&rxHeader, rxData);
 		}
 	}
 }
 
 /* ----------- CAN TX QUEUE ----------- */
-
-#define CAN_TX_QUEUE_SIZE   1024  // adjust as needed; must be power-of-2 only if you do bitmask tricks
 
 typedef struct {
 	CAN_HandleTypeDef *hcan;
@@ -64,21 +117,29 @@ uint16_t canTxHead = 0;
 uint16_t canTxTail = 0;
 CanTxItem_t canTxQueue[CAN_TX_QUEUE_SIZE];
 
-//Is queue empty?
+// check if the queuueeu is empty
 uint8_t CanTx_IsEmpty(void) {
-	return (canTxHead == canTxTail);
+	if (canTxHead == canTxTail) {
+		return 1;
+	}
+	return 0;
 }
 
 //A queue está cheia????
 uint8_t CanTx_IsFull(void) {
-	uint16_t next = (uint16_t) ((canTxHead + 1U) % CAN_TX_QUEUE_SIZE);
-	return (next == canTxTail);
+	uint16_t next = canTxHead + 1;
+	if (next >= CAN_TX_QUEUE_SIZE) {
+		next = 0;
+	}
+	if (next == canTxTail) {
+		return 1;
+	}
+	return 0;
 }
 
 //Função de background pra cagar tudo pro CAN
 void CanTx_ProcessQueue(void) {
-	// Try to send as many queued frames as there are free mailboxes - verys smart, thank you gpt :)
-	while (!CanTx_IsEmpty()) {
+	while (CanTx_IsEmpty() == 0) {
 
 		CanTxItem_t *item = &canTxQueue[canTxTail];
 
@@ -86,136 +147,165 @@ void CanTx_ProcessQueue(void) {
 		uint32_t mailbox;
 
 		TxH.StdId = item->id;
-		TxH.ExtId = 0U;
+		TxH.ExtId = 0;
 		TxH.IDE = CAN_ID_STD;
 		TxH.RTR = CAN_RTR_DATA;
 		TxH.DLC = item->dlc;
 		TxH.TransmitGlobalTime = DISABLE;
 
+		uint8_t busIdx = FAULT_CAN_BUS_2;
+		if (item->hcan == &hcan1) {
+			busIdx = FAULT_CAN_BUS_1;
+		}
+
 		// No free mailbox? Stop, will try again next time
-		if (HAL_CAN_GetTxMailboxesFreeLevel(item->hcan) == 0U) {
-			RAISE_ERROR(FAULT_CAN_MAILBOX_FULL, .channel_idx = (item->hcan == &hcan1) ? FAULT_CAN_BUS_1 : FAULT_CAN_BUS_2);
+		if (HAL_CAN_GetTxMailboxesFreeLevel(item->hcan) == 0) {
+			RAISE_ERROR(FAULT_CAN_MAILBOX_FULL, .channel_idx = busIdx);
 			break;
-		}else{
-			 KILL_ERROR(FAULT_CAN_MAILBOX_FULL);
+		} else {
+			KILL_ERROR(FAULT_CAN_MAILBOX_FULL);
 		}
 
 		if (HAL_CAN_AddTxMessage(item->hcan, &TxH, item->data, &mailbox) != HAL_OK) {
-
-			// TODO: log error, drop this frame and move on
-			// printConsole("CAN TX ERR ID=0x%03lX\r\n", (unsigned long)item->id);
-
-			 RAISE_ERROR(FAULT_CAN_SEND_ERROR, .channel_idx = (item->hcan == &hcan1) ? FAULT_CAN_BUS_1 : FAULT_CAN_BUS_2);
-
-			break;// Como dou brek, não tento outra vez
-		}else{
-			 KILL_ERROR(FAULT_CAN_SEND_ERROR);
+			RAISE_ERROR(FAULT_CAN_SEND_ERROR, .channel_idx = busIdx);
+			break;  // Como dou brek, não tento outra vez
+		} else {
+			KILL_ERROR(FAULT_CAN_SEND_ERROR);
 		}
 
-		// Pop from queue
-		canTxTail = (uint16_t) ((canTxTail + 1U) % CAN_TX_QUEUE_SIZE);
+		// Drop the item we just sent
+		canTxTail++;
+		if (canTxTail >= CAN_TX_QUEUE_SIZE) {
+			canTxTail = 0;
+		}
 	}
 }
 
 //Add message to queue
 HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, uint8_t dlc, const uint8_t *data) {
-	if (dlc > 8U) {
-		// TODO: return error cauz message too big
-		//return HAL_ERROR;
+	if (dlc > 8) {
+		return HAL_ERROR;
 	}
 
 	if (CanTx_IsFull()) {
-		// Queue overflow
-		// TODO: return error s
-		//return HAL_ERROR;
+		// Queue overflow - just drop it
 		return HAL_OK;
 	}
 
-	uint16_t pos = canTxHead;
-	canTxQueue[pos].hcan = hcan;
-	canTxQueue[pos].id = canID & 0x7FFU;   // standard ID
-	canTxQueue[pos].dlc = dlc;
+	canTxQueue[canTxHead].hcan = hcan;
+	canTxQueue[canTxHead].id = canID & 0x7FF;   // standard 11-bit ID
+	canTxQueue[canTxHead].dlc = dlc;
 
 	for (uint8_t i = 0; i < dlc; i++) {
-		canTxQueue[pos].data[i] = data[i];
+		canTxQueue[canTxHead].data[i] = data[i];
 	}
 
-	// Advance head atomically-ish
-	canTxHead = (uint16_t) ((pos + 1U) % CAN_TX_QUEUE_SIZE);
+	canTxHead++;
+	if (canTxHead >= CAN_TX_QUEUE_SIZE) {
+		canTxHead = 0;
+	}
 
 	return HAL_OK;
 }
 
+
 uint8_t CAN_IsStarted(CAN_HandleTypeDef *hcan) {
 	if (hcan == &hcan1) {
-		return s_can1Started;
+		return can1Started;
 	}
+
+	if (hcan == &hcan2) {
+		return can2Started;
+	}
+
 	return 0;
 }
 
-static void CAN_MarkStarted(CAN_HandleTypeDef *hcan, uint8_t started) {
-	if (hcan == &hcan1) {
-		s_can1Started = started;
+// Stop and start the CAN, update the started flag
+HAL_StatusTypeDef CAN_Restart(CAN_HandleTypeDef *hcan) {
+	HAL_CAN_Stop(hcan);
+
+	if (HAL_CAN_Start(hcan) == HAL_OK) {
+		if (hcan == &hcan1) {
+			can1Started = 1;
+		}
+
+		if (hcan == &hcan2) {
+			can2Started = 1;
+		}
+		return HAL_OK;
 	}
+
+	if (hcan == &hcan1) {
+		can1Started = 0;
+	}
+
+	if (hcan == &hcan2) {
+		can2Started = 0;
+	}
+	return HAL_ERROR;
 }
 
-static HAL_StatusTypeDef CAN_Restart(CAN_HandleTypeDef *hcan) {
-    (void)HAL_CAN_Stop(hcan);
-
-    if (HAL_CAN_Start(hcan) == HAL_OK) {
-        CAN_MarkStarted(hcan, 1);
-        return HAL_OK;
-    }
-
-    CAN_MarkStarted(hcan, 0);
-    return HAL_ERROR;
-}
 
 void CAN_Service(CAN_HandleTypeDef *hcan) {
 	uint32_t now = HAL_GetTick();
 
-	/* avoid hammering restart every single loop */
-	if ((now - s_lastCanRecoverTryMs) < 100) {
+	uint8_t busIdx = FAULT_CAN_BUS_2;
+	if (hcan == &hcan1) {
+	    busIdx = FAULT_CAN_BUS_1;
+	}
+
+	// Don't try to recover too often
+	if ((now - lastCanRecoverTry_time) < 100) {
 		return;
 	}
 
-	/* Case 1: not started yet */
-	if (!CAN_IsStarted(hcan)) {
+	// Not started yet -> try to start
+	if (CAN_IsStarted(hcan) == 0) {
 		if (HAL_CAN_Start(hcan) == HAL_OK) {
-			CAN_MarkStarted(hcan, 1);
+
+			if (hcan == &hcan1) {
+				can1Started = 1;
+			}
+
+			if (hcan == &hcan2) {
+				can2Started = 1;
+			}
+
 			KILL_ERROR(FAULT_CAN_INIT_ERROR);
-			//printfDebug("CAN started\n\r");
+
 		} else {
 
-			RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = FAULT_CAN_BUS_1);
-			CAN_MarkStarted(hcan, 0);
-			(void)CAN_Restart(hcan);
-			//printfDebug("CAN start failed\n\r");
+			RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
+
+			if (hcan == &hcan1) {
+				can1Started = 0;
+			}
+
+			if (hcan == &hcan2) {
+				can2Started = 0;
+			}
+
+			CAN_Restart(hcan);
 		}
-		s_lastCanRecoverTryMs = now;
-		//return;
-	}else{
+		lastCanRecoverTry_time = now;
+	} else {
 		KILL_ERROR(FAULT_CAN_INIT_ERROR);
 	}
 
-	/* Case 2: bus-off or other fatal CAN state */
-	uint32_t err = HAL_CAN_GetError(hcan);
-
-	if ((err & HAL_CAN_ERROR_BOF) != 0U) {
-		//printfDebug("CAN bus-off, restarting...\n\r");
-		//TODO: HAL_StatusTypeDef HAL_CAN_ResetError(CAN_HandleTypeDef *hcan)
-		(void)CAN_Restart(hcan);
-		s_lastCanRecoverTryMs = now;
+	// Bus-off try restart
+	uint32_t can_error = HAL_CAN_GetError(hcan);
+	if ((can_error & HAL_CAN_ERROR_BOF) != 0) {
+		CAN_Restart(hcan);
+		lastCanRecoverTry_time = now;
 		return;
 	}
 
-	/* Optional: if peripheral reports not ready/listening, try restart too */
-	HAL_CAN_StateTypeDef st = HAL_CAN_GetState(hcan);
-	if ((st == HAL_CAN_STATE_RESET) || (st == HAL_CAN_STATE_READY)) {
-		//printfDebug("CAN not running, restarting...\n\r");
-		//TODO: HAL_StatusTypeDef HAL_CAN_ResetError(CAN_HandleTypeDef *hcan)
-		(void)CAN_Restart(hcan);
-		s_lastCanRecoverTryMs = now;
+	// CAN not in a running state try restart
+	HAL_CAN_StateTypeDef can_state = HAL_CAN_GetState(hcan);
+	if (can_state == HAL_CAN_STATE_RESET || can_state == HAL_CAN_STATE_READY) {
+		CAN_Restart(hcan);
+		lastCanRecoverTry_time = now;
 		return;
 	}
 }
