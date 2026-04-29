@@ -7,6 +7,7 @@
 
 #include "adbms_to_CAN.h"
 #include "adBms_Application.h"
+#include "fan_management.h"
 
 #include "can.h"
 #include "dbc/powertrain_t26.h"
@@ -52,10 +53,10 @@ HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan) {
 	uint8_t data[8];
 	int len;
 
-	int overall_vmax = 0U;
-	int overall_vmin = 0xFFFFU;
-	int overall_tmax = 0U;
-	int overall_tmin = 0xFFFFU;
+	uint16_t overall_vmax = 0U;
+	uint16_t overall_vmin = 0xFFFFU;
+	uint16_t overall_tmax = 0U;
+	uint16_t overall_tmin = 0xFFFFU;
 
 	for (uint8_t module = 0; module < TOTAL_IC && module < 12; module++) {
 		const cell_asic *ic = &SLAVE[module];   // atualizar para a versão segura
@@ -78,6 +79,8 @@ HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan) {
 				overall_tmin = t;
 		}
 	}
+
+	Update_Fan_Temperature(overall_tmax);
 
 	struct powertrain_t26_master_msc_id_3_t m3 = { 0 };
 	m3.overall_maximum_voltage = overall_vmax;

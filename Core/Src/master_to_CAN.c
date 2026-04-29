@@ -18,6 +18,7 @@
 #include "main.h"
 #include "brain.h"
 #include "fault_manager.h"
+#include "fan_management.h"
 
 /* Set version */
 #define MASTER_FW_VERSION    7
@@ -186,7 +187,7 @@ HAL_StatusTypeDef Master_CAN_Send_MSC_1(CAN_HandleTypeDef *hcan) {
 	msg.ams_current_draw = powertrain_t26_master_msc_id_1_ams_current_draw_encode(analog_readings->ams_master_current);
 	msg.master_firmware_version = MASTER_FW_VERSION;
 	msg.adbms_pec_error = pec_error_detected;
-	msg.master_fan_pwm = MASTER_FAN_PWM_DEFAULT;
+	msg.master_fan_pwm = Get_Fan_PWM();
 	msg.master_state = (uint8_t) AMS_State;
 
 	packed_length = powertrain_t26_master_msc_id_1_pack(data, &msg, sizeof(data));

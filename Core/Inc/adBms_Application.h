@@ -26,6 +26,8 @@ and its licensor.
 #include "adbms_main.h"
 #include "cell_balancing.h"
 
+//max device counter - initial detection
+#define ADBMS_MAX_DEVICES 63
 #define TOTAL_IC 6
 extern cell_asic IC[TOTAL_IC];
 extern cell_asic SLAVE[TOTAL_IC];
@@ -99,6 +101,7 @@ void adBms6830_read_rdasall_voltage(uint8_t tIC, cell_asic *ic);
 
 void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic);
 void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic);
+uint8_t adBms6830_daisychain_device_counter(void);
 
 #endif
 /** @}*/

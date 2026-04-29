@@ -45,8 +45,8 @@ Core/Src/adbms_to_CAN.o: ../Core/Src/adbms_to_CAN.c \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830ParseCreate.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/mcuWrapper.h ../Core/Inc/stm32f4xx_it.h \
- ../Core/Inc/cell_balancing.h ../Core/Inc/can.h \
- ../Core/Inc/dbc/powertrain_t26.h
+ ../Core/Inc/cell_balancing.h ../Core/Inc/fan_management.h \
+ ../Core/Inc/can.h ../Core/Inc/dbc/powertrain_t26.h
 ../Core/Inc/adbms_to_CAN.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -99,5 +99,6 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/mcuWrapper.h:
 ../Core/Inc/stm32f4xx_it.h:
 ../Core/Inc/cell_balancing.h:
+../Core/Inc/fan_management.h:
 ../Core/Inc/can.h:
 ../Core/Inc/dbc/powertrain_t26.h:

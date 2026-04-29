@@ -1,9 +1,4 @@
-../Core/Inc/fan_management.h:67:23:FanMgr_ClampPWM	16	static
-../Core/Src/fan_management.c:14:12:cmp_desc	32	static
-../Core/Src/fan_management.c:29:12:cmp_asc	32	static
-../Core/Src/fan_management.c:45:6:PID_Init	48	static
-../Core/Src/fan_management.c:65:6:PID_SetTunings	24	static
-../Core/Src/fan_management.c:74:6:PID_FromZieglerNichols	48	static
-../Core/Src/fan_management.c:111:7:PID_Update	40	static
-../Core/Src/fan_management.c:155:7:FanMgr_ComputeControlTemp	56	static
-../Core/Src/fan_management.c:213:9:FanMgr_UpdatePWM	32	static
+../Core/Src/fan_management.c:39:9:Get_Fan_PWM	4	static
+../Core/Src/fan_management.c:44:6:Update_Fan_Temperature	16	static
+../Core/Src/fan_management.c:50:6:Fan_Start	8	static
+../Core/Src/fan_management.c:57:6:Fan_Update	48	static

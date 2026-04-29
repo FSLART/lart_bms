@@ -39,7 +39,7 @@ Core/Src/master_to_CAN.o: ../Core/Src/master_to_CAN.c \
  ../Core/Inc/brain.h ../Core/Inc/can.h ../Core/Inc/analog_readings.h \
  ../Core/Inc/precharge.h ../Core/Inc/brain.h ../Core/Inc/can.h \
  ../Core/Inc/dbc/powertrain_t26.h ../Core/Inc/main.h \
- ../Core/Inc/fault_manager.h
+ ../Core/Inc/fault_manager.h ../Core/Inc/fan_management.h
 ../Core/Inc/master_to_CAN.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -87,3 +87,4 @@ Core/Src/master_to_CAN.o: ../Core/Src/master_to_CAN.c \
 ../Core/Inc/dbc/powertrain_t26.h:
 ../Core/Inc/main.h:
 ../Core/Inc/fault_manager.h:
+../Core/Inc/fan_management.h:

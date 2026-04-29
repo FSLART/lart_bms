@@ -461,6 +461,9 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 
 		case STARTUP_START_AVG:
 
+			//find initial slaves in the chain
+			uint8_t slaves_found = adBms6830_daisychain_device_counter();
+
 			g_balance_cfg_initialized = false;
 			adBms6830_init_config(TOTAL_IC, &IC[0]);
 
@@ -1297,6 +1300,47 @@ uint16_t adBms6830_FindMinVoltageGlobally(void) {
 	}
 
 	return min_cell_mV;
+
+}
+
+/**
+ *******************************************************************************
+ * @brief Count how many 6830 are in the daisy chain
+ *******************************************************************************
+ */
+uint8_t adBms6830_daisychain_device_counter(void) {
+
+
+	uint8_t device_counter = 0;
+
+	cell_asic TEMP_SLAVE[ADBMS_MAX_DEVICES] = {0};
+
+	// a puta do {0} crashava o  processador fds
+	//memset(TEMP_SLAVE, 0, sizeof(TEMP_SLAVE));
+
+	adBmsWakeupIc(ADBMS_MAX_DEVICES);
+	adBmsReadData(ADBMS_MAX_DEVICES, &TEMP_SLAVE[0], RDSID, Sid, NONE);
+
+	for(uint8_t device = 0; device < ADBMS_MAX_DEVICES; device++) {
+		if(TEMP_SLAVE[device].cccrc.sid_pec == 0) {
+			device_counter++;
+		}
+	}
+
+	if (device_counter < 1) {
+
+		printfDebug("Chain BAD: %d device(s) confirmed.\r\n", device_counter);
+
+	}else if (device_counter > 1) {
+
+		printfDebug("Chain OK: %d device(s) confirmed.\r\n", device_counter);
+	}else{
+
+		printfDebug("Chain mega error, stupid\r\n", device_counter);
+
+	}
+
+	return device_counter;
 
 }
 

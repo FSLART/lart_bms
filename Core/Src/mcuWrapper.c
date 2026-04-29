@@ -419,6 +419,9 @@ void adBmsWakeupIc(uint8_t total_ic)
     Delay_ms(WAKEUP_DELAY);
     adBmsCsHigh();
     Delay_ms(WAKEUP_DELAY);
+
+    //PRA N DAR MERDA
+	HAL_WWDG_Refresh(&hwwdg);
   }
 }
 

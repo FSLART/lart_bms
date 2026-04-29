@@ -18,6 +18,7 @@
 #include "bootloader_jumper.h"
 
 #include "analog_readings.h"
+#include "fan_management.h"
 #include "bms_eeprom_config.h"
 #include "isa_ivt-s.h"
 #include "contactors.h"
@@ -68,8 +69,9 @@ void brain_start(void) {
 	// Start Timers
 	//HAL_TIM_Base_Start_IT(&htim8);
 	//HAL_TIM_Base_Start_IT(&htim10);
-	HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1); // start pwm
-	__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, 0);
+	//HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1); // start pwm
+	//__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, 0);
+	Fan_Start();
 
 	printfConsole("Start Program \n\r");
 	printfDebug("Bluetooth, u up? \r\n");
@@ -90,7 +92,7 @@ void brain_start(void) {
 		BmsConfig_LoadDefaults();
 	}
 
-	BmsConfig_DumpEEPROM(&eep24fc08);
+	//BmsConfig_DumpEEPROM(&eep24fc08);
 
 	//IVT_CAN_Setup_AllMessages(&hcan1);
 	IVT_CAN_Setup(&hcan1);
@@ -235,6 +237,8 @@ void brain_loop(void) {
 		//AnalogReadings_CAN_Send(&hcan1);
 		Master_CAN_SendAll(&hcan1);
 		//FaultManager_CAN_Send(&hcan1);
+
+		Fan_Update();
 		faultCheck = false;
 
 	}

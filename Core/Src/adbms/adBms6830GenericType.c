@@ -25,6 +25,7 @@
 #include "common.h"
 #include "adbms_main.h"
 #include "uartDMA.h"
+#include "fault_manager.h"
 
 //Send variable out to CAN Messaging processing
 uint8_t anyPecError = 0;
@@ -346,9 +347,11 @@ void adBmsReadData(uint8_t tIC, cell_asic *ic, uint8_t cmd_arg[2], TYPE type, GR
 			}
 		}
 
+		KILL_ERROR(FAULT_PEC_ERROR);
 		if (anyPecError) {
 			//HAL_GPIO_WritePin(LED_isoSPI_STATUS_GPIO_Port, LED_isoSPI_STATUS_Pin, GPIO_PIN_SET);
 			HAL_GPIO_TogglePin(LED_isoSPI_STATUS_GPIO_Port, LED_isoSPI_STATUS_Pin);
+			RAISE_ERROR(FAULT_PEC_ERROR);
 		} else {
 			HAL_GPIO_WritePin(LED_isoSPI_STATUS_GPIO_Port, LED_isoSPI_STATUS_Pin, GPIO_PIN_RESET);
 		}
