@@ -119,7 +119,7 @@ HAL_StatusTypeDef ADBMS_CAN_SendMSC_Module(CAN_HandleTypeDef *hcan, uint8_t modu
 	float ic_temp_c = (itmp_voltage / 0.0075f) - 273.0f;
 	if (ic_temp_c < 0.0f)
 		ic_temp_c = 0.0f;
-	int ic_temp = (int) (ic_temp_c + 0.5f);
+	int ic_temp = (int) (ic_temp_c + 0.5f - 100.0f);
 
 	// Open wire identifier byte:
 	uint8_t open_wire = 0;

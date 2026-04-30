@@ -19,6 +19,7 @@
 #include "brain.h"
 #include "fault_manager.h"
 #include "fan_management.h"
+#include "adBms_Application.h"
 
 /* Set version */
 #define MASTER_FW_VERSION    7
@@ -271,42 +272,59 @@ HAL_StatusTypeDef Master_CAN_Send_MSC_2(CAN_HandleTypeDef *hcan) {
 	POWERTRAIN_T26_MASTER_MSC_ID_2_LENGTH, data);
 }
 
-HAL_StatusTypeDef Master_CAN_SendPrecharge(CAN_HandleTypeDef *hcan)
-{
-    if (hcan == NULL) {
-        return HAL_ERROR;
-    }
+HAL_StatusTypeDef Master_CAN_Send_MSC_4(CAN_HandleTypeDef *hcan) {
+	if (hcan == NULL) {
+		return HAL_ERROR;
+	}
 
-    struct powertrain_t26_master_pre_charge_id_1_t msg = { 0 };
-    uint8_t data[POWERTRAIN_T26_MASTER_PRE_CHARGE_ID_1_LENGTH];
-    int packed_length;
+	struct powertrain_t26_master_msc_id_4_t msg = { 0 };
+	uint8_t data[POWERTRAIN_T26_MASTER_MSC_ID_4_LENGTH];
+	int packed_length;
 
-    msg.precharge_ctc_air_pos_state   = read_contactor_state(CONTACT_AIR_positivo_GPIO_Port, CONTACT_AIR_positivo_Pin);
-    msg.precharge_ctc_air_min_state   = read_contactor_state(CONTACT_AIR_negativo_GPIO_Port, CONTACT_AIR_negativo_Pin);
-    msg.precharge_ctc_charge_state    = read_contactor_state(CONTACT_PRE_GPIO_Port,          CONTACT_PRE_Pin);
-    msg.precharge_ctc_discharge_state = read_contactor_state(CONTACT_DSCH_GPIO_Port,         CONTACT_DSCH_Pin);
-    msg.precharge_state               = (uint8_t)Precharge_GetState();
+	msg.slaves_detected = (uint8_t) slaves_found;
 
-    packed_length = powertrain_t26_master_pre_charge_id_1_pack(data, &msg, sizeof(data));
-    if (packed_length < 0) {
-        return HAL_ERROR;
-    }
+	packed_length = powertrain_t26_master_msc_id_4_pack(data, &msg, sizeof(data));
+	if (packed_length < 0) {
+		return HAL_ERROR;
+	}
 
-    return CAN_TX_Add_To_Queue(hcan,
-        POWERTRAIN_T26_MASTER_PRE_CHARGE_ID_1_FRAME_ID,
-        POWERTRAIN_T26_MASTER_PRE_CHARGE_ID_1_LENGTH,
-        data);
+	return CAN_TX_Add_To_Queue(hcan, POWERTRAIN_T26_MASTER_MSC_ID_4_FRAME_ID, POWERTRAIN_T26_MASTER_MSC_ID_4_LENGTH, data);
 }
 
-HAL_StatusTypeDef Master_CAN_SendAll(CAN_HandleTypeDef *hcan)
-{
-    HAL_StatusTypeDef result_msc1      = Master_CAN_Send_MSC_1(hcan);
-    HAL_StatusTypeDef result_msc2      = Master_CAN_Send_MSC_2(hcan);
-    HAL_StatusTypeDef result_precharge = Master_CAN_SendPrecharge(hcan);
+HAL_StatusTypeDef Master_CAN_SendPrecharge(CAN_HandleTypeDef *hcan) {
+	if (hcan == NULL) {
+		return HAL_ERROR;
+	}
 
-    if (result_msc1 != HAL_OK || result_msc2 != HAL_OK || result_precharge != HAL_OK) {
-        return HAL_ERROR;
-    }
+	struct powertrain_t26_master_pre_charge_id_1_t msg = { 0 };
+	uint8_t data[POWERTRAIN_T26_MASTER_PRE_CHARGE_ID_1_LENGTH];
+	int packed_length;
 
-    return HAL_OK;
+	msg.precharge_ctc_air_pos_state = read_contactor_state(CONTACT_AIR_positivo_GPIO_Port, CONTACT_AIR_positivo_Pin);
+	msg.precharge_ctc_air_min_state = read_contactor_state(CONTACT_AIR_negativo_GPIO_Port, CONTACT_AIR_negativo_Pin);
+	msg.precharge_ctc_charge_state = read_contactor_state(CONTACT_PRE_GPIO_Port, CONTACT_PRE_Pin);
+	msg.precharge_ctc_discharge_state = read_contactor_state(CONTACT_DSCH_GPIO_Port, CONTACT_DSCH_Pin);
+	msg.precharge_state = (uint8_t) Precharge_GetState();
+
+	packed_length = powertrain_t26_master_pre_charge_id_1_pack(data, &msg, sizeof(data));
+	if (packed_length < 0) {
+		return HAL_ERROR;
+	}
+
+	return CAN_TX_Add_To_Queue(hcan,
+	POWERTRAIN_T26_MASTER_PRE_CHARGE_ID_1_FRAME_ID,
+	POWERTRAIN_T26_MASTER_PRE_CHARGE_ID_1_LENGTH, data);
+}
+
+HAL_StatusTypeDef Master_CAN_SendAll(CAN_HandleTypeDef *hcan) {
+	HAL_StatusTypeDef result_msc1 = Master_CAN_Send_MSC_1(hcan);
+	HAL_StatusTypeDef result_msc2 = Master_CAN_Send_MSC_2(hcan);
+	HAL_StatusTypeDef result_msc4 = Master_CAN_Send_MSC_4(hcan);
+	HAL_StatusTypeDef result_precharge = Master_CAN_SendPrecharge(hcan);
+
+	if (result_msc1 != HAL_OK || result_msc2 != HAL_OK || result_precharge != HAL_OK || result_msc4 != HAL_OK) {
+		return HAL_ERROR;
+	}
+
+	return HAL_OK;
 }

@@ -14,6 +14,7 @@
 
 HAL_StatusTypeDef Master_CAN_Send_MSC_1(CAN_HandleTypeDef *hcan);
 HAL_StatusTypeDef Master_CAN_Send_MSC_2(CAN_HandleTypeDef *hcan);
+HAL_StatusTypeDef Master_CAN_Send_MSC_4(CAN_HandleTypeDef *hcan);
 HAL_StatusTypeDef Master_CAN_SendPrecharge(CAN_HandleTypeDef *hcan);
 HAL_StatusTypeDef Master_CAN_SendAll(CAN_HandleTypeDef *hcan);
 

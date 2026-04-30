@@ -1,8 +1,9 @@
-../Core/Src/master_to_CAN.c:52:9:read_contactor_state	24	static
-../Core/Src/master_to_CAN.c:65:9:count_active_faults	16	static
-../Core/Src/master_to_CAN.c:82:9:get_fault_index_type	16	static
-../Core/Src/master_to_CAN.c:131:9:get_fault_index_value	24	static
-../Core/Src/master_to_CAN.c:164:19:Master_CAN_Send_MSC_1	48	static
-../Core/Src/master_to_CAN.c:207:19:Master_CAN_Send_MSC_2	56	static
-../Core/Src/master_to_CAN.c:274:19:Master_CAN_SendPrecharge	40	static
-../Core/Src/master_to_CAN.c:301:19:Master_CAN_SendAll	24	static
+../Core/Src/master_to_CAN.c:53:9:read_contactor_state	24	static
+../Core/Src/master_to_CAN.c:66:9:count_active_faults	16	static
+../Core/Src/master_to_CAN.c:83:9:get_fault_index_type	16	static
+../Core/Src/master_to_CAN.c:132:9:get_fault_index_value	24	static
+../Core/Src/master_to_CAN.c:165:19:Master_CAN_Send_MSC_1	48	static
+../Core/Src/master_to_CAN.c:208:19:Master_CAN_Send_MSC_2	56	static
+../Core/Src/master_to_CAN.c:275:19:Master_CAN_Send_MSC_4	32	static
+../Core/Src/master_to_CAN.c:294:19:Master_CAN_SendPrecharge	40	static
+../Core/Src/master_to_CAN.c:319:19:Master_CAN_SendAll	24	static
