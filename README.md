@@ -1,267 +1,139 @@
-# ⚡ BMS STM32F412 -- ADBMS6830 Project
+# BMS STM32F412 + ADBMS6830
+
+![Master V2 PCB](PCB/master_v2.png)
+
+Simple Battery Management System firmware for an STM32F412 master board using Analog Devices ADBMS6830 battery-monitor ICs.
+
+The project reads cell voltages, temperatures, current sensor data and contactor feedback, then sends the important information over CAN to the Powertrain Bus.
+
+## Main hardware
+
+- STM32F412RET6 microcontroller
+- ADBMS6830 battery monitoring ICs
+- isoSPI daisy chain for the BMS slaves
+- CAN bus for telemetry and commands
+- External EEPROM for saved configuration
+- IVT-S current / voltage sensor
+- Precharge, AIR+, AIR- and discharge contactors
+- PWM fan output
+
+## Main features
+
+- Cell voltage measurement
+- Thermistor temperature measurement
+- Open-wire detection
+- Passive cell balancing
+- Precharge state machine
+- Contactor feedback service
+- CAN telemetry using `powertrain_t26.dbc`
+- Fault manager with active fault tracking
+- SOC estimate using cell voltage and IVT-S ampere-second counter
+- UART debug output using DMA
+- Watchdog reset detection
+- CAN bootloader jump command
+
+## Important firmware modules
+
+| File | Purpose |
+| --- | --- |
+| `main.c` | STM32 HAL startup and peripheral initialization |
+| `brain.c` | Main BMS state machine |
+| `adBms_Application.c` | ADBMS6830 measurement and balancing flow |
+| `adbms_to_CAN.c` | Sends slave voltage, temperature and status data over CAN |
+| `master_to_CAN.c` | Sends master board status, faults and contactor data over CAN |
+| `precharge.c` | Controls the precharge sequence and contactors |
+| `contactors.c` | Simple open / close functions for contactors |
+| `cell_balancing.c` | Passive balancing logic |
+| `analog_readings.c` | ADC + DMA readings for MCU temperature, VREF and on board current sensor |
+| `isa_ivt-s.c` | IVT-S CAN sensor configuration and decoding |
+| `soc.c` | SOC estimation |
+| `fault_manager.c` | Fault storage, history and CAN fault reporting |
+| `can.c` | CAN RX callbacks and TX queue |
+| `fan_management.c` | Temperature-based PWM fan control |
+| `bms_eeprom_config.c` | EEPROM configuration storage |
+| `bootloader_jumper.c` | Jump to STM32 system bootloader over CAN command |
+| `uartDMA.c` | UART debug / UI output using DMA |
+
+## BMS states
+
+The main state machine is defined in `brain.h`:
+
+```c
+BALANCING
+CHARGING
+IDLE
+ONMISSION
+STARTUP
+FAULT
+```
+
+## Basic firmware flow
+
+1. `main.c` initializes the STM32 peripherals.
+2. `brain_start()` initializes CAN, EEPROM, fan control, analog readings, IVT-S, precharge and fault handling.
+3. `brain_loop()` runs forever.
+4. Depending on the BMS state, the firmware reads the ADBMS6830 chain, balances cells, checks faults and sends CAN messages.
+5. If a serious fault happens, the system can open the contactors and move to a safe state.
+
+## CAN communication
+
+The firmware uses the `powertrain_t26.dbc` file.
+
+CAN is used for:
+
+- Slave cell voltages
+- Slave temperatures
+- Module status
+- Master board status
+- Fault reporting
+- IVT-S sensor readings
+- Precharge commands
+- Cell balancing commands
+- Bootloader jump command
+
+## Precharge sequence
+
+The precharge module controls the high-voltage startup sequence:
+
+1. Open all contactors
+2. Close AIR-
+3. Close precharge contactor
+4. Check current and bus voltage
+5. Close AIR+
+6. Open precharge contactor
+7. Keep checking contactor feedback
 
-## 📘 Overview
+If something is wrong, the firmware opens the contactors and enters a safe state.
 
-This project implements a **Battery Management System (BMS)** using the
-**Analog Devices ADBMS6830** battery monitoring IC and an
-**STM32F412RET6** microcontroller as the system controller.
+## Cell balancing
 
-The firmware manages a **daisy-chained stack of ADBMS6830 devices via
-isoSPI**, monitors analog and CAN sensors, and exports telemetry through
-**CAN bus and UART DMA**.
+Balancing is passive and controlled through the ADBMS6830 discharge outputs.
 
-Main responsibilities of the system include:
+The firmware:
 
--   Cell voltage and temperature monitoring
--   CAN telemetry broadcasting
--   Contactor and precharge state-machine control
--   Analog sensor acquisition via ADC + DMA
--   Fault monitoring and error reporting
--   UART telemetry for debugging / UI integration
+- Finds the lowest valid cell voltage in the pack
+- Compares every cell against that minimum
+- Enables discharge on cells that are too high
+- Stops balancing when the cells are inside the configured deadband
 
-The project is implemented in **bare-metal C using STM32 HAL**, with
-modular drivers for each subsystem.
+## Fault handling
 
-------------------------------------------------------------------------
+The fault manager tracks active faults and stores context such as:
 
-# 🧱 System Architecture
+- Time of the fault
+- Measured value
+- Threshold value
+- Slave index
+- Cell index
+- CAN channel
+- Contactor mismatch bits
 
-## MCU
+Faults are also sent over CAN so they can be shown in the dashboard.
 
--   **STM32F412RET6**
--   Cortex-M4 @ **100 MHz**
--   HAL-based firmware
--   **Bare-metal scheduling (interrupt driven)**
+## Build target
 
-------------------------------------------------------------------------
+This project is made for STM32CubeIDE / STM32 HAL and targets:
 
-# 🔋 Battery Monitoring IC
-
-### ADBMS6830
-
-The **ADBMS6830** monitors battery cells and auxiliary channels in a
-daisy-chained architecture.
-
-Key capabilities:
-
--   **12 cell voltage measurements per IC**
--   **6 auxiliary inputs**
--   **isoSPI communication**
--   **PEC (CRC) validation**
--   **Open-wire detection**
-
-The driver uses the **Analog Devices BMS library** and parses results
-into structured arrays.
-
-------------------------------------------------------------------------
-
-# 📡 Communication Interfaces
-
-  Interface     Purpose
-  ------------- ------------------------------------
-  SPI1          Communication with ADBMS6830 chain
-  CAN1          Telemetry broadcast
-  UART (DMA)    Debug console / telemetry output
-  ADC1          Analog sensor readings
-  GPIO / EXTI   Contactor feedback interrupts
-
-------------------------------------------------------------------------
-
-# 🧩 Firmware Modules
-
-## 🧠 System Controller
-
-### `brain.c`
-
-Central firmware logic:
-
--   State machine management
--   Fault detection
--   Runtime counters
--   Scheduler interaction
-
-Main BMS states:
-
-    STARTUP
-    IDLE
-    BALANCING
-    CHARGING
-    ONMISSION
-    INACTIVE
-
-------------------------------------------------------------------------
-
-## 🔌 Precharge & Contactor Control
-
-### `precharge.c`
-
-Implements the high-voltage system startup sequence.
-
-Precharge stages:
-
-    START
-    OPEN_ALL
-    SWITCH_HVNEG
-    DELAY1
-    VERIFY1
-    SWITCH_PRECHARGE
-    DELAY2
-    VERIFY2
-    VERIFY_CURRENT
-    VERIFY_BUS_VOLT
-    SWITCH_HVPOS
-    DELAY3
-    VERIFY3
-    TURN_OFF_PRECHARGE
-    DELAY4
-    VERIFY4
-    END
-
-Additional states:
-
-    KILL
-    RX_CAN
-    WRONG
-
-------------------------------------------------------------------------
-
-# 🔋 Battery Telemetry → CAN
-
-### `adbms_to_CAN.c`
-
-This module converts ADBMS measurements into CAN frames defined by the
-AMS DBC file.
-
-Main functions:
-
-    ADBMS_CAN_SendVoltages_Module()
-    ADBMS_CAN_SendTemperatures_Module()
-    ADBMS_CAN_SendAll()
-
-------------------------------------------------------------------------
-
-# 🌡️ Temperature Monitoring
-
-Temperature measurements come from two sources:
-
-### BMS Thermistors
-
-Measured through the **ADBMS6830 auxiliary channels**.
-
-### MCU Internal Temperature
-
-The STM32 internal temperature sensor is read through **ADC1**.
-
-------------------------------------------------------------------------
-
-# 📊 Analog Sensor Acquisition
-
-### `analog_readings.c`
-
-Handles **ADC measurements using DMA**.
-
-Example inputs:
-
--   Current sensor
--   Voltage sense
--   MCU temperature
--   Vref reference
-
-------------------------------------------------------------------------
-
-# ⚙️ Contactor Feedback System
-
-The contactor feedback pins trigger **external interrupts (EXTI)**.
-
-Each interrupt updates a feedback counter representing the mechanical
-contactor state.
-
-This ensures:
-
--   Contactors physically switched
--   Wiring integrity
--   No stuck relays
-
-------------------------------------------------------------------------
-
-# ⏱️ Timing System
-
-Timers are used for multiple timing tasks:
-
-  Timer     Purpose
-  --------- ---------------------
-  TIM2      Microsecond delays
-  TIM5      SPI timing
-  SysTick   1 ms system tick
-  EXTI      Feedback interrupts
-
-------------------------------------------------------------------------
-
-# 🧠 Error Handling
-
-The BMS tracks system errors through an error status structure.
-
-Examples:
-
-    ERROR_SDC_TRIGGERED
-    ERROR_IMD_TRIGGERED
-    ERROR_CONTACTORS_MISMATCH
-    ERROR_CAN_FAILED
-    ERROR_OVERVOLTAGE
-    ERROR_OVERCURRENT
-    ERROR_BMS_OW
-    ERROR_BMS_FAIL
-
-------------------------------------------------------------------------
-
-# 📂 Project Structure
-
-    Core/
-    ├── Src/
-    │   ├── main.c
-    │   ├── brain.c
-    │   ├── precharge.c
-    │   ├── contactors.c
-    │   ├── can.c
-    │   ├── adbms_to_CAN.c
-    │   ├── analog_readings.c
-    │   ├── uartDMA.c
-    │   ├── mcuWrapper.c
-    │   ├── serialPrintResult.c
-    │   └── adBms_Application.c
-    │
-    ├── Inc/
-    │   ├── brain.h
-    │   ├── precharge.h
-    │   ├── can.h
-    │   ├── adbms_to_CAN.h
-    │   ├── analog_readings.h
-    │   └── main.h
-    │
-    Drivers/
-    ├── STM32 HAL
-    └── Analog Devices ADBMS6830 library
-
-------------------------------------------------------------------------
-
-# ✅ Current Status
-
-  Feature                   Status
-  ------------------------- --------------------
-  ADBMS6830 Communication   ✅ Working
-  isoSPI Daisy Chain        ✅ Verified
-  CAN Telemetry             ✅ Operational
-  Precharge Sequence        ✅ Implemented
-  ADC Analog Readings       ✅ Working
-  Contactor Feedback        ✅ Interrupt based
-  UART DMA Debug            ✅ Working
-  Fault Handling            ✅ Implemented
-
-------------------------------------------------------------------------
-
-# 📜 License
-
-This firmware is developed for research and testing of **Battery
-Management Systems using STM32 and Analog Devices BMS ICs**.
-
-All rights reserved © 2026.
+```text
+STM32F412RET6
+```
