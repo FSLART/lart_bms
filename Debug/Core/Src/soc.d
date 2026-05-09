@@ -35,7 +35,17 @@ Core/Src/soc.o: ../Core/Src/soc.c ../Core/Inc/soc.h ../Core/Inc/can.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
- ../Core/Inc/uartDMA.h ../Core/Inc/dbc/powertrain_t26.h
+ ../Core/Inc/adbms_application.h ../Core/Inc/adbms_main.h \
+ ../Core/Inc/brain.h ../Core/Inc/common.h \
+ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h \
+ ../Core/Inc/common.h \
+ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830GenericType.h \
+ ../Core/Inc/adbms_main.h \
+ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830ParseCreate.h \
+ C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h \
+ ../Core/Inc/mcuWrapper.h ../Core/Inc/stm32f4xx_it.h \
+ ../Core/Inc/cell_balancing.h ../Core/Inc/uartDMA.h \
+ ../Core/Inc/dbc/powertrain_t26.h
 ../Core/Inc/soc.h:
 ../Core/Inc/can.h:
 ../Core/Inc/main.h:
@@ -75,5 +85,18 @@ Core/Src/soc.o: ../Core/Src/soc.c ../Core/Inc/soc.h ../Core/Inc/can.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h:
+../Core/Inc/adbms_application.h:
+../Core/Inc/adbms_main.h:
+../Core/Inc/brain.h:
+../Core/Inc/common.h:
+C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
+../Core/Inc/common.h:
+C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830GenericType.h:
+../Core/Inc/adbms_main.h:
+C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830ParseCreate.h:
+C:/Users/jpser/Documents/GitHub/lart_bms/Core/Inc/adbms/adBms6830Data.h:
+../Core/Inc/mcuWrapper.h:
+../Core/Inc/stm32f4xx_it.h:
+../Core/Inc/cell_balancing.h:
 ../Core/Inc/uartDMA.h:
 ../Core/Inc/dbc/powertrain_t26.h:

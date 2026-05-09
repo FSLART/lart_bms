@@ -552,6 +552,8 @@ adbms_result_state adbms_main(AMSStates_t ams_state) {
 		break;
 
 	}
+
+	return ADBMS_ONGOING;
 }
 
 void run_command(int cmd) {
@@ -1284,9 +1286,8 @@ uint16_t adBms6830_FindMinVoltageGlobally(void) {
 	//encontrar a celula com menor tensão
 	uint16_t min_cell_mV = 65535;
 
-	printfDebug("c_codes[0][0]=%d  ac_codes[0][0]=%d\r\n", SLAVE[0].cell.c_codes[0], SLAVE[0].acell.ac_codes[0]);
-
 	for (uint8_t slave = 0; slave < slaves_found; slave++) {
+		printfDebug("c_codes[slave][0]=%d  ac_codes[slave][0]=%d\r\n", SLAVE[slave].cell.c_codes[0], SLAVE[slave].acell.ac_codes[0]);
 		for (uint8_t cell = 0; cell < CELL; cell++) {
 
 			int16_t raw_value = SLAVE[slave].acell.ac_codes[cell];

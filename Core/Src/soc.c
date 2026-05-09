@@ -10,17 +10,23 @@
 
 #include "soc.h"
 #include "can.h"
+#include "adbms_application.h"
 #include "uartDMA.h"
 #include "dbc/powertrain_t26.h"
-
-// 3 celulas paralelo * 4.5 Ah / cell = 13.5 Ah
-#define PACK_CAPACITY_AH 13.5f
 
 /*
  * +1 : the As value goes UP when the pack is being discharged
  * -1 : the As value goes DOWN when the pack is being discharged
  */
 #define DISCHARGE_SIGN (+1)
+
+/*
+ * Pack capacity:
+ * Your pack is 3P, so capacity is 3 * 4.5Ah = 13.5Ah.
+ * The number of series cells does NOT multiply Ah capacity.
+ */
+#define SOC_CELL_CAPACITY_AH     4.5
+#define SOC_PARALLEL_CELLS       3.0
 
 // SOC lookup table para INR-21700-P45B @25ºC acho
 typedef struct {
@@ -51,8 +57,12 @@ bool baseline_valid = false;
 //SOC_Init() chamado?
 bool init_done = false;
 
-//capacidade da mega pilha em Ampere-segundos (Ah * 3600)
-float pack_capacity_As = PACK_CAPACITY_AH * 3600;
+//returns negative As when the pack has charged and vice verse
+int32_t SOC_GetDischarged_As(int32_t as_now) {
+	int32_t delta_as = as_now - as_baseline;
+
+	return (int32_t) (DISCHARGE_SIGN * delta_as);
+}
 
 //Cell voltage in mV to a SOC percentage
 float CellVoltageToSoc(uint16_t cell_mV) {
@@ -119,6 +129,16 @@ void SOC_Init(uint16_t min_cell_mV) {
 
 void SOC_NotifyAsReading(int32_t as_now) {
 
+	// 3 celulas paralelo * 4.5 Ah / cell = 13.5 Ah
+	//float pack_capacity_Ah = slaves_found * ( 3 * 4.5);
+	const float pack_capacity_Ah = SOC_PARALLEL_CELLS * SOC_CELL_CAPACITY_AH;
+
+	const float pack_capacity_As = pack_capacity_Ah * 3600;
+
+	if (pack_capacity_As <= 0) {
+		return;
+	}
+
 	/* if SOC was never initialised we can still track delta later */
 	as_latest = as_now;
 
@@ -131,17 +151,32 @@ void SOC_NotifyAsReading(int32_t as_now) {
 	}
 
 	/* charge moved since the baseline, in Ampere-seconds */
-	int32_t delta_as = as_now - as_baseline;
-
+	//int32_t delta_as = as_now - as_baseline;
 	/* turn it into "charge taken out of the pack" (positive when discharging) */
-	float used_as = (float) (DISCHARGE_SIGN * delta_as);
-
+	//float used_as = (float) (DISCHARGE_SIGN * delta_as);
 	/* SOC drops as we drain the pack */
-	float drop_percent = (used_as / pack_capacity_As) * 100.0f;
-
-	soc_now_percent = ClampPercent(soc_initial_percent - drop_percent);
-
+	//float drop_percent = (used_as / pack_capacity_As) * 100;
+	//soc_now_percent = ClampPercent(soc_initial_percent - drop_percent);
 	//Send tyo CAN
+	//SOC_SendCAN(soc_now_percent);
+	/*
+	 * discharged_as:
+	 *   positive = energy removed from pack  -> SOC decreases
+	 *   negative = energy added to pack      -> SOC increases
+	 */
+	int32_t discharged_as = SOC_GetDischarged_As(as_now);
+
+	float soc_change_percent = ((float) discharged_as / pack_capacity_As) * 100;
+
+	/*
+	 * If discharged_as is positive:
+	 *   soc_now = initial - positive  -> SOC goes down
+	 *
+	 * If discharged_as is negative:
+	 *   soc_now = initial - negative  -> SOC goes up
+	 */
+	soc_now_percent = ClampPercent(soc_initial_percent - soc_change_percent);
+
 	SOC_SendCAN(soc_now_percent);
 }
 
@@ -164,7 +199,7 @@ int32_t SOC_GetUsedCharge_As(void) {
 	if (!baseline_valid) {
 		return 0;
 	}
-	return DISCHARGE_SIGN * (as_latest - as_baseline);
+	return SOC_GetDischarged_As(as_latest);
 }
 
 bool SOC_IsReady(void) {
@@ -196,21 +231,17 @@ void SOC_DumpUART(void) {
  */
 void SOC_SendCAN(float soc_percent) {
 
+	struct powertrain_t26_master_soc_accumulator_t msg = { 0 };
 	uint8_t data[POWERTRAIN_T26_MASTER_SOC_ACCUMULATOR_LENGTH];
+	int packed_length;
 
-	/* zero unused bytes */
-	for (uint8_t i = 0; i < POWERTRAIN_T26_MASTER_SOC_ACCUMULATOR_LENGTH; i++) {
-		data[i] = 0u;
+	msg.soc_integer = (uint8_t) soc_percent;
+	msg.soc_float = (uint16_t) (soc_percent * 100);
+
+	packed_length = powertrain_t26_master_soc_accumulator_pack(data, &msg, sizeof(data));
+	if (packed_length >= 0 && msg.soc_float < (100 * 100) && msg.soc_float >= 0 && msg.soc_integer < 100 && msg.soc_integer >= 0) {
+		CAN_TX_Add_To_Queue(&hcan1, POWERTRAIN_T26_MASTER_SOC_ACCUMULATOR_FRAME_ID, POWERTRAIN_T26_MASTER_SOC_ACCUMULATOR_LENGTH, data);
 	}
 
-	/* SOC_Integer – byte 0 */
-	data[0] = (uint8_t) soc_percent;
-
-	/* SOC_Float – bytes 1-2, signed 16-bit little-endian */
-	int16_t soc_float_raw = (int16_t) ((soc_percent - 0.01f) / 0.01f);
-	data[1] = (uint8_t) (soc_float_raw & 0x00FF);
-	data[2] = (uint8_t) ((soc_float_raw >> 8) & 0x00FF);
-
-	CAN_TX_Add_To_Queue(&hcan1, POWERTRAIN_T26_MASTER_SOC_ACCUMULATOR_FRAME_ID, POWERTRAIN_T26_MASTER_SOC_ACCUMULATOR_LENGTH, data);
 }
 

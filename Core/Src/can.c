@@ -17,8 +17,8 @@ CanRxCallback_t rxCallbacks[MAX_CAN_RX_CALLBACKS];
 uint8_t callbackCounter = 0;
 
 //CAN housekeeping
-uint8_t can1Started  = 0;
-uint8_t can2Started  = 0;
+uint8_t can1Started = 0;
+uint8_t can2Started = 0;
 uint32_t lastCanRecoverTry_time = 0;
 
 HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan) {
@@ -44,9 +44,9 @@ HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan) {
 
 	if (HAL_CAN_ConfigFilter(hcan, &filter) != HAL_OK) {
 		uint8_t busIdx = FAULT_CAN_BUS_2;
-	    if (hcan == &hcan1) {
-	        busIdx = FAULT_CAN_BUS_1;
-	    }
+		if (hcan == &hcan1) {
+			busIdx = FAULT_CAN_BUS_1;
+		}
 		RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
 		return HAL_ERROR;
 	}
@@ -54,9 +54,9 @@ HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan) {
 	// Without this, HAL_CAN_RxFifo0MsgPendingCallback will never fire
 	if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
 		uint8_t busIdx = FAULT_CAN_BUS_2;
-	    if (hcan == &hcan1) {
-	        busIdx = FAULT_CAN_BUS_1;
-	    }
+		if (hcan == &hcan1) {
+			busIdx = FAULT_CAN_BUS_1;
+		}
 
 		RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
 		return HAL_ERROR;
@@ -80,9 +80,9 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	uint8_t rxData[8];
 
 	uint8_t busIdx = FAULT_CAN_BUS_2;
-    if (hcan == &hcan1) {
-        busIdx = FAULT_CAN_BUS_1;
-    }
+	if (hcan == &hcan1) {
+		busIdx = FAULT_CAN_BUS_1;
+	}
 
 	//kill before checking for error
 	KILL_ERROR(FAULT_CAN_RECEIVE_ERROR);
@@ -93,8 +93,6 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 		RAISE_ERROR(FAULT_CAN_RECEIVE_ERROR, .channel_idx = busIdx);
 		return;
 	}
-
-
 
 	// Send it to everyone who registered
 	for (uint8_t i = 0; i < callbackCounter; i++) {
@@ -208,7 +206,6 @@ HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, u
 	return HAL_OK;
 }
 
-
 uint8_t CAN_IsStarted(CAN_HandleTypeDef *hcan) {
 	if (hcan == &hcan1) {
 		return can1Started;
@@ -246,16 +243,15 @@ HAL_StatusTypeDef CAN_Restart(CAN_HandleTypeDef *hcan) {
 	return HAL_ERROR;
 }
 
-
-void CAN_Service(CAN_HandleTypeDef *hcan) {
+/*void CAN_Service(CAN_HandleTypeDef *hcan) {
 	uint32_t now = HAL_GetTick();
 
 	uint8_t busIdx = FAULT_CAN_BUS_2;
 	if (hcan == &hcan1) {
-	    busIdx = FAULT_CAN_BUS_1;
+		busIdx = FAULT_CAN_BUS_1;
 	}
 
-	// Don't try to recover too often
+	// Dont try to recover too often
 	if ((now - lastCanRecoverTry_time) < 100) {
 		return;
 	}
@@ -307,6 +303,66 @@ void CAN_Service(CAN_HandleTypeDef *hcan) {
 		CAN_Restart(hcan);
 		lastCanRecoverTry_time = now;
 		return;
+	}
+}*/
+
+//possible hard fault solve
+void CAN_Service(CAN_HandleTypeDef *hcan) {
+	static uint32_t last_can1_try = 0;
+	static uint32_t last_can2_try = 0;
+
+	uint32_t now = HAL_GetTick();
+
+	static uint32_t last_try = 1;
+
+	if (hcan == NULL) {
+		return;
+	}
+
+	if (hcan == &hcan1) {
+		last_try = last_can1_try;
+	} else if (hcan == &hcan2) {
+		last_try = last_can2_try;
+	} else {
+		return;
+	}
+
+	// Only try recovery every 100 ms
+	if ((now - last_try) < 100) {
+		return;
+	}
+
+	last_try = now;
+
+	uint32_t error = HAL_CAN_GetError(hcan);
+	HAL_CAN_StateTypeDef state = HAL_CAN_GetState(hcan);
+
+	if (error != HAL_CAN_ERROR_NONE) {
+		RAISE_ERROR(FAULT_CAN_BUS_OFF);
+	}
+
+	//if ((state == HAL_CAN_STATE_ERROR) || (state == HAL_CAN_STATE_RESET) || (state == HAL_CAN_STATE_ERROR)) {
+	if ( (state == HAL_CAN_STATE_ERROR) || (state == HAL_CAN_STATE_RESET) ) {
+
+		HAL_CAN_Stop(hcan);
+		HAL_CAN_DeInit(hcan);
+
+		if (HAL_CAN_Init(hcan) != HAL_OK) {
+			RAISE_ERROR(FAULT_CAN_INIT_ERROR);
+			return;
+		}
+
+		if (CAN_Init(hcan) != HAL_OK) {
+			RAISE_ERROR(FAULT_CAN_INIT_ERROR);
+			return;
+		}
+
+		if (HAL_CAN_Start(hcan) != HAL_OK) {
+			RAISE_ERROR(FAULT_CAN_INIT_ERROR);
+			return;
+		}
+
+		KILL_ERROR(FAULT_CAN_INIT_ERROR);
 	}
 }
 

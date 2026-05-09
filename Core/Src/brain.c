@@ -190,6 +190,12 @@ void brain_loop(void) {
 			 }
 			 }*/
 
+
+			//uint16_t min_cell_mV = adBms6830_FindMinVoltageGlobally();
+
+			//RESET SOC
+			//SOC_Init(min_cell_mV);
+
 		}
 
 		break;
@@ -199,9 +205,10 @@ void brain_loop(void) {
 		//printfDma("	STARTUP \n\n");
 		//TODO: implement startup shit that needs looping i gueess lol
 
-		static uint8_t adbmsLoopCounter = 0;
+		//static uint8_t adbmsLoopCounter = 0;
 
-		if (adbms_main(AMS_Current_State) == ADBMS_END && adbmsLoopCounter > 100) {
+		//if (adbms_main(AMS_Current_State) == ADBMS_END && adbmsLoopCounter > 3) {
+		if (adbms_main(AMS_Current_State) == ADBMS_END ) {
 
 			//encontrar a celula com menor tensão
 			uint16_t min_cell_mV = adBms6830_FindMinVoltageGlobally();
@@ -211,9 +218,9 @@ void brain_loop(void) {
 
 			AMS_State = IDLE;
 
-		} else if (adbms_main(AMS_Current_State) == ADBMS_END) {
+		} /*else if (adbms_main(AMS_Current_State) == ADBMS_END) {
 			adbmsLoopCounter++;
-		}
+		}*/
 
 		HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
 
