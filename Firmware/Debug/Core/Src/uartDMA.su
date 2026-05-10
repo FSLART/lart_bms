@@ -1,9 +1,10 @@
 ../Core/Src/uartDMA.c:34:5:getDataLen	16	static
 ../Core/Src/uartDMA.c:44:5:getDataLen2	16	static
 ../Core/Src/uartDMA.c:54:6:startUartDmaTx	16	static
-../Core/Src/uartDMA.c:69:6:startUart2DmaTx	16	static
-../Core/Src/uartDMA.c:84:6:HAL_UART_TxCpltCallback	16	static
-../Core/Src/uartDMA.c:117:5:printfUI	96	dynamic
-../Core/Src/uartDMA.c:167:5:printfDebug	96	dynamic
-../Core/Src/uartDMA.c:222:6:printfConsole	272	static
-../Core/Src/uartDMA.c:252:13:jsonSendEscaped	24	static
+../Core/Src/uartDMA.c:70:6:startUart2DmaTx	16	static
+../Core/Src/uartDMA.c:85:6:HAL_UART_TxCpltCallback	16	static
+../Core/Src/uartDMA.c:118:5:printfUI	96	dynamic
+../Core/Src/uartDMA.c:169:5:printfDebug	96	dynamic
+../Core/Src/uartDMA.c:224:6:printfConsole	272	static
+../Core/Src/uartDMA.c:254:13:jsonSendEscaped	24	static
+../Core/Src/uartDMA.c:289:6:RN4871_SetName	8	static

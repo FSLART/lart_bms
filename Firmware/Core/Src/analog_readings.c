@@ -37,7 +37,7 @@ extern TIM_HandleTypeDef htim3;
  * rank 3 -> VREFINT
  * repeated ADC_SAMPLES_PER_CH times
  */
-static uint16_t s_adcDmaBuf[ADC_DMA_BUF_LEN];
+static uint16_t ADCdmaBuffer[ADC_DMA_BUF_LEN];
 static AnalogReadings_t s_analog = {0};
 
 static float AnalogReadings_ComputeVDDA(uint16_t raw_vref)
@@ -85,7 +85,7 @@ void AnalogReadings_Init(void)
     s_analog.data_ready = false;
 
     for (uint32_t i = 0; i < ADC_DMA_BUF_LEN; i++) {
-        s_adcDmaBuf[i] = 0u;
+        ADCdmaBuffer[i] = 0u;
     }
 
     HAL_TIM_Base_Start(&htim3);
@@ -101,20 +101,20 @@ void AnalogReadings_Start(void)
     s_analog.busy = true;
     s_analog.data_ready = false;
 
-    HAL_ADC_Start_DMA(&hadc1, (uint32_t *)s_adcDmaBuf, ADC_DMA_BUF_LEN);
+    HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADCdmaBuffer, ADC_DMA_BUF_LEN);
 }
 
 //Conversion Complete Callbacks
 void AnalogReadings_ConvCpltCallback(void)
 {
-    uint32_t sum_ams_master_current = 0u;
-    uint32_t sum_temp = 0u;
-    uint32_t sum_vref = 0u;
+    uint32_t sum_ams_master_current = 0;
+    uint32_t sum_temp = 0;
+    uint32_t sum_vref = 0;
 
     for (uint32_t i = 0; i < ADC_SAMPLES_PER_CH; i++) {
-        sum_ams_master_current += s_adcDmaBuf[(i * ADC_CHANNEL_COUNT) + 0u];
-        sum_temp += s_adcDmaBuf[(i * ADC_CHANNEL_COUNT) + 1u];
-        sum_vref += s_adcDmaBuf[(i * ADC_CHANNEL_COUNT) + 2u];
+        sum_temp += ADCdmaBuffer[(i * ADC_CHANNEL_COUNT) + 0];
+        sum_vref += ADCdmaBuffer[(i * ADC_CHANNEL_COUNT) + 1];
+        sum_ams_master_current += ADCdmaBuffer[(i * ADC_CHANNEL_COUNT) + 2];
     }
 
     //HAL_ADC_Stop_DMA(&hadc1);

@@ -103,7 +103,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
 
     __HAL_RCC_GPIOC_CLK_ENABLE();
     /**ADC1 GPIO Configuration
-    PC3     ------> ADC1_IN13
+    PC4     ------> ADC1_IN14
     */
     GPIO_InitStruct.Pin = CURRENT_SENSOR_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
@@ -157,7 +157,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     __HAL_RCC_ADC1_CLK_DISABLE();
 
     /**ADC1 GPIO Configuration
-    PC3     ------> ADC1_IN13
+    PC4     ------> ADC1_IN14
     */
     HAL_GPIO_DeInit(CURRENT_SENSOR_GPIO_Port, CURRENT_SENSOR_Pin);
 
@@ -228,10 +228,10 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* hcan)
 
     __HAL_RCC_GPIOB_CLK_ENABLE();
     /**CAN2 GPIO Configuration
-    PB12     ------> CAN2_RX
     PB13     ------> CAN2_TX
+    PB5     ------> CAN2_RX
     */
-    GPIO_InitStruct.Pin = CHARGER_CAN_RX_Pin|CHARGER_CAN_TX_Pin;
+    GPIO_InitStruct.Pin = CHARGER_CAN_TX_Pin|CHARGER_CAN_RX_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -286,10 +286,10 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* hcan)
     __HAL_RCC_CAN2_CLK_DISABLE();
 
     /**CAN2 GPIO Configuration
-    PB12     ------> CAN2_RX
     PB13     ------> CAN2_TX
+    PB5     ------> CAN2_RX
     */
-    HAL_GPIO_DeInit(GPIOB, CHARGER_CAN_RX_Pin|CHARGER_CAN_TX_Pin);
+    HAL_GPIO_DeInit(GPIOB, CHARGER_CAN_TX_Pin|CHARGER_CAN_RX_Pin);
 
     /* USER CODE BEGIN CAN2_MspDeInit 1 */
 
@@ -330,38 +330,7 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
     /* USER CODE BEGIN I2C1_MspInit 1 */
 
     /* USER CODE END I2C1_MspInit 1 */
-  }
-  else if(hi2c->Instance==I2C3)
-  {
-    /* USER CODE BEGIN I2C3_MspInit 0 */
 
-    /* USER CODE END I2C3_MspInit 0 */
-
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**I2C3 GPIO Configuration
-    PC9     ------> I2C3_SDA
-    PA8     ------> I2C3_SCL
-    */
-    GPIO_InitStruct.Pin = AUX_SENS_SDA_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF4_I2C3;
-    HAL_GPIO_Init(AUX_SENS_SDA_GPIO_Port, &GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = AUX_SENS_SCL_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF4_I2C3;
-    HAL_GPIO_Init(AUX_SENS_SCL_GPIO_Port, &GPIO_InitStruct);
-
-    /* Peripheral clock enable */
-    __HAL_RCC_I2C3_CLK_ENABLE();
-    /* USER CODE BEGIN I2C3_MspInit 1 */
-
-    /* USER CODE END I2C3_MspInit 1 */
   }
 
 }
@@ -393,26 +362,6 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
     /* USER CODE BEGIN I2C1_MspDeInit 1 */
 
     /* USER CODE END I2C1_MspDeInit 1 */
-  }
-  else if(hi2c->Instance==I2C3)
-  {
-    /* USER CODE BEGIN I2C3_MspDeInit 0 */
-
-    /* USER CODE END I2C3_MspDeInit 0 */
-    /* Peripheral clock disable */
-    __HAL_RCC_I2C3_CLK_DISABLE();
-
-    /**I2C3 GPIO Configuration
-    PC9     ------> I2C3_SDA
-    PA8     ------> I2C3_SCL
-    */
-    HAL_GPIO_DeInit(AUX_SENS_SDA_GPIO_Port, AUX_SENS_SDA_Pin);
-
-    HAL_GPIO_DeInit(AUX_SENS_SCL_GPIO_Port, AUX_SENS_SCL_Pin);
-
-    /* USER CODE BEGIN I2C3_MspDeInit 1 */
-
-    /* USER CODE END I2C3_MspDeInit 1 */
   }
 
 }

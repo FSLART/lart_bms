@@ -10,7 +10,7 @@ void OpenAllContactors(void){
 	OpenPreCarga();
 	OpenAIR_negativo();
 	OpenAIR_positivo();
-	OpenDescarga();
+	//OpenDescarga();
 }
 
 
@@ -31,9 +31,9 @@ void OpenAIR_positivo(void){
 }
 
 
-void OpenDescarga(void){
+/*void OpenDescarga(void){
 	HAL_GPIO_WritePin(CONTACT_DSCH_GPIO_Port, CONTACT_DSCH_Pin, GPIO_PIN_SET);
-}
+}*/
 
 
 void ClosePreCarga(void){
@@ -53,6 +53,6 @@ void CloseAIR_positivo(void){
 }
 
 
-void CloseDescarga(void){
+/*void CloseDescarga(void){
 	HAL_GPIO_WritePin(CONTACT_DSCH_GPIO_Port, CONTACT_DSCH_Pin, GPIO_PIN_RESET);
-}
+}*/

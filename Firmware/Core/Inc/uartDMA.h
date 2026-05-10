@@ -10,5 +10,8 @@ void printfConsole(const char *format, ...);
 // Print to BT
 int printfDebug(const char *format, ...);
 
+//gay ass name changer
+void RN4871_SetName(void);
+
 
 #endif /* INC_UARTDMA_H_ */

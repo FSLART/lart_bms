@@ -10,6 +10,7 @@
 "./Core/Src/ee24.o"
 "./Core/Src/fan_management.o"
 "./Core/Src/fault_manager.o"
+"./Core/Src/gpio_expander.o"
 "./Core/Src/isa_ivt-s.o"
 "./Core/Src/main.o"
 "./Core/Src/master_to_CAN.o"

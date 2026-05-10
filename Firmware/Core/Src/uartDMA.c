@@ -63,7 +63,8 @@ void startUartDmaTx(void) {
 	tailDma = tail + dataLen;
 
 	HAL_UART_Transmit_DMA(&uartHandle, dataPtr, dataLen);
-	HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
+	//TODO: gpio expander
+	//HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
 }
 
 void startUart2DmaTx(void) {
@@ -91,7 +92,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 		}
 
 		// If there is ANY data pending, start next DMA
-		if (head != tail){        // instead of (head > tail)
+		if (head != tail) {        // instead of (head > tail)
 
 			startUartDmaTx();
 		}
@@ -106,7 +107,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 		}
 
 		// If there is ANY data pending, start next DMA
-		if (head2 != tail2){        // <— instead of (head > tail)
+		if (head2 != tail2) {        // <— instead of (head > tail)
 
 			startUart2DmaTx();
 		}
@@ -157,7 +158,8 @@ int printfUI(const char *format, ...) {
 
 	if (HAL_UART_GetState(&uartHandle) == HAL_UART_STATE_READY) {
 		startUartDmaTx();
-		HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
+		//TODO: gpio expander
+		//HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
 	}
 
 	return written;
@@ -282,4 +284,23 @@ static void jsonSendEscaped(const char *s) {
 			}
 		}
 	}
+}
+
+void RN4871_SetName(void) {
+	printfDebug("Changing RN4871 name...\r\n");
+
+	// no \r\n after $$$
+	HAL_Delay(150);
+	printfDebug("$$$");
+	HAL_Delay(300);
+
+	//set namre
+	printfDebug("SN,LART Accumulator\r");
+	HAL_Delay(300);
+
+	//reboot
+	printfDebug("R,1\r");
+	HAL_Delay(1000);
+
+	printfDebug("RN4871 name command sent\r\n");
 }

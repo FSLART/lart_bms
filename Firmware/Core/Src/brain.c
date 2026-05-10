@@ -27,6 +27,7 @@
 #include "precharge.h"
 #include "can.h"
 #include "fault_manager.h"
+#include "gpio_expander.h"
 
 #include "powertrain_t26.h"
 
@@ -55,13 +56,13 @@ volatile bool toggleHeartbeat = false;
 
 void brain_start(void) {
 
+	OpenAllContactors();
+
 	FaultManager_Init();
 
 	//HAL_CAN_Start(&hcan1);
 	CAN_Service(&hcan1);
 	CAN_Init(&hcan1);
-
-	OpenAllContactors();
 
 	// Set CS2 Pin to HIGH to disable second SPI on 6822 + MSTR should be high by default
 	HAL_GPIO_WritePin(BMS_MSTR_GPIO_Port, BMS_MSTR_Pin, GPIO_PIN_SET);
@@ -75,6 +76,7 @@ void brain_start(void) {
 
 	printfConsole("Start Program \n\r");
 	printfDebug("Bluetooth, u up? \r\n");
+	//RN4871_SetName();
 	//OpenAllContactors();
 	//startUI();
 
@@ -91,6 +93,8 @@ void brain_start(void) {
 		printfDebug("EEPROM init failed, using code defaults\n");
 		BmsConfig_LoadDefaults();
 	}
+
+	MCP23017_Init();
 
 	//BmsConfig_DumpEEPROM(&eep24fc08);
 
@@ -202,6 +206,8 @@ void brain_loop(void) {
 
 	case STARTUP:
 
+		 //MCP23017_StartupAnimation_Update();
+
 		//printfDma("	STARTUP \n\n");
 		//TODO: implement startup shit that needs looping i gueess lol
 
@@ -215,6 +221,8 @@ void brain_loop(void) {
 
 			//RESET SOC
 			SOC_Init(min_cell_mV);
+
+			//MCP23017_All_LEDs_Off();
 
 			AMS_State = IDLE;
 
@@ -239,6 +247,7 @@ void brain_loop(void) {
 	if (faultCheck) {
 		//printfDma("FAULT CHECK \r\n");
 		//IVT_FAULT_CHECK();
+		//funcao_de_merda_pq_eu_errei_o_pinout_do_sensor_de_corrente();
 		//bms_openWireCheck(&ow_status);
 		ADBMS_CAN_SendAll(&hcan1, AMS_Current_State);
 		//AnalogReadings_CAN_Send(&hcan1);
@@ -261,7 +270,8 @@ void brain_loop(void) {
 
 	if (toggleHeartbeat) {
 
-		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+		//TODO: gpio expander
+		HAL_GPIO_TogglePin(MCU_HEARTBEAT_GPIO_Port, MCU_HEARTBEAT_Pin);
 		toggleHeartbeat = false;
 	}
 
@@ -278,6 +288,9 @@ void brain_loop(void) {
 
 	//check if there are can messages to send
 	CanTx_ProcessQueue();
+
+	MCP23017_StartupAnimation_Update();
+
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
@@ -296,13 +309,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	if (GPIO_Pin == B1_Pin) {
+	/*if (GPIO_Pin == B1_Pin) {
 		if (AMS_State == ONMISSION) {
 			AMS_State = IDLE;
 		} else {
 			AMS_State = ONMISSION;
 		}
-	}
+	}*/
 
 	Feedback_EXTI_Callback(GPIO_Pin);
 }

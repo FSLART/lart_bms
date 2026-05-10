@@ -22,7 +22,7 @@
 #include "adBms_Application.h"
 
 /* Set version */
-#define MASTER_FW_VERSION    7
+#define MASTER_FW_VERSION    11
 
 /* temporary */
 #ifndef MASTER_FAN_PWM_DEFAULT
@@ -300,10 +300,10 @@ HAL_StatusTypeDef Master_CAN_SendPrecharge(CAN_HandleTypeDef *hcan) {
 	uint8_t data[POWERTRAIN_T26_MASTER_PRE_CHARGE_ID_1_LENGTH];
 	int packed_length;
 
-	msg.precharge_ctc_air_pos_state = read_contactor_state(CONTACT_AIR_positivo_GPIO_Port, CONTACT_AIR_positivo_Pin);
-	msg.precharge_ctc_air_min_state = read_contactor_state(CONTACT_AIR_negativo_GPIO_Port, CONTACT_AIR_negativo_Pin);
-	msg.precharge_ctc_charge_state = read_contactor_state(CONTACT_PRE_GPIO_Port, CONTACT_PRE_Pin);
-	msg.precharge_ctc_discharge_state = read_contactor_state(CONTACT_DSCH_GPIO_Port, CONTACT_DSCH_Pin);
+	msg.precharge_ctc_air_pos_state = read_contactor_state(MCU_AIR_positivo_FB_GPIO_Port, MCU_AIR_positivo_FB_Pin);
+	msg.precharge_ctc_air_min_state = read_contactor_state(MCU_AIR_negativo_FB_GPIO_Port, MCU_AIR_negativo_FB_Pin);
+	msg.precharge_ctc_charge_state = read_contactor_state(MCU_PRE_FB_GPIO_Port, MCU_PRE_FB_Pin);
+	msg.precharge_ctc_discharge_state = read_contactor_state(MCU_DISCH_FB_GPIO_Port, MCU_DISCH_FB_Pin);
 	msg.precharge_state = (uint8_t) Precharge_GetState();
 
 	packed_length = powertrain_t26_master_pre_charge_id_1_pack(data, &msg, sizeof(data));
