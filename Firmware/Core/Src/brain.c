@@ -28,8 +28,10 @@
 #include "can.h"
 #include "fault_manager.h"
 #include "gpio_expander.h"
+#include "charger.h"
 
 #include "powertrain_t26.h"
+#include "eveurope_charger.h"
 
 #include "soc.h"
 
@@ -44,15 +46,15 @@ volatile AMSStates_t AMS_Current_State = FAULT;
 volatile AMSStates_t AMS_Previous_State = FAULT;
 
 /* runtime bookkeeping / flags */
-static volatile uint32_t runtime_sec = 0;
-static volatile bool faultCheck = false;
-static volatile bool updateUI = false;
+uint32_t runtime_sec = 0;
+bool faultCheck = false;
+bool updateUI = false;
 
 /* timing helpers for state machine */
 //static uint32_t timeDiff = 0;
-static uint32_t timeStart = 0;
+uint32_t timeStart = 0;
 //static uint32_t timeCmmd = 0;
-volatile bool toggleHeartbeat = false;
+bool toggleHeartbeat = false;
 
 void brain_start(void) {
 
@@ -63,6 +65,10 @@ void brain_start(void) {
 	//HAL_CAN_Start(&hcan1);
 	CAN_Service(&hcan1);
 	CAN_Init(&hcan1);
+
+	//HAL_CAN_Start(&hcan1);
+	//CAN_Service(&hcan2);
+	//CAN_Init(&hcan2);
 
 	// Set CS2 Pin to HIGH to disable second SPI on 6822 + MSTR should be high by default
 	HAL_GPIO_WritePin(BMS_MSTR_GPIO_Port, BMS_MSTR_Pin, GPIO_PIN_SET);
@@ -105,6 +111,7 @@ void brain_start(void) {
 	//inicializar as callbakc para o CAN
 	Precharge_CAN_Init();
 	CellBalancing_CAN_Init();
+	Charger_CAN_Init();
 
 	if (watchdog_flag & RCC_CSR_WWDGRSTF) {
 		RAISE_ERROR(FAULT_WATCHDOG_RESET);
@@ -145,6 +152,17 @@ void brain_loop(void) {
 
 		adbms_main(AMS_Current_State);
 		//}
+
+		break;
+
+	case CHARGING:
+
+		if ((getRuntimeMsDiff(timeStart) > 500) || (AMS_Previous_State != AMS_Current_State)) {
+			timeStart = getRuntimeMs();
+
+			Charger_Update();
+
+		}
 
 		break;
 
@@ -262,7 +280,7 @@ void brain_loop(void) {
 	// ~Update UI Triggered
 	if (updateUI) {
 		FaultManager_DumpUART();
-		SOC_DumpUART();
+		//SOC_DumpUART();
 		//send_ivt_ui();
 		//send_ad68_ui();
 		updateUI = false;
@@ -285,6 +303,7 @@ void brain_loop(void) {
 
 	//CAN housekeeping
 	CAN_Service(&hcan1);
+	//CAN_Service(&hcan2);
 
 	//check if there are can messages to send
 	CanTx_ProcessQueue();

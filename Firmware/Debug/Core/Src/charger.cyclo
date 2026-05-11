@@ -1,0 +1,9 @@
+../Core/Src/charger.c:37:6:Charger_CAN_Init	1
+../Core/Src/charger.c:48:6:Charger_CAN_Rx	13
+../Core/Src/charger.c:104:6:Charger_Update	4
+../Core/Src/charger.c:126:6:Charger_Stop	1
+../Core/Src/charger.c:131:6:Charger_SendRequest	3
+../Core/Src/charger.c:157:6:Charger_IsRequestedCurrentOK	1
+../Core/Src/charger.c:162:9:Charger_IsRequested	1
+../Core/Src/charger.c:166:10:Charger_GetRequestedCurrentRaw	1
+../Core/Src/charger.c:170:9:Charger_HasStatus	1

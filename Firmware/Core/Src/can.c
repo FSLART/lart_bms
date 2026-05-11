@@ -13,8 +13,11 @@
 #define MAX_CAN_RX_CALLBACKS 15  // Número de callbacks registados, tipo CAN_RegisterRxCallback(PreCharge_CAN_Rx);
 #define CAN_TX_QUEUE_SIZE    1024 //must be power of 2 only when working with bit masks
 
-CanRxCallback_t rxCallbacks[MAX_CAN_RX_CALLBACKS];
-uint8_t callbackCounter = 0;
+CanRxCallback_t can1RxCallbacks[MAX_CAN_RX_CALLBACKS];
+CanRxCallback_t can2RxCallbacks[MAX_CAN_RX_CALLBACKS];
+
+uint8_t can1CallbackCounter = 0;
+uint8_t can2CallbackCounter = 0;
 
 //CAN housekeeping
 uint8_t can1Started = 0;
@@ -39,7 +42,7 @@ HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan) {
 	if (hcan == &hcan1) {
 		filter.FilterBank = 0;
 	} else {
-		filter.FilterBank = 14;   // CAN2 must use a bank >= SlaveStartFilterBank
+		filter.FilterBank = 14;  // CAN2 must use a bank >= SlaveStartFilterBank
 	}
 
 	if (HAL_CAN_ConfigFilter(hcan, &filter) != HAL_OK) {
@@ -52,7 +55,8 @@ HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan) {
 	}
 
 	// Without this, HAL_CAN_RxFifo0MsgPendingCallback will never fire
-	if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
+	if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING)
+			!= HAL_OK) {
 		uint8_t busIdx = FAULT_CAN_BUS_2;
 		if (hcan == &hcan1) {
 			busIdx = FAULT_CAN_BUS_1;
@@ -66,12 +70,26 @@ HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan) {
 }
 
 HAL_StatusTypeDef CAN_RegisterRxCallback(CanRxCallback_t callback) {
-	if (callbackCounter >= MAX_CAN_RX_CALLBACKS) {
+	if (can1CallbackCounter >= MAX_CAN_RX_CALLBACKS) {
 		return HAL_ERROR;
 	}
-	rxCallbacks[callbackCounter] = callback;
-	callbackCounter++;
+
+	can1RxCallbacks[can1CallbackCounter] = callback;
+	can1CallbackCounter++;
+
 	return HAL_OK;
+}
+
+HAL_StatusTypeDef CAN2_RegisterRxCallback(CanRxCallback_t callback)
+{
+    if (can2CallbackCounter >= MAX_CAN_RX_CALLBACKS) {
+        return HAL_ERROR;
+    }
+
+    can2RxCallbacks[can2CallbackCounter] = callback;
+    can2CallbackCounter++;
+
+    return HAL_OK;
 }
 
 // HAL calls this when a message lands on FIFO0
@@ -95,10 +113,19 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	}
 
 	// Send it to everyone who registered
-	for (uint8_t i = 0; i < callbackCounter; i++) {
-		if (rxCallbacks[i] != NULL) {
-			rxCallbacks[i](&rxHeader, rxData);
-		}
+	if (hcan == &hcan1) {
+	    for (uint8_t i = 0; i < can1CallbackCounter; i++) {
+	        if (can1RxCallbacks[i] != NULL) {
+	            can1RxCallbacks[i](&rxHeader, rxData);
+	        }
+	    }
+	}
+	else if (hcan == &hcan2) {
+	    for (uint8_t i = 0; i < can2CallbackCounter; i++) {
+	        if (can2RxCallbacks[i] != NULL) {
+	            can2RxCallbacks[i](&rxHeader, rxData);
+	        }
+	    }
 	}
 }
 
@@ -108,6 +135,7 @@ typedef struct {
 	CAN_HandleTypeDef *hcan;
 	uint32_t id;
 	uint8_t dlc;
+	uint8_t ide;
 	uint8_t data[8];
 } CanTxItem_t;
 
@@ -144,9 +172,17 @@ void CanTx_ProcessQueue(void) {
 		CAN_TxHeaderTypeDef TxH;
 		uint32_t mailbox;
 
-		TxH.StdId = item->id;
+		TxH.StdId = 0;
 		TxH.ExtId = 0;
-		TxH.IDE = CAN_ID_STD;
+
+		if (item->ide == CAN_ID_EXT) {
+			TxH.ExtId = item->id & 0x1FFFFFFF;
+			TxH.IDE = CAN_ID_EXT;
+		} else {
+			TxH.StdId = item->id & 0x7FF;
+			TxH.IDE = CAN_ID_STD;
+		}
+
 		TxH.RTR = CAN_RTR_DATA;
 		TxH.DLC = item->dlc;
 		TxH.TransmitGlobalTime = DISABLE;
@@ -164,7 +200,8 @@ void CanTx_ProcessQueue(void) {
 			KILL_ERROR(FAULT_CAN_MAILBOX_FULL);
 		}
 
-		if (HAL_CAN_AddTxMessage(item->hcan, &TxH, item->data, &mailbox) != HAL_OK) {
+		if (HAL_CAN_AddTxMessage(item->hcan, &TxH, item->data, &mailbox)
+				!= HAL_OK) {
 			RAISE_ERROR(FAULT_CAN_SEND_ERROR, .channel_idx = busIdx);
 			break;  // Como dou brek, não tento outra vez
 		} else {
@@ -179,8 +216,8 @@ void CanTx_ProcessQueue(void) {
 	}
 }
 
-//Add message to queue
-HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, uint8_t dlc, const uint8_t *data) {
+static HAL_StatusTypeDef CAN_TX_Add_To_Queue_Internal(CAN_HandleTypeDef *hcan,
+		uint32_t canID, uint8_t dlc, const uint8_t *data, uint8_t ide) {
 	if (dlc > 8) {
 		return HAL_ERROR;
 	}
@@ -191,7 +228,14 @@ HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, u
 	}
 
 	canTxQueue[canTxHead].hcan = hcan;
-	canTxQueue[canTxHead].id = canID & 0x7FF;   // standard 11-bit ID
+	canTxQueue[canTxHead].ide = ide;
+
+	if (ide == CAN_ID_EXT) {
+		canTxQueue[canTxHead].id = canID & 0x1FFFFFFF;
+	} else {
+		canTxQueue[canTxHead].id = canID & 0x7FF;
+	}
+
 	canTxQueue[canTxHead].dlc = dlc;
 
 	for (uint8_t i = 0; i < dlc; i++) {
@@ -204,6 +248,18 @@ HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, u
 	}
 
 	return HAL_OK;
+}
+
+//Add standard 11-bit CAN message to queue
+HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID,
+		uint8_t dlc, const uint8_t *data) {
+	return CAN_TX_Add_To_Queue_Internal(hcan, canID, dlc, data, CAN_ID_STD);
+}
+
+//Add extended 29-bit CAN message to queue
+HAL_StatusTypeDef CAN_TX_Add_Extended_To_Queue(CAN_HandleTypeDef *hcan,
+		uint32_t canID, uint8_t dlc, const uint8_t *data) {
+	return CAN_TX_Add_To_Queue_Internal(hcan, canID, dlc, data, CAN_ID_EXT);
 }
 
 uint8_t CAN_IsStarted(CAN_HandleTypeDef *hcan) {
@@ -244,67 +300,67 @@ HAL_StatusTypeDef CAN_Restart(CAN_HandleTypeDef *hcan) {
 }
 
 /*void CAN_Service(CAN_HandleTypeDef *hcan) {
-	uint32_t now = HAL_GetTick();
+ uint32_t now = HAL_GetTick();
 
-	uint8_t busIdx = FAULT_CAN_BUS_2;
-	if (hcan == &hcan1) {
-		busIdx = FAULT_CAN_BUS_1;
-	}
+ uint8_t busIdx = FAULT_CAN_BUS_2;
+ if (hcan == &hcan1) {
+ busIdx = FAULT_CAN_BUS_1;
+ }
 
-	// Dont try to recover too often
-	if ((now - lastCanRecoverTry_time) < 100) {
-		return;
-	}
+ // Dont try to recover too often
+ if ((now - lastCanRecoverTry_time) < 100) {
+ return;
+ }
 
-	// Not started yet -> try to start
-	if (CAN_IsStarted(hcan) == 0) {
-		if (HAL_CAN_Start(hcan) == HAL_OK) {
+ // Not started yet -> try to start
+ if (CAN_IsStarted(hcan) == 0) {
+ if (HAL_CAN_Start(hcan) == HAL_OK) {
 
-			if (hcan == &hcan1) {
-				can1Started = 1;
-			}
+ if (hcan == &hcan1) {
+ can1Started = 1;
+ }
 
-			if (hcan == &hcan2) {
-				can2Started = 1;
-			}
+ if (hcan == &hcan2) {
+ can2Started = 1;
+ }
 
-			KILL_ERROR(FAULT_CAN_INIT_ERROR);
+ KILL_ERROR(FAULT_CAN_INIT_ERROR);
 
-		} else {
+ } else {
 
-			RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
+ RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
 
-			if (hcan == &hcan1) {
-				can1Started = 0;
-			}
+ if (hcan == &hcan1) {
+ can1Started = 0;
+ }
 
-			if (hcan == &hcan2) {
-				can2Started = 0;
-			}
+ if (hcan == &hcan2) {
+ can2Started = 0;
+ }
 
-			CAN_Restart(hcan);
-		}
-		lastCanRecoverTry_time = now;
-	} else {
-		KILL_ERROR(FAULT_CAN_INIT_ERROR);
-	}
+ CAN_Restart(hcan);
+ }
+ lastCanRecoverTry_time = now;
+ } else {
+ KILL_ERROR(FAULT_CAN_INIT_ERROR);
+ }
 
-	// Bus-off try restart
-	uint32_t can_error = HAL_CAN_GetError(hcan);
-	if ((can_error & HAL_CAN_ERROR_BOF) != 0) {
-		CAN_Restart(hcan);
-		lastCanRecoverTry_time = now;
-		return;
-	}
+ // Bus-off try restart
+ uint32_t can_error = HAL_CAN_GetError(hcan);
+ if ((can_error & HAL_CAN_ERROR_BOF) != 0) {
+ CAN_Restart(hcan);
+ lastCanRecoverTry_time = now;
+ return;
+ }
 
-	// CAN not in a running state try restart
-	HAL_CAN_StateTypeDef can_state = HAL_CAN_GetState(hcan);
-	if (can_state == HAL_CAN_STATE_RESET || can_state == HAL_CAN_STATE_READY) {
-		CAN_Restart(hcan);
-		lastCanRecoverTry_time = now;
-		return;
-	}
-}*/
+ // CAN not in a running state try restart
+ HAL_CAN_StateTypeDef can_state = HAL_CAN_GetState(hcan);
+ if (can_state == HAL_CAN_STATE_RESET || can_state == HAL_CAN_STATE_READY) {
+ CAN_Restart(hcan);
+ lastCanRecoverTry_time = now;
+ return;
+ }
+ }*/
 
 //possible hard fault solve
 void CAN_Service(CAN_HandleTypeDef *hcan) {
@@ -334,35 +390,129 @@ void CAN_Service(CAN_HandleTypeDef *hcan) {
 
 	last_try = now;
 
+	uint8_t busIdx = FAULT_CAN_BUS_2;
+	if (hcan == &hcan1) {
+		busIdx = FAULT_CAN_BUS_1;
+	}
+
 	uint32_t error = HAL_CAN_GetError(hcan);
 	HAL_CAN_StateTypeDef state = HAL_CAN_GetState(hcan);
 
 	if (error != HAL_CAN_ERROR_NONE) {
-		RAISE_ERROR(FAULT_CAN_BUS_OFF);
+		RAISE_ERROR(FAULT_CAN_BUS_OFF, .channel_idx = busIdx);
 	}
 
 	//if ((state == HAL_CAN_STATE_ERROR) || (state == HAL_CAN_STATE_RESET) || (state == HAL_CAN_STATE_ERROR)) {
-	if ( (state == HAL_CAN_STATE_ERROR) || (state == HAL_CAN_STATE_RESET) ) {
+	if ((state == HAL_CAN_STATE_ERROR) || (state == HAL_CAN_STATE_RESET)) {
 
 		HAL_CAN_Stop(hcan);
 		HAL_CAN_DeInit(hcan);
 
 		if (HAL_CAN_Init(hcan) != HAL_OK) {
-			RAISE_ERROR(FAULT_CAN_INIT_ERROR);
+			RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
 			return;
 		}
 
 		if (CAN_Init(hcan) != HAL_OK) {
-			RAISE_ERROR(FAULT_CAN_INIT_ERROR);
+			RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
 			return;
 		}
 
 		if (HAL_CAN_Start(hcan) != HAL_OK) {
-			RAISE_ERROR(FAULT_CAN_INIT_ERROR);
+			RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
 			return;
 		}
 
 		KILL_ERROR(FAULT_CAN_INIT_ERROR);
+	}
+
+	//CAN_PrintHalError(error);
+}
+
+void CAN_PrintHalError(uint32_t error) {
+	printfDebug("HAL_CAN error = 0x%08lX\r\n", error);
+
+	if (error & HAL_CAN_ERROR_EWG) {
+		printfDebug(" - HAL_CAN_ERROR_EWG: error warning\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_EPV) {
+		printfDebug(" - HAL_CAN_ERROR_EPV: error passive\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_BOF) {
+		printfDebug(" - HAL_CAN_ERROR_BOF: bus off\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_STF) {
+		printfDebug(" - HAL_CAN_ERROR_STF: stuff error\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_FOR) {
+		printfDebug(" - HAL_CAN_ERROR_FOR: form error\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_ACK) {
+		printfDebug(" - HAL_CAN_ERROR_ACK: no ACK received\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_BR) {
+		printfDebug(" - HAL_CAN_ERROR_BR: bit recessive error\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_BD) {
+		printfDebug(" - HAL_CAN_ERROR_BD: bit dominant error\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_CRC) {
+		printfDebug(" - HAL_CAN_ERROR_CRC: CRC error\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_TX_ALST0) {
+		printfDebug(
+				" - HAL_CAN_ERROR_TX_ALST0: arbitration lost mailbox 0\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_TX_TERR0) {
+		printfDebug(" - HAL_CAN_ERROR_TX_TERR0: transmit error mailbox 0\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_TX_ALST1) {
+		printfDebug(
+				" - HAL_CAN_ERROR_TX_ALST1: arbitration lost mailbox 1\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_TX_TERR1) {
+		printfDebug(" - HAL_CAN_ERROR_TX_TERR1: transmit error mailbox 1\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_TX_ALST2) {
+		printfDebug(
+				" - HAL_CAN_ERROR_TX_ALST2: arbitration lost mailbox 2\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_TX_TERR2) {
+		printfDebug(" - HAL_CAN_ERROR_TX_TERR2: transmit error mailbox 2\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_TIMEOUT) {
+		printfDebug(" - HAL_CAN_ERROR_TIMEOUT\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_NOT_INITIALIZED) {
+		printfDebug(" - HAL_CAN_ERROR_NOT_INITIALIZED\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_NOT_READY) {
+		printfDebug(" - HAL_CAN_ERROR_NOT_READY\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_NOT_STARTED) {
+		printfDebug(" - HAL_CAN_ERROR_NOT_STARTED\r\n");
+	}
+
+	if (error & HAL_CAN_ERROR_PARAM) {
+		printfDebug(" - HAL_CAN_ERROR_PARAM\r\n");
 	}
 }
 

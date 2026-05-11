@@ -3179,3 +3179,10 @@
 ../Core/Src/dbc/powertrain_t26.c:24206:8:powertrain_t26_master_msc_id_4_slaves_detected_decode	16	static
 ../Core/Src/dbc/powertrain_t26.c:24211:6:powertrain_t26_master_msc_id_4_slaves_detected_is_in_range	16	static
 ../Core/Src/dbc/powertrain_t26.c:24216:6:powertrain_t26_master_msc_id_4_slaves_detected_is_in_phys_range	16	static
+../Core/Src/dbc/powertrain_t26.c:24221:5:powertrain_t26_start_charging_pack	24	static
+../Core/Src/dbc/powertrain_t26.c:24237:5:powertrain_t26_start_charging_unpack	24	static
+../Core/Src/dbc/powertrain_t26.c:24251:5:powertrain_t26_start_charging_init	16	static
+../Core/Src/dbc/powertrain_t26.c:24260:9:powertrain_t26_start_charging_charging_request_encode	16	static
+../Core/Src/dbc/powertrain_t26.c:24265:8:powertrain_t26_start_charging_charging_request_decode	16	static
+../Core/Src/dbc/powertrain_t26.c:24270:6:powertrain_t26_start_charging_charging_request_is_in_range	16	static
+../Core/Src/dbc/powertrain_t26.c:24275:6:powertrain_t26_start_charging_charging_request_is_in_phys_range	16	static

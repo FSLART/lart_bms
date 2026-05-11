@@ -44,7 +44,7 @@ uint32_t canRxIgnoreUntil = 0;
 
 //BYPASS FEEDBACKS
 bool bypassDischarge = true; //bypasss discharge feedback check
-bool bypassChecks = false; // bypass feedbacks checks
+bool bypassChecks = true; // bypass feedbacks checks
 
 /* feedback counters */
 int8_t fb_dsch = 0;

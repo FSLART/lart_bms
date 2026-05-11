@@ -1,5 +1,5 @@
-Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+Core/Src/charger.o: ../Core/Src/charger.c ../Core/Inc/charger.h \
+ ../Core/Inc/main.h ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -35,27 +35,11 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
- ../Core/Inc/brain.h ../Core/Inc/adbms_main.h ../Core/Inc/main.h \
- ../Core/Inc/brain.h ../Core/Inc/common.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
- ../Core/Inc/common.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830GenericType.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830ParseCreate.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
- ../Core/Inc/mcuWrapper.h ../Core/Inc/stm32f4xx_it.h \
- ../Core/Inc/cell_balancing.h ../Core/Inc/adbms_to_CAN.h \
- ../Core/Inc/can.h ../Core/Inc/bootloader_jumper.h \
- ../Core/Inc/analog_readings.h ../Core/Inc/fan_management.h \
- ../Core/Inc/bms_eeprom_config.h ../Core/Inc/ee24.h \
- ../Core/Inc/cell_balancing.h ../Core/Inc/fault_manager.h \
- ../Core/Inc/uartDMA.h ../Core/Inc/isa_ivt-s.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/powertrain_t26.h \
- ../Core/Inc/contactors.h ../Core/Inc/uartDMA.h \
- ../Core/Inc/master_to_CAN.h ../Core/Inc/precharge.h ../Core/Inc/can.h \
- ../Core/Inc/fault_manager.h ../Core/Inc/gpio_expander.h \
- ../Core/Inc/uartdma.h ../Core/Inc/charger.h \
+ ../Core/Inc/main.h ../Core/Inc/brain.h ../Core/Inc/can.h \
+ ../Core/Inc/uartDMA.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/eveurope_charger.h \
- ../Core/Inc/soc.h
+ ../Core/Inc/dbc/powertrain_t26.h
+../Core/Inc/charger.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -93,39 +77,9 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h:
-../Core/Inc/brain.h:
-../Core/Inc/adbms_main.h:
 ../Core/Inc/main.h:
 ../Core/Inc/brain.h:
-../Core/Inc/common.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
-../Core/Inc/common.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830GenericType.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830ParseCreate.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
-../Core/Inc/mcuWrapper.h:
-../Core/Inc/stm32f4xx_it.h:
-../Core/Inc/cell_balancing.h:
-../Core/Inc/adbms_to_CAN.h:
 ../Core/Inc/can.h:
-../Core/Inc/bootloader_jumper.h:
-../Core/Inc/analog_readings.h:
-../Core/Inc/fan_management.h:
-../Core/Inc/bms_eeprom_config.h:
-../Core/Inc/ee24.h:
-../Core/Inc/cell_balancing.h:
-../Core/Inc/fault_manager.h:
 ../Core/Inc/uartDMA.h:
-../Core/Inc/isa_ivt-s.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/powertrain_t26.h:
-../Core/Inc/contactors.h:
-../Core/Inc/uartDMA.h:
-../Core/Inc/master_to_CAN.h:
-../Core/Inc/precharge.h:
-../Core/Inc/can.h:
-../Core/Inc/fault_manager.h:
-../Core/Inc/gpio_expander.h:
-../Core/Inc/uartdma.h:
-../Core/Inc/charger.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/eveurope_charger.h:
-../Core/Inc/soc.h:
+../Core/Inc/dbc/powertrain_t26.h:

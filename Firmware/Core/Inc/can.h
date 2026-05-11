@@ -16,11 +16,15 @@ void CanTx_ProcessQueue(void);
 
 HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, uint8_t dlc, const uint8_t *data);
 
+HAL_StatusTypeDef CAN_TX_Add_Extended_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, uint8_t dlc, const uint8_t *data);
+
 /**
  * Register a callback that will be called on every received CAN message on FIFO0.
  * Returns HAL_OK on success, HAL_ERROR if the callback list is full.
  */
 HAL_StatusTypeDef CAN_RegisterRxCallback(CanRxCallback_t callback);
+
+HAL_StatusTypeDef CAN2_RegisterRxCallback(CanRxCallback_t callback);
 
 HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan);
 
@@ -28,6 +32,8 @@ HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan);
 //CAN housekeeping
 void CAN_Service(CAN_HandleTypeDef *hcan);
 uint8_t CAN_IsStarted(CAN_HandleTypeDef *hcan);
+
+void CAN_PrintHalError(uint32_t error);
 
 
 #endif /* INC_CAN_H_ */

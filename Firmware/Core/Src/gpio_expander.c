@@ -32,6 +32,8 @@
 uint8_t mcp23017_gpioa_state = 0x00;
 uint8_t mcp23017_gpiob_state = 0x00;
 
+bool init_animation_busy = true;
+
 // helper write MCP23017 register.
 void MCP23017_Write_Register(uint8_t reg, uint8_t value) {
 	HAL_StatusTypeDef result;
@@ -104,7 +106,7 @@ void MCP23017_LED(mcp23017_led_t led, mcp23017_led_state_t state) {
 	//uint8_t bit_position;
 	uint8_t bit_mask;
 
-	if (led > MCP23017_GPB7 || led < MCP23017_GPB0) {
+	if (led > LED_AUX2 || led < LED_UART) {
 		RAISE_ERROR(FAULT_EEPROM_VALIDATION_ERROR);
 		return;
 	}
@@ -130,7 +132,11 @@ void MCP23017_LED(mcp23017_led_t led, mcp23017_led_state_t state) {
 		return;
 	}
 
-	MCP23017_Write_Register(MCP23017_OLATB, mcp23017_gpiob_state);
+	if (init_animation_busy == false) {
+
+		MCP23017_Write_Register(MCP23017_OLATB, mcp23017_gpiob_state);
+
+	}
 }
 
 // read dip switch
@@ -154,14 +160,14 @@ uint8_t MCP23017_Read_DIP(mcp23017_dip_t dip) {
 }
 
 void MCP23017_All_LEDs_Off(void) {
-	MCP23017_LED(MCP23017_GPB0, OFF);
-	MCP23017_LED(MCP23017_GPB1, OFF);
-	MCP23017_LED(MCP23017_GPB2, OFF);
-	MCP23017_LED(MCP23017_GPB3, OFF);
-	MCP23017_LED(MCP23017_GPB4, OFF);
-	MCP23017_LED(MCP23017_GPB5, OFF);
-	MCP23017_LED(MCP23017_GPB6, OFF);
-	MCP23017_LED(MCP23017_GPB7, OFF);
+	MCP23017_LED(LED_UART, OFF);
+	MCP23017_LED(LED_ISOSPI, OFF);
+	MCP23017_LED(LED_CAN, OFF);
+	MCP23017_LED(LED_BALANCING_STATUS, OFF);
+	MCP23017_LED(LED_CHARGING_STATUS, OFF);
+	MCP23017_LED(LED_PRECHARGE_STATUS, OFF);
+	MCP23017_LED(LED_AUX1, OFF);
+	MCP23017_LED(LED_AUX2, OFF);
 }
 
 void MCP23017_StartupAnimation_Update(void) {
@@ -170,10 +176,10 @@ void MCP23017_StartupAnimation_Update(void) {
 		LED_PISCA_RUNNING = 0, LED_PISCA_MATA_LEDS, LED_PISCA_NAO
 	} led_anim_phase_t;
 
-	  static led_anim_phase_t phase_pisca = LED_PISCA_RUNNING;
+	static led_anim_phase_t phase_pisca = LED_PISCA_RUNNING;
 
 	//static pra n voltare m a 0 cada vez que e chamada
-	  static uint32_t animation_start_ms = 0;
+	static uint32_t animation_start_ms = 0;
 	static uint32_t last_update_ms = 0;
 	static uint8_t led_position = 0;
 
@@ -186,6 +192,8 @@ void MCP23017_StartupAnimation_Update(void) {
 	switch (phase_pisca) {
 
 	case LED_PISCA_RUNNING:
+
+		init_animation_busy = true;
 
 		if ((now - animation_start_ms) >= 3000) {
 			phase_pisca = LED_PISCA_MATA_LEDS;
@@ -219,9 +227,32 @@ void MCP23017_StartupAnimation_Update(void) {
 		MCP23017_All_LEDs_Off();
 
 		// acender LED da frente e cauda
-		MCP23017_LED((mcp23017_led_t) led_front, ON);
-		MCP23017_LED((mcp23017_led_t) led_back_1, ON);
-		MCP23017_LED((mcp23017_led_t) led_back_2, ON);
+		//MCP23017_LED((mcp23017_led_t) led_front, ON);
+		//MCP23017_LED((mcp23017_led_t) led_back_1, ON);
+		//MCP23017_LED((mcp23017_led_t) led_back_2, ON);
+
+		uint8_t bit_mask;
+
+		//led_front
+		bit_mask = 1 << led_front;
+
+		mcp23017_gpiob_state |= bit_mask;
+
+		MCP23017_Write_Register(MCP23017_OLATB, mcp23017_gpiob_state);
+
+		//led_back_1
+		bit_mask = 1 << led_back_1;
+
+		mcp23017_gpiob_state |= bit_mask;
+
+		MCP23017_Write_Register(MCP23017_OLATB, mcp23017_gpiob_state);
+
+		//led_back_2
+		bit_mask = 1 << led_back_2;
+
+		mcp23017_gpiob_state |= bit_mask;
+
+		MCP23017_Write_Register(MCP23017_OLATB, mcp23017_gpiob_state);
 
 		// avançar para o próximo LED
 		led_position++;
@@ -233,6 +264,8 @@ void MCP23017_StartupAnimation_Update(void) {
 		break;
 
 	case LED_PISCA_MATA_LEDS:
+
+		init_animation_busy = false;
 
 		MCP23017_All_LEDs_Off();
 
