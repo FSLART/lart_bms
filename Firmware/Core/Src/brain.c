@@ -63,7 +63,7 @@ void brain_start(void) {
 	FaultManager_Init();
 
 	//HAL_CAN_Start(&hcan1);
-	CAN_Service(&hcan1);
+	//CAN_Service(&hcan1);
 	CAN_Init(&hcan1);
 
 	//HAL_CAN_Start(&hcan1);
@@ -212,19 +212,16 @@ void brain_loop(void) {
 			 }
 			 }*/
 
-
 			//uint16_t min_cell_mV = adBms6830_FindMinVoltageGlobally();
-
 			//RESET SOC
 			//SOC_Init(min_cell_mV);
-
 		}
 
 		break;
 
 	case STARTUP:
 
-		 //MCP23017_StartupAnimation_Update();
+		//MCP23017_StartupAnimation_Update();
 
 		//printfDma("	STARTUP \n\n");
 		//TODO: implement startup shit that needs looping i gueess lol
@@ -232,7 +229,7 @@ void brain_loop(void) {
 		//static uint8_t adbmsLoopCounter = 0;
 
 		//if (adbms_main(AMS_Current_State) == ADBMS_END && adbmsLoopCounter > 3) {
-		if (adbms_main(AMS_Current_State) == ADBMS_END ) {
+		if (adbms_main(AMS_Current_State) == ADBMS_END) {
 
 			//encontrar a celula com menor tensão
 			uint16_t min_cell_mV = adBms6830_FindMinVoltageGlobally();
@@ -245,8 +242,8 @@ void brain_loop(void) {
 			AMS_State = IDLE;
 
 		} /*else if (adbms_main(AMS_Current_State) == ADBMS_END) {
-			adbmsLoopCounter++;
-		}*/
+		 adbmsLoopCounter++;
+		 }*/
 
 		HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
 
@@ -329,12 +326,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	/*if (GPIO_Pin == B1_Pin) {
-		if (AMS_State == ONMISSION) {
-			AMS_State = IDLE;
-		} else {
-			AMS_State = ONMISSION;
-		}
-	}*/
+	 if (AMS_State == ONMISSION) {
+	 AMS_State = IDLE;
+	 } else {
+	 AMS_State = ONMISSION;
+	 }
+	 }*/
 
 	Feedback_EXTI_Callback(GPIO_Pin);
 }

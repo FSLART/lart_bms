@@ -43,7 +43,8 @@ Core/Src/adbms/adBms6830GenericType.o: \
  C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830ParseCreate.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/mcuWrapper.h ../Core/Inc/stm32f4xx_it.h \
- ../Core/Inc/uartDMA.h ../Core/Inc/fault_manager.h
+ ../Core/Inc/uartDMA.h ../Core/Inc/fault_manager.h \
+ ../Core/Inc/gpio_expander.h ../Core/Inc/uartdma.h
 ../Core/Inc/common.h:
 ../Core/Inc/adbms_main.h:
 ../Core/Inc/main.h:
@@ -93,3 +94,5 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h
 ../Core/Inc/stm32f4xx_it.h:
 ../Core/Inc/uartDMA.h:
 ../Core/Inc/fault_manager.h:
+../Core/Inc/gpio_expander.h:
+../Core/Inc/uartdma.h:

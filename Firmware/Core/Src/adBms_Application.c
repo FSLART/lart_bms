@@ -26,6 +26,7 @@
 #include "cell_balancing.h"
 #include "uartDMA.h"
 #include "fault_manager.h"
+#include "gpio_expander.h"
 
 uint8_t slaves_found = 0;
 
@@ -37,11 +38,25 @@ uint8_t slaves_found = 0;
  */
 
 typedef enum {
-	ADBMS_IDLE_READ_PREV = 0, ADBMS_IDLE_READ_AVG_START_AUX, ADBMS_IDLE_READ_AUX_START_RAUX, ADBMS_IDLE_READ_RAUX_STATUS, ADBMS_IDLE_OW_START_EVEN, ADBMS_IDLE_OW_READ_EVEN_START_ODD, ADBMS_IDLE_OW_READ_ODD_EVALUATE
+	ADBMS_IDLE_READ_PREV = 0,
+	ADBMS_IDLE_READ_AVG_START_AUX,
+	ADBMS_IDLE_READ_AUX_START_RAUX,
+	ADBMS_IDLE_READ_RAUX_STATUS,
+	ADBMS_IDLE_OW_START_EVEN,
+	ADBMS_IDLE_OW_READ_EVEN_START_ODD,
+	ADBMS_IDLE_OW_READ_ODD_EVALUATE
 } adbms_idle_phase_t;
 
 typedef enum {
-	BAL_CYCLE_INIT = 0, BAL_CYCLE_APPLY, BAL_CYCLE_ON_TIME, BAL_CYCLE_STOP_DISCHARGE, BAL_CYCLE_SETTLE, BAL_CYCLE_START_AVG, BAL_CYCLE_WAIT_AVG, BAL_CYCLE_READ_AVG, BAL_CYCLE_COMPUTE
+	BAL_CYCLE_INIT = 0,
+	BAL_CYCLE_APPLY,
+	BAL_CYCLE_ON_TIME,
+	BAL_CYCLE_STOP_DISCHARGE,
+	BAL_CYCLE_SETTLE,
+	BAL_CYCLE_START_AVG,
+	BAL_CYCLE_WAIT_AVG,
+	BAL_CYCLE_READ_AVG,
+	BAL_CYCLE_COMPUTE
 } adbms_balancing_phase_t;
 
 typedef enum {
@@ -1313,10 +1328,12 @@ uint16_t adBms6830_FindMinVoltageGlobally(void) {
  */
 uint8_t adBms6830_daisychain_device_counter(void) {
 
-
 	uint8_t device_counter = 0;
 
-	cell_asic TEMP_SLAVE[ADBMS_MAX_DEVICES] = {0};
+	//TODO: EEPROM: masterCfg.total_ic4
+	uint8_t expected_devices = 6;
+
+	cell_asic TEMP_SLAVE[ADBMS_MAX_DEVICES] = { 0 };
 
 	// a puta do {0} crashava o  processador fds
 	//memset(TEMP_SLAVE, 0, sizeof(TEMP_SLAVE));
@@ -1324,26 +1341,64 @@ uint8_t adBms6830_daisychain_device_counter(void) {
 	adBmsWakeupIc(ADBMS_MAX_DEVICES);
 	adBmsReadData(ADBMS_MAX_DEVICES, &TEMP_SLAVE[0], RDSID, Sid, NONE);
 
-	for(uint8_t device = 0; device < ADBMS_MAX_DEVICES; device++) {
-		if(TEMP_SLAVE[device].cccrc.sid_pec == 0) {
-			device_counter++;
+	for (uint8_t device = 0; device < ADBMS_MAX_DEVICES; device++) {
+
+		uint8_t all_00 = 1;
+		uint8_t all_ff = 1;
+
+		for (uint8_t i = 0; i < 6; i++) {
+
+			if (TEMP_SLAVE[device].sid.sid[i] != 0x00) {
+				all_00 = 0;
+			}
+
+			if (TEMP_SLAVE[device].sid.sid[i] != 0xFF) {
+				all_ff = 0;
+			}
 		}
+
+		// If the response is all 0x00 or all 0xFF, assume no real device answered
+		uint8_t sid_valid = 1;
+
+		if (all_00 || all_ff) {
+			sid_valid = 0;
+		}
+
+		// PEC from the SID read
+		uint8_t pec_ok = 0;
+
+		if (TEMP_SLAVE[device].cccrc.sid_pec == 0) {
+			pec_ok = 1;
+		}
+
+		// Good device found
+		if (sid_valid && pec_ok) {
+			device_counter++;
+		} else {
+			// first bad/missing device means end of chain
+			break;
+		}
+
 	}
 
-	if (device_counter < 1) {
+	// Now compare detected devices with expected devices
+	if (device_counter == expected_devices) {
 
-		printfDebug("Chain BAD: %d device(s) confirmed.\r\n", device_counter);
+		printfDebug("Chain OK: expected %d, found %d device(s).\r\n", expected_devices, device_counter);
 
-	}else if (device_counter > 1) {
+		KILL_ERROR(FAULT_SLAVE_NOT_DETECTED);
+		KILL_ERROR(FAULT_PEC_ERROR);
+		MCP23017_LED(LED_ISOSPI, OFF);
 
-		printfDebug("Chain OK: %d device(s) confirmed.\r\n", device_counter);
-	}else{
+	} else {
 
-		printfDebug("Chain mega error, stupid\r\n", device_counter);
+		printfDebug("Chain BAD: expected %d, found %d device(s).\r\n", expected_devices, device_counter);
 
+		RAISE_ERROR(FAULT_SLAVE_NOT_DETECTED, .slave_idx = device_counter, .measured_value = device_counter, .threshold_value = expected_devices);
+
+		MCP23017_LED(LED_ISOSPI, ON);
 	}
 
 	return device_counter;
 
 }
-

@@ -48,7 +48,8 @@ Core/Src/adBms_Application.o: ../Core/Src/adBms_Application.c \
  C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830CmdList.h \
  ../Core/Inc/serialPrintResult.h ../Core/Inc/mcuWrapper.h \
  ../Core/Inc/brain.h ../Core/Inc/cell_balancing.h ../Core/Inc/uartDMA.h \
- ../Core/Inc/fault_manager.h
+ ../Core/Inc/fault_manager.h ../Core/Inc/gpio_expander.h \
+ ../Core/Inc/uartdma.h
 ../Core/Inc/common.h:
 ../Core/Inc/adBms_Application.h:
 ../Core/Inc/adbms_main.h:
@@ -106,3 +107,5 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830CmdLis
 ../Core/Inc/cell_balancing.h:
 ../Core/Inc/uartDMA.h:
 ../Core/Inc/fault_manager.h:
+../Core/Inc/gpio_expander.h:
+../Core/Inc/uartdma.h:

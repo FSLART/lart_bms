@@ -26,6 +26,7 @@
 #include "adbms_main.h"
 #include "uartDMA.h"
 #include "fault_manager.h"
+#include "gpio_expander.h"
 
 //Send variable out to CAN Messaging processing
 uint8_t anyPecError = 0;
@@ -340,6 +341,7 @@ void adBmsReadData(uint8_t tIC, cell_asic *ic, uint8_t cmd_arg[2], TYPE type, GR
 		//always start at 0
 		anyPecError = 0;
 
+		//MCP23017_LED(LED_ISOSPI, OFF);
 		for (uint8_t cic = 0; cic < tIC; cic++) {
 			if (pec_error[cic] != 0) {
 				anyPecError = 1;
@@ -349,13 +351,11 @@ void adBmsReadData(uint8_t tIC, cell_asic *ic, uint8_t cmd_arg[2], TYPE type, GR
 
 		KILL_ERROR(FAULT_PEC_ERROR);
 		if (anyPecError) {
-			//TODO: gpio expander
+
+			MCP23017_LED(LED_ISOSPI, ON);
 			//HAL_GPIO_WritePin(LED_isoSPI_STATUS_GPIO_Port, LED_isoSPI_STATUS_Pin, GPIO_PIN_SET);
 			//HAL_GPIO_TogglePin(LED_isoSPI_STATUS_GPIO_Port, LED_isoSPI_STATUS_Pin);
 			RAISE_ERROR(FAULT_PEC_ERROR);
-		} else {
-			//TODO: gpio expander
-			//HAL_GPIO_WritePin(LED_isoSPI_STATUS_GPIO_Port, LED_isoSPI_STATUS_Pin, GPIO_PIN_RESET);
 		}
 
 		switch (type) {

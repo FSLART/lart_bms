@@ -9,6 +9,7 @@
 #include "brain.h"
 #include "uartDMA.h"
 #include "fault_manager.h"
+#include "gpio_expander.h"
 
 #define MAX_CAN_RX_CALLBACKS 15  // Número de callbacks registados, tipo CAN_RegisterRxCallback(PreCharge_CAN_Rx);
 #define CAN_TX_QUEUE_SIZE    1024 //must be power of 2 only when working with bit masks
@@ -25,9 +26,19 @@ uint8_t can2Started = 0;
 uint32_t lastCanRecoverTry_time = 0;
 
 HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan) {
-	CAN_FilterTypeDef filter = { 0 };
 
-	// ID=0 + Mask=0 -> match everything
+	CAN_FilterTypeDef filter = { 0 };
+	uint8_t busIdx = FAULT_CAN_BUS_2;
+
+	if (hcan == NULL) {
+		return HAL_ERROR;
+	}
+
+	if (hcan == &hcan1) {
+		busIdx = FAULT_CAN_BUS_1;
+	}
+
+	/* ID=0 + Mask=0 -> accept everything */
 	filter.FilterMode = CAN_FILTERMODE_IDMASK;
 	filter.FilterScale = CAN_FILTERSCALE_32BIT;
 	filter.FilterIdHigh = 0x0000;
@@ -41,30 +52,48 @@ HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan) {
 	// Pick a filter bank in the half that belongs to this CAN
 	if (hcan == &hcan1) {
 		filter.FilterBank = 0;
+	} else if (hcan == &hcan2) {
+		filter.FilterBank = 14;
 	} else {
-		filter.FilterBank = 14;  // CAN2 must use a bank >= SlaveStartFilterBank
+		return HAL_ERROR;
 	}
 
 	if (HAL_CAN_ConfigFilter(hcan, &filter) != HAL_OK) {
-		uint8_t busIdx = FAULT_CAN_BUS_2;
-		if (hcan == &hcan1) {
-			busIdx = FAULT_CAN_BUS_1;
-		}
 		RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
+		MCP23017_LED(LED_CAN, ON);
 		return HAL_ERROR;
 	}
 
 	// Without this, HAL_CAN_RxFifo0MsgPendingCallback will never fire
 	if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING)
 			!= HAL_OK) {
-		uint8_t busIdx = FAULT_CAN_BUS_2;
-		if (hcan == &hcan1) {
-			busIdx = FAULT_CAN_BUS_1;
-		}
-
 		RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
+		MCP23017_LED(LED_CAN, ON);
 		return HAL_ERROR;
 	}
+
+	if (HAL_CAN_Start(hcan) != HAL_OK) {
+		RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
+		MCP23017_LED(LED_CAN, ON);
+
+		if (hcan == &hcan1) {
+			can1Started = 0;
+		} else {
+			can2Started = 0;
+		}
+
+		return HAL_ERROR;
+	}
+
+	if (hcan == &hcan1) {
+		can1Started = 1;
+	} else {
+		can2Started = 1;
+	}
+
+	KILL_ERROR(FAULT_CAN_INIT_ERROR);
+	MCP23017_LED(LED_CAN, OFF);
+	return HAL_OK;
 
 	return HAL_OK;
 }
@@ -80,16 +109,15 @@ HAL_StatusTypeDef CAN_RegisterRxCallback(CanRxCallback_t callback) {
 	return HAL_OK;
 }
 
-HAL_StatusTypeDef CAN2_RegisterRxCallback(CanRxCallback_t callback)
-{
-    if (can2CallbackCounter >= MAX_CAN_RX_CALLBACKS) {
-        return HAL_ERROR;
-    }
+HAL_StatusTypeDef CAN2_RegisterRxCallback(CanRxCallback_t callback) {
+	if (can2CallbackCounter >= MAX_CAN_RX_CALLBACKS) {
+		return HAL_ERROR;
+	}
 
-    can2RxCallbacks[can2CallbackCounter] = callback;
-    can2CallbackCounter++;
+	can2RxCallbacks[can2CallbackCounter] = callback;
+	can2CallbackCounter++;
 
-    return HAL_OK;
+	return HAL_OK;
 }
 
 // HAL calls this when a message lands on FIFO0
@@ -104,28 +132,29 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 	//kill before checking for error
 	KILL_ERROR(FAULT_CAN_RECEIVE_ERROR);
+	MCP23017_LED(LED_CAN, OFF);
 
 	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rxHeader, rxData) != HAL_OK) {
 
 		// FUDEU
 		RAISE_ERROR(FAULT_CAN_RECEIVE_ERROR, .channel_idx = busIdx);
+		MCP23017_LED(LED_CAN, ON);
 		return;
 	}
 
 	// Send it to everyone who registered
 	if (hcan == &hcan1) {
-	    for (uint8_t i = 0; i < can1CallbackCounter; i++) {
-	        if (can1RxCallbacks[i] != NULL) {
-	            can1RxCallbacks[i](&rxHeader, rxData);
-	        }
-	    }
-	}
-	else if (hcan == &hcan2) {
-	    for (uint8_t i = 0; i < can2CallbackCounter; i++) {
-	        if (can2RxCallbacks[i] != NULL) {
-	            can2RxCallbacks[i](&rxHeader, rxData);
-	        }
-	    }
+		for (uint8_t i = 0; i < can1CallbackCounter; i++) {
+			if (can1RxCallbacks[i] != NULL) {
+				can1RxCallbacks[i](&rxHeader, rxData);
+			}
+		}
+	} else if (hcan == &hcan2) {
+		for (uint8_t i = 0; i < can2CallbackCounter; i++) {
+			if (can2RxCallbacks[i] != NULL) {
+				can2RxCallbacks[i](&rxHeader, rxData);
+			}
+		}
 	}
 }
 
@@ -195,17 +224,21 @@ void CanTx_ProcessQueue(void) {
 		// No free mailbox? Stop, will try again next time
 		if (HAL_CAN_GetTxMailboxesFreeLevel(item->hcan) == 0) {
 			RAISE_ERROR(FAULT_CAN_MAILBOX_FULL, .channel_idx = busIdx);
-			break;
+			MCP23017_LED(LED_CAN, ON);
+			//break;
 		} else {
 			KILL_ERROR(FAULT_CAN_MAILBOX_FULL);
+			MCP23017_LED(LED_CAN, OFF);
 		}
 
 		if (HAL_CAN_AddTxMessage(item->hcan, &TxH, item->data, &mailbox)
 				!= HAL_OK) {
 			RAISE_ERROR(FAULT_CAN_SEND_ERROR, .channel_idx = busIdx);
+			MCP23017_LED(LED_CAN, ON);
 			break;  // Como dou brek, não tento outra vez
 		} else {
 			KILL_ERROR(FAULT_CAN_SEND_ERROR);
+			MCP23017_LED(LED_CAN, OFF);
 		}
 
 		// Drop the item we just sent
@@ -398,8 +431,20 @@ void CAN_Service(CAN_HandleTypeDef *hcan) {
 	uint32_t error = HAL_CAN_GetError(hcan);
 	HAL_CAN_StateTypeDef state = HAL_CAN_GetState(hcan);
 
+	if (error == HAL_CAN_ERROR_NONE) {
+		KILL_ERROR(FAULT_CAN_SEND_ERROR);
+		MCP23017_LED(LED_CAN, OFF);
+		return;
+	}
+
 	if (error != HAL_CAN_ERROR_NONE) {
+		RAISE_ERROR(FAULT_CAN_SEND_ERROR, .channel_idx = busIdx);
+		MCP23017_LED(LED_CAN, ON);
+	}
+
+	if (error == HAL_CAN_ERROR_BOF) {
 		RAISE_ERROR(FAULT_CAN_BUS_OFF, .channel_idx = busIdx);
+		MCP23017_LED(LED_CAN, ON);
 	}
 
 	//if ((state == HAL_CAN_STATE_ERROR) || (state == HAL_CAN_STATE_RESET) || (state == HAL_CAN_STATE_ERROR)) {
@@ -410,23 +455,22 @@ void CAN_Service(CAN_HandleTypeDef *hcan) {
 
 		if (HAL_CAN_Init(hcan) != HAL_OK) {
 			RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
+			MCP23017_LED(LED_CAN, ON);
 			return;
 		}
 
 		if (CAN_Init(hcan) != HAL_OK) {
 			RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
-			return;
-		}
-
-		if (HAL_CAN_Start(hcan) != HAL_OK) {
-			RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
+			MCP23017_LED(LED_CAN, ON);
 			return;
 		}
 
 		KILL_ERROR(FAULT_CAN_INIT_ERROR);
+		MCP23017_LED(LED_CAN, OFF);
 	}
 
 	//CAN_PrintHalError(error);
+	HAL_CAN_ResetError(hcan);
 }
 
 void CAN_PrintHalError(uint32_t error) {
