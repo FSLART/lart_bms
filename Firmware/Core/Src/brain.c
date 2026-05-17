@@ -303,7 +303,7 @@ void brain_loop(void) {
 	//CAN_Service(&hcan2);
 
 	//check if there are can messages to send
-	CanTx_ProcessQueue();
+	//CanTx_ProcessQueue(); - now done in CAN serivice
 
 	MCP23017_StartupAnimation_Update();
 

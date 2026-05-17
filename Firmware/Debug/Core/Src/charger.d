@@ -38,7 +38,8 @@ Core/Src/charger.o: ../Core/Src/charger.c ../Core/Inc/charger.h \
  ../Core/Inc/main.h ../Core/Inc/brain.h ../Core/Inc/can.h \
  ../Core/Inc/uartDMA.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/eveurope_charger.h \
- ../Core/Inc/dbc/powertrain_t26.h
+ ../Core/Inc/dbc/powertrain_t26.h ../Core/Inc/gpio_expander.h \
+ ../Core/Inc/uartdma.h
 ../Core/Inc/charger.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -83,3 +84,5 @@ Core/Src/charger.o: ../Core/Src/charger.c ../Core/Inc/charger.h \
 ../Core/Inc/uartDMA.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/eveurope_charger.h:
 ../Core/Inc/dbc/powertrain_t26.h:
+../Core/Inc/gpio_expander.h:
+../Core/Inc/uartdma.h:

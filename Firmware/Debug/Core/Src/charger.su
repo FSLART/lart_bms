@@ -1,9 +1,9 @@
-../Core/Src/charger.c:37:6:Charger_CAN_Init	8	static
+../Core/Src/charger.c:41:6:Charger_CAN_Init	8	static
 ../Core/Src/charger.c:48:6:Charger_CAN_Rx	24	static
-../Core/Src/charger.c:104:6:Charger_Update	16	static
-../Core/Src/charger.c:126:6:Charger_Stop	8	static
-../Core/Src/charger.c:131:6:Charger_SendRequest	40	static
+../Core/Src/charger.c:103:6:Charger_Update	16	static
+../Core/Src/charger.c:123:6:Charger_Stop	8	static
+../Core/Src/charger.c:132:6:Charger_SendRequest	40	static
 ../Core/Src/charger.c:157:6:Charger_IsRequestedCurrentOK	4	static
 ../Core/Src/charger.c:162:9:Charger_IsRequested	4	static
 ../Core/Src/charger.c:166:10:Charger_GetRequestedCurrentRaw	4	static
-../Core/Src/charger.c:170:9:Charger_HasStatus	4	static
+../Core/Src/charger.c:170:9:Charger_HasStatus	16	static

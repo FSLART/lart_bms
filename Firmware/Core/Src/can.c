@@ -23,6 +23,7 @@ uint8_t can2CallbackCounter = 0;
 //CAN housekeeping
 uint8_t can1Started = 0;
 uint8_t can2Started = 0;
+
 uint32_t lastCanRecoverTry_time = 0;
 
 HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan) {
@@ -65,8 +66,7 @@ HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan) {
 	}
 
 	// Without this, HAL_CAN_RxFifo0MsgPendingCallback will never fire
-	if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING)
-			!= HAL_OK) {
+	if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
 		RAISE_ERROR(FAULT_CAN_INIT_ERROR, .channel_idx = busIdx);
 		MCP23017_LED(LED_CAN, ON);
 		return HAL_ERROR;
@@ -168,60 +168,83 @@ typedef struct {
 	uint8_t data[8];
 } CanTxItem_t;
 
+typedef struct {
+	uint16_t head;
+	uint16_t tail;
+	CanTxItem_t item[CAN_TX_QUEUE_SIZE];
+} CanTxQueue_t;
+
 uint16_t canTxHead = 0;
 uint16_t canTxTail = 0;
-CanTxItem_t canTxQueue[CAN_TX_QUEUE_SIZE];
+
+CanTxQueue_t can1TxQueue = { 0 };
+CanTxQueue_t can2TxQueue = { 0 };
 
 // check if the queuueeu is empty
-uint8_t CanTx_IsEmpty(void) {
-	if (canTxHead == canTxTail) {
+uint8_t CanTx_IsEmpty(CanTxQueue_t *queuue) {
+
+	if (queuue->head == queuue->tail) {
+
 		return 1;
 	}
+
 	return 0;
 }
 
 //A queue está cheia????
-uint8_t CanTx_IsFull(void) {
-	uint16_t next = canTxHead + 1;
+uint8_t CanTx_IsFull(CanTxQueue_t *queeue) {
+
+	uint16_t next = queeue->head + 1;
+
 	if (next >= CAN_TX_QUEUE_SIZE) {
 		next = 0;
 	}
-	if (next == canTxTail) {
+
+	if (next == queeue->tail) {
 		return 1;
 	}
+
 	return 0;
 }
 
 //Função de background pra cagar tudo pro CAN
-void CanTx_ProcessQueue(void) {
-	while (CanTx_IsEmpty() == 0) {
+void CanTx_ProcessSelectedQueue(CanTxQueue_t *queuue, CAN_HandleTypeDef *hcan) {
 
-		CanTxItem_t *item = &canTxQueue[canTxTail];
+	uint8_t busIdx = FAULT_CAN_BUS_2;
 
-		CAN_TxHeaderTypeDef TxH;
-		uint32_t mailbox;
+	if (hcan == &hcan1) {
+		busIdx = FAULT_CAN_BUS_1;
+	}
 
-		TxH.StdId = 0;
-		TxH.ExtId = 0;
-
-		if (item->ide == CAN_ID_EXT) {
-			TxH.ExtId = item->id & 0x1FFFFFFF;
-			TxH.IDE = CAN_ID_EXT;
-		} else {
-			TxH.StdId = item->id & 0x7FF;
-			TxH.IDE = CAN_ID_STD;
-		}
-
-		TxH.RTR = CAN_RTR_DATA;
-		TxH.DLC = item->dlc;
-		TxH.TransmitGlobalTime = DISABLE;
-
-		uint8_t busIdx = FAULT_CAN_BUS_2;
-		if (item->hcan == &hcan1) {
-			busIdx = FAULT_CAN_BUS_1;
-		}
+	while (!CanTx_IsEmpty(queuue)) {
 
 		// No free mailbox? Stop, will try again next time
+		if (HAL_CAN_GetTxMailboxesFreeLevel(hcan) == 0) {
+
+			RAISE_ERROR(FAULT_CAN_MAILBOX_FULL, .channel_idx = busIdx);
+			MCP23017_LED(LED_CAN, ON);
+
+			////break;
+			return;
+		}
+
+		CanTxItem_t *item = &queuue->item[queuue->tail];
+
+		CAN_TxHeaderTypeDef txh = { 0 };
+		uint32_t mailbox = 0;
+
+		if (item->ide == CAN_ID_EXT) {
+			txh.ExtId = item->id & 0x1FFFFFFF;
+			txh.IDE = CAN_ID_EXT;
+		} else {
+			txh.StdId = item->id & 0x7FF;
+			txh.IDE = CAN_ID_STD;
+		}
+
+		txh.RTR = CAN_RTR_DATA;
+		txh.DLC = item->dlc;
+		txh.TransmitGlobalTime = DISABLE;
+
 		if (HAL_CAN_GetTxMailboxesFreeLevel(item->hcan) == 0) {
 			RAISE_ERROR(FAULT_CAN_MAILBOX_FULL, .channel_idx = busIdx);
 			MCP23017_LED(LED_CAN, ON);
@@ -231,67 +254,102 @@ void CanTx_ProcessQueue(void) {
 			MCP23017_LED(LED_CAN, OFF);
 		}
 
-		if (HAL_CAN_AddTxMessage(item->hcan, &TxH, item->data, &mailbox)
-				!= HAL_OK) {
+		if (HAL_CAN_AddTxMessage(hcan, &txh, item->data, &mailbox) != HAL_OK) {
 			RAISE_ERROR(FAULT_CAN_SEND_ERROR, .channel_idx = busIdx);
 			MCP23017_LED(LED_CAN, ON);
-			break;  // Como dou brek, não tento outra vez
-		} else {
-			KILL_ERROR(FAULT_CAN_SEND_ERROR);
-			MCP23017_LED(LED_CAN, OFF);
+			return;
 		}
 
 		// Drop the item we just sent
-		canTxTail++;
-		if (canTxTail >= CAN_TX_QUEUE_SIZE) {
-			canTxTail = 0;
+		queuue->tail++;
+		if (queuue->tail >= CAN_TX_QUEUE_SIZE) {
+			queuue->tail = 0;
 		}
+
+		//ok ehhehehhe
+		KILL_ERROR(FAULT_CAN_MAILBOX_FULL);
+		KILL_ERROR(FAULT_CAN_SEND_ERROR);
+		MCP23017_LED(LED_CAN, OFF);
 	}
 }
 
-static HAL_StatusTypeDef CAN_TX_Add_To_Queue_Internal(CAN_HandleTypeDef *hcan,
-		uint32_t canID, uint8_t dlc, const uint8_t *data, uint8_t ide) {
+static HAL_StatusTypeDef CAN_TX_Add_To_Queue_Internal(CAN_HandleTypeDef *hcan, uint32_t canID, uint8_t dlc, const uint8_t *data, uint8_t ide) {
+
+	//placegolder
+	CanTxQueue_t *queueueu = NULL;
+
+	if (hcan == &hcan1) {
+
+		queueueu = &can1TxQueue;
+
+	} else if (hcan == &hcan2) {
+
+		queueueu = &can2TxQueue;
+
+	} else {
+
+		return HAL_ERROR;
+
+	}
+
+	if (queueueu == NULL) {
+		return HAL_ERROR;
+	}
+
+	if (data == NULL) {
+		return HAL_ERROR;
+	}
+
 	if (dlc > 8) {
 		return HAL_ERROR;
 	}
 
-	if (CanTx_IsFull()) {
+	if (CanTx_IsFull(queueueu)) {
+		uint8_t busIdx = FAULT_CAN_BUS_2;
+
+		if (hcan == &hcan1) {
+			busIdx = FAULT_CAN_BUS_1;
+		}
+
+		RAISE_ERROR(FAULT_CAN_MAILBOX_FULL, .channel_idx = busIdx);
+		//return HAL_ERROR;
+
 		// Queue overflow - just drop it
+		//TODO: replace oleder messages with fresh ones
 		return HAL_OK;
 	}
 
-	canTxQueue[canTxHead].hcan = hcan;
-	canTxQueue[canTxHead].ide = ide;
+	queueueu->item[queueueu->head].hcan = hcan;
+	queueueu->item[queueueu->head].ide = ide;
+	queueueu->item[queueueu->head].dlc = dlc;
 
 	if (ide == CAN_ID_EXT) {
-		canTxQueue[canTxHead].id = canID & 0x1FFFFFFF;
+		queueueu->item[queueueu->head].id = canID & 0x1FFFFFFF;
 	} else {
-		canTxQueue[canTxHead].id = canID & 0x7FF;
+		queueueu->item[queueueu->head].id = canID & 0x7FF;
 	}
-
-	canTxQueue[canTxHead].dlc = dlc;
 
 	for (uint8_t i = 0; i < dlc; i++) {
-		canTxQueue[canTxHead].data[i] = data[i];
+		queueueu->item[queueueu->head].data[i] = data[i];
 	}
 
-	canTxHead++;
-	if (canTxHead >= CAN_TX_QUEUE_SIZE) {
-		canTxHead = 0;
+	queueueu->head++;
+	if (queueueu->head >= CAN_TX_QUEUE_SIZE) {
+		queueueu->head = 0;
 	}
 
 	return HAL_OK;
 }
 
 //Add standard 11-bit CAN message to queue
-HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID,
-		uint8_t dlc, const uint8_t *data) {
+HAL_StatusTypeDef CAN_TX_Add_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, uint8_t dlc, const uint8_t *data) {
+
 	return CAN_TX_Add_To_Queue_Internal(hcan, canID, dlc, data, CAN_ID_STD);
 }
 
 //Add extended 29-bit CAN message to queue
-HAL_StatusTypeDef CAN_TX_Add_Extended_To_Queue(CAN_HandleTypeDef *hcan,
-		uint32_t canID, uint8_t dlc, const uint8_t *data) {
+HAL_StatusTypeDef CAN_TX_Add_Extended_To_Queue(CAN_HandleTypeDef *hcan, uint32_t canID, uint8_t dlc, const uint8_t *data) {
+
 	return CAN_TX_Add_To_Queue_Internal(hcan, canID, dlc, data, CAN_ID_EXT);
 }
 
@@ -408,6 +466,17 @@ void CAN_Service(CAN_HandleTypeDef *hcan) {
 		return;
 	}
 
+	//TODO: maybe only triogger this every 2ms so ISA doesnt crash
+	if (hcan == &hcan1) {
+
+		CanTx_ProcessSelectedQueue(&can1TxQueue, &hcan1);
+
+	} else {
+
+		CanTx_ProcessSelectedQueue(&can2TxQueue, &hcan2);
+
+	}
+
 	if (hcan == &hcan1) {
 		last_try = last_can1_try;
 	} else if (hcan == &hcan2) {
@@ -513,8 +582,7 @@ void CAN_PrintHalError(uint32_t error) {
 	}
 
 	if (error & HAL_CAN_ERROR_TX_ALST0) {
-		printfDebug(
-				" - HAL_CAN_ERROR_TX_ALST0: arbitration lost mailbox 0\r\n");
+		printfDebug(" - HAL_CAN_ERROR_TX_ALST0: arbitration lost mailbox 0\r\n");
 	}
 
 	if (error & HAL_CAN_ERROR_TX_TERR0) {
@@ -522,8 +590,7 @@ void CAN_PrintHalError(uint32_t error) {
 	}
 
 	if (error & HAL_CAN_ERROR_TX_ALST1) {
-		printfDebug(
-				" - HAL_CAN_ERROR_TX_ALST1: arbitration lost mailbox 1\r\n");
+		printfDebug(" - HAL_CAN_ERROR_TX_ALST1: arbitration lost mailbox 1\r\n");
 	}
 
 	if (error & HAL_CAN_ERROR_TX_TERR1) {
@@ -531,8 +598,7 @@ void CAN_PrintHalError(uint32_t error) {
 	}
 
 	if (error & HAL_CAN_ERROR_TX_ALST2) {
-		printfDebug(
-				" - HAL_CAN_ERROR_TX_ALST2: arbitration lost mailbox 2\r\n");
+		printfDebug(" - HAL_CAN_ERROR_TX_ALST2: arbitration lost mailbox 2\r\n");
 	}
 
 	if (error & HAL_CAN_ERROR_TX_TERR2) {

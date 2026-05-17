@@ -20,30 +20,29 @@ extern TIM_HandleTypeDef htim3;
 #define TS_CAL1_ADDR        ((uint16_t*)0x1FFF7A2C)   /* ADC raw @ 30C, VDDA = 3.3V */
 #define TS_CAL2_ADDR        ((uint16_t*)0x1FFF7A2E)   /* ADC raw @110C, VDDA = 3.3V */
 
-#define TEMP_CAL1_TEMPC     30.0f
-#define TEMP_CAL2_TEMPC     110.0f
+#define TEMP_CAL1_TEMPC     30
+#define TEMP_CAL2_TEMPC     110
 
 /* For 12-bit ADC resolution */
-#define ADC_MAX_COUNTS      4095.0f
+#define ADC_MAX_COUNTS      4095
 
 /* Typical STM32 internal reference voltage */
-#define VREFINT_TYP_VOLTS   1.21f
+#define VREFINT_TYP_VOLTS   1.21
 
-#define MCS1802_SENSITIVITY   0.264f   // 264 mV/A = 0.264 V/A do datasheet
+#define MCS1802_SENSITIVITY   0.264   // 264 mV/A = 0.264 V/A do datasheet
 
 /* DMA buffer:
- * rank 1 -> ams_master_current
- * rank 2 -> TEMP
- * rank 3 -> VREFINT
- * repeated ADC_SAMPLES_PER_CH times
+ * rank 1 -> TEMP
+ * rank 2 -> VREFINT
+ * rank 3 -> ams_master_current
  */
-static uint16_t ADCdmaBuffer[ADC_DMA_BUF_LEN];
-static AnalogReadings_t s_analog = {0};
+uint16_t ADCdmaBuffer[ADC_DMA_BUF_LEN];
+AnalogReadings_t adc_readings = {0};
 
 static float AnalogReadings_ComputeVDDA(uint16_t raw_vref)
 {
-    if (raw_vref == 0u) {
-        return 0.0f;
+    if (raw_vref == 0) {
+        return 0;
     }
 
     return (VREFINT_TYP_VOLTS * ADC_MAX_COUNTS) / (float)raw_vref;
@@ -53,7 +52,7 @@ static float AnalogReadings_ComputeCurrent(uint16_t raw_ams_master_current, floa
 {
     float vout = ((float)raw_ams_master_current * vdda) / ADC_MAX_COUNTS;  // ADC → volts
 
-    float zero_current = vdda * 0.5f;                        // VCC/2 offset
+    float zero_current = vdda * 0.5;                        // VCC/2 offset
 
     return (vout - zero_current) / MCS1802_SENSITIVITY;      // amps
 }
@@ -75,17 +74,17 @@ static float AnalogReadings_ComputeTempC(uint16_t raw_temp, float vdda)
 
 void AnalogReadings_Init(void)
 {
-    s_analog.raw_ams_master_current = 0u;
-    s_analog.raw_temp = 0u;
-    s_analog.raw_vref = 0u;
-    s_analog.vdda = 0.0f;
-    s_analog.ams_master_current = 0.0f;
-    s_analog.mcu_temp_c = 0.0f;
-    s_analog.busy = false;
-    s_analog.data_ready = false;
+    adc_readings.raw_ams_master_current = 0;
+    adc_readings.raw_temp = 0;
+    adc_readings.raw_vref = 0;
+    adc_readings.vdda = 0.0;
+    adc_readings.ams_master_current = 0.0;
+    adc_readings.mcu_temp_c = 0.0;
+    adc_readings.busy = false;
+    adc_readings.data_ready = false;
 
     for (uint32_t i = 0; i < ADC_DMA_BUF_LEN; i++) {
-        ADCdmaBuffer[i] = 0u;
+        ADCdmaBuffer[i] = 0;
     }
 
     HAL_TIM_Base_Start(&htim3);
@@ -94,12 +93,12 @@ void AnalogReadings_Init(void)
 
 void AnalogReadings_Start(void)
 {
-    if (s_analog.busy) {
+    if (adc_readings.busy) {
         return;
     }
 
-    s_analog.busy = true;
-    s_analog.data_ready = false;
+    adc_readings.busy = true;
+    adc_readings.data_ready = false;
 
     HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADCdmaBuffer, ADC_DMA_BUF_LEN);
 }
@@ -119,21 +118,22 @@ void AnalogReadings_ConvCpltCallback(void)
 
     //HAL_ADC_Stop_DMA(&hadc1);
 
-    s_analog.raw_ams_master_current = (uint16_t)(sum_ams_master_current / ADC_SAMPLES_PER_CH);
-    s_analog.raw_temp = (uint16_t)(sum_temp / ADC_SAMPLES_PER_CH);
-    s_analog.raw_vref = (uint16_t)(sum_vref / ADC_SAMPLES_PER_CH);
+    adc_readings.raw_ams_master_current = (uint16_t)(sum_ams_master_current / ADC_SAMPLES_PER_CH);
+    adc_readings.raw_temp = (uint16_t)(sum_temp / ADC_SAMPLES_PER_CH);
+    adc_readings.raw_vref = (uint16_t)(sum_vref / ADC_SAMPLES_PER_CH);
 
-    s_analog.vdda = AnalogReadings_ComputeVDDA(s_analog.raw_vref);
-    s_analog.ams_master_current = AnalogReadings_ComputeCurrent(s_analog.raw_ams_master_current, s_analog.vdda);
-    s_analog.mcu_temp_c = AnalogReadings_ComputeTempC(s_analog.raw_temp, s_analog.vdda);
+    adc_readings.vdda = AnalogReadings_ComputeVDDA(adc_readings.raw_vref);
+    adc_readings.ams_master_current = AnalogReadings_ComputeCurrent(adc_readings.raw_ams_master_current, adc_readings.vdda);
+    adc_readings.mcu_temp_c = AnalogReadings_ComputeTempC(adc_readings.raw_temp, adc_readings.vdda);
 
-    s_analog.busy = false;
-    s_analog.data_ready = true;
+    adc_readings.busy = false;
+    adc_readings.data_ready = true;
 }
 
+//n sei pk q tem de ser const
 const AnalogReadings_t *AnalogReadings_Get(void)
 {
-    return &s_analog;
+    return &adc_readings;
 }
 
 /*HAL_StatusTypeDef AnalogReadings_CAN_Send(CAN_HandleTypeDef *hcan)
@@ -145,15 +145,15 @@ const AnalogReadings_t *AnalogReadings_Get(void)
         return HAL_ERROR;
     }
 
-    if (!s_analog.data_ready) {
+    if (!adc_readings.data_ready) {
         return HAL_ERROR;
     }
 
     struct powertrain_t26_master_msc_id_1_t msg = {0};
 
-    msg.mcu_vref = powertrain_t26_master_msc_id_1_mcu_vref_encode(s_analog.vdda);
-    msg.mcu_temperature = powertrain_t26_master_msc_id_1_mcu_temperature_encode(s_analog.mcu_temp_c);
-    msg.ams_current_draw = powertrain_t26_master_msc_id_1_ams_current_draw_encode(s_analog.ams_master_current);
+    msg.mcu_vref = powertrain_t26_master_msc_id_1_mcu_vref_encode(adc_readings.vdda);
+    msg.mcu_temperature = powertrain_t26_master_msc_id_1_mcu_temperature_encode(adc_readings.mcu_temp_c);
+    msg.ams_current_draw = powertrain_t26_master_msc_id_1_ams_current_draw_encode(adc_readings.ams_master_current);
 
     len = powertrain_t26_master_msc_id_1_pack(data, &msg, sizeof(data));
     if (len < 0) {
@@ -174,7 +174,7 @@ const AnalogReadings_t *AnalogReadings_Get(void)
 
 		if (adc->data_ready)
 		{
-			printfDebug("ADC RAW: IN13=%u TEMP=%u VREF=%u\r\n",
+			printfDebug("ADC RAW: IN14=%u TEMP=%u VREF=%u\r\n",
 		           adc->raw_ams_master_current,
 		           adc->raw_temp,
 		           adc->raw_vref);

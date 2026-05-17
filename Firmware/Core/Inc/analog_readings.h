@@ -13,7 +13,7 @@
 #include "main.h"
 
 #define ADC_CHANNEL_COUNT    3
-#define ADC_SAMPLES_PER_CH   10
+#define ADC_SAMPLES_PER_CH   600
 #define ADC_DMA_BUF_LEN      (ADC_CHANNEL_COUNT * ADC_SAMPLES_PER_CH)
 
 typedef struct {

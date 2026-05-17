@@ -18,7 +18,7 @@ void Charger_CAN_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data);
 
 void Charger_Update(void);
 void Charger_Stop(void);
-void Charger_SendRequest(uint8_t enable);
+void Charger_SendRequest(bool enable);
 
 bool Charger_IsRequestedCurrentOK(void);
 uint8_t Charger_IsRequested(void);
