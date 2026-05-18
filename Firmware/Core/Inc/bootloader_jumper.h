@@ -13,7 +13,7 @@
 /* Flag set by the CAN RX ISR, consumed in the main loop (Thread Mode). */
 extern volatile uint8_t triggerJumpToBootloader;
 
-void CAN_Setup_Bootloader_Jumper(void);
+void Setup_Bootloader_Jumper(void);
 void JumpToBootloader(void);
 
 

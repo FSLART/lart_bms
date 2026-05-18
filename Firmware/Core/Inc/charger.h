@@ -14,7 +14,8 @@
 
 void Charger_CAN_Init(void);
 
-void Charger_CAN_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data);
+void Charger_CAN_Comms_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data);
+void Charger_CAN_Requests_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data);
 
 void Charger_Update(void);
 void Charger_Stop(void);

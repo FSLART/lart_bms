@@ -39,13 +39,31 @@ uint8_t charger_status_valid = 0;
 uint32_t last_charger_status_ms = 0;
 
 void Charger_CAN_Init(void) {
-	CAN_RegisterRxCallback(Charger_CAN_Rx);
+
+	CAN_RegisterRxCallback(Charger_CAN_Requests_RX);
+	CAN2_RegisterRxCallback(Charger_CAN_Comms_RX);
 
 	requested_voltage_raw = eveurope_charger_bms_charging_request_max_charging_voltage_encode(CHARGER_MAX_VOLTAGE_V);
 	requested_current_raw = eveurope_charger_bms_charging_request_max_charging_current_encode(CHARGER_MAX_CURRENT_A);
 }
 
-void Charger_CAN_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
+void Charger_CAN_Comms_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
+	if ((hdr == 0) || (data == 0)) {
+		return;
+	}
+
+	// Status from the EV Europe
+	if ((hdr->IDE == CAN_ID_EXT) && (hdr->ExtId == EVEUROPE_CHARGER_CHARGER_STATUS_FRAME_ID)) {
+
+		if (eveurope_charger_charger_status_unpack(&last_charger_status, data, hdr->DLC) == 0) {
+
+			charger_status_valid = 1;
+			last_charger_status_ms = HAL_GetTick();
+		}
+	}
+}
+
+void Charger_CAN_Requests_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 	if ((hdr == 0) || (data == 0)) {
 		return;
 	}
@@ -121,6 +139,7 @@ void Charger_Update(void) {
 }
 
 void Charger_Stop(void) {
+
 	Charger_SendRequest(false);
 	last_charger_command_ms = HAL_GetTick();
 
@@ -139,7 +158,7 @@ void Charger_SendRequest(bool enable) {
 	msg.max_charging_voltage = requested_voltage_raw;
 	msg.max_charging_current = requested_current_raw;
 
-	// 0 - charge, 1 - no charger
+	// 0 - charge, 1 - no charge para carregador
 	if (enable != false) {
 		msg.control = 0;
 	} else {

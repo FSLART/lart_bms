@@ -11,8 +11,11 @@
 
 #include <string.h>
 #include "main.h"
+#include "can.h"
 #include "bootloader_jumper.h"
 #include "fault_manager.h"
+#include "powertrain_t26.h"
+#include "uartDMA.h"
 
 extern CAN_HandleTypeDef hcan2;
 
@@ -85,35 +88,34 @@ void JumpToBootloader(void)
     while (1) {}
 }
 
-/* ------------------------------------------------
-   Init: filter + notification + start
-   ------------------------------------------------ */
-void CAN_Setup_Bootloader_Jumper(void)
-{
-    CAN_FilterTypeDef f = {
-        .FilterBank           = 14,
-        .FilterMode           = CAN_FILTERMODE_IDMASK,
-        .FilterScale          = CAN_FILTERSCALE_32BIT,
-        .FilterIdHigh         = 0x0000,
-        .FilterIdLow          = 0x0000,
-        .FilterMaskIdHigh     = 0x0000,
-        .FilterMaskIdLow      = 0x0000,
-        .FilterFIFOAssignment = CAN_RX_FIFO1,
-        .FilterActivation     = ENABLE,
-        .SlaveStartFilterBank = 14,
-    };
-    HAL_CAN_ConfigFilter(&hcan2, &f);
-    HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO1_MSG_PENDING);
+void Programmer_CAN_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 
-    KILL_ERROR(FAULT_CAN_INIT_ERROR);
-    if (HAL_CAN_Start(&hcan2) != HAL_OK) {
-        RAISE_ERROR(FAULT_CAN_INIT_ERROR, FAULT_CAN_BUS_2);
+	//chmama 1 x
+	static struct powertrain_t26_start_programmer_t last_programmer_msg;
+
+	if ((hdr == 0) || (data == 0)) {
+		return;
+	}
+
+	// Status from the can programmer
+	if ((hdr->IDE == CAN_ID_STD) && (hdr->StdId == POWERTRAIN_T26_START_PROGRAMMER_FRAME_ID)) {
+
+		//returns 0 if succsess
+	    if (powertrain_t26_start_programmer_unpack(&last_programmer_msg, data, hdr->DLC) == 0) {
+	    	triggerJumpToBootloader = 1;
+	    }
+	}
+}
+
+void Setup_Bootloader_Jumper(void)
+{
+    if (CAN2_RegisterRxCallback(Programmer_CAN_RX) == HAL_OK) {
+        //printfDebug("Bootloader CAN2 callback registered\r\n");
+    } else {
+        //printfDebug("Bootloader CAN2 callback register FAILED\r\n");
     }
 }
 
-/* ------------------------------------------------
-   RX Callback — NÃO saltar aqui, apenas setar flag
-   ------------------------------------------------ */
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
     CAN_RxHeaderTypeDef rxHeader;

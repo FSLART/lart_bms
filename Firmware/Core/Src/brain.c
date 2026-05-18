@@ -68,7 +68,7 @@ void brain_start(void) {
 
 	//HAL_CAN_Start(&hcan1);
 	//CAN_Service(&hcan2);
-	//CAN_Init(&hcan2);
+	CAN_Init(&hcan2);
 
 	// Set CS2 Pin to HIGH to disable second SPI on 6822 + MSTR should be high by default
 	HAL_GPIO_WritePin(BMS_MSTR_GPIO_Port, BMS_MSTR_Pin, GPIO_PIN_SET);
@@ -122,7 +122,7 @@ void brain_start(void) {
 	// Start Timer11 for falut check
 	//HAL_TIM_Base_Start_IT(&htim11);
 
-	CAN_Setup_Bootloader_Jumper();
+	Setup_Bootloader_Jumper();
 
 	//bmsState = INACTIVE;
 	AMS_State = STARTUP;
@@ -300,7 +300,7 @@ void brain_loop(void) {
 
 	//CAN housekeeping
 	CAN_Service(&hcan1);
-	//CAN_Service(&hcan2);
+	CAN_Service(&hcan2);
 
 	//check if there are can messages to send
 	//CanTx_ProcessQueue(); - now done in CAN serivice
