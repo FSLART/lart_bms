@@ -81,7 +81,7 @@ ERR INJECT_ERR_SPI_READ = WITHOUT_ERR;
 /* Set Under Voltage and Over Voltage Thresholds */
 const float OV_THRESHOLD = 4.1; /* Volt */
 const float UV_THRESHOLD = 2.7; /* Volt */
-const int OWC_Threshold = 2000; /* Cell Open wire threshold(mili volt) */
+const int OWC_Threshold = 2500; /* Cell Open wire threshold(mili volt) */
 const int OWC_Threshold_Delta = 350; /* Cell Open wire threshold(mili volt) */
 const int OWA_Threshold = 50000; /* Aux Open wire threshold(mili volt) */
 const uint32_t LOOP_MEASUREMENT_COUNT = 1; /* Loop measurment count */
@@ -1214,11 +1214,15 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 				printfDebug("OW FAULT: IC%u Cell%u (%ldmV)\r\n", slave + 1, cell + 1, voltage_mV);
 				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_mV);
 
+				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+
 			} else if (voltage_delta > OWC_Threshold_Delta) {
 
 				ic[slave].diag_result.cell_ow[cell] = 1;
 				printfDebug("OW FAULT: IC%u Cell%u DELTA(%ldmV)\r\n", slave + 1, cell + 1, voltage_delta);
 				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_delta);
+
+				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
 
 			} else {
 				ic[slave].diag_result.cell_ow[cell] = 0;
@@ -1290,6 +1294,8 @@ void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
 				ic[slave].diag_result.aux_ow[gpio] = 1;
 				printfDebug("AUX OW FAULT: IC%u GPIO%u diff (%ldmV) \r\n", slave + 1, gpio + 1, pdown);
 				RAISE_ERROR(FAULT_OW_DETECTED_RTH, .slave_idx = slave + 1, .channel_idx = gpio + 1, .measured_value = (float )pdown);
+
+				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
 			} else {
 				ic[slave].diag_result.aux_ow[gpio] = 0;
 			}
@@ -1331,7 +1337,7 @@ uint8_t adBms6830_daisychain_device_counter(void) {
 	uint8_t device_counter = 0;
 
 	//TODO: EEPROM: masterCfg.total_ic4
-	uint8_t expected_devices = 6;
+	uint8_t expected_devices = 12;
 
 	cell_asic TEMP_SLAVE[ADBMS_MAX_DEVICES] = { 0 };
 
@@ -1395,6 +1401,9 @@ uint8_t adBms6830_daisychain_device_counter(void) {
 		printfDebug("Chain BAD: expected %d, found %d device(s).\r\n", expected_devices, device_counter);
 
 		RAISE_ERROR(FAULT_SLAVE_NOT_DETECTED, .slave_idx = device_counter, .measured_value = device_counter, .threshold_value = expected_devices);
+
+
+		//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
 
 		MCP23017_LED(LED_ISOSPI, ON);
 	}

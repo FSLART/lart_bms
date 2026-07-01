@@ -58,6 +58,8 @@ bool toggleHeartbeat = false;
 
 void brain_start(void) {
 
+	HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+
 	OpenAllContactors();
 
 	FaultManager_Init();
@@ -100,7 +102,7 @@ void brain_start(void) {
 		BmsConfig_LoadDefaults();
 	}
 
-	MCP23017_Init();
+	//MCP23017_Init();
 
 	//BmsConfig_DumpEEPROM(&eep24fc08);
 
@@ -115,7 +117,7 @@ void brain_start(void) {
 
 	if (watchdog_flag & RCC_CSR_WWDGRSTF) {
 		RAISE_ERROR(FAULT_WATCHDOG_RESET);
-		HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+		//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
 		printfDebug("BOOT: WWDG reset detected!\r\n");
 	}
 
@@ -173,6 +175,8 @@ void brain_loop(void) {
 			timeStart = getRuntimeMs();
 
 			adbms_main(AMS_Current_State);
+
+			HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
 
 			//printfDebug("IDLE: %d ms \r\n", (int)(getRuntimeMs() - timeStart));
 
@@ -260,6 +264,11 @@ void brain_loop(void) {
 
 	// Fault Check Triggered
 	if (faultCheck) {
+
+		if (AMS_Current_State == IDLE || AMS_Current_State == CHARGING) {
+			BMS_SafetyCheck();
+		}
+
 		//printfDma("FAULT CHECK \r\n");
 		//IVT_FAULT_CHECK();
 		//funcao_de_merda_pq_eu_errei_o_pinout_do_sensor_de_corrente();
@@ -305,7 +314,7 @@ void brain_loop(void) {
 	//check if there are can messages to send
 	//CanTx_ProcessQueue(); - now done in CAN serivice
 
-	MCP23017_StartupAnimation_Update();
+	//MCP23017_StartupAnimation_Update();
 
 }
 
@@ -343,7 +352,7 @@ void HAL_SYSTICK_Callback(void) {
 	static int counter_800ms = 0;
 	static int counter_1000ms = 0;
 
-	if (++counter_200ms >= 100) {
+	if (++counter_200ms >= 250) {
 		counter_200ms = 0;
 		faultCheck = true;
 	}

@@ -18,22 +18,22 @@
 
 #include "fault_manager.h"
 
-#define PRECHARGE_CAN_LOCKOUT_MS   15000 //esperar este tempo antes de processar uma nova requisição de inicialização de precarga
+#define PRECHARGE_CAN_LOCKOUT_MS   10000 //esperar este tempo antes de processar uma nova requisição de inicialização de precarga
 
 //200 ms devido ao gnd ser partilhado, má projetação da pcb
-#define CONTACTOR_DELAY_MS   250  // tempo de chekagewm da atracagem do contactor
-#define FEEDBACK_DEBOUNCE_MS   250
+#define CONTACTOR_DELAY_MS   300  // tempo de chekagewm da atracagem do contactor
+#define FEEDBACK_DEBOUNCE_MS   200
 
 typedef struct {
-    uint8_t pending;          // waiting for debounce to finish
-    uint32_t start_ms;        // when debounce started
-    GPIO_PinState candidate;  // state seen at interrupt
+	uint8_t pending;          // waiting for debounce to finish
+	uint32_t start_ms;        // when debounce started
+	GPIO_PinState candidate;  // state seen at interrupt
 } FeedbackDebounce_t;
 
-FeedbackDebounce_t db_air_neg = {0};
-FeedbackDebounce_t db_air_pos = {0};
-FeedbackDebounce_t db_pre     = {0};
-FeedbackDebounce_t db_dsch    = {0};
+FeedbackDebounce_t db_air_neg = { 0 };
+FeedbackDebounce_t db_air_pos = { 0 };
+FeedbackDebounce_t db_pre = { 0 };
+FeedbackDebounce_t db_dsch = { 0 };
 
 //Internal variables
 //PrechargeState_t state = RX_CAN;
@@ -44,7 +44,7 @@ uint32_t canRxIgnoreUntil = 0;
 
 //BYPASS FEEDBACKS
 bool bypassDischarge = true; //bypasss discharge feedback check
-bool bypassChecks = true; // bypass feedbacks checks
+bool bypassChecks = false; // bypass feedbacks checks
 
 /* feedback counters */
 int8_t fb_dsch = 0;
@@ -260,12 +260,12 @@ void Precharge_Update(void) {
 
 	case CHECKING_PRECHARGE_IS_OPEN:
 		if (IsTheStateOK(state) || bypassChecks)
-			state = END;
+			state = HV_ON;
 		else
 			state = WRONG;
 		break;
 
-	case END:
+	case HV_ON:
 		if (!OnPrechargeComplete(state)) {
 			state = KILL;
 		}
@@ -336,13 +336,9 @@ bool OnPrechargeComplete(PrechargeState_t state_guard) {
 }
 
 /* helper macro builds contactor_bits for the contactors */
-static uint8_t Build_Mismatch_Bits(bool discharge_on, bool air_neg_on, bool air_pos_on, bool precharge_on, bool expect_dsch, bool expect_air_negative, bool expect_air_positive, bool exp_precharge)
-{
-    return (uint8_t)((
-    	( (discharge_on    != expect_dsch) && !bypassDischarge) ? FAULT_CTC_DSCH    : 0u) |
-        ( (air_neg_on != expect_air_negative)                       ? FAULT_CTC_AIR_NEG : 0u) |
-        ( (air_pos_on != expect_air_positive)                       ? FAULT_CTC_AIR_POS : 0u) |
-        ( (precharge_on     != exp_precharge)                       ? FAULT_CTC_PRE     : 0u));
+static uint8_t Build_Mismatch_Bits(bool discharge_on, bool air_neg_on, bool air_pos_on, bool precharge_on, bool expect_dsch, bool expect_air_negative, bool expect_air_positive, bool exp_precharge) {
+	return (uint8_t) ((((discharge_on != expect_dsch) && !bypassDischarge) ? FAULT_CTC_DSCH : 0u) | ((air_neg_on != expect_air_negative) ? FAULT_CTC_AIR_NEG : 0u) | ((air_pos_on != expect_air_positive) ? FAULT_CTC_AIR_POS : 0u)
+			| ((precharge_on != exp_precharge) ? FAULT_CTC_PRE : 0u));
 }
 
 /**
@@ -397,90 +393,85 @@ bool IsTheStateOK(PrechargeState_t check_state) {
 		// after closing AIR-
 		//return (!discharge_on && air_neg_on && !air_pos_on && !precharge_on);
 
-
 		ok = (((discharge_on || bypassDischarge) && air_neg_on && !air_pos_on && !precharge_on) || bypassChecks);
 
-        if (!ok) {
-            RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, false, false));
-        } else {
-            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+		if (!ok) {
+			RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, false, false));
+		} else {
+			KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
 
-        	printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
-            printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:0 PRE:0\r\n", check_state);
-            printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
-        }
+			printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
+			printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:0 PRE:0\r\n", check_state);
+			printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		}
 		return ok;
 
 	case CHECKING_PRECHARGE_IS_CLOSED:
 		// after closing PRE
 		//return (!discharge_on && air_neg_on && !air_pos_on && precharge_on);
 
-
 		ok = (((discharge_on || bypassDischarge) && air_neg_on && !air_pos_on && precharge_on) || bypassChecks);
 
-        if (!ok) {
-            RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, false, true));
-        } else {
-            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+		if (!ok) {
+			RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, false, true));
+		} else {
+			KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
 
-            printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
-    		printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:0 PRE:1\r\n", check_state);
-    		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
-        }
+			printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
+			printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:0 PRE:1\r\n", check_state);
+			printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		}
 		return ok;
 
 	case CHECKING_AIR_POS_IS_CLOSED:
 		// after closing AIR+
 		//return (!discharge_on && air_neg_on && air_pos_on && precharge_on);
 
-
 		ok = (((discharge_on || bypassDischarge) && air_neg_on && air_pos_on && precharge_on) || bypassChecks);
 
-        if (!ok) {
-            RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, true, true));
-        } else {
-            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+		if (!ok) {
+			RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, true, true));
+		} else {
+			KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
 
-            printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
-            printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:1\r\n", check_state);
-            printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
-        }
+			printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
+			printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:1\r\n", check_state);
+			printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		}
 		return ok;
 
 	case CHECKING_PRECHARGE_IS_OPEN:
 		// after opening PRE again
 		//return (!discharge_on && air_neg_on && air_pos_on && !precharge_on);
 
-
 		ok = (((discharge_on || bypassDischarge) && air_neg_on && air_pos_on && !precharge_on) || bypassChecks);
 
-        if (!ok) {
-            RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, true, false));
-        } else {
-            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+		if (!ok) {
+			RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, true, false));
+		} else {
+			KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
 
-            printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
-            printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:0\r\n", check_state);
-            printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
-        }
+			printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
+			printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:0\r\n", check_state);
+			printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		}
 		return ok;
 
-	case END:
+	case HV_ON:
 		// after opening PRE again
 		//return (!discharge_on && air_neg_on && air_pos_on && !precharge_on);
 
-
 		ok = (((discharge_on || bypassDischarge) && air_neg_on && air_pos_on && !precharge_on) || bypassChecks);
 
-        if (!ok) {
-        	RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, true, false));
-        } else {
-            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+		if (!ok) {
+			RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, true, true, true, false));
+		} else {
+			KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
 
-            printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
-            printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:0\r\n", check_state);
-            printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
-        }
+			printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
+			printfDebug("STATE %d | EXPECT DSCH:1 AIR-:1 AIR+:1 PRE:0\r\n", check_state);
+			printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		}
 		return ok;
 
 	case WRONG:
@@ -490,29 +481,28 @@ bool IsTheStateOK(PrechargeState_t check_state) {
 		printfDebug("STATE %d | EXPECT DSCH:0 AIR-:0 AIR+:0 PRE:0\r\n", check_state);
 		ok = (((!discharge_on || bypassDischarge) && !air_neg_on && !air_pos_on && !precharge_on) || bypassChecks);
 		printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
-        /*if (!ok) {
-        	RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, false, false, false, false));
-        } else {
-            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
-        }*/
+		/*if (!ok) {
+		 RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, false, false, false, false));
+		 } else {
+		 KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+		 }*/
 		return ok;
 
 	case OPEN_ALL:
 		// first check if all off
 		//return (!discharge_on && !air_neg_on && !air_pos_on && !precharge_on);
 
-
 		ok = (((!discharge_on || bypassDischarge) && !air_neg_on && !air_pos_on && !precharge_on) || bypassChecks);
 
-        if (!ok) {
-        	RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, false, false, false, false));
-        } else {
-            KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
+		if (!ok) {
+			RAISE_ERROR(FAULT_CONTACTOR_MISMATCH, .contactor_bits = Build_Mismatch_Bits(discharge_on, air_neg_on, air_pos_on, precharge_on, false, false, false, false));
+		} else {
+			KILL_ERROR(FAULT_CONTACTOR_MISMATCH);
 
-            printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
-            printfDebug("STATE %d | EXPECT DSCH:0 AIR-:0 AIR+:0 PRE:0\r\n", check_state);
-            printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
-        }
+			printfDebug("STATE %d | REAL     DSCH:%d AIR-:%d AIR+:%d PRE:%d\r\n", check_state, fb_dsch, fb_air_neg, fb_air_pos, fb_pre);
+			printfDebug("STATE %d | EXPECT DSCH:0 AIR-:0 AIR+:0 PRE:0\r\n", check_state);
+			printfDebug("RESULT: %s\r\n", ok ? "OK" : "FAIL");
+		}
 		return ok;
 
 	default:
@@ -585,125 +575,123 @@ bool IsCurrentOK(void) {
  *******************************************************************************
  */
 void Feedback_EXTI_Callback(uint16_t GPIO_Pin) {
-    uint32_t now = HAL_GetTick();
-    GPIO_PinState pin_state;
-
-    switch (GPIO_Pin) {
-    case GPIO_PIN_12:   // PC12 = MCU_DISCH_FB
-        if (!db_dsch.pending) {
-            pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12);
-            fb_dsch = (pin_state == GPIO_PIN_SET) ? 1 : 0;
-            db_dsch.pending = 1U;
-            db_dsch.start_ms = now;
-            db_dsch.candidate = pin_state;
-            printfDebug("MCU_DISCH_FB latched -> %d\r\n", fb_dsch);
-        }
-        break;
-
-    case GPIO_PIN_11:   // PC11 = MCU_AIR-_FB
-        if (!db_air_neg.pending) {
-            pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11);
-            fb_air_neg = (pin_state == GPIO_PIN_SET) ? 1 : 0;
-            db_air_neg.pending = 1U;
-            db_air_neg.start_ms = now;
-            db_air_neg.candidate = pin_state;
-            printfDebug("MCU_AIR-_FB latched -> %d\r\n", fb_air_neg);
-        }
-        break;
-
-    case GPIO_PIN_10:   // PC10 = MCU_AIR+_FB
-        if (!db_air_pos.pending) {
-            pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10);
-            fb_air_pos = (pin_state == GPIO_PIN_SET) ? 1 : 0;
-            db_air_pos.pending = 1U;
-            db_air_pos.start_ms = now;
-            db_air_pos.candidate = pin_state;
-            printfDebug("MCU_AIR+_FB latched -> %d\r\n", fb_air_pos);
-        }
-        break;
-
-    case GPIO_PIN_15:   // PA15 = MCU_PRE_FB
-        if (!db_pre.pending) {
-            pin_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15);
-            fb_pre = (pin_state == GPIO_PIN_SET) ? 1 : 0;
-            db_pre.pending = 1U;
-            db_pre.start_ms = now;
-            db_pre.candidate = pin_state;
-            printfDebug("MCU_PRE_FB latched -> %d\r\n", fb_pre);
-        }
-        break;
-
-    default:
-        break;
-    }
-}
-/*void Feedback_EXTI_Callback(uint16_t GPIO_Pin) {
+	uint32_t now = HAL_GetTick();
 	GPIO_PinState pin_state;
 
 	switch (GPIO_Pin) {
 	case GPIO_PIN_12:   // PC12 = MCU_DISCH_FB
-		pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12);
-		fb_dsch += (pin_state == GPIO_PIN_SET) ? 1 : -1;
-		printfDebug("MCU_DISCH_FB triggered\r\n");
+		if (!db_dsch.pending) {
+			pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12);
+			fb_dsch = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+			db_dsch.pending = 1U;
+			db_dsch.start_ms = now;
+			db_dsch.candidate = pin_state;
+			printfDebug("MCU_DISCH_FB latched -> %d\r\n", fb_dsch);
+		}
 		break;
 
 	case GPIO_PIN_11:   // PC11 = MCU_AIR-_FB
-		pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11);
-		fb_air_neg += (pin_state == GPIO_PIN_SET) ? 1 : -1;
-		printfDebug("MCU_AIR-_FB triggered\r\n");
+		if (!db_air_neg.pending) {
+			pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11);
+			fb_air_neg = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+			db_air_neg.pending = 1U;
+			db_air_neg.start_ms = now;
+			db_air_neg.candidate = pin_state;
+			printfDebug("MCU_AIR-_FB latched -> %d\r\n", fb_air_neg);
+		}
 		break;
 
 	case GPIO_PIN_10:   // PC10 = MCU_AIR+_FB
-		pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10);
-		fb_air_pos += (pin_state == GPIO_PIN_SET) ? 1 : -1;
-		printfDebug("MCU_AIR+_FB triggered\r\n");
+		if (!db_air_pos.pending) {
+			pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10);
+			fb_air_pos = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+			db_air_pos.pending = 1U;
+			db_air_pos.start_ms = now;
+			db_air_pos.candidate = pin_state;
+			printfDebug("MCU_AIR+_FB latched -> %d\r\n", fb_air_pos);
+		}
 		break;
 
 	case GPIO_PIN_15:   // PA15 = MCU_PRE_FB
-		pin_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15);
-		fb_pre += (pin_state == GPIO_PIN_SET) ? 1 : -1;
-		printfDebug("MCU_PRE_FB triggered\r\n");
+		if (!db_pre.pending) {
+			pin_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15);
+			fb_pre = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+			db_pre.pending = 1U;
+			db_pre.start_ms = now;
+			db_pre.candidate = pin_state;
+			printfDebug("MCU_PRE_FB latched -> %d\r\n", fb_pre);
+		}
 		break;
 
 	default:
 		break;
 	}
-}*/
+}
+/*void Feedback_EXTI_Callback(uint16_t GPIO_Pin) {
+ GPIO_PinState pin_state;
 
+ switch (GPIO_Pin) {
+ case GPIO_PIN_12:   // PC12 = MCU_DISCH_FB
+ pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12);
+ fb_dsch += (pin_state == GPIO_PIN_SET) ? 1 : -1;
+ printfDebug("MCU_DISCH_FB triggered\r\n");
+ break;
+
+ case GPIO_PIN_11:   // PC11 = MCU_AIR-_FB
+ pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11);
+ fb_air_neg += (pin_state == GPIO_PIN_SET) ? 1 : -1;
+ printfDebug("MCU_AIR-_FB triggered\r\n");
+ break;
+
+ case GPIO_PIN_10:   // PC10 = MCU_AIR+_FB
+ pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10);
+ fb_air_pos += (pin_state == GPIO_PIN_SET) ? 1 : -1;
+ printfDebug("MCU_AIR+_FB triggered\r\n");
+ break;
+
+ case GPIO_PIN_15:   // PA15 = MCU_PRE_FB
+ pin_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15);
+ fb_pre += (pin_state == GPIO_PIN_SET) ? 1 : -1;
+ printfDebug("MCU_PRE_FB triggered\r\n");
+ break;
+
+ default:
+ break;
+ }
+ }*/
 
 void Feedback_DebounceUpdate(void) {
-    uint32_t now = HAL_GetTick();
-    GPIO_PinState pin_state;
+	uint32_t now = HAL_GetTick();
+	GPIO_PinState pin_state;
 
-    if (db_dsch.pending && ((now - db_dsch.start_ms) >= FEEDBACK_DEBOUNCE_MS)) {
-        pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12);
-        fb_dsch = (pin_state == GPIO_PIN_SET) ? 1 : 0;
-        db_dsch.pending = 0U;
-        printfDebug("MCU_DISCH_FB debounce end -> %d\r\n", fb_dsch);
-    }
+	if (db_dsch.pending && ((now - db_dsch.start_ms) >= FEEDBACK_DEBOUNCE_MS)) {
+		pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12);
+		fb_dsch = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+		db_dsch.pending = 0U;
+		printfDebug("MCU_DISCH_FB debounce end -> %d\r\n", fb_dsch);
+	}
 
-    if (db_air_neg.pending && ((now - db_air_neg.start_ms) >= FEEDBACK_DEBOUNCE_MS)) {
-        pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11);
-        fb_air_neg = (pin_state == GPIO_PIN_SET) ? 1 : 0;
-        db_air_neg.pending = 0U;
-        printfDebug("MCU_AIR-_FB debounce end -> %d\r\n", fb_air_neg);
-    }
+	if (db_air_neg.pending && ((now - db_air_neg.start_ms) >= FEEDBACK_DEBOUNCE_MS)) {
+		pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11);
+		fb_air_neg = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+		db_air_neg.pending = 0U;
+		printfDebug("MCU_AIR-_FB debounce end -> %d\r\n", fb_air_neg);
+	}
 
-    if (db_air_pos.pending && ((now - db_air_pos.start_ms) >= FEEDBACK_DEBOUNCE_MS)) {
-        pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10);
-        fb_air_pos = (pin_state == GPIO_PIN_SET) ? 1 : 0;
-        db_air_pos.pending = 0U;
-        printfDebug("MCU_AIR+_FB debounce end -> %d\r\n", fb_air_pos);
-    }
+	if (db_air_pos.pending && ((now - db_air_pos.start_ms) >= FEEDBACK_DEBOUNCE_MS)) {
+		pin_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10);
+		fb_air_pos = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+		db_air_pos.pending = 0U;
+		printfDebug("MCU_AIR+_FB debounce end -> %d\r\n", fb_air_pos);
+	}
 
-    if (db_pre.pending && ((now - db_pre.start_ms) >= FEEDBACK_DEBOUNCE_MS)) {
-        pin_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15);
-        fb_pre = (pin_state == GPIO_PIN_SET) ? 1 : 0;
-        db_pre.pending = 0U;
-        printfDebug("MCU_PRE_FB debounce end -> %d\r\n", fb_pre);
-    }
+	if (db_pre.pending && ((now - db_pre.start_ms) >= FEEDBACK_DEBOUNCE_MS)) {
+		pin_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15);
+		fb_pre = (pin_state == GPIO_PIN_SET) ? 1 : 0;
+		db_pre.pending = 0U;
+		printfDebug("MCU_PRE_FB debounce end -> %d\r\n", fb_pre);
+	}
 }
-
 
 /**
  *******************************************************************************
@@ -755,17 +743,21 @@ void PreCharge_CAN_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 				canRxIgnoreUntil = now + PRECHARGE_CAN_LOCKOUT_MS;
 			}
 		} else if (prechargeInit.precharge_request == 0) {
-			state = KILL;
-			canRxIgnoreUntil = 0;
-			start_initiated = false;
+			//if (state == HV_ON) {
+				state = KILL;
+				canRxIgnoreUntil = 0;
+				start_initiated = false;
+			//}
 		}
 
+		break;
+
 	default:
-		/*printConsole("Unknown CAN ID 0x%03lX, DLC=%lu, Data:", id, dlc);
+		/*printfDebug("Unknown CAN ID 0x%03lX, DLC=%lu, Data:", id, dlc);
 		 for (uint32_t i = 0; i < dlc; i++) {
-		 printConsole(" %02X", data[i]);
+		 printfDebug(" %02X", data[i]);
 		 }
-		 printConsole("\r\n");*/
+		 printfDebug("\r\n");*/
 		break;
 	}
 }

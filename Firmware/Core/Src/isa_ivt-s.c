@@ -1,10 +1,17 @@
 #include "isa_ivt-s.h"
+#include "fault_manager.h"
 #include "main.h"
 #include "brain.h"
 #include "uartDMA.h"
 #include "can.h"
 #include "soc.h"
 #include "dbc/powertrain_t26.h"
+
+#define SAFETY_PACK_OV_mV   599000
+#define SAFETY_PACK_UV_mV   2.8 * 144 * 1000
+#define SAFETY_PACK_OC_mA   80000
+#define SAFETY_PACK_UC_mA   (-80000)
+#define SAFETY_ISA_OT_dC    600 // 0.1 °C/LSB,
 
 extern CAN_HandleTypeDef hcan1;	// CAN module for PT bus
 
@@ -60,26 +67,26 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
 	CAN_RegisterRxCallback(IVT_CAN_OnMessage);
 
 	/*CAN_FilterTypeDef f = { 0 };
-	f.FilterBank = 0;
-	f.FilterMode = CAN_FILTERMODE_IDMASK;
-	f.FilterScale = CAN_FILTERSCALE_32BIT;
-	f.FilterFIFOAssignment = CAN_FILTER_FIFO0;
-	f.FilterActivation = CAN_FILTER_ENABLE;
-	f.SlaveStartFilterBank = 14;
+	 f.FilterBank = 0;
+	 f.FilterMode = CAN_FILTERMODE_IDMASK;
+	 f.FilterScale = CAN_FILTERSCALE_32BIT;
+	 f.FilterFIFOAssignment = CAN_FILTER_FIFO0;
+	 f.FilterActivation = CAN_FILTER_ENABLE;
+	 f.SlaveStartFilterBank = 14;
 
-	//match every ID
-	f.FilterIdHigh = 0x0000;
-	f.FilterIdLow = 0x0000;
-	f.FilterMaskIdHigh = 0x0000;
-	f.FilterMaskIdLow = 0x0000;
+	 //match every ID
+	 f.FilterIdHigh = 0x0000;
+	 f.FilterIdLow = 0x0000;
+	 f.FilterMaskIdHigh = 0x0000;
+	 f.FilterMaskIdLow = 0x0000;
 
-	if (HAL_CAN_ConfigFilter(hcan, &f) != HAL_OK) {
-		printfConsole("Error setting wildcard filter\r\n");
-	}
+	 if (HAL_CAN_ConfigFilter(hcan, &f) != HAL_OK) {
+	 printfConsole("Error setting wildcard filter\r\n");
+	 }
 
-	if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
-		printfConsole("Error activating CAN RX FIFO0 notification\r\n");
-	}*/
+	 if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
+	 printfConsole("Error activating CAN RX FIFO0 notification\r\n");
+	 }*/
 }
 
 // config the ivts sensor
@@ -151,6 +158,9 @@ void IVT_CAN_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 		if (powertrain_t26_ivt_msg_result_i_unpack(&r, data, 8) == 0) {
 			ivt.iBatt = r.ivt_result_i;     // mA
 		}
+
+		Check_PackVoltage_and_Current();
+
 		break;
 	}
 
@@ -159,6 +169,9 @@ void IVT_CAN_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 		if (powertrain_t26_ivt_msg_result_u1_unpack(&r, data, 8) == 0) {
 			ivt.vBatt = r.ivt_result_u1;    // mV
 		}
+
+		Check_PackVoltage_and_Current();
+
 		break;
 	}
 
@@ -167,6 +180,9 @@ void IVT_CAN_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 		if (powertrain_t26_ivt_msg_result_t_unpack(&r, data, 8) == 0) {
 			ivt.temp = r.ivt_result_t;      // 0.1 °C raw
 		}
+
+		Check_PackVoltage_and_Current();
+
 		break;
 	}
 
@@ -175,23 +191,24 @@ void IVT_CAN_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 		if (powertrain_t26_ivt_msg_result_w_unpack(&r, data, 8) == 0) {
 			ivt.power = r.ivt_result_w;     // W
 		}
+
 		break;
 	}
 
 	case IVT_RESULTAS_CANID: {
 
-	    struct powertrain_t26_ivt_msg_result_as_t r;
+		struct powertrain_t26_ivt_msg_result_as_t r;
 
-	    if (powertrain_t26_ivt_msg_result_as_unpack(&r, data, 8) == 0) {
+		if (powertrain_t26_ivt_msg_result_as_unpack(&r, data, 8) == 0) {
 
-	        ivt.coulombs_As = r.ivt_result_as;
+			ivt.coulombs_As = r.ivt_result_as;
 
-	        //UPDATE SOCOC
-	        SOC_NotifyAsReading(ivt.coulombs_As);
+			//UPDATE SOCOC
+			SOC_NotifyAsReading(ivt.coulombs_As);
 
-	        ivt.SOC = (int32_t)(SOC_GetPercent() * 100);
-	    }
-	    break;
+			ivt.SOC = (int32_t) (SOC_GetPercent() * 100);
+		}
+		break;
 	}
 
 	default:
@@ -254,7 +271,6 @@ void IVT_PROCESS_SYSERRORS(const struct powertrain_t26_ivt_msg_response_t *resp)
 	}
 }
 
-
 void IVT_PROCESS_MEASURERRORS(const struct powertrain_t26_ivt_msg_response_t *resp) {
 
 	/*
@@ -279,27 +295,36 @@ void IVT_PROCESS_MEASURERRORS(const struct powertrain_t26_ivt_msg_response_t *re
 	printfConsole("		MEASURERRORS: 0x%04X\r\n", mask);
 
 	// Reset flags this function owns
-	ivt.faults.U1_oc      = false;
-	ivt.faults.U2_oc      = false;
-	ivt.faults.U3_oc      = false;
+	ivt.faults.U1_oc = false;
+	ivt.faults.U2_oc = false;
+	ivt.faults.U3_oc = false;
 	ivt.faults.current_oc = false;
-	ivt.faults.ntc_l_oc   = false;
-	ivt.faults.ntc_h_oc   = false;
-	ivt.faults.adc        = false;
+	ivt.faults.ntc_l_oc = false;
+	ivt.faults.ntc_h_oc = false;
+	ivt.faults.adc = false;
 
 	// ADC errors
-	if (mask & 0x001F) ivt.faults.adc = true;
+	if (mask & 0x001F)
+		ivt.faults.adc = true;
 
-	if (mask & (1 << 5)) ivt.faults.vRef    = true;  // Vref
-	if (mask & (1 << 6)) ivt.faults.current = true;  // I1-I2
+	if (mask & (1 << 5))
+		ivt.faults.vRef = true;  // Vref
+	if (mask & (1 << 6))
+		ivt.faults.current = true;  // I1-I2
 
 	// Open circuits
-	if (mask & (1 << 8))  ivt.faults.current_oc = true;
-	if (mask & (1 << 9))  ivt.faults.U1_oc      = true;
-	if (mask & (1 << 10)) ivt.faults.U2_oc      = true;
-	if (mask & (1 << 11)) ivt.faults.U3_oc      = true;
-	if (mask & (1 << 12)) ivt.faults.ntc_h_oc   = true;
-	if (mask & (1 << 13)) ivt.faults.ntc_l_oc   = true;
+	if (mask & (1 << 8))
+		ivt.faults.current_oc = true;
+	if (mask & (1 << 9))
+		ivt.faults.U1_oc = true;
+	if (mask & (1 << 10))
+		ivt.faults.U2_oc = true;
+	if (mask & (1 << 11))
+		ivt.faults.U3_oc = true;
+	if (mask & (1 << 12))
+		ivt.faults.ntc_h_oc = true;
+	if (mask & (1 << 13))
+		ivt.faults.ntc_l_oc = true;
 }
 
 void IVT_SET_BITRATE(void) {
@@ -330,45 +355,95 @@ void IVT_SET_BITRATE(void) {
 
 }
 
+//apenas serve pra dar pull à info
+int32_t IVT_GetCurrent_mA(void) {
+	return ivt.iBatt;     // mA
+}
+
+int32_t IVT_GetPackVoltage_mV(void) {
+	return ivt.vBatt;     // mV (U1)
+}
+
+int32_t IVT_GetTemperature_dC(void) {
+	return ivt.temp;     // x0.1 ºC
+}
+
+void Check_PackVoltage_and_Current(void) {
+	int32_t pack_mV = IVT_GetPackVoltage_mV();
+	int32_t pack_mA = IVT_GetCurrent_mA();
+	int32_t ISA_dC = IVT_GetTemperature_dC();
+
+	if (pack_mV > 1000) {
+
+		if (pack_mV > SAFETY_PACK_OV_mV) {
+			RAISE_ERROR(FAULT_PACK_VOLTAGE_MISMATCH, .measured_value = (float ) pack_mV, .threshold_value = (float) SAFETY_PACK_OV_mV);
+			//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
+		}
+
+		if (pack_mV < SAFETY_PACK_UV_mV) {
+			RAISE_ERROR(FAULT_PACK_VOLTAGE_MISMATCH, .measured_value = (float ) pack_mV, .threshold_value = (float) SAFETY_PACK_UV_mV);
+			//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
+		}
+
+	}
+
+	if (pack_mA > SAFETY_PACK_OC_mA) {
+		//TODO: não há código de overcurrent dedicado, uso este só para registar
+		RAISE_ERROR(FAULT_CURRENT_SENSOR_ERROR, .measured_value = (float ) pack_mA, .threshold_value = (float) SAFETY_PACK_OC_mA);
+		//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
+	}
+
+	if (pack_mA < SAFETY_PACK_UC_mA) {
+		//TODO: não há código de undercurrent dedicado, uso este só para registar
+		RAISE_ERROR(FAULT_CURRENT_SENSOR_ERROR, .measured_value = (float ) pack_mA, .threshold_value = (float) SAFETY_PACK_UC_mA);
+		//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
+	}
+
+	if (ISA_dC > SAFETY_ISA_OT_dC) {
+		RAISE_ERROR(FAULT_OVERTEMPERATURE, .measured_value = (float) ISA_dC / 10.0f, .threshold_value = (float) SAFETY_ISA_OT_dC / 10.0f);
+		//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
+	}
+}
+
 void send_ivt_ui(void) {
 
 	printfUI("[{\"ivt\":0,");
 
 	// real-time values
-	printfUI("\"vBatt\":%ld,",  ivt.vBatt);
-	printfUI("\"iBatt\":%ld,",  ivt.iBatt);
-	printfUI("\"power\":%ld,",  ivt.power);
-	printfUI("\"temp\":%ld,",   ivt.temp);
-	printfUI("\"SOH\":%ld,",    ivt.SOH);
-	printfUI("\"SOC\":%ld,",    ivt.SOC);
+	printfUI("\"vBatt\":%ld,", ivt.vBatt);
+	printfUI("\"iBatt\":%ld,", ivt.iBatt);
+	printfUI("\"power\":%ld,", ivt.power);
+	printfUI("\"temp\":%ld,", ivt.temp);
+	printfUI("\"SOH\":%ld,", ivt.SOH);
+	printfUI("\"SOC\":%ld,", ivt.SOC);
 
 	// config readbacks
-	printfUI("\"conf_CANbit\":%.0f,",     ivt.conf_CANbit);
-	printfUI("\"conf_maxTemp\":%.2f,",    ivt.conf_maxTemp);
-	printfUI("\"conf_minTemp\":%.2f,",    ivt.conf_minTemp);
+	printfUI("\"conf_CANbit\":%.0f,", ivt.conf_CANbit);
+	printfUI("\"conf_maxTemp\":%.2f,", ivt.conf_maxTemp);
+	printfUI("\"conf_minTemp\":%.2f,", ivt.conf_minTemp);
 	printfUI("\"conf_minCurrent\":%.2f,", ivt.conf_minCurrent);
 	printfUI("\"conf_maxCurrent\":%.2f,", ivt.conf_maxCurrent);
-	printfUI("\"conf_maxU1\":%.2f,",      ivt.conf_maxU1);
-	printfUI("\"conf_minU1\":%.2f,",      ivt.conf_minU1);
-	printfUI("\"conf_maxU2\":%.2f,",      ivt.conf_maxU2);
-	printfUI("\"conf_minU2\":%.2f,",      ivt.conf_minU2);
-	printfUI("\"conf_maxU3\":%.2f,",      ivt.conf_maxU3);
-	printfUI("\"conf_minU3\":%.2f,",      ivt.conf_minU3);
+	printfUI("\"conf_maxU1\":%.2f,", ivt.conf_maxU1);
+	printfUI("\"conf_minU1\":%.2f,", ivt.conf_minU1);
+	printfUI("\"conf_maxU2\":%.2f,", ivt.conf_maxU2);
+	printfUI("\"conf_minU2\":%.2f,", ivt.conf_minU2);
+	printfUI("\"conf_maxU3\":%.2f,", ivt.conf_maxU3);
+	printfUI("\"conf_minU3\":%.2f,", ivt.conf_minU3);
 
 	// fault flags
 	printfUI("\"faults\":{");
-	printfUI("\"CAN\":%s,",        ivt.faults.CAN        ? "true" : "false");
-	printfUI("\"power\":%s,",      ivt.faults.power      ? "true" : "false");
-	printfUI("\"current\":%s,",    ivt.faults.current    ? "true" : "false");
-	printfUI("\"vRef\":%s,",       ivt.faults.vRef       ? "true" : "false");
-	printfUI("\"U3_oc\":%s,",      ivt.faults.U3_oc      ? "true" : "false");
-	printfUI("\"U2_oc\":%s,",      ivt.faults.U2_oc      ? "true" : "false");
-	printfUI("\"U1_oc\":%s,",      ivt.faults.U1_oc      ? "true" : "false");
+	printfUI("\"CAN\":%s,", ivt.faults.CAN ? "true" : "false");
+	printfUI("\"power\":%s,", ivt.faults.power ? "true" : "false");
+	printfUI("\"current\":%s,", ivt.faults.current ? "true" : "false");
+	printfUI("\"vRef\":%s,", ivt.faults.vRef ? "true" : "false");
+	printfUI("\"U3_oc\":%s,", ivt.faults.U3_oc ? "true" : "false");
+	printfUI("\"U2_oc\":%s,", ivt.faults.U2_oc ? "true" : "false");
+	printfUI("\"U1_oc\":%s,", ivt.faults.U1_oc ? "true" : "false");
 	printfUI("\"current_oc\":%s,", ivt.faults.current_oc ? "true" : "false");
-	printfUI("\"ntc_l_oc\":%s,",   ivt.faults.ntc_l_oc   ? "true" : "false");
-	printfUI("\"ntc_h_oc\":%s,",   ivt.faults.ntc_h_oc   ? "true" : "false");
-	printfUI("\"adc\":%s,",        ivt.faults.adc        ? "true" : "false");
-	printfUI("\"temp\":%s",        ivt.faults.temp       ? "true" : "false");
+	printfUI("\"ntc_l_oc\":%s,", ivt.faults.ntc_l_oc ? "true" : "false");
+	printfUI("\"ntc_h_oc\":%s,", ivt.faults.ntc_h_oc ? "true" : "false");
+	printfUI("\"adc\":%s,", ivt.faults.adc ? "true" : "false");
+	printfUI("\"temp\":%s", ivt.faults.temp ? "true" : "false");
 	printfUI("}");
 
 	printfUI("}]\n");

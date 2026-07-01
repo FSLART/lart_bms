@@ -24,6 +24,6 @@
 ../Core/Src/adBms_Application.c:1150:6:adBms6830_clear_spin_measurement	16	static
 ../Core/Src/adBms_Application.c:1165:6:adBms6830_clear_fcell_measurement	16	static
 ../Core/Src/adBms_Application.c:1178:6:adBms6830_evaluate_cell_open_wire	72	static
-../Core/Src/adBms_Application.c:1272:6:adBms6830_evaluate_aux_open_wire	48	static
-../Core/Src/adBms_Application.c:1300:10:adBms6830_FindMinVoltageGlobally	24	static
-../Core/Src/adBms_Application.c:1329:9:adBms6830_daisychain_device_counter	36080	static
+../Core/Src/adBms_Application.c:1276:6:adBms6830_evaluate_aux_open_wire	48	static
+../Core/Src/adBms_Application.c:1306:10:adBms6830_FindMinVoltageGlobally	24	static
+../Core/Src/adBms_Application.c:1335:9:adBms6830_daisychain_device_counter	36080	static

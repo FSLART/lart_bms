@@ -8,6 +8,7 @@
 #include "adbms_to_CAN.h"
 #include "adBms_Application.h"
 #include "fan_management.h"
+#include "fault_manager.h"
 
 #include "can.h"
 #include "dbc/powertrain_t26.h"
@@ -15,8 +16,52 @@
 #include <math.h>
 #include <string.h>
 
+#define SAFETY_CELL_OV_V   4.20
+#define SAFETY_CELL_UV_V   2.80
+#define SAFETY_CELL_OT_C   60.0
+
 //Cache for the delta, since it is in another message grouped with other adbms stuff
 int s_module_voltage_delta[12];
+
+void BMS_SafetyCheck(void) {
+
+	for (int module = 0; module < slaves_found && module < 12; module++) {
+
+		const cell_asic *ic = &SLAVE[module];
+
+		// 12 células por módulo
+		for (int cell = 0; cell < 12; cell++) {
+
+			float cell_v = 1.5f + (ic->cell.c_codes[cell] * 0.00015f);
+
+			if (cell_v > SAFETY_CELL_OV_V) {
+				RAISE_ERROR(FAULT_OVERVOLTAGE, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_OV_V);
+				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+			}
+
+			if (cell_v < SAFETY_CELL_UV_V) {
+				RAISE_ERROR(FAULT_UNDERVOLTAGE, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_UV_V);
+				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+			}
+		}
+
+		// 6 NTC por módulo
+		for (int ntc = 0; ntc < 6; ntc++) {
+
+			float cell_t = getTemperatureCAN(ic->raux.ra_codes[ntc]);
+
+			// NTC desligado lê ~2 ou 150 -> ignorar para não disparar à toa
+			if (cell_t <= 2.0f || cell_t >= 149.0f) {
+				continue;
+			}
+
+			if (cell_t > SAFETY_CELL_OT_C) {
+				RAISE_ERROR(FAULT_OVERTEMPERATURE, .slave_idx = module + 1, .channel_idx = ntc + 1, .measured_value = cell_t, .threshold_value = SAFETY_CELL_OT_C);
+				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+			}
+		}
+	}
+}
 
 HAL_StatusTypeDef Slaves_CAN_SendMessage(CAN_HandleTypeDef *hcan, uint32_t canID, uint32_t dataLength, const uint8_t *TxData) {
 	if (dataLength > 8U) {

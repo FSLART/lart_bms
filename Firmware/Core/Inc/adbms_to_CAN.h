@@ -27,4 +27,6 @@ HAL_StatusTypeDef ADBMS_CAN_SendAll(CAN_HandleTypeDef *hcan, AMSStates_t ams_cur
 float data_to_volts(int16_t, adbms_data_type_t);
 float getTemperatureCAN(int16_t);
 
+void BMS_SafetyCheck(void);
+
 #endif /* INC_ADBMS_TO_CAN_H_ */

@@ -76,5 +76,10 @@ void IVT_PROCESS_MEASURERRORS(const struct powertrain_t26_ivt_msg_response_t *re
 
 void send_ivt_ui(void);
 
+int32_t IVT_GetCurrent_mA(void);
+int32_t IVT_GetPackVoltage_mV(void);
+int32_t IVT_GetTemperature_dC(void);
+void    Check_PackVoltage_and_Current(void);
+
 
 #endif /* INC_PTC_FDCAN_H_ */
