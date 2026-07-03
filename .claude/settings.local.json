@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(python3 -c ' *)",
-      "Bash(python3 \"C:\\\\Users\\\\jpser\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-jpser-Documents-GitHub-lart-bms\\\\71f7fca9-d43b-42fe-8a9f-fcbd53bf5ad9\\\\scratchpad\\\\community_summary.py\")"
+      "Bash(python3 \"C:\\\\Users\\\\jpser\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-jpser-Documents-GitHub-lart-bms\\\\71f7fca9-d43b-42fe-8a9f-fcbd53bf5ad9\\\\scratchpad\\\\community_summary.py\")",
+      "Bash(git check-ignore *)",
+      "Bash(grep -E '\\\\.\\(o|d|su|cyclo|elf|bin|hex|map|list\\)$')",
+      "Bash(git rm *)",
+      "Bash(git add *)",
+      "Bash(find \"C:/Users/jpser/.claude/plugins/cache/caveman/caveman/25d22f864ad6/skills/caveman-compress\" -maxdepth 2)",
+      "Bash(python3 -m scripts \"C:/Users/jpser/.claude/projects/C--Users-jpser-Documents-GitHub-lart-bms/memory/project_lart_bms_overview.md\")"
     ]
   }
 }

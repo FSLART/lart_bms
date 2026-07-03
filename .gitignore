@@ -17,8 +17,8 @@ _build/
 .metadata/
 
 #Debug
-Debug/*
-debug/*
+Debug/**
+debug/**
 Release/
 release
 
@@ -72,3 +72,6 @@ release
 
 !Debug/*.bin
 !Debug/*.elf
+
+# eeprom dump tool output - kept in repo (not a build artifact)
+!Firmware/dump_to_binary/output.bin
