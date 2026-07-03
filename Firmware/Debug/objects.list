@@ -13,6 +13,7 @@
 "./Core/Src/fault_manager.o"
 "./Core/Src/gpio_expander.o"
 "./Core/Src/isa_ivt-s.o"
+"./Core/Src/live_debug.o"
 "./Core/Src/main.o"
 "./Core/Src/master_to_CAN.o"
 "./Core/Src/mcuWrapper.o"

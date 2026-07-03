@@ -29,6 +29,7 @@
 #include "fault_manager.h"
 #include "gpio_expander.h"
 #include "charger.h"
+#include "live_debug.h"
 
 #include "powertrain_t26.h"
 #include "eveurope_charger.h"
@@ -306,6 +307,13 @@ void brain_loop(void) {
 
 	//update precharge state machine if necessary
 	Precharge_Update();
+
+	//refresh live debug snapshot every 500ms (debugger-only, cheap)
+	static uint32_t liveDebugTimer = 0;
+	if (getRuntimeMsDiff(liveDebugTimer) >= 500) {
+		liveDebugTimer = getRuntimeMs();
+		LiveDebug_Update();
+	}
 
 	//CAN housekeeping
 	CAN_Service(&hcan1);

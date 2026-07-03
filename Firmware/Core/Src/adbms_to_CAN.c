@@ -23,6 +23,13 @@
 //Cache for the delta, since it is in another message grouped with other adbms stuff
 int s_module_voltage_delta[12];
 
+/* Pack-level overalls, cached by ADBMS_CAN_Send_Master_MSC_3 for live debug */
+uint16_t g_pack_vmax_mV = 0;
+uint16_t g_pack_vmin_mV = 0;
+int16_t  g_pack_tmax_cC = 0;
+int16_t  g_pack_tmin_cC = 0;
+uint32_t g_pack_voltage_sum_mV = 0;
+
 void BMS_SafetyCheck(void) {
 
 	for (int module = 0; module < slaves_found && module < 12; module++) {
@@ -102,12 +109,15 @@ HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan) {
 	uint16_t overall_vmin = 0xFFFFU;
 	uint16_t overall_tmax = 0U;
 	uint16_t overall_tmin = 0xFFFFU;
+	uint32_t pack_voltage_sum = 0U;
 
 	for (uint8_t module = 0; module < slaves_found && module < 12; module++) {
 		const cell_asic *ic = &SLAVE[module];   // atualizar para a versão segura
 
 		for (uint8_t i = 0; i < 12; i++) {
 			int v = data_to_volts(ic->cell.c_codes[i], ADBMS_CELL);
+
+			pack_voltage_sum += (uint32_t) v;
 
 			if (v > overall_vmax)
 				overall_vmax = v;
@@ -124,6 +134,13 @@ HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan) {
 				overall_tmin = t;
 		}
 	}
+
+	/* Cache pack-level overalls for the live debug snapshot */
+	g_pack_vmax_mV = overall_vmax;
+	g_pack_vmin_mV = overall_vmin;
+	g_pack_tmax_cC = (int16_t) overall_tmax;
+	g_pack_tmin_cC = (int16_t) overall_tmin;
+	g_pack_voltage_sum_mV = pack_voltage_sum;
 
 	Update_Fan_Temperature(overall_tmax);
 

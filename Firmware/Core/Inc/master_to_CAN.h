@@ -18,5 +18,8 @@ HAL_StatusTypeDef Master_CAN_Send_MSC_4(CAN_HandleTypeDef *hcan);
 HAL_StatusTypeDef Master_CAN_SendPrecharge(CAN_HandleTypeDef *hcan);
 HAL_StatusTypeDef Master_CAN_SendAll(CAN_HandleTypeDef *hcan);
 
+uint8_t count_active_faults(void);
+uint8_t read_contactor_state(GPIO_TypeDef *gpio_port, uint16_t gpio_pin);
+
 
 #endif /* INC_MASTER_TO_CAN_H_ */

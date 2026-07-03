@@ -24,6 +24,13 @@ HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t
 HAL_StatusTypeDef ADBMS_CAN_SendTemperatures_Module(CAN_HandleTypeDef *hcan, uint8_t module);
 HAL_StatusTypeDef ADBMS_CAN_SendAll(CAN_HandleTypeDef *hcan, AMSStates_t ams_current_state);
 
+/* Pack-level overalls cached by ADBMS_CAN_Send_Master_MSC_3, for live debug */
+extern uint16_t g_pack_vmax_mV;
+extern uint16_t g_pack_vmin_mV;
+extern int16_t  g_pack_tmax_cC;
+extern int16_t  g_pack_tmin_cC;
+extern uint32_t g_pack_voltage_sum_mV;
+
 float data_to_volts(int16_t, adbms_data_type_t);
 float getTemperatureCAN(int16_t);
 

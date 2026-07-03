@@ -368,6 +368,14 @@ int32_t IVT_GetTemperature_dC(void) {
 	return ivt.temp;     // x0.1 ºC
 }
 
+int32_t IVT_GetPower_W(void) {
+	return ivt.power;     // W
+}
+
+int32_t IVT_GetCoulombs_As(void) {
+	return ivt.coulombs_As;     // As
+}
+
 void Check_PackVoltage_and_Current(void) {
 	int32_t pack_mV = IVT_GetPackVoltage_mV();
 	int32_t pack_mA = IVT_GetCurrent_mA();

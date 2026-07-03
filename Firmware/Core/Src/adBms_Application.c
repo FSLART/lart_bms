@@ -116,7 +116,18 @@ static const uint32_t BALANCE_ON_TIME_MS = 1920;
 static const uint32_t BALANCE_SETTLE_MS = 15;
 static const uint32_t AVG_CONV_WAIT_MS = 20;
 
+/* Latest state returned by adbms_main(), mirrored for live debug snapshot */
+volatile adbms_result_state adbms_current_state = ADBMS_END;
+
+static adbms_result_state adbms_main_impl(AMSStates_t ams_state);
+
 adbms_result_state adbms_main(AMSStates_t ams_state) {
+	adbms_result_state result = adbms_main_impl(ams_state);
+	adbms_current_state = result;
+	return result;
+}
+
+static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 
 	switch (ams_state) {
 
