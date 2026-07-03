@@ -33,6 +33,9 @@ typedef enum {
 	ADBMS_END = 0, ADBMS_ONGOING, ADBMS_START
 } adbms_result_state;
 
+/* Last state returned by adbms_main() - exposed for live debug snapshot */
+extern volatile adbms_result_state adbms_current_state;
+
 adbms_result_state adbms_main(AMSStates_t);
 
 uint16_t adBms6830_FindMinVoltageGlobally(void);

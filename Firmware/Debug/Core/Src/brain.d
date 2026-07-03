@@ -53,7 +53,8 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
  ../Core/Inc/contactors.h ../Core/Inc/uartDMA.h \
  ../Core/Inc/master_to_CAN.h ../Core/Inc/precharge.h ../Core/Inc/can.h \
  ../Core/Inc/fault_manager.h ../Core/Inc/gpio_expander.h \
- ../Core/Inc/uartdma.h ../Core/Inc/charger.h \
+ ../Core/Inc/uartdma.h ../Core/Inc/charger.h ../Core/Inc/live_debug.h \
+ ../Core/Inc/precharge.h ../Core/Inc/adbms_main.h \
  C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/eveurope_charger.h \
  ../Core/Inc/soc.h
 ../Core/Inc/main.h:
@@ -127,5 +128,8 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/powertrain_t26.h:
 ../Core/Inc/gpio_expander.h:
 ../Core/Inc/uartdma.h:
 ../Core/Inc/charger.h:
+../Core/Inc/live_debug.h:
+../Core/Inc/precharge.h:
+../Core/Inc/adbms_main.h:
 C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/eveurope_charger.h:
 ../Core/Inc/soc.h:

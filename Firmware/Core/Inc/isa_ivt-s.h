@@ -79,6 +79,8 @@ void send_ivt_ui(void);
 int32_t IVT_GetCurrent_mA(void);
 int32_t IVT_GetPackVoltage_mV(void);
 int32_t IVT_GetTemperature_dC(void);
+int32_t IVT_GetPower_W(void);
+int32_t IVT_GetCoulombs_As(void);
 void    Check_PackVoltage_and_Current(void);
 
 

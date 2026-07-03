@@ -363,6 +363,27 @@ HAL_StatusTypeDef CAN_TX_Add_Extended_To_Queue(CAN_HandleTypeDef *hcan, uint32_t
 	return CAN_TX_Add_To_Queue_Internal(hcan, canID, dlc, data, CAN_ID_EXT);
 }
 
+// Number of items currently queued for TX on this bus (for live debug)
+uint16_t CanTx_GetQueueDepth(CAN_HandleTypeDef *hcan) {
+	CanTxQueue_t *queue = NULL;
+
+	if (hcan == &hcan1) {
+		queue = &can1TxQueue;
+	} else if (hcan == &hcan2) {
+		queue = &can2TxQueue;
+	} else {
+		return 0;
+	}
+
+	uint16_t depth = (uint16_t) (queue->head - queue->tail);
+
+	if (queue->head < queue->tail) {
+		depth = (uint16_t) (CAN_TX_QUEUE_SIZE - queue->tail + queue->head);
+	}
+
+	return depth;
+}
+
 uint8_t CAN_IsStarted(CAN_HandleTypeDef *hcan) {
 	if (hcan == &hcan1) {
 		return can1Started;
