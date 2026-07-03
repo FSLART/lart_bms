@@ -100,6 +100,9 @@ static const char *fault_names[FAULT_COUNT] = {
     /* Open-wire diagnostics */
     [FAULT_OW_DETECTED_CELL]          = "OW_DETECTED_CELL",
     [FAULT_OW_DETECTED_RTH]           = "OW_DETECTED_RTH",
+
+    /* GPIO expander */
+    [FAULT_GPIO_EXPANDER]             = "GPIO_EXPANDER",
 };
 
 /* ═══════════════════════════════════════════════════════════════

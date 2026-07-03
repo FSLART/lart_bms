@@ -92,6 +92,9 @@ typedef enum {
     FAULT_OW_DETECTED_CELL            = 42,
     FAULT_OW_DETECTED_RTH             = 43,
 
+    /* GPIO expander (MCP23017 over I2C) */
+    FAULT_GPIO_EXPANDER               = 44,
+
     FAULT_COUNT   /* sentinel — must stay ≤ 63 */
 } FaultCode_t;
 

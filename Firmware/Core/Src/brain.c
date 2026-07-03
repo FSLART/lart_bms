@@ -308,6 +308,13 @@ void brain_loop(void) {
 	//update precharge state machine if necessary
 	Precharge_Update();
 
+	//push any pending LED changes to the GPIO expander (single I2C write,
+	//only when something changed - LEDs set from interrupts land here)
+	//NOTE: intentionally disabled for now - expander I2C comms off.
+	//All MCP23017_LED() calls are safe and just update the local bitmask;
+	//un-comment this single line to bring the LEDs back.
+	//MCP23017_Flush();
+
 	//refresh live debug snapshot every 500ms (debugger-only, cheap)
 	static uint32_t liveDebugTimer = 0;
 	if (getRuntimeMsDiff(liveDebugTimer) >= 500) {

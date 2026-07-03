@@ -51,7 +51,13 @@ typedef enum
 
 void MCP23017_Init(void);
 
+/* Update an LED in the local bitmask. Interrupt-safe: never touches I2C.
+ * The change reaches the chip on the next MCP23017_Flush(). */
 void MCP23017_LED(mcp23017_led_t led, mcp23017_led_state_t state);
+
+/* Write pending LED changes to the chip over I2C.
+ * Call from the main loop only - never from an interrupt. */
+void MCP23017_Flush(void);
 
 uint8_t MCP23017_Read_DIP_Port(void);
 

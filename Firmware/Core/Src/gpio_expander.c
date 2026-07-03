@@ -30,9 +30,22 @@
 
 // bitmastdos gpios
 uint8_t mcp23017_gpioa_state = 0x00;
-uint8_t mcp23017_gpiob_state = 0x00;
+volatile uint8_t mcp23017_gpiob_state = 0x00;
 
-bool init_animation_busy = true;
+/* Set whenever the LED bitmask changes. MCP23017_Flush() (main loop only)
+ * writes the new state over I2C and clears it. This is what makes
+ * MCP23017_LED() safe to call from interrupts: it never touches I2C itself. */
+volatile bool mcp23017_leds_dirty = false;
+
+/* True only while the startup animation owns the LEDs. Starts false so
+ * MCP23017_Flush() works even when the animation is disabled; the animation
+ * itself sets it true while running and clears it when done. */
+bool init_animation_busy = false;
+
+/* Print I2C errors only once, otherwise a dead/absent expander spams the
+ * UART on every access. The fault stays raised either way; the flag resets
+ * on the first successful transfer so a recovered chip can report again. */
+static bool mcp23017_error_printed = false;
 
 // helper write MCP23017 register.
 void MCP23017_Write_Register(uint8_t reg, uint8_t value) {
@@ -42,10 +55,16 @@ void MCP23017_Write_Register(uint8_t reg, uint8_t value) {
 	I2C_MEMADD_SIZE_8BIT, &value, 1, 1);
 
 	if (result != HAL_OK) {
-		printfDebug("MCP23017 write fail reg=0x%02X err=0x%08lX\r\n", reg,
-				hi2c1.ErrorCode);
-		//RAISE_ERROR(FAULT_EEPROM_VALIDATION_ERROR);
+		if (!mcp23017_error_printed) {
+			mcp23017_error_printed = true;
+			printfDebug("MCP23017 write fail reg=0x%02X err=0x%08lX (further errors muted)\r\n",
+					reg, hi2c1.ErrorCode);
+		}
+		RAISE_ERROR(FAULT_GPIO_EXPANDER);
+		return;
 	}
+
+	mcp23017_error_printed = false;
 }
 
 uint8_t MCP23017_Read_Register(uint8_t reg) {
@@ -56,10 +75,15 @@ uint8_t MCP23017_Read_Register(uint8_t reg) {
 	I2C_MEMADD_SIZE_8BIT, &value, 1, 1);
 
 	if (result != HAL_OK) {
-		printfDebug("error gpio expander read GPIO\r\n");
-		RAISE_ERROR(FAULT_EEPROM_VALIDATION_ERROR);
+		if (!mcp23017_error_printed) {
+			mcp23017_error_printed = true;
+			printfDebug("MCP23017 read fail reg=0x%02X (further errors muted)\r\n", reg);
+		}
+		RAISE_ERROR(FAULT_GPIO_EXPANDER);
 		return 0;
 	}
+
+	mcp23017_error_printed = false;
 
 	return value;
 }
@@ -101,18 +125,31 @@ void MCP23017_Init(void) {
 	MCP23017_All_LEDs_Off();
 }
 
-// Control one MCP23017 output pin.
+/* Control one MCP23017 output pin.
+ *
+ * SAFE TO CALL FROM INTERRUPTS. This function only updates the local bitmask
+ * and marks it dirty - it never does I2C. The actual write to the chip
+ * happens later in MCP23017_Flush(), called from brain_loop.
+ *
+ * (The old version wrote I2C directly from here. When called inside the CAN
+ * RX interrupt, the blocking I2C transfer stalled the ISR long enough to
+ * drop frames and brick the CAN bus.) */
 void MCP23017_LED(mcp23017_led_t led, mcp23017_led_state_t state) {
-	//uint8_t bit_position;
 	uint8_t bit_mask;
 
 	if (led > LED_AUX2 || led < LED_UART) {
-		RAISE_ERROR(FAULT_EEPROM_VALIDATION_ERROR);
+		RAISE_ERROR(FAULT_GPIO_EXPANDER);
 		return;
 	}
 
 	//bits for leds
 	bit_mask = 1 << led;
+
+	/* The read-modify-write below can be interrupted (this function is called
+	 * from both interrupts and the main loop), so briefly mask interrupts to
+	 * avoid losing an LED update. This is nanoseconds, not an I2C transfer. */
+	uint32_t primask = __get_PRIMASK();
+	__disable_irq();
 
 	if (state == ON) {
 
@@ -128,15 +165,40 @@ void MCP23017_LED(mcp23017_led_t led, mcp23017_led_state_t state) {
 
 	} else {
 
-		RAISE_ERROR(FAULT_EEPROM_VALIDATION_ERROR);
+		__set_PRIMASK(primask);
+		RAISE_ERROR(FAULT_GPIO_EXPANDER);
 		return;
 	}
 
-	if (init_animation_busy == false) {
+	mcp23017_leds_dirty = true;
 
-		MCP23017_Write_Register(MCP23017_OLATB, mcp23017_gpiob_state);
+	__set_PRIMASK(primask);
+}
 
+/* Push the LED bitmask to the chip if it changed since the last flush.
+ *
+ * MAIN LOOP ONLY - this is the single place that writes LED state over I2C.
+ * Called once per brain_loop pass; does nothing when no LED changed, so the
+ * I2C bus stays quiet most of the time.
+ *
+ * The dirty flag is cleared BEFORE the write on purpose: if an interrupt
+ * changes an LED while the I2C transfer is in flight, the flag is set again
+ * and the next flush picks up the change. Clearing after the write could
+ * silently lose that update. */
+void MCP23017_Flush(void) {
+
+	if (!mcp23017_leds_dirty) {
+		return;
 	}
+
+	// Skip while the startup animation owns the LEDs
+	if (init_animation_busy) {
+		return;
+	}
+
+	mcp23017_leds_dirty = false;
+
+	MCP23017_Write_Register(MCP23017_OLATB, mcp23017_gpiob_state);
 }
 
 // read dip switch
@@ -145,7 +207,7 @@ uint8_t MCP23017_Read_DIP(mcp23017_dip_t dip) {
 	uint8_t bit_mask;
 
 	if (dip > MCP23017_GPA7) {
-		RAISE_ERROR(FAULT_EEPROM_VALIDATION_ERROR);
+		RAISE_ERROR(FAULT_GPIO_EXPANDER);
 		return 0;
 	}
 
@@ -223,34 +285,10 @@ void MCP23017_StartupAnimation_Update(void) {
 			led_back_2 = led_position - 2;
 		}
 
-		//  turn everything off primeirio
-		MCP23017_All_LEDs_Off();
-
-		// acender LED da frente e cauda
-		//MCP23017_LED((mcp23017_led_t) led_front, ON);
-		//MCP23017_LED((mcp23017_led_t) led_back_1, ON);
-		//MCP23017_LED((mcp23017_led_t) led_back_2, ON);
-
-		uint8_t bit_mask;
-
-		//led_front
-		bit_mask = 1 << led_front;
-
-		mcp23017_gpiob_state |= bit_mask;
-
-		MCP23017_Write_Register(MCP23017_OLATB, mcp23017_gpiob_state);
-
-		//led_back_1
-		bit_mask = 1 << led_back_1;
-
-		mcp23017_gpiob_state |= bit_mask;
-
-		MCP23017_Write_Register(MCP23017_OLATB, mcp23017_gpiob_state);
-
-		//led_back_2
-		bit_mask = 1 << led_back_2;
-
-		mcp23017_gpiob_state |= bit_mask;
+		/* Build the new frame: front LED + 2-LED tail, everything else off.
+		 * One single I2C write per frame (this runs in the main loop, where
+		 * a direct write is fine). */
+		mcp23017_gpiob_state = (1 << led_front) | (1 << led_back_1) | (1 << led_back_2);
 
 		MCP23017_Write_Register(MCP23017_OLATB, mcp23017_gpiob_state);
 
