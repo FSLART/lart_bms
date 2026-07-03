@@ -74,6 +74,25 @@ typedef struct {
 	uint16_t can2_tx_queue_depth;
 } live_debug_can_t;
 
+/* --- cell balancing : whole snapshot from ac_codes + tx_cfgb.dcc --- */
+#define LIVE_DEBUG_BAL_MAX_IC 12
+
+typedef struct {
+	uint8_t     active;                 // 1 = AMS_State == BALANCING
+	const char *stage_name;             // "ROUGH" / "FINE" / "END"
+	const char *phase_name;             // "INIT", "ON_TIME", "READ_AVG", ...
+	uint16_t    target_min_mV;          // frozen global minimum (balance target)
+	uint8_t     cells_discharging;      // total cells with DCC on, whole pack
+	uint8_t     cells_per_ic[LIVE_DEBUG_BAL_MAX_IC];     // DCC count per slave
+	uint16_t    dcc_mask_per_ic[LIVE_DEBUG_BAL_MAX_IC];  // raw DCC bitmask per slave
+	uint16_t    pack_vmax_mV;           // highest valid cell (avg registers)
+	uint16_t    pack_vmin_mV;           // lowest valid cell (avg registers)
+	uint16_t    pack_delta_mV;          // vmax - vmin
+	uint16_t    worst_delta_mV;         // biggest (cell - target), 0 = converged
+	uint8_t     worst_slave;            // 1-based, 0 = none
+	uint8_t     worst_cell;             // 1-based, 0 = none
+} live_debug_balancing_t;
+
 typedef struct {
 	live_debug_brain_t      brain;
 	live_debug_adbms_t      adbms;
@@ -81,6 +100,7 @@ typedef struct {
 	live_debug_contactors_t contactors;
 	live_debug_board_t      board;
 	live_debug_can_t        can;
+	live_debug_balancing_t  balancing;
 } live_debug_t;
 
 extern live_debug_t live_debug;

@@ -63,8 +63,9 @@ uint16_t BatteryPack_FindMinVoltageGlobally(const cell_asic *ic_array, uint8_t t
 
 	for (uint8_t m = 0; m < total_ic; m++) {
 		for (uint8_t i = 0; i < BALANCING_CELL_COUNT; i++) {
-			//int16_t code = cfg->use_filtered_cells ? ic_array[m].scell.sc_codes[i] : ic_array[m].scell.sc_codes[i]; // Filtered not implmemnnted
-			int16_t code = ic_array[m].cell.c_codes[i]; // Filtered not implmemnnted
+			/* Registos de média (RDAC): são estes que o ciclo de balanceamento
+			 * refresca em BAL_CYCLE_READ_AVG; c_codes ficam obsoletos em BALANCING */
+			int16_t code = ic_array[m].acell.ac_codes[i];
 
 			uint16_t cell_mV = cell_code_to_mV(code);
 
@@ -101,7 +102,7 @@ balance_stage_t BatteryPack_DetermineBalanceStage(const cell_asic *ic_array, uin
 
 	for (uint8_t m = 0; m < total_ic; m++) {
 		for (uint8_t i = 0; i < BALANCING_CELL_COUNT; i++) {
-			int16_t code = ic_array[m].cell.c_codes[i];
+			int16_t code = ic_array[m].acell.ac_codes[i];
 			uint16_t cell_mV = cell_code_to_mV(code);
 
 			if ((cell_mV < cfg->min_cell_mV) || (cell_mV > cfg->max_cell_mV)) {
@@ -152,9 +153,8 @@ void Balance_ComputeModule(const cell_asic *ic, const balance_config_t *cfg, bal
 	// 1) Ler as tensões das células
 	for (uint8_t i = 0; i < BALANCING_CELL_COUNT; i++) {
 
-		//ESCOLHER QUE TIPO DE CANAL SE VAI FAZER A LEITURA DAS TENSÕES       nÃO IMPLEMENTADO YET
-		//int16_t code = cfg->use_filtered_cells ? ic->scell.sc_codes[i] : ic->scell.sc_codes[i];
-		int16_t code = ic->cell.c_codes[i];
+		//Registos de média (RDAC), refrescados em cada ciclo de balanceamento
+		int16_t code = ic->acell.ac_codes[i];
 
 		//adc pra mv
 		uint16_t cell_in_mv = cell_code_to_mV(code);

@@ -112,12 +112,24 @@ balance_stage_t balanceStage = BALANCE_STAGE_ROUGH;
 
 static adbms_balancing_phase_t balPhase = BAL_CYCLE_INIT;
 static uint32_t balPhaseStart = 0;
-static const uint32_t BALANCE_ON_TIME_MS = 1920;
-static const uint32_t BALANCE_SETTLE_MS = 15;
+/* Tem de ficar abaixo do tSLEEP mínimo do ADBMS6830 (1.8s): sem comandos
+ * válidos durante o pulso, o watchdog limpa os bits DCC e o IC adormece */
+static const uint32_t BALANCE_ON_TIME_MS = 1500;
+/* Relaxação da célula após cortar a descarga; 15ms só limpava a queda
+ * ohmica, com deadband de 8mV convém deixar assentar mais */
+static const uint32_t BALANCE_SETTLE_MS = 100;
 static const uint32_t AVG_CONV_WAIT_MS = 20;
+/* Guarda térmica dos FETs internos de descarga (datasheet: monitorizar
+ * die temp com descarga interna) */
+static const float BALANCE_DIE_TEMP_LIMIT_C = 85.0f;
 
 /* Latest state returned by adbms_main(), mirrored for live debug snapshot */
 volatile adbms_result_state adbms_current_state = ADBMS_END;
+
+/* balPhase é static; expor só o valor para o live debug */
+uint8_t Balancing_GetPhase(void) {
+	return (uint8_t) balPhase;
+}
 
 static adbms_result_state adbms_main_impl(AMSStates_t ams_state);
 
@@ -148,6 +160,24 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 
 		case BAL_CYCLE_INIT:
 
+			/* Recalcular o estágio ANTES de decidir sair: senão o END só é
+			 * detetado um ciclo (~1.6s) mais tarde. BALANCE_END vindo de fora
+			 * (paragem via CAN) é sticky - não recalcular por cima dele */
+			if (balanceStage != BALANCE_END) {
+				balanceStage = BatteryPack_DetermineBalanceStage(&IC[0], slaves_found, &g_balance_cfg, global_min_mV);
+			}
+
+			/* Guarda térmica: FETs de descarga internos, die temp via STATA */
+			for (uint8_t module = 0; module < slaves_found; module++) {
+				float itmp_v = ((IC[module].stata.itmp + 10000) * 0.000150f);
+				float die_c = (itmp_v / 0.0075f) - 273.0f;
+
+				if (die_c >= BALANCE_DIE_TEMP_LIMIT_C) {
+					RAISE_ERROR(FAULT_BALANCING_OVERTEMP, .slave_idx = module + 1, .measured_value = die_c, .threshold_value = BALANCE_DIE_TEMP_LIMIT_C);
+					balanceStage = BALANCE_END;
+				}
+			}
+
 			if (balanceStage == BALANCE_END) {
 				for (uint8_t module = 0; module < slaves_found; module++) {
 					IC[module].tx_cfgb.dcc = 0;
@@ -162,8 +192,6 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 
 				balPhase = BAL_CYCLE_COMPUTE;
 			}
-
-			balanceStage = BatteryPack_DetermineBalanceStage(&IC[0], slaves_found, &g_balance_cfg, global_min_mV);
 
 			break;
 

@@ -34,6 +34,10 @@ extern uint8_t slaves_found;
 extern cell_asic IC[ADBMS_MAX_DEVICES];
 extern cell_asic SLAVE[ADBMS_MAX_DEVICES];
 extern balance_stage_t balanceStage;
+extern uint16_t global_min_mV;
+
+/* Fase interna do ciclo de balanceamento (BAL_CYCLE_*), para live debug */
+uint8_t Balancing_GetPhase(void);
 
 void app_main(void);
 void run_command(int cmd);
