@@ -54,6 +54,12 @@ void Fan_Start(void) {
 	__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, 0);
 }
 
+// Histerese: ventoinha liga acima de fan_table[0] e só desliga
+// FAN_HYSTERESIS_C abaixo, para não oscilar com a temperatura no limite
+#define FAN_HYSTERESIS_C 5.0f
+
+static uint8_t fan_on = 0;
+
 void Fan_Update(void)
 {
 
@@ -96,16 +102,41 @@ void Fan_Update(void)
 		}
 	}
 
+	// Histerese on/off
+	if (fan_on)
+	{
+		// Só desliga quando descer 5ºC abaixo do limiar de arranque
+		if (temperature <= (fan_table[0].temperature - FAN_HYSTERESIS_C))
+		{
+			fan_on = 0;
+		}
+	}
+	else
+	{
+		// Liga quando a tabela pedir PWM > 0 (acima do 1º ponto)
+		if (pwm_8bit > 0)
+		{
+			fan_on = 1;
+		}
+	}
+
+	if (!fan_on)
+	{
+		pwm_8bit = 0;
+	}
+	else if (pwm_8bit == 0)
+	{
+		// Dentro da banda de histerese (a descer): manter velocidade mínima
+		pwm_8bit = fan_table[1].pwm;
+	}
+
 	// Convert 0-255 value to timer compare value
 	pwm_timer_value = ((uint32_t)pwm_8bit * timer_max) / 255;
 
-	//clamp this bitch
-	if(pwm_timer_value < 0){
-		pwm_timer_value = 255;
-	}
-
-	if(pwm_timer_value > 255){
-		pwm_timer_value = 255;
+	// Clamp ao período do timer (ARR), não a 255
+	if (pwm_timer_value > timer_max)
+	{
+		pwm_timer_value = timer_max;
 	}
 
 	__HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_1, pwm_timer_value);
