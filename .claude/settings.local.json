@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(python3 \"C:\\\\Users\\\\jpser\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-jpser-Documents-GitHub-lart-bms\\\\71f7fca9-d43b-42fe-8a9f-fcbd53bf5ad9\\\\scratchpad\\\\community_summary.py\")"
+    ]
+  }
+}

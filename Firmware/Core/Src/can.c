@@ -144,6 +144,16 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 	// Send it to everyone who registered
 	if (hcan == &hcan1) {
+		/* Every frame ID on the CAN1 powertrain bus is an 11-bit standard ID.
+		   An extended (29-bit) frame is either foreign traffic or a corrupted
+		   capture; the CAN1 callbacks read rxHeader.StdId and switch on the
+		   standard-ID defines, so an extended frame would decode as the wrong
+		   signal with the wrong payload (id-space overlap). Drop it before
+		   dispatch. CAN2 intentionally keeps extended frames. */
+		if (rxHeader.IDE == CAN_ID_EXT) {
+			return;
+		}
+
 		for (uint8_t i = 0; i < can1CallbackCounter; i++) {
 			if (can1RxCallbacks[i] != NULL) {
 				can1RxCallbacks[i](&rxHeader, rxData);
