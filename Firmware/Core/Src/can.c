@@ -491,7 +491,7 @@ void CAN_Service(CAN_HandleTypeDef *hcan) {
 
 	uint32_t now = HAL_GetTick();
 
-	static uint32_t last_try = 1;
+	uint32_t *last_try;
 
 	if (hcan == NULL) {
 		return;
@@ -509,19 +509,19 @@ void CAN_Service(CAN_HandleTypeDef *hcan) {
 	}
 
 	if (hcan == &hcan1) {
-		last_try = last_can1_try;
+		last_try = &last_can1_try;
 	} else if (hcan == &hcan2) {
-		last_try = last_can2_try;
+		last_try = &last_can2_try;
 	} else {
 		return;
 	}
 
 	// Only try recovery every 100 ms
-	if ((now - last_try) < 100) {
+	if ((now - *last_try) < 100) {
 		return;
 	}
 
-	last_try = now;
+	*last_try = now;
 
 	uint8_t busIdx = FAULT_CAN_BUS_2;
 	if (hcan == &hcan1) {
