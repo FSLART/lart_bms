@@ -57,8 +57,9 @@ void BMS_SafetyCheck(void) {
 
 			float cell_t = getTemperatureCAN(ic->raux.ra_codes[ntc]);
 
-			// NTC desligado lê ~2 ou 150 -> ignorar para não disparar à toa
+			// NTC desligado lê ~2 ou 150 -> não avaliar OT, mas assinalar sensor avariado
 			if (cell_t <= 2.0f || cell_t >= 149.0f) {
+				RAISE_ERROR(FAULT_TEMP_SENSOR_OPEN, .slave_idx = module + 1, .channel_idx = ntc + 1, .measured_value = cell_t);
 				continue;
 			}
 
@@ -128,12 +129,24 @@ HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan) {
 		for (uint8_t i = 0; i < 6; i++) {
 			int t = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[i]));
 
+			/* NTC aberto (1.99ºC) ou curto/erro (>=149ºC): não deixar
+			 * inquinar o min/max do pack */
+			if (t <= 200 || t >= 14900)
+				continue;
+
 			if (t > overall_tmax)
 				overall_tmax = t;
 			if (t < overall_tmin)
 				overall_tmin = t;
 		}
 	}
+
+	/* Sem slaves ou sem leituras válidas: min ficaria no valor de init
+	 * (0xFFFF = 655.35 no CAN) -> enviar 0 em vez de lixo */
+	if (overall_vmin == 0xFFFFU)
+		overall_vmin = 0U;
+	if (overall_tmin == 0xFFFFU)
+		overall_tmin = 0U;
 
 	/* Cache pack-level overalls for the live debug snapshot */
 	g_pack_vmax_mV = overall_vmax;
@@ -455,30 +468,30 @@ HAL_StatusTypeDef ADBMS_CAN_SendTemperatures_Module(CAN_HandleTypeDef *hcan, uin
 	int t5 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[4]));
 	int t6 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[5]));
 
-	int temp_max = 10;
-	int temp_min = 9999999;
+	int temps[6] = { t1, t2, t3, t4, t5, t6 };
 
-	if (t2 > temp_max)
-		temp_max = t2;
-	if (t3 > temp_max)
-		temp_max = t3;
-	if (t4 > temp_max)
-		temp_max = t4;
-	if (t5 > temp_max)
-		temp_max = t5;
-	if (t6 > temp_max)
-		temp_max = t6;
+	int temp_max = 0;
+	int temp_min = 0;
+	uint8_t temp_valid = 0;
 
-	if (t2 < temp_min)
-		temp_min = t2;
-	if (t3 < temp_min)
-		temp_min = t3;
-	if (t4 < temp_min)
-		temp_min = t4;
-	if (t5 < temp_min)
-		temp_min = t5;
-	if (t6 < temp_min)
-		temp_min = t6;
+	for (uint8_t i = 0; i < 6; i++) {
+		/* NTC aberto lê 1.99ºC (199 cC) e em curto/erro >= 149ºC:
+		 * descartar do max/min como no BMS_SafetyCheck */
+		if (temps[i] <= 200 || temps[i] >= 14900)
+			continue;
+
+		if (!temp_valid) {
+			temp_max = temps[i];
+			temp_min = temps[i];
+			temp_valid = 1;
+			continue;
+		}
+
+		if (temps[i] > temp_max)
+			temp_max = temps[i];
+		if (temps[i] < temp_min)
+			temp_min = temps[i];
+	}
 
 	int temp_delta = temp_max - temp_min;
 
