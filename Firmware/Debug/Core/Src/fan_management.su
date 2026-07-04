@@ -1,4 +1,4 @@
 ../Core/Src/fan_management.c:39:9:Get_Fan_PWM	4	static
 ../Core/Src/fan_management.c:44:6:Update_Fan_Temperature	16	static
 ../Core/Src/fan_management.c:50:6:Fan_Start	8	static
-../Core/Src/fan_management.c:57:6:Fan_Update	48	static
+../Core/Src/fan_management.c:63:6:Fan_Update	48	static

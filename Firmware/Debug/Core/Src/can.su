@@ -11,5 +11,5 @@
 ../Core/Src/can.c:367:10:CanTx_GetQueueDepth	24	static
 ../Core/Src/can.c:387:9:CAN_IsStarted	16	static
 ../Core/Src/can.c:400:19:CAN_Restart	16	static
-../Core/Src/can.c:488:6:CAN_Service	96	static
+../Core/Src/can.c:488:6:CAN_Service	104	static
 ../Core/Src/can.c:576:6:CAN_PrintHalError	16	static

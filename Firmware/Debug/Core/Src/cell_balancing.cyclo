@@ -1,8 +1,8 @@
 ../Core/Src/cell_balancing.c:18:6:Balance_InitDefaultConfig	2
 ../Core/Src/cell_balancing.c:40:10:cell_code_to_mV	3
 ../Core/Src/cell_balancing.c:55:10:BatteryPack_FindMinVoltageGlobally	11
-../Core/Src/cell_balancing.c:87:17:BatteryPack_DetermineBalanceStage	15
-../Core/Src/cell_balancing.c:138:6:Balance_ComputeModule	21
+../Core/Src/cell_balancing.c:88:17:BatteryPack_DetermineBalanceStage	15
+../Core/Src/cell_balancing.c:139:6:Balance_ComputeModule	21
 ../Core/Src/cell_balancing.c:261:6:Balance_ApplyToIc	5
 ../Core/Src/cell_balancing.c:286:6:CellBalancing_CAN_Init	1
 ../Core/Src/cell_balancing.c:290:6:CellBalancing_CAN_Rx	7
