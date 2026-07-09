@@ -134,6 +134,13 @@ typedef struct {
      */
     uint8_t contactor_bits;
 
+    /* channel_mask – bitmap de canais afetados (bit N = canal N, 1-based p/ NTC).
+     * Ao contrário do resto do contexto (que é substituído em cada RAISE),
+     * este campo é ACUMULADO por OR enquanto o fault está ativo — permite
+     * mostrar vários canais avariados do mesmo slave num só fault code.
+     * 0 = não usado (comportamento antigo). */
+    uint16_t channel_mask;
+
 } FaultContext_t;
 
 /* Contactor bit-mask helpers */

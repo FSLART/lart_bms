@@ -1,9 +1,9 @@
 ../Core/Src/adbms_to_CAN.c:33:6:BMS_SafetyCheck	96	static
-../Core/Src/adbms_to_CAN.c:74:19:Slaves_CAN_SendMessage	24	static
-../Core/Src/adbms_to_CAN.c:85:19:ADBMS_CAN_SendAll	24	static
-../Core/Src/adbms_to_CAN.c:105:19:ADBMS_CAN_Send_Master_MSC_3	64	static
-../Core/Src/adbms_to_CAN.c:176:19:ADBMS_CAN_SendMSC_Module	176	static
-../Core/Src/adbms_to_CAN.c:451:19:ADBMS_CAN_SendTemperatures_Module	288	static
-../Core/Src/adbms_to_CAN.c:830:19:ADBMS_CAN_SendVoltages_Module	488	static
-../Core/Src/adbms_to_CAN.c:1501:7:data_to_volts	24	static
-../Core/Src/adbms_to_CAN.c:1534:7:getTemperatureCAN	64	static
+../Core/Src/adbms_to_CAN.c:86:19:Slaves_CAN_SendMessage	24	static
+../Core/Src/adbms_to_CAN.c:97:19:ADBMS_CAN_SendAll	24	static
+../Core/Src/adbms_to_CAN.c:117:19:ADBMS_CAN_Send_Master_MSC_3	64	static
+../Core/Src/adbms_to_CAN.c:188:19:ADBMS_CAN_SendMSC_Module	176	static
+../Core/Src/adbms_to_CAN.c:463:19:ADBMS_CAN_SendTemperatures_Module	288	static
+../Core/Src/adbms_to_CAN.c:842:19:ADBMS_CAN_SendVoltages_Module	488	static
+../Core/Src/adbms_to_CAN.c:1513:7:data_to_volts	24	static
+../Core/Src/adbms_to_CAN.c:1546:7:getTemperatureCAN	64	static

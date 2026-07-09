@@ -4,7 +4,7 @@
 ../Core/Src/adbms/adBms6830GenericType.c:153:10:CalcPEC10	48	static
 ../Core/Src/adbms/adBms6830GenericType.c:190:6:spiSendCmd	24	static
 ../Core/Src/adbms/adBms6830GenericType.c:224:6:spiReadData	56	static
-../Core/Src/adbms/adBms6830GenericType.c:296:6:adBmsReadData	88	static
+../Core/Src/adbms/adBms6830GenericType.c:296:6:adBmsReadData	96	static
 ../Core/Src/adbms/adBms6830GenericType.c:562:6:spiWriteData	48	static
 ../Core/Src/adbms/adBms6830GenericType.c:627:6:adBmsWriteData	48	static
 ../Core/Src/adbms/adBms6830GenericType.c:724:10:adBmsPollAdc	32	static

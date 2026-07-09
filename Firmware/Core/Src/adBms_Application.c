@@ -27,6 +27,7 @@
 #include "uartDMA.h"
 #include "fault_manager.h"
 #include "gpio_expander.h"
+#include "adbms_to_CAN.h"   // g_pack_tmax_cC (cross-check ITMP no balanceamento)
 
 uint8_t slaves_found = 0;
 
@@ -165,16 +166,64 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 			 * (paragem via CAN) é sticky - não recalcular por cima dele */
 			if (balanceStage != BALANCE_END) {
 				balanceStage = BatteryPack_DetermineBalanceStage(&IC[0], slaves_found, &g_balance_cfg, global_min_mV);
+
+				if (balanceStage == BALANCE_END) {
+					printfDebug("BAL END: converged/no work (target=%umV)\r\n", global_min_mV);
+				}
+			} else {
+				printfDebug("BAL END: external stop (CAN)\r\n");
 			}
 
-			/* Guarda térmica: FETs de descarga internos, die temp via STATA */
-			for (uint8_t module = 0; module < slaves_found; module++) {
-				float itmp_v = ((IC[module].stata.itmp + 10000) * 0.000150f);
-				float die_c = (itmp_v / 0.0075f) - 273.0f;
+			/* Guarda térmica: FETs de descarga internos, die temp via STATA.
+			 * Endurecida contra lixo de leitura (último IC da chain já provou
+			 * entregar registos podres): PEC tem de estar OK, valor tem de ser
+			 * plausível, e só aborta com 2 ciclos consecutivos acima do limite */
+			{
+				static uint8_t die_ot_count[12] = { 0 };
 
-				if (die_c >= BALANCE_DIE_TEMP_LIMIT_C) {
-					RAISE_ERROR(FAULT_BALANCING_OVERTEMP, .slave_idx = module + 1, .measured_value = die_c, .threshold_value = BALANCE_DIE_TEMP_LIMIT_C);
-					balanceStage = BALANCE_END;
+				for (uint8_t module = 0; module < slaves_found && module < 12; module++) {
+
+					/* STATA deste ciclo com PEC errado -> registo não fiável */
+					if (IC[module].cccrc.stat_pec != 0) {
+						continue;
+					}
+
+					float itmp_v = ((IC[module].stata.itmp + 10000) * 0.000150f);
+					float die_c = (itmp_v / 0.0075f) - 273.0f;
+
+					/* Fora de -40..150ºC = leitura impossível (0x8000/lixo),
+					 * ignorar sem mexer no contador */
+					if ((die_c < -40.0f) || (die_c > 150.0f)) {
+						printfDebug("BAL ITMP GARBAGE: S%u raw=0x%04X (%.1fC)\r\n", module + 1, (uint16_t) IC[module].stata.itmp, die_c);
+						continue;
+					}
+
+					/* Cross-check físico: die não pode estar >60ºC acima do NTC
+					 * mais quente do pack (S12 já entregou 125.6ºC de lixo que
+					 * passava na janela absoluta). Backstop real: thermal
+					 * shutdown interno do chip a ~150ºC */
+					float ntc_max_c = ((float) g_pack_tmax_cC) / 100.0f;
+					if (die_c > (ntc_max_c + 60.0f)) {
+						printfDebug("BAL ITMP IMPLAUSIVEL: S%u raw=0x%04X (%.1fC, NTCmax=%.1fC)\r\n", module + 1, (uint16_t) IC[module].stata.itmp, die_c, ntc_max_c);
+						continue;
+					}
+
+					if (die_c >= BALANCE_DIE_TEMP_LIMIT_C) {
+						die_ot_count[module]++;
+
+						if (die_ot_count[module] >= 2) {
+							printfDebug("BAL DIE OT: S%u raw=0x%04X %.1fC\r\n", module + 1, (uint16_t) IC[module].stata.itmp, die_c);
+							RAISE_ERROR(FAULT_BALANCING_OVERTEMP, .slave_idx = module + 1, .measured_value = die_c, .threshold_value = BALANCE_DIE_TEMP_LIMIT_C);
+							balanceStage = BALANCE_END;
+						}
+					} else {
+						die_ot_count[module] = 0;
+					}
+				}
+
+				/* Sessão terminou: limpar contadores para a próxima */
+				if (balanceStage == BALANCE_END) {
+					memset(die_ot_count, 0, sizeof(die_ot_count));
 				}
 			}
 
@@ -1332,7 +1381,7 @@ void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
 			if (pup > 10000 || pdown > 0) {
 				ic[slave].diag_result.aux_ow[gpio] = 1;
 				printfDebug("AUX OW FAULT: IC%u GPIO%u diff (%ldmV) \r\n", slave + 1, gpio + 1, pdown);
-				RAISE_ERROR(FAULT_OW_DETECTED_RTH, .slave_idx = slave + 1, .channel_idx = gpio + 1, .measured_value = (float )pdown);
+				RAISE_ERROR(FAULT_OW_DETECTED_RTH, .slave_idx = slave + 1, .channel_idx = gpio + 1, .channel_mask = (uint16_t)(1U << (gpio + 1)), .measured_value = (float )pdown);
 
 				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
 			} else {
@@ -1376,7 +1425,7 @@ uint8_t adBms6830_daisychain_device_counter(void) {
 	uint8_t device_counter = 0;
 
 	//TODO: EEPROM: masterCfg.total_ic4
-	uint8_t expected_devices = 12;
+	uint8_t expected_devices = 2;
 
 	cell_asic TEMP_SLAVE[ADBMS_MAX_DEVICES] = { 0 };
 

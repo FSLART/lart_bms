@@ -32,6 +32,17 @@ uint32_t g_pack_voltage_sum_mV = 0;
 
 void BMS_SafetyCheck(void) {
 
+	/* Warmup de arranque: os registos dos ADBMS ainda estão no valor de
+	 * reset (0x8000) até às primeiras leituras válidas de toda a chain.
+	 * Não avaliar OV/UV/OT nos primeiros ciclos para não latchar faults
+	 * fantasma no boot */
+	static uint8_t boot_warmup_reads = 0;
+
+	if (boot_warmup_reads < 10) {
+		boot_warmup_reads++;
+		return;
+	}
+
 	for (int module = 0; module < slaves_found && module < 12; module++) {
 
 		const cell_asic *ic = &SLAVE[module];
@@ -57,9 +68,10 @@ void BMS_SafetyCheck(void) {
 
 			float cell_t = getTemperatureCAN(ic->raux.ra_codes[ntc]);
 
-			// NTC desligado lê ~2 ou 150 -> não avaliar OT, mas assinalar sensor avariado
+			// NTC desligado lê ~2 ou 150 -> não avaliar OT.
+			// Open wire de NTC é reportado só como OW_DETECTED_RTH (check dedicado
+			// no adBms_Application), para não duplicar faults do mesmo problema
 			if (cell_t <= 2.0f || cell_t >= 149.0f) {
-				RAISE_ERROR(FAULT_TEMP_SENSOR_OPEN, .slave_idx = module + 1, .channel_idx = ntc + 1, .measured_value = cell_t);
 				continue;
 			}
 

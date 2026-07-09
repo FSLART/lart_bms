@@ -10,5 +10,5 @@
 ../Core/Src/isa_ivt-s.c:367:9:IVT_GetTemperature_dC	4	static
 ../Core/Src/isa_ivt-s.c:371:9:IVT_GetPower_W	4	static
 ../Core/Src/isa_ivt-s.c:375:9:IVT_GetCoulombs_As	4	static
-../Core/Src/isa_ivt-s.c:379:6:Check_PackVoltage_and_Current	104	static
+../Core/Src/isa_ivt-s.c:379:6:Check_PackVoltage_and_Current	120	static
 ../Core/Src/isa_ivt-s.c:416:6:send_ivt_ui	8	static

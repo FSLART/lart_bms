@@ -167,8 +167,14 @@ void FaultManager_Raise(FaultCode_t code, const FaultContext_t *ctx)
 
     bool already_active = active_fault[code];
 
-    /* Always update the stored context (new cell, new timestamp, etc.) */
+    /* Always update the stored context (new cell, new timestamp, etc.).
+     * channel_mask é a exceção: acumula por OR enquanto ativo, para não
+     * perder canais quando vários raisers usam o mesmo fault code */
+    uint16_t prev_mask = fault_context[code].channel_mask;
     fault_context[code] = *ctx;
+    if (already_active) {
+        fault_context[code].channel_mask |= prev_mask;
+    }
 
     if (!already_active) {
         /* First time this fault fires: set the bit and log it */
@@ -397,9 +403,23 @@ void FaultManager_DumpUART(void)
          * Set channel_idx = 0-based NTC channel when raising this fault.
          */
         case FAULT_OW_DETECTED_RTH:
-            printfDebug(" | S%u NTC%u",
-                        (unsigned) c->slave_idx,
-                        (unsigned) c->channel_idx);
+            if (c->channel_mask != 0) {
+                /* Lista todos os canais acumulados: "S4 NTC3,4" */
+                printfDebug(" | S%u NTC", (unsigned) c->slave_idx);
+                {
+                    bool first = true;
+                    for (uint8_t ch = 0; ch < 16; ch++) {
+                        if (c->channel_mask & (1U << ch)) {
+                            printfDebug(first ? "%u" : ",%u", (unsigned) ch);
+                            first = false;
+                        }
+                    }
+                }
+            } else {
+                printfDebug(" | S%u NTC%u",
+                            (unsigned) c->slave_idx,
+                            (unsigned) c->channel_idx);
+            }
             break;
 
         default:

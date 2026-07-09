@@ -4,7 +4,7 @@
 ../Core/Src/precharge.c:141:6:Precharge_Update	16	static
 ../Core/Src/precharge.c:312:6:OnPrechargeComplete	24	static
 ../Core/Src/precharge.c:339:16:Build_Mismatch_Bits	16	static
-../Core/Src/precharge.c:365:6:IsTheStateOK	144	static
+../Core/Src/precharge.c:365:6:IsTheStateOK	168	static
 ../Core/Src/precharge.c:531:6:IsBusVoltageOK	4	static
 ../Core/Src/precharge.c:553:6:IsCurrentOK	4	static
 ../Core/Src/precharge.c:577:6:Feedback_EXTI_Callback	24	static
