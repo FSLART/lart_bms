@@ -8,7 +8,10 @@
       "Bash(git rm *)",
       "Bash(git add *)",
       "Bash(find \"C:/Users/jpser/.claude/plugins/cache/caveman/caveman/25d22f864ad6/skills/caveman-compress\" -maxdepth 2)",
-      "Bash(python3 -m scripts \"C:/Users/jpser/.claude/projects/C--Users-jpser-Documents-GitHub-lart-bms/memory/project_lart_bms_overview.md\")"
+      "Bash(python3 -m scripts \"C:/Users/jpser/.claude/projects/C--Users-jpser-Documents-GitHub-lart-bms/memory/project_lart_bms_overview.md\")",
+      "Skill(artifact-design)",
+      "Skill(artifact-design:*)",
+      "PowerShell(python \"C:\\\\Users\\\\jpser\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-jpser-Documents-GitHub-lart-bms\\\\f18bd82b-cfa1-40e5-8ccc-58d10587f383\\\\scratchpad\\\\extract_docx.py\" \"G:\\\\My Drive\\\\Uni\\\\Projeto\\\\Desenvolvimento e implementa�ao de um BMS para o ve�culo Formula Student TEK-26E.docx\" \"C:\\\\Users\\\\jpser\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-jpser-Documents-GitHub-lart-bms\\\\f18bd82b-cfa1-40e5-8ccc-58d10587f383\\\\scratchpad\\\\relatorio.txt\")"
     ]
   }
 }

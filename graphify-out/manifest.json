@@ -1,8 +1,8 @@
 {
   "Firmware/Core/Inc/adBms_Application.h": {
-    "mtime": 1777490337.9307604,
-    "ast_hash": "c6565a5d1618ab27f920442d75e068f9",
-    "semantic_hash": "c6565a5d1618ab27f920442d75e068f9"
+    "mtime": 1783110386.7148309,
+    "ast_hash": "6043e044e062a9af3107689bc458b53b",
+    "semantic_hash": "6043e044e062a9af3107689bc458b53b"
   },
   "Firmware/Core/Inc/adbms/adBms6830CmdList.h": {
     "mtime": 1773689922.896629,
@@ -100,9 +100,9 @@
     "semantic_hash": "78a5eec3e842f93b16de4defac75b411"
   },
   "Firmware/Core/Inc/fault_manager.h": {
-    "mtime": 1783077256.651492,
-    "ast_hash": "06109424be83550fe1f4b77bf9fed4cd",
-    "semantic_hash": "06109424be83550fe1f4b77bf9fed4cd"
+    "mtime": 1783189004.1912498,
+    "ast_hash": "5ad0ccc82d9b16af45b7856069750485",
+    "semantic_hash": "5ad0ccc82d9b16af45b7856069750485"
   },
   "Firmware/Core/Inc/gpio_expander.h": {
     "mtime": 1783077256.6555827,
@@ -160,9 +160,9 @@
     "semantic_hash": "9762a0947e4d457b1113703a4416ab91"
   },
   "Firmware/Core/Src/adBms_Application.c": {
-    "mtime": 1783048125.4765534,
-    "ast_hash": "073ba2d5263e8420e2277b35d554e104",
-    "semantic_hash": "073ba2d5263e8420e2277b35d554e104"
+    "mtime": 1783448730.512334,
+    "ast_hash": "af3e32a1280bf512ab3afb2cf653f817",
+    "semantic_hash": "af3e32a1280bf512ab3afb2cf653f817"
   },
   "Firmware/Core/Src/adbms/adBms6830GenericType.c": {
     "mtime": 1778583459.5244932,
@@ -175,9 +175,9 @@
     "semantic_hash": "d92c6fd4d5efb983317a42af92086748"
   },
   "Firmware/Core/Src/adbms_to_CAN.c": {
-    "mtime": 1783048154.239247,
-    "ast_hash": "4e79d96ccbf54beeb8a43493be7ce0a8",
-    "semantic_hash": "4e79d96ccbf54beeb8a43493be7ce0a8"
+    "mtime": 1783188709.786981,
+    "ast_hash": "b5f7fd04cfd391090a8bd88e87613c34",
+    "semantic_hash": "b5f7fd04cfd391090a8bd88e87613c34"
   },
   "Firmware/Core/Src/analog_readings.c": {
     "mtime": 1778943111.1145425,
@@ -200,14 +200,14 @@
     "semantic_hash": "29f95a76ced7c47b29ccd3f71444bd26"
   },
   "Firmware/Core/Src/can.c": {
-    "mtime": 1783048169.8113885,
-    "ast_hash": "26621de5cb757a0561e8a930f01f6ee6",
-    "semantic_hash": "26621de5cb757a0561e8a930f01f6ee6"
+    "mtime": 1783107077.1616344,
+    "ast_hash": "20d1a4360d284613014d1b5998c0cb14",
+    "semantic_hash": "20d1a4360d284613014d1b5998c0cb14"
   },
   "Firmware/Core/Src/cell_balancing.c": {
-    "mtime": 1777118866.491069,
-    "ast_hash": "ecfa95b45dfcbbad1cf1d014c8412fc3",
-    "semantic_hash": "ecfa95b45dfcbbad1cf1d014c8412fc3"
+    "mtime": 1783109688.9026535,
+    "ast_hash": "87599cdae6ee0346fa23a34be1c60ffe",
+    "semantic_hash": "87599cdae6ee0346fa23a34be1c60ffe"
   },
   "Firmware/Core/Src/charger.c": {
     "mtime": 1779113338.3249562,
@@ -235,14 +235,14 @@
     "semantic_hash": "721e66db7d9c17e43c81a3f780121770"
   },
   "Firmware/Core/Src/fan_management.c": {
-    "mtime": 1777484662.2746985,
-    "ast_hash": "4ae09f5888fab0f564eb2082f60cb496",
-    "semantic_hash": "4ae09f5888fab0f564eb2082f60cb496"
+    "mtime": 1783107419.486239,
+    "ast_hash": "62bc7891e48baf24b4951925f90d09eb",
+    "semantic_hash": "62bc7891e48baf24b4951925f90d09eb"
   },
   "Firmware/Core/Src/fault_manager.c": {
-    "mtime": 1783077256.6587625,
-    "ast_hash": "809acbb1f823ddd4668309ba1b30d1e3",
-    "semantic_hash": "809acbb1f823ddd4668309ba1b30d1e3"
+    "mtime": 1783189018.199811,
+    "ast_hash": "2184ddd30d40e208d0cbc778e9996a06",
+    "semantic_hash": "2184ddd30d40e208d0cbc778e9996a06"
   },
   "Firmware/Core/Src/gpio_expander.c": {
     "mtime": 1783077433.3169053,
@@ -275,7 +275,7 @@
     "semantic_hash": "6a9b88a076e6baaeda9e3814efb85e88"
   },
   "Firmware/Core/Src/serialPrintResult.c": {
-    "mtime": 1775559391.6894102,
+    "mtime": 1783106943.371733,
     "ast_hash": "c6538855e1adb444511dc4a982d982a7",
     "semantic_hash": "c6538855e1adb444511dc4a982d982a7"
   },
@@ -855,18 +855,28 @@
     "semantic_hash": "e3d151bc5c38f63aef55eaeb9e3b92bf"
   },
   ".claude/settings.local.json": {
-    "mtime": 1783104946.6852074,
-    "ast_hash": "7f7969beba2c7ba452525261ae603fc7",
-    "semantic_hash": "7f7969beba2c7ba452525261ae603fc7"
+    "mtime": 1784064264.428587,
+    "ast_hash": "42dde6763d335c132262a1fb7995f458",
+    "semantic_hash": "42dde6763d335c132262a1fb7995f458"
   },
   "Firmware/Core/Inc/live_debug.h": {
-    "mtime": 1783048512.952739,
-    "ast_hash": "b7a9584bc0937fae56e0e9499980dd09",
-    "semantic_hash": "b7a9584bc0937fae56e0e9499980dd09"
+    "mtime": 1783110399.9916308,
+    "ast_hash": "4b4e10b4ad3e6d4974a61edb8b748590",
+    "semantic_hash": "4b4e10b4ad3e6d4974a61edb8b748590"
   },
   "Firmware/Core/Src/live_debug.c": {
-    "mtime": 1783048252.4567432,
-    "ast_hash": "1dd749365732797c42bfe29a74e1bb38",
-    "semantic_hash": "1dd749365732797c42bfe29a74e1bb38"
+    "mtime": 1783110420.8637235,
+    "ast_hash": "b6f1d93dc127d9111cd1296da037e035",
+    "semantic_hash": "b6f1d93dc127d9111cd1296da037e035"
+  },
+  "AMS_FLUXOGRAMAS.md": {
+    "mtime": 1784065320.1304407,
+    "ast_hash": "cae61e36790643b614830b64c86f181a",
+    "semantic_hash": "cae61e36790643b614830b64c86f181a"
+  },
+  "AMS_PROTECTIONS_ARCHITECTURE_PLAN.md": {
+    "mtime": 1783619758.50985,
+    "ast_hash": "27a4482bd98625243a588fc3f2b5cbb2",
+    "semantic_hash": "27a4482bd98625243a588fc3f2b5cbb2"
   }
 }
