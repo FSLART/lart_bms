@@ -48,6 +48,15 @@ typedef enum {
 	ADBMS_IDLE_OW_READ_ODD_EVALUATE
 } adbms_idle_phase_t;
 
+/* Mesmo ciclo de leitura do IDLE mas sem as fases de open-wire: durante o
+ * carregamento só interessa tensao/temperatura frescas para o charger */
+typedef enum {
+	ADBMS_CHARGING_READ_PREV = 0,
+	ADBMS_CHARGING_READ_AVG_START_AUX,
+	ADBMS_CHARGING_READ_AUX_START_RAUX,
+	ADBMS_CHARGING_READ_RAUX_SNAPSHOT
+} adbms_charging_phase_t;
+
 typedef enum {
 	BAL_CYCLE_INIT = 0,
 	BAL_CYCLE_APPLY,
@@ -104,6 +113,9 @@ uint32_t startupPhaseStart = 0;
 
 adbms_idle_phase_t adbmsPhase = ADBMS_IDLE_READ_PREV;
 uint32_t adbmsPhaseStart = 0;
+
+adbms_charging_phase_t chargingPhase = ADBMS_CHARGING_READ_PREV;
+uint32_t chargingPhaseStart = 0;
 static balance_config_t g_balance_cfg;
 static bool g_balance_cfg_initialized = false;
 
@@ -559,6 +571,86 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 		break;
 
 		//break;
+
+	case CHARGING:
+
+		g_balance_cfg_initialized = false; // making sure it is always false
+
+		switch (chargingPhase) {
+
+		case ADBMS_CHARGING_READ_PREV:
+
+			adBmsWakeupIc(slaves_found);
+			adBmsReadData(slaves_found, &IC[0], RDCVA, Cell, A);
+			adBmsReadData(slaves_found, &IC[0], RDCVB, Cell, B);
+			adBmsReadData(slaves_found, &IC[0], RDCVC, Cell, C);
+			adBmsReadData(slaves_found, &IC[0], RDCVD, Cell, D);
+			adBmsReadData(slaves_found, &IC[0], RDCVE, Cell, E);
+			adBmsReadData(slaves_found, &IC[0], RDCVF, Cell, F);
+
+			adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
+			chargingPhaseStart = getRuntimeMs();
+			chargingPhase = ADBMS_CHARGING_READ_AVG_START_AUX;
+
+			return ADBMS_START;
+			break;
+
+		case ADBMS_CHARGING_READ_AVG_START_AUX:
+			if (getRuntimeMsDiff(chargingPhaseStart) >= 10) {
+				adBmsWakeupIc(slaves_found);
+				adBmsReadData(slaves_found, &IC[0], RDACA, AvgCell, A);
+				adBmsReadData(slaves_found, &IC[0], RDACB, AvgCell, B);
+				adBmsReadData(slaves_found, &IC[0], RDACC, AvgCell, C);
+				adBmsReadData(slaves_found, &IC[0], RDACD, AvgCell, D);
+				adBmsReadData(slaves_found, &IC[0], RDACE, AvgCell, E);
+				adBmsReadData(slaves_found, &IC[0], RDACF, AvgCell, F);
+
+				//Read AUX
+				adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
+				chargingPhaseStart = getRuntimeMs();
+				chargingPhase = ADBMS_CHARGING_READ_AUX_START_RAUX;
+			}
+			break;
+
+		case ADBMS_CHARGING_READ_AUX_START_RAUX:
+			if (getRuntimeMsDiff(chargingPhaseStart) >= 10) {
+				adBmsWakeupIc(slaves_found);
+				adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
+				adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
+				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
+				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
+
+				adBmsReadData(slaves_found, &IC[0], RDSTATA, Status, A);
+				adBmsReadData(slaves_found, &IC[0], RDSTATB, Status, B);
+				adBmsReadData(slaves_found, &IC[0], RDSTATC, Status, C);
+				adBmsReadData(slaves_found, &IC[0], RDSTATD, Status, D);
+				adBmsReadData(slaves_found, &IC[0], RDSTATE, Status, E);
+
+				//Read GPIOS
+				adBms6830_Adax2(AUX_CH_TO_CONVERT);
+				chargingPhaseStart = getRuntimeMs();
+				chargingPhase = ADBMS_CHARGING_READ_RAUX_SNAPSHOT;
+			}
+			break;
+
+		case ADBMS_CHARGING_READ_RAUX_SNAPSHOT:
+			if (getRuntimeMsDiff(chargingPhaseStart) >= 10) {
+				adBmsWakeupIc(slaves_found);
+				adBmsReadData(slaves_found, &IC[0], RDRAXA, RAux, A);
+				adBmsReadData(slaves_found, &IC[0], RDRAXB, RAux, B);
+				adBmsReadData(slaves_found, &IC[0], RDRAXC, RAux, C);
+				adBmsReadData(slaves_found, &IC[0], RDRAXD, RAux, D);
+
+				/*  SNAPSHOT  - o charger decide (4.2V / 60C) com base
+				 * nos agregados calculados a partir do SLAVE[] */
+				memcpy(SLAVE, IC, sizeof(SLAVE));
+
+				chargingPhaseStart = getRuntimeMs();
+				chargingPhase = ADBMS_CHARGING_READ_PREV;
+			}
+			break;
+		}
+		break;
 
 	case STARTUP:
 

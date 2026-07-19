@@ -5,15 +5,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Core/Src/dbc/eveurope_charger.c \
+../Core/Src/dbc/handcart_t26.c \
 ../Core/Src/dbc/powertrain_t26.c 
 
 OBJS += \
-./Core/Src/dbc/eveurope_charger.o \
+./Core/Src/dbc/handcart_t26.o \
 ./Core/Src/dbc/powertrain_t26.o 
 
 C_DEPS += \
-./Core/Src/dbc/eveurope_charger.d \
+./Core/Src/dbc/handcart_t26.d \
 ./Core/Src/dbc/powertrain_t26.d 
 
 
@@ -24,7 +24,7 @@ Core/Src/dbc/%.o Core/Src/dbc/%.su Core/Src/dbc/%.cyclo: ../Core/Src/dbc/%.c Cor
 clean: clean-Core-2f-Src-2f-dbc
 
 clean-Core-2f-Src-2f-dbc:
-	-$(RM) ./Core/Src/dbc/eveurope_charger.cyclo ./Core/Src/dbc/eveurope_charger.d ./Core/Src/dbc/eveurope_charger.o ./Core/Src/dbc/eveurope_charger.su ./Core/Src/dbc/powertrain_t26.cyclo ./Core/Src/dbc/powertrain_t26.d ./Core/Src/dbc/powertrain_t26.o ./Core/Src/dbc/powertrain_t26.su
+	-$(RM) ./Core/Src/dbc/handcart_t26.cyclo ./Core/Src/dbc/handcart_t26.d ./Core/Src/dbc/handcart_t26.o ./Core/Src/dbc/handcart_t26.su ./Core/Src/dbc/powertrain_t26.cyclo ./Core/Src/dbc/powertrain_t26.d ./Core/Src/dbc/powertrain_t26.o ./Core/Src/dbc/powertrain_t26.su
 
 .PHONY: clean-Core-2f-Src-2f-dbc
 

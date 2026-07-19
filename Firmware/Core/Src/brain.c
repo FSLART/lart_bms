@@ -32,7 +32,7 @@
 #include "live_debug.h"
 
 #include "powertrain_t26.h"
-#include "eveurope_charger.h"
+#include "handcart_t26.h"
 
 #include "soc.h"
 
@@ -160,8 +160,10 @@ void brain_loop(void) {
 
 	case CHARGING:
 
-		if ((getRuntimeMsDiff(timeStart) > 500) || (AMS_Previous_State != AMS_Current_State)) {
+		if ((getRuntimeMsDiff(timeStart) > 50) || (AMS_Previous_State != AMS_Current_State)) {
 			timeStart = getRuntimeMs();
+
+			adbms_main(AMS_Current_State);
 
 			Charger_Update();
 

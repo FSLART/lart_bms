@@ -55,7 +55,7 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
  ../Core/Inc/fault_manager.h ../Core/Inc/gpio_expander.h \
  ../Core/Inc/uartdma.h ../Core/Inc/charger.h ../Core/Inc/live_debug.h \
  ../Core/Inc/precharge.h ../Core/Inc/adbms_main.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/eveurope_charger.h \
+ C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/handcart_t26.h \
  ../Core/Inc/soc.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -131,5 +131,5 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/powertrain_t26.h:
 ../Core/Inc/live_debug.h:
 ../Core/Inc/precharge.h:
 ../Core/Inc/adbms_main.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/eveurope_charger.h:
+C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/handcart_t26.h:
 ../Core/Inc/soc.h:

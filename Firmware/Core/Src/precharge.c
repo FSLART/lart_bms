@@ -14,6 +14,8 @@
 
 #include "dbc/powertrain_t26.h"
 
+#include "handcart_t26.h"
+
 #include "uartDMA.h"
 
 #include "fault_manager.h"
@@ -97,6 +99,11 @@ void Precharge_Init(void) {
  */
 void Precharge_CAN_Init(void) {
 	CAN_RegisterRxCallback(PreCharge_CAN_Rx);
+
+	// no carregamento a ordem de precarga vem do switch do handcart (0x084)
+	// no CAN2; handler separado porque 0x084 no CAN1 e outra mensagem
+	// (INV1_SET_POSITION) e nao pode disparar precarga
+	CAN2_RegisterRxCallback(PreCharge_CAN2_Rx);
 }
 
 /**
@@ -116,6 +123,26 @@ void Precharge_CAN_Init(void) {
  */
 PrechargeState_t Precharge_GetState(void) {
 	return state;
+}
+
+/**
+ *******************************************************************************
+ * Function: Precharge_ForceKill
+ * @brief Force the precharge state machine into the KILL state.
+ *
+ * @details Used by other modules (charger) that need to open the contactors
+ *          without waiting for a CAN request. Mirrors the behaviour of the
+ *          precharge_request == 0 path of the CAN handler.
+ *
+ * Parameters:
+ *
+ * @return None
+ *
+ *******************************************************************************
+ */
+void Precharge_ForceKill(void) {
+	state = KILL;
+	canRxIgnoreUntil = 0;
 }
 
 /**
@@ -759,5 +786,52 @@ void PreCharge_CAN_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 		 }
 		 printfDebug("\r\n");*/
 		break;
+	}
+}
+
+/**
+ *******************************************************************************
+ * Function: PreCharge_CAN2_Rx
+ * @brief Process the Handcart charge order on the charger bus (CAN2).
+ *
+ * @details The Handcart transmits its switch state on 0x084 every 100 ms.
+ *          Switch ON starts the precharge sequence (same rules as the CAN1
+ *          request: only from KILL and outside the lockout window). Switch
+ *          OFF forces the system back to the safe KILL state. This handler
+ *          is registered only on CAN2 because 0x084 on CAN1 belongs to a
+ *          different message (INV1_SET_POSITION).
+ *
+ * Parameters:
+ *
+ * @param [in]  *hdr                     Pointer to the CAN RX header
+ *
+ * @param [in]  *data                    Pointer to the received CAN data buffer
+ *
+ * @return None
+ *
+ *******************************************************************************
+ */
+void PreCharge_CAN2_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
+
+	uint32_t now = HAL_GetTick();
+
+	if ((hdr->IDE == CAN_ID_STD) && (hdr->StdId == HANDCART_T26_HANDCART_SWITCH_FEEDBACK_FRAME_ID)) {
+
+		struct handcart_t26_handcart_switch_feedback_t sw;
+
+		if (handcart_t26_handcart_switch_feedback_unpack(&sw, data, hdr->DLC) != 0) {
+			return;
+		}
+
+		if (sw.switch_feedback > 0) {
+			if ((state == KILL) && ((int32_t) (now - canRxIgnoreUntil) >= 0)) {
+				state = RX_CAN;
+				canRxIgnoreUntil = now + PRECHARGE_CAN_LOCKOUT_MS;
+				printfDebug("Handcart switch ON -> precharge start\r\n");
+			}
+		} else {
+			state = KILL;
+			canRxIgnoreUntil = 0;
+		}
 	}
 }
