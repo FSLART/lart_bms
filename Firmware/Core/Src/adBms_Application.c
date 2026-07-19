@@ -28,6 +28,7 @@
 #include "fault_manager.h"
 #include "gpio_expander.h"
 #include "adbms_to_CAN.h"   // g_pack_tmax_cC (cross-check ITMP no balanceamento)
+#include "ams_error.h"
 
 uint8_t slaves_found = 0;
 
@@ -1574,6 +1575,10 @@ uint8_t adBms6830_daisychain_device_counter(void) {
 
 		KILL_ERROR(FAULT_SLAVE_NOT_DETECTED);
 		KILL_ERROR(FAULT_PEC_ERROR);
+
+		// chain completa = prova de vida -> limpa o ERRO fail-safe do boot
+		AMS_Error_Clear();
+
 		MCP23017_LED(LED_ISOSPI, OFF);
 
 	} else {
@@ -1582,8 +1587,9 @@ uint8_t adBms6830_daisychain_device_counter(void) {
 
 		RAISE_ERROR(FAULT_SLAVE_NOT_DETECTED, .slave_idx = device_counter, .measured_value = device_counter, .threshold_value = expected_devices);
 
-
-		//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+		// menos slaves que o esperado = medicoes em falta -> linha AMS_ERROR
+		// vai a erro e fica latched (nada no loop volta a por OK sozinho)
+		AMS_Error_Trigger();
 
 		MCP23017_LED(LED_ISOSPI, ON);
 	}

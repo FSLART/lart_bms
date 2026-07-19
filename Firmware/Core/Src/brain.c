@@ -30,6 +30,7 @@
 #include "gpio_expander.h"
 #include "charger.h"
 #include "live_debug.h"
+#include "ams_error.h"
 
 #include "powertrain_t26.h"
 #include "handcart_t26.h"
@@ -59,7 +60,9 @@ bool toggleHeartbeat = false;
 
 void brain_start(void) {
 
-	HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+	// linha AMS_ERROR arranca em ERRO (fail-safe, como o SET original);
+	// a partir daqui so o ams_error.c mexe no pino
+	AMS_Error_Init();
 
 	OpenAllContactors();
 
@@ -179,8 +182,6 @@ void brain_loop(void) {
 
 			adbms_main(AMS_Current_State);
 
-			HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
-
 			//printfDebug("IDLE: %d ms \r\n", (int)(getRuntimeMs() - timeStart));
 
 			//loop_count = 0;
@@ -251,8 +252,6 @@ void brain_loop(void) {
 		} /*else if (adbms_main(AMS_Current_State) == ADBMS_END) {
 		 adbmsLoopCounter++;
 		 }*/
-
-		HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
 
 		break;
 
