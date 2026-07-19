@@ -64,6 +64,8 @@ uint32_t lastTime = 0;
 void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
 
 	// register IVT listener for all CAN messages
+	// NOTA: so CAN1 - a ISA do pack. A segunda ISA (do handcart, CAN2)
+	// e um sensor diferente e nao pode contaminar este estado (SOC/As)
 	CAN_RegisterRxCallback(IVT_CAN_OnMessage);
 
 	/*CAN_FilterTypeDef f = { 0 };

@@ -11,4 +11,4 @@
 ../Core/Src/precharge.c:604:6:Feedback_EXTI_Callback	11
 ../Core/Src/precharge.c:690:6:Feedback_DebounceUpdate	9
 ../Core/Src/precharge.c:746:6:PreCharge_CAN_Rx	6
-../Core/Src/precharge.c:814:6:PreCharge_CAN2_Rx	7
+../Core/Src/precharge.c:814:6:PreCharge_CAN2_Rx	8

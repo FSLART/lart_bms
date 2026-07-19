@@ -36,7 +36,8 @@ extern CAN_HandleTypeDef hcan2;
 #define CHARGER_CELL_TARGET_MV      4200   // stop charging when highest cell gets here
 #define CHARGER_MAX_TEMP_cC         6000   // 60.00 C, g_pack_tmax_cC is in centi-degrees
 #define CHARGER_MAX_CURRENT_CUT_mA  8000   // 8 A from the ISA, cut charging above this
-#define CHARGER_STOP_SETTLE_MS      1000   // wait for current to die before opening contactors
+#define CHARGER_STOP_SETTLE_MS      5000   // max wait after the stop command before opening contactors
+#define CHARGER_STOP_CURRENT_mA     500    // below this ISA current the contactors can open right away
 
 //internal charging sequence, only runs while the VCU keeps the request on
 typedef enum {
@@ -114,16 +115,13 @@ void Charger_CAN_Requests_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 
 		} else {
 
-			charger_is_requested = 0;
-
-			if (AMS_State != CHARGING) {
-				return;
+			// so marcar o pedido como desligado: a paragem ordenada
+			// (parar carregador -> settle -> KILL) e feita no Charger_Update
+			if (charger_is_requested != 0) {
+				printfDebug("Handcart switch OFF -> stopping charge\r\n");
 			}
 
-			Charger_Stop();
-
-			AMS_State = IDLE;
-			printfDebug("Handcart switch OFF -> AMS_State = IDLE\r\n");
+			charger_is_requested = 0;
 		}
 
 		return;
@@ -140,12 +138,56 @@ void Charger_CAN_Requests_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 	}
 }
 
+/* Depois de mandar o carregador parar: contactores podem abrir assim que a
+ * corrente da ISA morrer (<500 mA), com um maximo de 5 s a espera */
+static bool Charger_SettleDone(uint32_t now) {
+
+	int32_t settle_mA = IVT_GetCurrent_mA();
+	if (settle_mA < 0)
+		settle_mA = -settle_mA;
+
+	if (settle_mA < CHARGER_STOP_CURRENT_mA) {
+		return true;
+	}
+
+	return ((now - stop_settle_start_ms) >= CHARGER_STOP_SETTLE_MS);
+}
+
 void Charger_Update(void) {
 	uint32_t now = HAL_GetTick();
 
 	if (charger_is_requested == 0) {
-		// Handcart dropped the request, sequence goes back to the start
-		charge_state = CHARGER_ST_WAIT_HV;
+
+		// Handcart switch OFF: contactors must NOT open right away, first
+		// stop the charger, let the current die, only then go to KILL
+		switch (charge_state) {
+
+		case CHARGER_ST_CHARGING:
+			Charger_SendRequest(false);
+			stop_settle_start_ms = now;
+			charge_state = CHARGER_ST_STOPPING;
+			break;
+
+		case CHARGER_ST_STOPPING:
+			if (Charger_SettleDone(now)) {
+				Precharge_ForceKill();
+				printfDebug("Charger: switch OFF -> contactors open, back to IDLE\r\n");
+				charge_state = CHARGER_ST_WAIT_HV;
+				MCP23017_LED(LED_CHARGING_STATUS, OFF);
+				AMS_State = IDLE;
+			}
+			break;
+
+		default:
+			// was not charging yet (or already done): no current flowing,
+			// safe to open everything right away
+			Precharge_ForceKill();
+			charge_state = CHARGER_ST_WAIT_HV;
+			MCP23017_LED(LED_CHARGING_STATUS, OFF);
+			AMS_State = IDLE;
+			break;
+		}
+
 		return;
 	}
 
@@ -229,7 +271,7 @@ void Charger_Update(void) {
 
 	case CHARGER_ST_STOPPING:
 		// let the current die down before opening the contactors
-		if ((now - stop_settle_start_ms) >= CHARGER_STOP_SETTLE_MS) {
+		if (Charger_SettleDone(now)) {
 			Precharge_ForceKill();
 			printfDebug("Charger: contactors open, charge finished\r\n");
 			charge_state = CHARGER_ST_DONE;

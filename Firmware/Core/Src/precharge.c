@@ -823,15 +823,23 @@ void PreCharge_CAN2_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 			return;
 		}
 
+		/* o handcart manda o estado do switch a cada 100ms: arrancar so na
+		 * transicao OFF->ON, senao o stream de 1s rearranca a precarga
+		 * sozinho logo a seguir a um corte do charger */
+		static uint8_t last_switch_state = 0;
+
 		if (sw.switch_feedback > 0) {
-			if ((state == KILL) && ((int32_t) (now - canRxIgnoreUntil) >= 0)) {
+			if ((last_switch_state == 0) && (state == KILL) && ((int32_t) (now - canRxIgnoreUntil) >= 0)) {
 				state = RX_CAN;
 				canRxIgnoreUntil = now + PRECHARGE_CAN_LOCKOUT_MS;
 				printfDebug("Handcart switch ON -> precharge start\r\n");
 			}
-		} else {
-			state = KILL;
-			canRxIgnoreUntil = 0;
 		}
+		/* switch OFF: NAO matar aqui - com corrente de carga a passar os
+		 * contactores nao podem abrir logo. O charger trata da paragem
+		 * ordenada (para o carregador, espera settle) e chama
+		 * Precharge_ForceKill() no fim */
+
+		last_switch_state = (sw.switch_feedback > 0) ? 1 : 0;
 	}
 }
