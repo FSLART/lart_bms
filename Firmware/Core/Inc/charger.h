@@ -23,6 +23,7 @@ void Charger_SendRequest(bool enable);
 
 bool Charger_IsRequestedCurrentOK(void);
 uint8_t Charger_IsRequested(void);
+uint32_t Charger_GetSwitchFeedbackAgeMs(void);
 
 uint16_t Charger_GetRequestedCurrentRaw(void);
 

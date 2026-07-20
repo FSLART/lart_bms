@@ -55,6 +55,10 @@ uint16_t requested_voltage_raw = 0;
 uint16_t requested_current_raw = 0;
 int32_t last_charger_command_ms = 0;
 
+/* heartbeat do handcart: qualquer 0x084 (ON ou OFF) conta como vivo */
+uint8_t handcart_feedback_seen = 0;
+uint32_t last_switch_feedback_ms = 0;
+
 struct handcart_t26_charger_status_t last_charger_status;
 uint8_t charger_status_valid = 0;
 uint32_t last_charger_status_ms = 0;
@@ -98,6 +102,9 @@ void Charger_CAN_Requests_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 		if (handcart_t26_handcart_switch_feedback_unpack(&rx, data, hdr->DLC) != 0) {
 			return;
 		}
+
+		handcart_feedback_seen = 1;
+		last_switch_feedback_ms = HAL_GetTick();
 
 		if (rx.switch_feedback > 0) {
 
@@ -333,6 +340,16 @@ bool Charger_IsRequestedCurrentOK(void) {
 
 uint8_t Charger_IsRequested(void) {
 	return charger_is_requested;
+}
+
+/* idade do ultimo 0x084; 0xFFFFFFFF = handcart nunca visto desde o boot */
+uint32_t Charger_GetSwitchFeedbackAgeMs(void) {
+
+	if (handcart_feedback_seen == 0) {
+		return 0xFFFFFFFFu;
+	}
+
+	return HAL_GetTick() - last_switch_feedback_ms;
 }
 
 uint16_t Charger_GetRequestedCurrentRaw(void) {

@@ -218,6 +218,11 @@ void IVT_CAN_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 	}
 }
 
+/* idade da ultima frame da ISA do pack (CAN1), para o timeout no brain */
+uint32_t IVT_GetLastRxAgeMs(void) {
+	return HAL_GetTick() - lastTime;
+}
+
 void IVT_FAULT_CHECK(void) {
 
 	if ((HAL_GetTick() - lastTime) > 1000) {

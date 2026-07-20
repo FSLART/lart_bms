@@ -58,6 +58,50 @@ uint32_t timeStart = 0;
 //static uint32_t timeCmmd = 0;
 bool toggleHeartbeat = false;
 
+/* timeouts de sensores (corre no faultCheck, 250ms):
+ * - ISA do pack (CAN1): sempre presente no carro, >1s calada = AMS_ERROR,
+ *   volta a falar = limpa
+ * - 0x084 do handcart (CAN2): so vigiado durante o carregamento; se o
+ *   stream de 100ms morrer >1s com a carga a decorrer = AMS_ERROR
+ * Clear so na transicao morto->vivo (edge), para nao andar a limpar a
+ * cada tick um erro clearable posto por outra fonte qualquer */
+#define SENSOR_TIMEOUT_MS 1000
+
+static void SensorTimeouts_Check(void) {
+
+	static uint8_t isa_dead = 0;
+	static uint8_t handcart_dead = 0;
+
+	uint8_t isa_dead_now = (IVT_GetLastRxAgeMs() > SENSOR_TIMEOUT_MS) ? 1 : 0;
+
+	if (isa_dead_now != 0) {
+		AMS_Error_Trigger();
+	} else if (isa_dead != 0) {
+		AMS_Error_Clear();
+	}
+
+	isa_dead = isa_dead_now;
+
+	uint8_t handcart_dead_now = 0;
+
+	if (AMS_Current_State == CHARGING) {
+
+		uint32_t age = Charger_GetSwitchFeedbackAgeMs();
+
+		if ((age != 0xFFFFFFFFu) && (age > SENSOR_TIMEOUT_MS)) {
+			handcart_dead_now = 1;
+		}
+	}
+
+	if (handcart_dead_now != 0) {
+		AMS_Error_Trigger();
+	} else if (handcart_dead != 0) {
+		AMS_Error_Clear();
+	}
+
+	handcart_dead = handcart_dead_now;
+}
+
 void brain_start(void) {
 
 	// linha AMS_ERROR arranca em ERRO (fail-safe, como o SET original);
@@ -270,6 +314,8 @@ void brain_loop(void) {
 		if (AMS_Current_State == IDLE || AMS_Current_State == CHARGING) {
 			BMS_SafetyCheck();
 		}
+
+		SensorTimeouts_Check();
 
 		//printfDma("FAULT CHECK \r\n");
 		//IVT_FAULT_CHECK();

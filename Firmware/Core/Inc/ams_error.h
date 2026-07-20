@@ -10,6 +10,9 @@
 
 #include <stdint.h>
 
+/* dois niveis apenas:
+ * - Trigger/Clear        -> erro clearable (limpa em runtime)
+ * - TriggerLatched       -> erro permanente, so um power cycle limpa */
 void AMS_Error_Init(void);
 void AMS_Error_Trigger(void);
 void AMS_Error_TriggerLatched(void);

@@ -10,6 +10,9 @@
  *  querer (era o que acontecia no IDLE, que reescrevia o pino a cada
  *  50ms).
  *
+ *  Dois niveis: clearable (Trigger/Clear) e permanente (TriggerLatched,
+ *  so um power cycle limpa). O permanente ganha sempre ao clearable.
+ *
  *  Polaridade do pino: RESET = OK, SET = ERRO.
  */
 
@@ -26,7 +29,7 @@ static uint8_t ams_error_permanent = 0;
 
 static void AMS_Error_WritePin(void) {
 
-	if (ams_error_active != 0) {
+	if ((ams_error_active != 0) || (ams_error_permanent != 0)) {
 		HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
 	} else {
 		HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_RESET);
@@ -58,28 +61,28 @@ void AMS_Error_TriggerLatched(void) {
 	}
 
 	ams_error_permanent = 1;
-	ams_error_active = 1;
 	AMS_Error_WritePin();
 }
 
 void AMS_Error_Clear(void) {
 
-	// erro permanente nao se limpa em runtime
-	if (ams_error_permanent != 0) {
-		printfDebug("AMS_ERROR clear REFUSED (permanent latch)\r\n");
-		return;
-	}
-
-	if (ams_error_active != 0) {
+	if ((ams_error_active != 0) && (ams_error_permanent == 0)) {
 		printfDebug("AMS_ERROR line -> OK\r\n");
 	}
 
 	ams_error_active = 0;
+
+	// se houver latch permanente o WritePin mantem o pino em erro na mesma
 	AMS_Error_WritePin();
 }
 
 uint8_t AMS_Error_IsActive(void) {
-	return ams_error_active;
+
+	if ((ams_error_active != 0) || (ams_error_permanent != 0)) {
+		return 1;
+	}
+
+	return 0;
 }
 
 uint8_t AMS_Error_IsPermanent(void) {
