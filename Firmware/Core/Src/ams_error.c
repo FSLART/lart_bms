@@ -20,6 +20,10 @@
 
 static uint8_t ams_error_active = 0;
 
+/* latch permanente: uma vez a 1 nunca mais volta a 0 em runtime, so o
+ * arranque (zerar do .bss) o limpa - nenhuma funcao escreve 0 aqui */
+static uint8_t ams_error_permanent = 0;
+
 static void AMS_Error_WritePin(void) {
 
 	if (ams_error_active != 0) {
@@ -47,7 +51,24 @@ void AMS_Error_Trigger(void) {
 	AMS_Error_WritePin();
 }
 
+void AMS_Error_TriggerLatched(void) {
+
+	if (ams_error_permanent == 0) {
+		printfDebug("AMS_ERROR line -> ERROR (PERMANENT, only reboot clears)\r\n");
+	}
+
+	ams_error_permanent = 1;
+	ams_error_active = 1;
+	AMS_Error_WritePin();
+}
+
 void AMS_Error_Clear(void) {
+
+	// erro permanente nao se limpa em runtime
+	if (ams_error_permanent != 0) {
+		printfDebug("AMS_ERROR clear REFUSED (permanent latch)\r\n");
+		return;
+	}
 
 	if (ams_error_active != 0) {
 		printfDebug("AMS_ERROR line -> OK\r\n");
@@ -59,4 +80,8 @@ void AMS_Error_Clear(void) {
 
 uint8_t AMS_Error_IsActive(void) {
 	return ams_error_active;
+}
+
+uint8_t AMS_Error_IsPermanent(void) {
+	return ams_error_permanent;
 }

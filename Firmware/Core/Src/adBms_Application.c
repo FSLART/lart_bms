@@ -1395,7 +1395,9 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 				printfDebug("OW FAULT: IC%u Cell%u (%ldmV)\r\n", slave + 1, cell + 1, voltage_mV);
 				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_mV);
 
-				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+				// fio de sense partido = tensao dessa celula deixa de ser
+				// confiavel -> AMS_ERROR permanente, so reboot limpa
+				AMS_Error_TriggerLatched();
 
 			} else if (voltage_delta > OWC_Threshold_Delta) {
 
@@ -1403,7 +1405,7 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 				printfDebug("OW FAULT: IC%u Cell%u DELTA(%ldmV)\r\n", slave + 1, cell + 1, voltage_delta);
 				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_delta);
 
-				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+				AMS_Error_TriggerLatched();
 
 			} else {
 				ic[slave].diag_result.cell_ow[cell] = 0;
@@ -1454,6 +1456,18 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
  }
  }*/
 
+/* open-wire de hardware conhecidos neste carro (harness do S4 com NTC3 e
+ * NTC4 partidos): continuam a ir para o fault manager mas nao latcham o
+ * AMS_ERROR, senao a linha ficava presa em erro em todos os arranques */
+static uint8_t aux_ow_is_expected(uint8_t slave_1b, uint8_t ntc_1b) {
+
+	if ((slave_1b == 4) && ((ntc_1b == 3) || (ntc_1b == 4))) {
+		return 1;
+	}
+
+	return 0;
+}
+
 void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
 
 	KILL_ERROR(FAULT_OW_DETECTED_RTH); //Garantir novos erros caso detectados
@@ -1476,7 +1490,11 @@ void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
 				printfDebug("AUX OW FAULT: IC%u GPIO%u diff (%ldmV) \r\n", slave + 1, gpio + 1, pdown);
 				RAISE_ERROR(FAULT_OW_DETECTED_RTH, .slave_idx = slave + 1, .channel_idx = gpio + 1, .channel_mask = (uint16_t)(1U << (gpio + 1)), .measured_value = (float )pdown);
 
-				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+				// NTC sem fio = temperatura dessa zona as cegas -> AMS_ERROR
+				// permanente, exceto nos canais partidos ja conhecidos
+				if (aux_ow_is_expected((uint8_t) (slave + 1), (uint8_t) (gpio + 1)) == 0) {
+					AMS_Error_TriggerLatched();
+				}
 			} else {
 				ic[slave].diag_result.aux_ow[gpio] = 0;
 			}
