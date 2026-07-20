@@ -278,6 +278,12 @@ void brain_loop(void) {
 		ADBMS_CAN_SendAll(&hcan1, AMS_Current_State);
 		//AnalogReadings_CAN_Send(&hcan1);
 		Master_CAN_SendAll(&hcan1);
+
+		// repetir a telemetria toda no CAN2 para o handcart/carregador
+		// tambem a ver tensoes/temperaturas (IDs 0x600-0x706, sem conflito
+		// com nada que viva no barramento do carregador)
+		ADBMS_CAN_SendAll(&hcan2, AMS_Current_State);
+		Master_CAN_SendAll(&hcan2);
 		//FaultManager_CAN_Send(&hcan1);
 
 		Fan_Update();
