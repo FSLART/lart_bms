@@ -1,5 +1,6 @@
 "./Core/Src/adBms_Application.o"
 "./Core/Src/adbms_to_CAN.o"
+"./Core/Src/ams_error.o"
 "./Core/Src/analog_readings.o"
 "./Core/Src/bms_eeprom_config.o"
 "./Core/Src/bootloader_jumper.o"

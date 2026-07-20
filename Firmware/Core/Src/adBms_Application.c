@@ -1361,6 +1361,14 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 	KILL_ERROR(FAULT_OW_DETECTED_CELL); //Garantir novos erros caso detectados
 
 	for (uint8_t slave = 0; slave < tIC; slave++) {
+
+		/* leitura com PEC mau = codes sao lixo do parse do vendor -> julgar
+		 * isto dava OW falso e latch permanente sem fio nenhum partido */
+		if ((ic[slave].cccrc.scell_pec != 0) || (ic[slave].cccrc.acell_pec != 0)) {
+			printfDebug("OW CHECK: IC%u skipped (PEC error)\r\n", slave + 1);
+			continue;
+		}
+
 		for (uint8_t cell = 0; cell < CELL; cell++) {
 
 			int32_t raw_code;
@@ -1473,6 +1481,13 @@ void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
 	KILL_ERROR(FAULT_OW_DETECTED_RTH); //Garantir novos erros caso detectados
 
 	for (uint8_t slave = 0; slave < tIC; slave++) {
+
+		/* mesmo racional do OW de celula: PEC mau = dados invalidos, skip */
+		if (ic[slave].cccrc.aux_pec != 0) {
+			printfDebug("AUX OW CHECK: IC%u skipped (PEC error)\r\n", slave + 1);
+			continue;
+		}
+
 		for (uint8_t gpio = 0; gpio < AUX; gpio++) {
 
 			/*int32_t pup_mV = (ic[slave].gpio.aux_pup_up[gpio] + 10000) * 150 / 1000;
