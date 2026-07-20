@@ -9,6 +9,7 @@
 #include "adBms_Application.h"
 #include "fan_management.h"
 #include "fault_manager.h"
+#include "ams_error.h"
 
 #include "can.h"
 #include "dbc/powertrain_t26.h"
@@ -48,36 +49,52 @@ void BMS_SafetyCheck(void) {
 		const cell_asic *ic = &SLAVE[module];
 
 		// 12 células por módulo
-		for (int cell = 0; cell < 12; cell++) {
+		// PEC mau = codes sao lixo do parse do vendor -> nao julgar tensoes
+		if (ic->cccrc.cell_pec == 0) {
 
-			float cell_v = 1.5f + (ic->cell.c_codes[cell] * 0.00015f);
+			for (int cell = 0; cell < 12; cell++) {
 
-			if (cell_v > SAFETY_CELL_OV_V) {
-				RAISE_ERROR(FAULT_OVERVOLTAGE, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_OV_V);
-				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
-			}
+				float cell_v = 1.5f + (ic->cell.c_codes[cell] * 0.00015f);
 
-			if (cell_v < SAFETY_CELL_UV_V) {
-				RAISE_ERROR(FAULT_UNDERVOLTAGE, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_UV_V);
-				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+				/* modulo do valor: registo por escrever (0x8000) da -3.4V,
+				 * que em valor absoluto vira 3.4V e nao dispara UV fantasma */
+				cell_v = fabsf(cell_v);
+
+				if (cell_v > SAFETY_CELL_OV_V) {
+					RAISE_ERROR(FAULT_OVERVOLTAGE, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_OV_V);
+					AMS_Error_TriggerLatched();
+				}
+
+				if (cell_v < SAFETY_CELL_UV_V) {
+					RAISE_ERROR(FAULT_UNDERVOLTAGE, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_UV_V);
+					AMS_Error_TriggerLatched();
+				}
 			}
 		}
 
 		// 6 NTC por módulo
-		for (int ntc = 0; ntc < 6; ntc++) {
+		// mesmo racional: raux com PEC mau nao serve para julgar OT
+		if (ic->cccrc.raux_pec == 0) {
 
-			float cell_t = getTemperatureCAN(ic->raux.ra_codes[ntc]);
+			for (int ntc = 0; ntc < 6; ntc++) {
 
-			// NTC desligado lê ~2 ou 150 -> não avaliar OT.
-			// Open wire de NTC é reportado só como OW_DETECTED_RTH (check dedicado
-			// no adBms_Application), para não duplicar faults do mesmo problema
-			if (cell_t <= 2.0f || cell_t >= 149.0f) {
-				continue;
-			}
+				float cell_t = getTemperatureCAN(ic->raux.ra_codes[ntc]);
 
-			if (cell_t > SAFETY_CELL_OT_C) {
-				RAISE_ERROR(FAULT_OVERTEMPERATURE, .slave_idx = module + 1, .channel_idx = ntc + 1, .measured_value = cell_t, .threshold_value = SAFETY_CELL_OT_C);
-				//HAL_GPIO_WritePin(AMS_ERROR_GPIO_Port, AMS_ERROR_Pin, GPIO_PIN_SET);
+				// modulo do valor, mesmo racional das tensoes: leitura
+				// negativa e lixo, nao temperatura real
+				cell_t = fabsf(cell_t);
+
+				// NTC desligado lê ~2 ou 150 -> não avaliar OT.
+				// Open wire de NTC é reportado só como OW_DETECTED_RTH (check dedicado
+				// no adBms_Application), para não duplicar faults do mesmo problema
+				if (cell_t <= 2.0f || cell_t >= 149.0f) {
+					continue;
+				}
+
+				if (cell_t > SAFETY_CELL_OT_C) {
+					RAISE_ERROR(FAULT_OVERTEMPERATURE, .slave_idx = module + 1, .channel_idx = ntc + 1, .measured_value = cell_t, .threshold_value = SAFETY_CELL_OT_C);
+					AMS_Error_TriggerLatched();
+				}
 			}
 		}
 	}
