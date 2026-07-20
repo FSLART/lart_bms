@@ -29,11 +29,15 @@ extern CAN_HandleTypeDef hcan2;
 #define CHARGER_STATUS_TIMEOUT_MS  3000
 
 //set values
-#define CHARGER_MAX_VOLTAGE_V 504
+#define CHARGER_MAX_VOLTAGE_V 600  // 144s: o corte real e a celula mais alta
+                                   // chegar aos 4.15V (600/144 = 4.17V/cel,
+                                   // por isso e sempre o BMS que corta primeiro)
 #define CHARGER_MAX_CURRENT_A 6
 
 //charging protection limits
-#define CHARGER_CELL_TARGET_MV      4200   // stop charging when highest cell gets here
+#define CHARGER_CELL_TARGET_MV      4150   // stop charging when highest cell gets here
+                                           // (abaixo dos 4.20V do OV permanente, para a
+                                           // carga completa nunca tocar na protecao)
 #define CHARGER_MAX_TEMP_cC         6000   // 60.00 C, g_pack_tmax_cC is in centi-degrees
 #define CHARGER_MAX_CURRENT_CUT_mA  8000   // 8 A from the ISA, cut charging above this
 #define CHARGER_STOP_SETTLE_MS      5000   // max wait after the stop command before opening contactors

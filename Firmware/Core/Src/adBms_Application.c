@@ -55,7 +55,10 @@ typedef enum {
 	ADBMS_CHARGING_READ_PREV = 0,
 	ADBMS_CHARGING_READ_AVG_START_AUX,
 	ADBMS_CHARGING_READ_AUX_START_RAUX,
-	ADBMS_CHARGING_READ_RAUX_SNAPSHOT
+	ADBMS_CHARGING_READ_RAUX_SNAPSHOT,
+	ADBMS_CHARGING_OW_START_EVEN,
+	ADBMS_CHARGING_OW_READ_EVEN_START_ODD,
+	ADBMS_CHARGING_OW_READ_ODD_EVALUATE
 } adbms_charging_phase_t;
 
 typedef enum {
@@ -642,9 +645,110 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 				adBmsReadData(slaves_found, &IC[0], RDRAXC, RAux, C);
 				adBmsReadData(slaves_found, &IC[0], RDRAXD, RAux, D);
 
+				chargingPhaseStart = getRuntimeMs();
+				chargingPhase = ADBMS_CHARGING_OW_START_EVEN;
+			}
+			break;
+
+		case ADBMS_CHARGING_OW_START_EVEN:
+			if (getRuntimeMsDiff(chargingPhaseStart) >= 5) {
+
 				/*  SNAPSHOT  - o charger decide (4.2V / 60C) com base
-				 * nos agregados calculados a partir do SLAVE[] */
+				 * nos agregados calculados a partir do SLAVE[], tirado
+				 * antes das conversoes OW mexerem nos registos */
 				memcpy(SLAVE, IC, sizeof(SLAVE));
+
+				adBmsWakeupIc(slaves_found);
+				// Start even-channel OW check
+				adBms6830_Adsv(SINGLE, DCP_OFF, OW_ON_EVEN_CH);
+				// Send ADAX with pull-up current and OW enabled
+				adBms6830_Adax(AUX_OW_ON, PUP_UP, AUX_CH_TO_CONVERT);
+
+				chargingPhaseStart = getRuntimeMs();
+				chargingPhase = ADBMS_CHARGING_OW_READ_EVEN_START_ODD;
+			}
+			break;
+
+		case ADBMS_CHARGING_OW_READ_EVEN_START_ODD:
+			if (getRuntimeMsDiff(chargingPhaseStart) >= 15) {
+
+				// Read S-volt results with even pull active
+				adBmsWakeupIc(slaves_found);
+				adBmsReadData(slaves_found, &IC[0], RDSVA, S_volt, A);
+				adBmsReadData(slaves_found, &IC[0], RDSVB, S_volt, B);
+				adBmsReadData(slaves_found, &IC[0], RDSVC, S_volt, C);
+				adBmsReadData(slaves_found, &IC[0], RDSVD, S_volt, D);
+				adBmsReadData(slaves_found, &IC[0], RDSVE, S_volt, E);
+				adBmsReadData(slaves_found, &IC[0], RDSVF, S_volt, F);
+
+				//aux
+				adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
+				adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
+				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
+				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
+
+				// Save pull-up readings
+				for (uint8_t slave = 0; slave < slaves_found; slave++) {
+					for (uint8_t g = 0; g < AUX; g++) {
+						IC[slave].gpio.aux_pup_up[g] = IC[slave].aux.a_codes[g];
+					}
+				}
+
+				// Start odd-channel OW check
+				adBms6830_Adsv(SINGLE, DCP_OFF, OW_ON_ODD_CH);
+
+				// Now send ADAX with pull-down current
+				adBms6830_Adax(AUX_OW_ON, PUP_DOWN, AUX_CH_TO_CONVERT);
+
+				chargingPhaseStart = getRuntimeMs();
+				chargingPhase = ADBMS_CHARGING_OW_READ_ODD_EVALUATE;
+			}
+			break;
+
+		case ADBMS_CHARGING_OW_READ_ODD_EVALUATE:
+			if (getRuntimeMsDiff(chargingPhaseStart) >= 10) {
+
+				// Save even-pull readings for even-numbered cells
+				for (uint8_t slave = 0; slave < slaves_found; slave++) {
+					for (uint8_t cell = 0; cell < CELL; cell++) {
+						IC[slave].owcell.cell_ow_even[cell] = IC[slave].scell.sc_codes[cell];
+					}
+				}
+
+				adBmsWakeupIc(slaves_found);
+				// Read S-volt results with odd pull active
+				adBmsReadData(slaves_found, &IC[0], RDSVA, S_volt, A);
+				adBmsReadData(slaves_found, &IC[0], RDSVB, S_volt, B);
+				adBmsReadData(slaves_found, &IC[0], RDSVC, S_volt, C);
+				adBmsReadData(slaves_found, &IC[0], RDSVD, S_volt, D);
+				adBmsReadData(slaves_found, &IC[0], RDSVE, S_volt, E);
+				adBmsReadData(slaves_found, &IC[0], RDSVF, S_volt, F);
+
+				//auz
+				adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
+				adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
+				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
+				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
+
+				// Save odd-pull readings and check all cells for open wire
+				for (uint8_t slave = 0; slave < slaves_found; slave++) {
+					for (uint8_t cell = 0; cell < CELL; cell++) {
+						IC[slave].owcell.cell_ow_odd[cell] = IC[slave].scell.sc_codes[cell];
+					}
+				}
+
+				// Save pull-down readings
+				for (uint8_t slave = 0; slave < slaves_found; slave++) {
+					for (uint8_t g = 0; g < AUX; g++) {
+						IC[slave].gpio.aux_pup_down[g] = IC[slave].aux.a_codes[g];
+					}
+				}
+
+				// Now evaluate: fill diag_result.cell_ow[] (o proprio
+				// evaluate latcha o AMS_ERROR permanente se detetar OW)
+				adBms6830_evaluate_cell_open_wire(slaves_found, IC);
+				// Evaluate aux OW measruments
+				adBms6830_evaluate_aux_open_wire(slaves_found, IC);
 
 				chargingPhaseStart = getRuntimeMs();
 				chargingPhase = ADBMS_CHARGING_READ_PREV;
