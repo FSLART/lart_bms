@@ -71,6 +71,20 @@ void LiveDebug_Update(void) {
 	live_debug.can.can1_tx_queue_depth = CanTx_GetQueueDepth(&hcan1);
 	live_debug.can.can2_tx_queue_depth = CanTx_GetQueueDepth(&hcan2);
 
+	/* CAN status + erros por barramento */
+	live_debug.can.can1_state    = CAN_GetState(&hcan1);
+	live_debug.can.can2_state    = CAN_GetState(&hcan2);
+	live_debug.can.can1_bus_off  = CAN_GetBusOff(&hcan1);
+	live_debug.can.can2_bus_off  = CAN_GetBusOff(&hcan2);
+	live_debug.can.can1_hw_error = CAN_GetHwError(&hcan1);
+	live_debug.can.can2_hw_error = CAN_GetHwError(&hcan2);
+	live_debug.can.can1_tx_error_counter = CAN_GetTEC(&hcan1);
+	live_debug.can.can2_tx_error_counter = CAN_GetTEC(&hcan2);
+	live_debug.can.can1_rx_error_counter = CAN_GetREC(&hcan1);
+	live_debug.can.can2_rx_error_counter = CAN_GetREC(&hcan2);
+	live_debug.can.can1_last_error_code  = CAN_GetLEC(&hcan1);
+	live_debug.can.can2_last_error_code  = CAN_GetLEC(&hcan2);
+
 	/* cell balancing */
 	static const char *bal_stage_names[] = { "ROUGH", "FINE", "END" };
 	static const char *bal_phase_names[] = { "INIT", "APPLY", "ON_TIME", "STOP_DISCHARGE", "SETTLE", "START_AVG", "WAIT_AVG", "READ_AVG", "COMPUTE" };

@@ -59,8 +59,8 @@ uint32_t timeStart = 0;
 bool toggleHeartbeat = false;
 
 /* timeouts de sensores (corre no faultCheck, 250ms):
- * - ISA do pack (CAN1): sempre presente no carro, >1s calada = AMS_ERROR,
- *   volta a falar = limpa
+ * - ISA: basta estar viva num dos barramentos (CAN1 do pack OU CAN2 do
+ *   handcart). So da erro se >1s sem frames de ISA em NENHUM CAN
  * - 0x084 do handcart (CAN2): so vigiado durante o carregamento; se o
  *   stream de 100ms morrer >1s com a carga a decorrer = AMS_ERROR
  * Clear so na transicao morto->vivo (edge), para nao andar a limpar a
@@ -72,7 +72,7 @@ static void SensorTimeouts_Check(void) {
 	static uint8_t isa_dead = 0;
 	static uint8_t handcart_dead = 0;
 
-	uint8_t isa_dead_now = (IVT_GetLastRxAgeMs() > SENSOR_TIMEOUT_MS) ? 1 : 0;
+	uint8_t isa_dead_now = (IVT_GetLastRxAgeMsAny() > SENSOR_TIMEOUT_MS) ? 1 : 0;
 
 	if (isa_dead_now != 0) {
 		AMS_Error_Trigger();
@@ -162,6 +162,9 @@ void brain_start(void) {
 	Precharge_CAN_Init();
 	CellBalancing_CAN_Init();
 	Charger_CAN_Init();
+
+	// detetor de presenca da 2a ISA no CAN2 (so timeout, nao alimenta SOC)
+	IVT_CAN2_Presence_Init();
 
 	if (watchdog_flag & RCC_CSR_WWDGRSTF) {
 		RAISE_ERROR(FAULT_WATCHDOG_RESET);

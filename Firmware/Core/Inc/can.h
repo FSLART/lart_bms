@@ -34,6 +34,14 @@ void CAN_Service(CAN_HandleTypeDef *hcan);
 uint8_t CAN_IsStarted(CAN_HandleTypeDef *hcan);
 uint16_t CanTx_GetQueueDepth(CAN_HandleTypeDef *hcan);
 
+/* diagnostico do periferico bxCAN (live debug) */
+uint8_t  CAN_GetState(CAN_HandleTypeDef *hcan);     // HAL_CAN_StateTypeDef
+uint32_t CAN_GetHwError(CAN_HandleTypeDef *hcan);   // HAL_CAN_GetError() bitmask
+uint8_t  CAN_GetTEC(CAN_HandleTypeDef *hcan);       // transmit error counter (ESR)
+uint8_t  CAN_GetREC(CAN_HandleTypeDef *hcan);       // receive error counter (ESR)
+uint8_t  CAN_GetLEC(CAN_HandleTypeDef *hcan);       // last error code (ESR 6:4)
+uint8_t  CAN_GetBusOff(CAN_HandleTypeDef *hcan);    // 1 = bus-off (ESR BOFF)
+
 void CAN_PrintHalError(uint32_t error);
 
 

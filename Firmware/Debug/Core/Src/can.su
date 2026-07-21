@@ -9,7 +9,13 @@
 ../Core/Src/can.c:355:19:CAN_TX_Add_To_Queue	32	static
 ../Core/Src/can.c:361:19:CAN_TX_Add_Extended_To_Queue	32	static
 ../Core/Src/can.c:367:10:CanTx_GetQueueDepth	24	static
-../Core/Src/can.c:387:9:CAN_IsStarted	16	static
-../Core/Src/can.c:400:19:CAN_Restart	16	static
-../Core/Src/can.c:488:6:CAN_Service	120	static
-../Core/Src/can.c:576:6:CAN_PrintHalError	16	static
+../Core/Src/can.c:389:9:CAN_GetState	16	static
+../Core/Src/can.c:396:10:CAN_GetHwError	16	static
+../Core/Src/can.c:404:9:CAN_GetTEC	16	static
+../Core/Src/can.c:411:9:CAN_GetREC	16	static
+../Core/Src/can.c:418:9:CAN_GetLEC	16	static
+../Core/Src/can.c:425:9:CAN_GetBusOff	16	static
+../Core/Src/can.c:432:9:CAN_IsStarted	16	static
+../Core/Src/can.c:445:19:CAN_Restart	16	static
+../Core/Src/can.c:533:6:CAN_Service	120	static
+../Core/Src/can.c:621:6:CAN_PrintHalError	16	static

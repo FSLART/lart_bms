@@ -78,6 +78,11 @@ void BMS_SafetyCheck(void) {
 
 			for (int ntc = 0; ntc < 6; ntc++) {
 
+				// NTC desativado por hardware: nao avaliar OT
+				if (NTC_IsBypassed((uint8_t) (module + 1), (uint8_t) (ntc + 1))) {
+					continue;
+				}
+
 				float cell_t = getTemperatureCAN(ic->raux.ra_codes[ntc]);
 
 				// modulo do valor, mesmo racional das tensoes: leitura
@@ -156,6 +161,11 @@ HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan) {
 		}
 
 		for (uint8_t i = 0; i < 6; i++) {
+
+			// NTC desativado por hardware: fora do min/max do pack
+			if (NTC_IsBypassed((uint8_t) (module + 1), (uint8_t) (i + 1)))
+				continue;
+
 			int t = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[i]));
 
 			/* NTC aberto (1.99ºC) ou curto/erro (>=149ºC): não deixar
@@ -489,13 +499,14 @@ HAL_StatusTypeDef ADBMS_CAN_SendTemperatures_Module(CAN_HandleTypeDef *hcan, uin
 
 	/* RAUX has 6 channels: ic->raux.ra_codes[0..5]
 	 * getTemperatureCAN() doesnt account for DBC factor
+	 * NTC desativado (NTC_IsBypassed) -> manda 0, nao o lixo 2.0 do raux
 	 */
-	int t1 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[0]));
-	int t2 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[1]));
-	int t3 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[2]));
-	int t4 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[3]));
-	int t5 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[4]));
-	int t6 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[5]));
+	int t1 = NTC_IsBypassed(slave, 1) ? 0 : (int) (100 * getTemperatureCAN(ic->raux.ra_codes[0]));
+	int t2 = NTC_IsBypassed(slave, 2) ? 0 : (int) (100 * getTemperatureCAN(ic->raux.ra_codes[1]));
+	int t3 = NTC_IsBypassed(slave, 3) ? 0 : (int) (100 * getTemperatureCAN(ic->raux.ra_codes[2]));
+	int t4 = NTC_IsBypassed(slave, 4) ? 0 : (int) (100 * getTemperatureCAN(ic->raux.ra_codes[3]));
+	int t5 = NTC_IsBypassed(slave, 5) ? 0 : (int) (100 * getTemperatureCAN(ic->raux.ra_codes[4]));
+	int t6 = NTC_IsBypassed(slave, 6) ? 0 : (int) (100 * getTemperatureCAN(ic->raux.ra_codes[5]));
 
 	int temps[6] = { t1, t2, t3, t4, t5, t6 };
 

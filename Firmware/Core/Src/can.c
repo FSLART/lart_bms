@@ -384,6 +384,51 @@ uint16_t CanTx_GetQueueDepth(CAN_HandleTypeDef *hcan) {
 	return depth;
 }
 
+/* --- diagnostico do periferico bxCAN --- */
+
+uint8_t CAN_GetState(CAN_HandleTypeDef *hcan) {
+	if (hcan == NULL) {
+		return 0;
+	}
+	return (uint8_t) HAL_CAN_GetState(hcan);
+}
+
+uint32_t CAN_GetHwError(CAN_HandleTypeDef *hcan) {
+	if (hcan == NULL) {
+		return 0;
+	}
+	return HAL_CAN_GetError(hcan);
+}
+
+/* ESR: TEC[31:24], REC[23:16], LEC[6:4], BOFF bit2, EPVF bit1, EWGF bit0 */
+uint8_t CAN_GetTEC(CAN_HandleTypeDef *hcan) {
+	if (hcan == NULL) {
+		return 0;
+	}
+	return (uint8_t) ((hcan->Instance->ESR >> 24) & 0xFFU);
+}
+
+uint8_t CAN_GetREC(CAN_HandleTypeDef *hcan) {
+	if (hcan == NULL) {
+		return 0;
+	}
+	return (uint8_t) ((hcan->Instance->ESR >> 16) & 0xFFU);
+}
+
+uint8_t CAN_GetLEC(CAN_HandleTypeDef *hcan) {
+	if (hcan == NULL) {
+		return 0;
+	}
+	return (uint8_t) ((hcan->Instance->ESR >> 4) & 0x07U);
+}
+
+uint8_t CAN_GetBusOff(CAN_HandleTypeDef *hcan) {
+	if (hcan == NULL) {
+		return 0;
+	}
+	return (uint8_t) ((hcan->Instance->ESR & CAN_ESR_BOFF) ? 1U : 0U);
+}
+
 uint8_t CAN_IsStarted(CAN_HandleTypeDef *hcan) {
 	if (hcan == &hcan1) {
 		return can1Started;

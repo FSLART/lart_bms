@@ -109,6 +109,10 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic);
 void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic);
 uint8_t adBms6830_daisychain_device_counter(void);
 
+/* NTCs desativados por hardware (fonte unica: NTC_IsBypassed em
+ * adBms_Application.c). 1-based: slave 1..12, ntc 1..6 */
+uint8_t NTC_IsBypassed(uint8_t slave_1b, uint8_t ntc_1b);
+
 #endif
 /** @}*/
 /** @}*/

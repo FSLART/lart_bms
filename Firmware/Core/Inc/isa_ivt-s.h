@@ -72,6 +72,10 @@ void IVT_CAN_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data);
 
 void IVT_FAULT_CHECK(void);
 uint32_t IVT_GetLastRxAgeMs(void);
+uint32_t IVT_GetLastRxAgeMsCan2(void);
+uint32_t IVT_GetLastRxAgeMsAny(void);
+void IVT_CAN2_Presence_Init(void);
+void IVT_CAN2_Presence_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data);
 void IVT_PROCESS_SYSERRORS(const struct powertrain_t26_ivt_msg_response_t *resp);
 void IVT_PROCESS_MEASURERRORS(const struct powertrain_t26_ivt_msg_response_t *resp);
 

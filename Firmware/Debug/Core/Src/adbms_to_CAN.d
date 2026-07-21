@@ -46,7 +46,7 @@ Core/Src/adbms_to_CAN.o: ../Core/Src/adbms_to_CAN.c \
  C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/mcuWrapper.h ../Core/Inc/stm32f4xx_it.h \
  ../Core/Inc/cell_balancing.h ../Core/Inc/fan_management.h \
- ../Core/Inc/fault_manager.h ../Core/Inc/can.h \
+ ../Core/Inc/fault_manager.h ../Core/Inc/ams_error.h ../Core/Inc/can.h \
  ../Core/Inc/dbc/powertrain_t26.h
 ../Core/Inc/adbms_to_CAN.h:
 ../Core/Inc/main.h:
@@ -102,5 +102,6 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h
 ../Core/Inc/cell_balancing.h:
 ../Core/Inc/fan_management.h:
 ../Core/Inc/fault_manager.h:
+../Core/Inc/ams_error.h:
 ../Core/Inc/can.h:
 ../Core/Inc/dbc/powertrain_t26.h:

@@ -1568,12 +1568,21 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
  }
  }*/
 
-/* open-wire de hardware conhecidos neste carro (harness do S4 com NTC3 e
- * NTC4 partidos): continuam a ir para o fault manager mas nao latcham o
- * AMS_ERROR, senao a linha ficava presa em erro em todos os arranques */
-static uint8_t aux_ow_is_expected(uint8_t slave_1b, uint8_t ntc_1b) {
+/* NTCs desativados por hardware (harness partido / sensor removido). Um
+ * canal aqui listado e ignorado em todo o lado: sem OT, sem contaminar o
+ * min/max do pack e sem latchar AMS_ERROR por open-wire. Fonte unica de
+ * verdade - editar so esta tabela para ligar/desligar NTCs.
+ *   slave_1b, ntc_1b sao 1-based (slave 1..12, NTC 1..6) */
+uint8_t NTC_IsBypassed(uint8_t slave_1b, uint8_t ntc_1b) {
 
-	if ((slave_1b == 4) && ((ntc_1b == 3) || (ntc_1b == 4))) {
+	// slave 6: aux nao converte (raux fica em reset 0x8000 -> lixo 2.0),
+	// desativar todos os NTC deste slave
+	if (slave_1b == 6) {
+		return 1;
+	}
+
+	// slave 10: NTC3 e NTC4 desativados
+	if ((slave_1b == 10) && ((ntc_1b == 3) || (ntc_1b == 4))) {
 		return 1;
 	}
 
@@ -1594,6 +1603,12 @@ void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
 
 		for (uint8_t gpio = 0; gpio < AUX; gpio++) {
 
+			// NTC desativado por hardware: nao medir de todo
+			if (NTC_IsBypassed((uint8_t) (slave + 1), (uint8_t) (gpio + 1))) {
+				ic[slave].diag_result.aux_ow[gpio] = 0;
+				continue;
+			}
+
 			/*int32_t pup_mV = (ic[slave].gpio.aux_pup_up[gpio] + 10000) * 150 / 1000;
 			 int32_t pdown_mV = (ic[slave].gpio.aux_pup_down[gpio] + 10000) * 150 / 1000;*/
 			//int32_t diff_mV = pup_mV - pdown_mV;
@@ -1610,10 +1625,8 @@ void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
 				RAISE_ERROR(FAULT_OW_DETECTED_RTH, .slave_idx = slave + 1, .channel_idx = gpio + 1, .channel_mask = (uint16_t)(1U << (gpio + 1)), .measured_value = (float )pdown);
 
 				// NTC sem fio = temperatura dessa zona as cegas -> AMS_ERROR
-				// permanente, exceto nos canais partidos ja conhecidos
-				if (aux_ow_is_expected((uint8_t) (slave + 1), (uint8_t) (gpio + 1)) == 0) {
-					AMS_Error_TriggerLatched();
-				}
+				// permanente (canais desativados ja sairam no continue acima)
+				AMS_Error_TriggerLatched();
 			} else {
 				ic[slave].diag_result.aux_ow[gpio] = 0;
 			}
@@ -1654,8 +1667,8 @@ uint8_t adBms6830_daisychain_device_counter(void) {
 
 	uint8_t device_counter = 0;
 
-	//TODO: EEPROM: masterCfg.total_ic4
-	uint8_t expected_devices = 2;
+	//TODO: EEPROM: masterCfg.total_ic
+	uint8_t expected_devices = 12;
 
 	cell_asic TEMP_SLAVE[ADBMS_MAX_DEVICES] = { 0 };
 

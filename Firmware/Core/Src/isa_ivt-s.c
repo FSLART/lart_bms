@@ -52,6 +52,12 @@ uint8_t IVT_configComplete = 0;
 bool commsCheck = false;
 uint32_t lastTime = 0;
 
+/* presenca da 2a ISA no CAN2 (a do handcart). So carimba o tempo da ultima
+ * frame - NUNCA alimenta o ivt (SOC/corrente/As): e um sensor diferente e
+ * nao pode contaminar o estado do pack. Serve so para o timeout combinado */
+uint32_t lastTimeCan2 = 0;
+static uint8_t can2_isa_seen = 0;
+
 /**
  * @brief  Configures FDCAN filters for IVT-S sensor data and starts the controller.
  * @details Sets up individual mask filters to accept only the specific IVT-S CAN IDs
@@ -89,6 +95,29 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
 	 if (HAL_CAN_ActivateNotification(hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
 	 printfConsole("Error activating CAN RX FIFO0 notification\r\n");
 	 }*/
+}
+
+/* Deteta so a PRESENCA da ISA no CAN2 (frames de resultado 0x521..0x528).
+ * Nao desempacota nem alimenta o ivt - o SOC/corrente do pack vem so da
+ * ISA do CAN1. Usado pelo timeout combinado: basta uma ISA viva num dos
+ * barramentos para nao dar erro */
+void IVT_CAN2_Presence_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
+
+	(void) data;
+
+	if (hdr == 0) {
+		return;
+	}
+
+	if ((hdr->IDE == CAN_ID_STD) && (hdr->StdId >= IVT_RESULTI_CANID) && (hdr->StdId <= IVT_RESULTWH_CANID)) {
+		lastTimeCan2 = HAL_GetTick();
+		can2_isa_seen = 1;
+	}
+}
+
+/* registar o detetor de presenca no CAN2 (chamado uma vez no arranque) */
+void IVT_CAN2_Presence_Init(void) {
+	CAN2_RegisterRxCallback(IVT_CAN2_Presence_OnMessage);
 }
 
 // config the ivts sensor
@@ -221,6 +250,23 @@ void IVT_CAN_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 /* idade da ultima frame da ISA do pack (CAN1), para o timeout no brain */
 uint32_t IVT_GetLastRxAgeMs(void) {
 	return HAL_GetTick() - lastTime;
+}
+
+/* idade da ultima frame da ISA no CAN2 (handcart); enorme se nunca vista */
+uint32_t IVT_GetLastRxAgeMsCan2(void) {
+	if (can2_isa_seen == 0) {
+		return 0xFFFFFFFFu;
+	}
+	return HAL_GetTick() - lastTimeCan2;
+}
+
+/* menor das duas idades: ISA viva em qualquer barramento -> valor pequeno.
+ * So fica grande (timeout) se NENHUMA ISA estiver presente em nenhum CAN */
+uint32_t IVT_GetLastRxAgeMsAny(void) {
+	uint32_t age1 = IVT_GetLastRxAgeMs();
+	uint32_t age2 = IVT_GetLastRxAgeMsCan2();
+
+	return (age1 < age2) ? age1 : age2;
 }
 
 void IVT_FAULT_CHECK(void) {

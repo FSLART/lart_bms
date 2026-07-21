@@ -72,6 +72,22 @@ typedef struct {
 	uint8_t  can2_started;
 	uint16_t can1_tx_queue_depth;
 	uint16_t can2_tx_queue_depth;
+
+	/* status do periferico */
+	uint8_t  can1_state;      // HAL_CAN_StateTypeDef
+	uint8_t  can2_state;
+	uint8_t  can1_bus_off;    // 1 = bus-off (parou de vez ate recovery)
+	uint8_t  can2_bus_off;
+
+	/* erros */
+	uint32_t can1_hw_error;          // HAL_CAN_GetError() bitmask
+	uint32_t can2_hw_error;
+	uint8_t  can1_tx_error_counter;  // erros de TX; sobe = TX sem ACK. >=256 -> bus-off
+	uint8_t  can2_tx_error_counter;
+	uint8_t  can1_rx_error_counter;  // erros de RX
+	uint8_t  can2_rx_error_counter;
+	uint8_t  can1_last_error_code;   // 0 ok, 1 stuff, 2 form, 3 ACK, 4 bit-rec, 5 bit-dom, 6 CRC
+	uint8_t  can2_last_error_code;
 } live_debug_can_t;
 
 /* --- cell balancing : whole snapshot from ac_codes + tx_cfgb.dcc --- */
