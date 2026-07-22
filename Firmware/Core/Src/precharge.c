@@ -41,7 +41,7 @@ FeedbackDebounce_t db_dsch = { 0 };
 
 //Internal variables
 //PrechargeState_t state = RX_CAN;
-PrechargeState_t state = WRONG;
+PrechargeState_t state = KILL;
 uint32_t timer;
 uint32_t delayStart = 0;
 uint32_t canRxIgnoreUntil = 0;
