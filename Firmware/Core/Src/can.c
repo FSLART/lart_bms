@@ -10,6 +10,7 @@
 #include "uartDMA.h"
 #include "fault_manager.h"
 #include "gpio_expander.h"
+#include "ams_error.h"
 
 #define MAX_CAN_RX_CALLBACKS 15  // Número de callbacks registados, tipo CAN_RegisterRxCallback(PreCharge_CAN_Rx);
 #define CAN_TX_QUEUE_SIZE    1024 //must be power of 2 only when working with bit masks
@@ -702,3 +703,25 @@ void CAN_PrintHalError(uint32_t error) {
 	}
 }
 
+/* Latch AMS_ERROR if both CAN software queues have been full
+ * simultaneously for more than 500 ms. This means the BMS is completely
+ * unable to queue new CAN messages on either bus. */
+void CAN_CheckBothSoftwareQueuesFull(void)
+{
+	static uint32_t both_full_since_ms = 0;
+
+	uint8_t can1_full = CanTx_IsFull(&can1TxQueue);
+	uint8_t can2_full = CanTx_IsFull(&can2TxQueue);
+
+	if (can1_full && can2_full) {
+		if (both_full_since_ms == 0) {
+			both_full_since_ms = HAL_GetTick();
+		}
+		if ((HAL_GetTick() - both_full_since_ms) >= 500) {
+			printfDebug("Both CAN software TX queues full >500ms -> AMS_ERROR latched\r\n");
+			AMS_Error_TriggerLatched();
+		}
+	} else {
+		both_full_since_ms = 0;
+	}
+}
