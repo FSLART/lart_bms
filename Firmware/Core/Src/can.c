@@ -703,12 +703,15 @@ void CAN_PrintHalError(uint32_t error) {
 	}
 }
 
-/* Latch AMS_ERROR if both CAN software queues have been full
+/* Raise AMS_ERROR (clearable) if both CAN software queues have been full
  * simultaneously for more than 500 ms. This means the BMS is completely
- * unable to queue new CAN messages on either bus. */
+ * unable to queue new CAN messages on either bus. Recovers on its own
+ * once a queue drains - the external latch PCB is what keeps the vehicle
+ * in fault until a manual reset. */
 void CAN_CheckBothSoftwareQueuesFull(void)
 {
 	static uint32_t both_full_since_ms = 0;
+	static uint8_t queues_full_active = 0;
 
 	uint8_t can1_full = CanTx_IsFull(&can1TxQueue);
 	uint8_t can2_full = CanTx_IsFull(&can2TxQueue);
@@ -718,10 +721,15 @@ void CAN_CheckBothSoftwareQueuesFull(void)
 			both_full_since_ms = HAL_GetTick();
 		}
 		if ((HAL_GetTick() - both_full_since_ms) >= 500) {
-			printfDebug("Both CAN software TX queues full >500ms -> AMS_ERROR latched\r\n");
-			AMS_Error_TriggerLatched();
+			printfDebug("Both CAN software TX queues full >500ms -> AMS_ERROR\r\n");
+			AMS_Error_Trigger();
+			queues_full_active = 1;
 		}
 	} else {
 		both_full_since_ms = 0;
+		if (queues_full_active != 0) {
+			AMS_Error_Clear();
+			queues_full_active = 0;
+		}
 	}
 }

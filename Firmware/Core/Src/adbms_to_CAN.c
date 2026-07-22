@@ -47,6 +47,11 @@ void BMS_SafetyCheck(void) {
 	// quantos devices da chain estao com PEC error nesta leitura
 	uint8_t pec_error_devices = 0;
 
+	// OV/UV/OT nesta leitura (clearable: recupera quando a celula/NTC
+	// volta a ficar dentro dos limites - o latch PCB externo e' que
+	// mantem o veiculo em erro ate ao reset manual)
+	uint8_t ovuvot_fault_now = 0;
+
 	for (int module = 0; module < slaves_found && module < 12; module++) {
 
 		const cell_asic *ic = &SLAVE[module];
@@ -70,12 +75,12 @@ void BMS_SafetyCheck(void) {
 
 				if (cell_v > SAFETY_CELL_OV_V) {
 					RAISE_ERROR(FAULT_OVERVOLTAGE, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_OV_V);
-					AMS_Error_TriggerLatched();
+					ovuvot_fault_now = 1;
 				}
 
 				if (cell_v < SAFETY_CELL_UV_V) {
 					RAISE_ERROR(FAULT_UNDERVOLTAGE, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_UV_V);
-					AMS_Error_TriggerLatched();
+					ovuvot_fault_now = 1;
 				}
 			}
 		}
@@ -106,11 +111,26 @@ void BMS_SafetyCheck(void) {
 
 				if (cell_t > SAFETY_CELL_OT_C) {
 					RAISE_ERROR(FAULT_OVERTEMPERATURE, .slave_idx = module + 1, .channel_idx = ntc + 1, .measured_value = cell_t, .threshold_value = SAFETY_CELL_OT_C);
-					AMS_Error_TriggerLatched();
+					ovuvot_fault_now = 1;
 				}
 			}
 		}
 	}
+
+	/* OV/UV/OT (clearable): recupera sozinho quando a celula/NTC volta a
+	 * ficar dentro dos limites. Clear so na transicao fault->ok (edge),
+	 * para nao apagar a cada tick um erro clearable posto por outra
+	 * fonte. O latch PCB externo e' quem mantem o veiculo em erro ate
+	 * ao reset manual, o firmware so reporta a condicao em tempo real */
+	static uint8_t ovuvot_active = 0;
+
+	if (ovuvot_fault_now != 0) {
+		AMS_Error_Trigger();
+	} else if (ovuvot_active != 0) {
+		AMS_Error_Clear();
+	}
+
+	ovuvot_active = ovuvot_fault_now;
 
 	/* Mais de 1/4 dos devices em PEC error = comms da chain a degradar,
 	 * medicoes nao confiaveis -> AMS_ERROR clearable (nao permanente:
