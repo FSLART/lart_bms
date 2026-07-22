@@ -44,9 +44,17 @@ void BMS_SafetyCheck(void) {
 		return;
 	}
 
+	// quantos devices da chain estao com PEC error nesta leitura
+	uint8_t pec_error_devices = 0;
+
 	for (int module = 0; module < slaves_found && module < 12; module++) {
 
 		const cell_asic *ic = &SLAVE[module];
+
+		// device com PEC error (comms isoSPI ma) -> contar para a protecao
+		if (ic->cccrc.cell_pec != 0) {
+			pec_error_devices++;
+		}
 
 		// 12 células por módulo
 		// PEC mau = codes sao lixo do parse do vendor -> nao julgar tensoes
@@ -103,6 +111,23 @@ void BMS_SafetyCheck(void) {
 			}
 		}
 	}
+
+	/* Mais de 1/4 dos devices em PEC error = comms da chain a degradar,
+	 * medicoes nao confiaveis -> AMS_ERROR clearable (nao permanente:
+	 * recupera sozinho quando a chain voltar). Clear so na transicao
+	 * flood->ok (edge), para nao apagar a cada tick um erro clearable
+	 * posto por outra fonte */
+	static uint8_t pec_flood = 0;
+
+	uint8_t pec_flood_now = (pec_error_devices > (slaves_found / 4)) ? 1 : 0;
+
+	if (pec_flood_now != 0) {
+		AMS_Error_Trigger();
+	} else if (pec_flood != 0) {
+		AMS_Error_Clear();
+	}
+
+	pec_flood = pec_flood_now;
 }
 
 HAL_StatusTypeDef Slaves_CAN_SendMessage(CAN_HandleTypeDef *hcan, uint32_t canID, uint32_t dataLength, const uint8_t *TxData) {

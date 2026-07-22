@@ -27,6 +27,6 @@
 ../Core/Src/adBms_Application.c:1450:6:adBms6830_clear_fcell_measurement	16	static
 ../Core/Src/adBms_Application.c:1463:6:adBms6830_evaluate_cell_open_wire	80	static
 ../Core/Src/adBms_Application.c:1576:9:NTC_IsBypassed	16	static
-../Core/Src/adBms_Application.c:1586:6:adBms6830_evaluate_aux_open_wire	48	static
-../Core/Src/adBms_Application.c:1631:10:adBms6830_FindMinVoltageGlobally	24	static
-../Core/Src/adBms_Application.c:1660:9:adBms6830_daisychain_device_counter	36080	static
+../Core/Src/adBms_Application.c:1592:6:adBms6830_evaluate_aux_open_wire	48	static
+../Core/Src/adBms_Application.c:1637:10:adBms6830_FindMinVoltageGlobally	24	static
+../Core/Src/adBms_Application.c:1666:9:adBms6830_daisychain_device_counter	36080	static
