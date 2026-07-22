@@ -30,6 +30,9 @@
 #include "adbms_to_CAN.h"   // g_pack_tmax_cC (cross-check ITMP no balanceamento)
 #include "ams_error.h"
 
+/* OW AMS_ERROR (clearable): definido junto aos evaluate, chamado na state machine */
+static void adBms6830_OpenWire_UpdateAmsError(void);
+
 uint8_t slaves_found = 0;
 
 /**
@@ -567,6 +570,9 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 				// Evaluate aux OW measruments
 				adBms6830_evaluate_aux_open_wire(slaves_found, IC);
 
+				// liga/desliga o AMS_ERROR conforme haja OW (clearable)
+				adBms6830_OpenWire_UpdateAmsError();
+
 				adbmsPhaseStart = getRuntimeMs();
 				adbmsPhase = ADBMS_IDLE_READ_PREV;
 			}
@@ -749,6 +755,9 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 				adBms6830_evaluate_cell_open_wire(slaves_found, IC);
 				// Evaluate aux OW measruments
 				adBms6830_evaluate_aux_open_wire(slaves_found, IC);
+
+				// liga/desliga o AMS_ERROR conforme haja OW (clearable)
+				adBms6830_OpenWire_UpdateAmsError();
 
 				chargingPhaseStart = getRuntimeMs();
 				chargingPhase = ADBMS_CHARGING_READ_PREV;
@@ -1460,9 +1469,17 @@ void adBms6830_clear_fcell_measurement(uint8_t tIC) {
 /** @}*/
 /** @}*/
 
+/* estado de open-wire da ultima avaliacao (cell + aux). O AMS_ERROR de OW
+ * e clearable: liga quando ha OW, desliga quando deixa de haver (recupera
+ * em runtime se o fio for reparado com o sistema a correr) */
+static uint8_t cell_ow_present = 0;
+static uint8_t aux_ow_present = 0;
+
 void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 
 	KILL_ERROR(FAULT_OW_DETECTED_CELL); //Garantir novos erros caso detectados
+
+	uint8_t ow_found = 0;
 
 	for (uint8_t slave = 0; slave < tIC; slave++) {
 
@@ -1507,9 +1524,9 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 				printfDebug("OW FAULT: IC%u Cell%u (%ldmV)\r\n", slave + 1, cell + 1, voltage_mV);
 				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_mV);
 
-				// fio de sense partido = tensao dessa celula deixa de ser
-				// confiavel -> AMS_ERROR permanente, so reboot limpa
-				AMS_Error_TriggerLatched();
+				// fio de sense partido -> marca OW presente (AMS_ERROR
+				// clearable, limpa quando deixar de haver OW)
+				ow_found = 1;
 
 			} else if (voltage_delta > OWC_Threshold_Delta) {
 
@@ -1517,13 +1534,15 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 				printfDebug("OW FAULT: IC%u Cell%u DELTA(%ldmV)\r\n", slave + 1, cell + 1, voltage_delta);
 				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_delta);
 
-				AMS_Error_TriggerLatched();
+				ow_found = 1;
 
 			} else {
 				ic[slave].diag_result.cell_ow[cell] = 0;
 			}
 		}
 	}
+
+	cell_ow_present = ow_found;
 }
 
 /*void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
@@ -1593,6 +1612,8 @@ void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
 
 	KILL_ERROR(FAULT_OW_DETECTED_RTH); //Garantir novos erros caso detectados
 
+	uint8_t ow_found = 0;
+
 	for (uint8_t slave = 0; slave < tIC; slave++) {
 
 		/* mesmo racional do OW de celula: PEC mau = dados invalidos, skip */
@@ -1624,14 +1645,35 @@ void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
 				printfDebug("AUX OW FAULT: IC%u GPIO%u diff (%ldmV) \r\n", slave + 1, gpio + 1, pdown);
 				RAISE_ERROR(FAULT_OW_DETECTED_RTH, .slave_idx = slave + 1, .channel_idx = gpio + 1, .channel_mask = (uint16_t)(1U << (gpio + 1)), .measured_value = (float )pdown);
 
-				// NTC sem fio = temperatura dessa zona as cegas -> AMS_ERROR
-				// permanente (canais desativados ja sairam no continue acima)
-				AMS_Error_TriggerLatched();
+				// NTC sem fio -> marca OW presente (canais desativados ja
+				// sairam no continue acima); AMS_ERROR clearable
+				ow_found = 1;
 			} else {
 				ic[slave].diag_result.aux_ow[gpio] = 0;
 			}
 		}
 	}
+
+	aux_ow_present = ow_found;
+}
+
+/* Junta o OW de cell e aux e liga/desliga o AMS_ERROR. Clearable: se todos
+ * os open-wire desaparecerem (fio reparado em runtime), limpa sozinho. Clear
+ * so na transicao ow->sem-ow (edge), para nao apagar a cada ciclo um erro
+ * clearable posto por outra fonte. Chamado no fim da fase OW da state machine */
+static void adBms6830_OpenWire_UpdateAmsError(void) {
+
+	static uint8_t ow_active = 0;
+
+	uint8_t ow_now = (cell_ow_present || aux_ow_present) ? 1 : 0;
+
+	if (ow_now != 0) {
+		AMS_Error_Trigger();
+	} else if (ow_active != 0) {
+		AMS_Error_Clear();
+	}
+
+	ow_active = ow_now;
 }
 
 uint16_t adBms6830_FindMinVoltageGlobally(void) {
