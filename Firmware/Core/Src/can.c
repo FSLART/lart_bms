@@ -230,14 +230,22 @@ void CanTx_ProcessSelectedQueue(CanTxQueue_t *queuue, CAN_HandleTypeDef *hcan) {
 	while (!CanTx_IsEmpty(queuue)) {
 
 		// No free mailbox? Stop, will try again next time
-		if (HAL_CAN_GetTxMailboxesFreeLevel(hcan) == 0) {
+		if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0 && HAL_CAN_GetTxMailboxesFreeLevel(&hcan2) == 0) {
 
-			RAISE_ERROR(FAULT_CAN_MAILBOX_FULL, .channel_idx = busIdx);
-			MCP23017_LED(LED_CAN, ON);
+					RAISE_ERROR(FAULT_CAN_MAILBOX_FULL, .channel_idx = busIdx);
+					MCP23017_LED(LED_CAN, ON);
+
+					////break;
+					return;
+				}
+		/*if (HAL_CAN_GetTxMailboxesFreeLevel(hcan) == 0) {
+
+			//RAISE_ERROR(FAULT_CAN_MAILBOX_FULL, .channel_idx = busIdx);
+			//MCP23017_LED(LED_CAN, ON);
 
 			////break;
 			return;
-		}
+		}*/
 
 		CanTxItem_t *item = &queuue->item[queuue->tail];
 
@@ -700,6 +708,29 @@ void CAN_PrintHalError(uint32_t error) {
 
 	if (error & HAL_CAN_ERROR_PARAM) {
 		printfDebug(" - HAL_CAN_ERROR_PARAM\r\n");
+	}
+}
+/* Latch AMS_ERROR if both CAN peripherals have had all TX mailboxes full
+ * simultaneously for more than 500 ms. A single bus jammed or a brief
+ * coincident spike does not trigger this — it requires both buses to be
+ * continuously blocked, which means no frame can leave the BMS at all. */
+void CAN_CheckBothMailboxesFull(void)
+{
+	static uint32_t both_full_since_ms = 0;
+
+	uint8_t can1_full = (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0);
+	uint8_t can2_full = (HAL_CAN_GetTxMailboxesFreeLevel(&hcan2) == 0);
+
+	if (can1_full && can2_full) {
+		if (both_full_since_ms == 0) {
+			both_full_since_ms = HAL_GetTick();
+		}
+		if ((HAL_GetTick() - both_full_since_ms) >= 500) {
+			printfDebug("Both CAN TX mailboxes full >500ms -> AMS_ERROR latched\r\n");
+			AMS_Error_TriggerLatched();
+		}
+	} else {
+		both_full_since_ms = 0;
 	}
 }
 

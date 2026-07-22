@@ -31,6 +31,7 @@ HAL_StatusTypeDef CAN_Init(CAN_HandleTypeDef *hcan);
 
 //CAN housekeeping
 void CAN_Service(CAN_HandleTypeDef *hcan);
+void CAN_CheckBothMailboxesFull(void);
 void CAN_CheckBothBusesDown(void);
 uint8_t CAN_IsStarted(CAN_HandleTypeDef *hcan);
 uint16_t CanTx_GetQueueDepth(CAN_HandleTypeDef *hcan);

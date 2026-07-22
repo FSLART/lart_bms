@@ -381,7 +381,7 @@ void brain_loop(void) {
 	//CAN housekeeping
 	CAN_Service(&hcan1);
 	CAN_Service(&hcan2);
-	CAN_CheckBothBusesDown();
+	//CAN_CheckBothBusesDown();
 
 
 	//check if there are can messages to send
