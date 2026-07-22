@@ -10,6 +10,7 @@
 #include "uartDMA.h"
 #include "fault_manager.h"
 #include "gpio_expander.h"
+#include "ams_error.h"
 
 #define MAX_CAN_RX_CALLBACKS 15  // Número de callbacks registados, tipo CAN_RegisterRxCallback(PreCharge_CAN_Rx);
 #define CAN_TX_QUEUE_SIZE    1024 //must be power of 2 only when working with bit masks
@@ -702,3 +703,32 @@ void CAN_PrintHalError(uint32_t error) {
 	}
 }
 
+/* Check whether both CAN buses are simultaneously down and latch AMS_ERROR.
+ *
+ * A 500 ms debounce prevents a brief coincident glitch from permanently
+ * latching. Once both buses have been simultaneously unhealthy for 500 ms
+ * the error is permanent - only a power cycle clears it. */
+void CAN_CheckBothBusesDown(void)
+{
+	static uint32_t both_down_since_ms = 0;
+
+	uint8_t can1_down = CAN_GetBusOff(&hcan1) ||
+	                    (HAL_CAN_GetError(&hcan1) != HAL_CAN_ERROR_NONE) ||
+	                    !CAN_IsStarted(&hcan1);
+
+	uint8_t can2_down = CAN_GetBusOff(&hcan2) ||
+	                    (HAL_CAN_GetError(&hcan2) != HAL_CAN_ERROR_NONE) ||
+	                    !CAN_IsStarted(&hcan2);
+
+	if (can1_down && can2_down) {
+		if (both_down_since_ms == 0) {
+			both_down_since_ms = HAL_GetTick();
+		}
+		if ((HAL_GetTick() - both_down_since_ms) >= 500) {
+			printfDebug("Both CAN buses down >500ms -> AMS_ERROR latched\r\n");
+			AMS_Error_TriggerLatched();
+		}
+	} else {
+		both_down_since_ms = 0;
+	}
+}

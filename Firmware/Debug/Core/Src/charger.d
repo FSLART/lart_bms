@@ -37,13 +37,13 @@ Core/Src/charger.o: ../Core/Src/charger.c ../Core/Inc/charger.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
  ../Core/Inc/main.h ../Core/Inc/brain.h ../Core/Inc/can.h \
  ../Core/Inc/uartDMA.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/handcart_t26.h \
+ E:/bms/lart_bms/Firmware/Core/Inc/dbc/handcart_t26.h \
  ../Core/Inc/gpio_expander.h ../Core/Inc/uartdma.h \
  ../Core/Inc/precharge.h ../Core/Inc/adbms_to_CAN.h ../Core/Inc/brain.h \
  ../Core/Inc/can.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
+ E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/common.h ../Core/Inc/isa_ivt-s.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/powertrain_t26.h
+ E:/bms/lart_bms/Firmware/Core/Inc/dbc/powertrain_t26.h
 ../Core/Inc/charger.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -86,14 +86,14 @@ Core/Src/charger.o: ../Core/Src/charger.c ../Core/Inc/charger.h \
 ../Core/Inc/brain.h:
 ../Core/Inc/can.h:
 ../Core/Inc/uartDMA.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/handcart_t26.h:
+E:/bms/lart_bms/Firmware/Core/Inc/dbc/handcart_t26.h:
 ../Core/Inc/gpio_expander.h:
 ../Core/Inc/uartdma.h:
 ../Core/Inc/precharge.h:
 ../Core/Inc/adbms_to_CAN.h:
 ../Core/Inc/brain.h:
 ../Core/Inc/can.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
+E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/common.h:
 ../Core/Inc/isa_ivt-s.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/powertrain_t26.h:
+E:/bms/lart_bms/Firmware/Core/Inc/dbc/powertrain_t26.h:

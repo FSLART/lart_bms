@@ -36,7 +36,8 @@ Core/Src/can.o: ../Core/Src/can.c ../Core/Inc/can.h ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
  ../Core/Inc/brain.h ../Core/Inc/uartDMA.h ../Core/Inc/fault_manager.h \
- ../Core/Inc/gpio_expander.h ../Core/Inc/uartdma.h
+ ../Core/Inc/gpio_expander.h ../Core/Inc/uartdma.h \
+ ../Core/Inc/ams_error.h
 ../Core/Inc/can.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -80,3 +81,4 @@ Core/Src/can.o: ../Core/Src/can.c ../Core/Inc/can.h ../Core/Inc/main.h \
 ../Core/Inc/fault_manager.h:
 ../Core/Inc/gpio_expander.h:
 ../Core/Inc/uartdma.h:
+../Core/Inc/ams_error.h:

@@ -37,7 +37,7 @@ Core/Src/bootloader_jumper.o: ../Core/Src/bootloader_jumper.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
  ../Core/Inc/can.h ../Core/Inc/main.h ../Core/Inc/bootloader_jumper.h \
  ../Core/Inc/fault_manager.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/powertrain_t26.h \
+ E:/bms/lart_bms/Firmware/Core/Inc/dbc/powertrain_t26.h \
  ../Core/Inc/uartDMA.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -80,5 +80,5 @@ Core/Src/bootloader_jumper.o: ../Core/Src/bootloader_jumper.c \
 ../Core/Inc/main.h:
 ../Core/Inc/bootloader_jumper.h:
 ../Core/Inc/fault_manager.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/powertrain_t26.h:
+E:/bms/lart_bms/Firmware/Core/Inc/dbc/powertrain_t26.h:
 ../Core/Inc/uartDMA.h:

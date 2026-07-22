@@ -37,7 +37,7 @@ Core/Src/bms_eeprom_config.o: ../Core/Src/bms_eeprom_config.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
  ../Core/Inc/cell_balancing.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
+ E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/common.h ../Core/Inc/fault_manager.h ../Core/Inc/uartDMA.h
 ../Core/Inc/bms_eeprom_config.h:
 ../Core/Inc/ee24.h:
@@ -79,7 +79,7 @@ Core/Src/bms_eeprom_config.o: ../Core/Src/bms_eeprom_config.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h:
 ../Core/Inc/cell_balancing.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
+E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/common.h:
 ../Core/Inc/fault_manager.h:
 ../Core/Inc/uartDMA.h:

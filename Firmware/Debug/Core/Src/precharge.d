@@ -37,8 +37,9 @@ Core/Src/precharge.o: ../Core/Src/precharge.c ../Core/Inc/precharge.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
  ../Core/Inc/contactors.h ../Core/Inc/can.h \
  ../Core/Inc/dbc/powertrain_t26.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/handcart_t26.h \
- ../Core/Inc/uartDMA.h ../Core/Inc/fault_manager.h
+ E:/bms/lart_bms/Firmware/Core/Inc/dbc/handcart_t26.h \
+ ../Core/Inc/uartDMA.h ../Core/Inc/fault_manager.h \
+ ../Core/Inc/ams_error.h
 ../Core/Inc/precharge.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -80,6 +81,7 @@ Core/Src/precharge.o: ../Core/Src/precharge.c ../Core/Inc/precharge.h \
 ../Core/Inc/contactors.h:
 ../Core/Inc/can.h:
 ../Core/Inc/dbc/powertrain_t26.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/dbc/handcart_t26.h:
+E:/bms/lart_bms/Firmware/Core/Inc/dbc/handcart_t26.h:
 ../Core/Inc/uartDMA.h:
 ../Core/Inc/fault_manager.h:
+../Core/Inc/ams_error.h:

@@ -36,15 +36,15 @@ Core/Src/cell_balancing.o: ../Core/Src/cell_balancing.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
+ E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/common.h ../Core/Inc/uartDMA.h ../Core/Inc/can.h \
  ../Core/Inc/brain.h ../Core/Inc/dbc/powertrain_t26.h \
  ../Core/Inc/adBms_Application.h ../Core/Inc/adbms_main.h \
  ../Core/Inc/brain.h ../Core/Inc/common.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830GenericType.h \
+ E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830GenericType.h \
  ../Core/Inc/adbms_main.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830ParseCreate.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
+ E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830ParseCreate.h \
+ E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/mcuWrapper.h ../Core/Inc/stm32f4xx_it.h \
  ../Core/Inc/cell_balancing.h
 ../Core/Inc/cell_balancing.h:
@@ -85,7 +85,7 @@ Core/Src/cell_balancing.o: ../Core/Src/cell_balancing.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
+E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/common.h:
 ../Core/Inc/uartDMA.h:
 ../Core/Inc/can.h:
@@ -95,10 +95,10 @@ C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h
 ../Core/Inc/adbms_main.h:
 ../Core/Inc/brain.h:
 ../Core/Inc/common.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830GenericType.h:
+E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830GenericType.h:
 ../Core/Inc/adbms_main.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830ParseCreate.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
+E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830ParseCreate.h:
+E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/mcuWrapper.h:
 ../Core/Inc/stm32f4xx_it.h:
 ../Core/Inc/cell_balancing.h:

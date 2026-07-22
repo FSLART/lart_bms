@@ -38,10 +38,10 @@ Core/Src/adbms/adBms6830GenericType.o: \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
  ../Core/Inc/brain.h ../Core/Inc/common.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830GenericType.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830ParseCreate.h \
- C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
+ E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
+ E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830GenericType.h \
+ E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830ParseCreate.h \
+ E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h \
  ../Core/Inc/mcuWrapper.h ../Core/Inc/stm32f4xx_it.h \
  ../Core/Inc/uartDMA.h ../Core/Inc/fault_manager.h \
  ../Core/Inc/gpio_expander.h ../Core/Inc/uartdma.h
@@ -86,10 +86,10 @@ Core/Src/adbms/adBms6830GenericType.o: \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h:
 ../Core/Inc/brain.h:
 ../Core/Inc/common.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830GenericType.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830ParseCreate.h:
-C:/Users/jpser/Documents/GitHub/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
+E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
+E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830GenericType.h:
+E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830ParseCreate.h:
+E:/bms/lart_bms/Firmware/Core/Inc/adbms/adBms6830Data.h:
 ../Core/Inc/mcuWrapper.h:
 ../Core/Inc/stm32f4xx_it.h:
 ../Core/Inc/uartDMA.h:
