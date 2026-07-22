@@ -20,6 +20,8 @@
 
 #include "fault_manager.h"
 
+#include "ams_error.h"
+
 #define PRECHARGE_CAN_LOCKOUT_MS   10000 //esperar este tempo antes de processar uma nova requisição de inicialização de precarga
 
 //200 ms devido ao gnd ser partilhado, má projetação da pcb
@@ -294,6 +296,9 @@ void Precharge_Update(void) {
 
 	case HV_ON:
 		if (!OnPrechargeComplete(state)) {
+			// contactor abriu/soldou com HV ligado -> mismatch, latch permanente
+			printfDebug("Precharge: contactor mismatch in HV_ON -> AMS_ERROR (permanent)\r\n");
+			AMS_Error_TriggerLatched();
 			state = KILL;
 		}
 
@@ -302,6 +307,10 @@ void Precharge_Update(void) {
 	case WRONG:
 		delayStart = 0;
 		IsTheStateOK(state);
+		// qualquer falha da sequencia aterra aqui = mismatch de contactor
+		// -> AMS_ERROR permanente, so power cycle limpa
+		printfDebug("Precharge: contactor mismatch (WRONG) -> AMS_ERROR (permanent)\r\n");
+		AMS_Error_TriggerLatched();
 		state = KILL;
 		break;
 
