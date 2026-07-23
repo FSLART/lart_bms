@@ -77,6 +77,14 @@ for entry in "${FILES[@]}"; do
 	i=$((i + 1))
 done
 
+# conteudo igual IGNORANDO line endings (CRLF Windows vs LF Unix)? Assim o
+# script e idempotente em qualquer PC - nao reescreve so por causa do \r
+same_content() {
+	# $1 = novo (temp, LF do curl)   $2 = destino
+	[ -f "$2" ] || return 1
+	diff -q <(tr -d '\r' <"$1") <(tr -d '\r' <"$2") >/dev/null 2>&1
+}
+
 # 2) comparar / escrever
 i=0
 changed=0
@@ -84,7 +92,7 @@ for entry in "${FILES[@]}"; do
 	dst="${entry##*|}"
 	base="$(basename "${dst}")"
 
-	if [ -f "${dst}" ] && cmp -s "${TMP}/f${i}" "${dst}"; then
+	if same_content "${TMP}/f${i}" "${dst}"; then
 		echo "  = ${base} (igual)"
 	else
 		changed=$((changed + 1))
@@ -92,7 +100,14 @@ for entry in "${FILES[@]}"; do
 			echo "  ~ ${base} MUDARIA"
 		else
 			mkdir -p "$(dirname "${dst}")"
-			cp "${TMP}/f${i}" "${dst}"
+			# preservar o line ending do destino para nao criar churn no git:
+			# se o ficheiro atual ja e CRLF (Windows/autocrlf) escreve CRLF,
+			# senao LF. Ficheiro novo -> LF.
+			if [ -f "${dst}" ] && [ "$(tr -cd '\r' <"${dst}" | wc -c)" -gt 0 ]; then
+				sed 's/$/\r/' "${TMP}/f${i}" >"${dst}"
+			else
+				cp "${TMP}/f${i}" "${dst}"
+			fi
 			echo "  + ${base} atualizado"
 		fi
 	fi
