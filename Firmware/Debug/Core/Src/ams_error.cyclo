@@ -1,7 +1,0 @@
-../Core/Src/ams_error.c:30:13:AMS_Error_WritePin	3
-../Core/Src/ams_error.c:39:6:AMS_Error_Init	1
-../Core/Src/ams_error.c:47:6:AMS_Error_Trigger	2
-../Core/Src/ams_error.c:57:6:AMS_Error_TriggerLatched	2
-../Core/Src/ams_error.c:67:6:AMS_Error_Clear	3
-../Core/Src/ams_error.c:79:9:AMS_Error_IsActive	3
-../Core/Src/ams_error.c:88:9:AMS_Error_IsPermanent	1

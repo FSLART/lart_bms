@@ -1,4 +1,0 @@
-../Core/Src/bootloader_jumper.c:38:6:JumpToBootloader	40	static,ignoring_inline_asm
-../Core/Src/bootloader_jumper.c:91:6:Programmer_CAN_RX	16	static
-../Core/Src/bootloader_jumper.c:110:6:Setup_Bootloader_Jumper	8	static
-../Core/Src/bootloader_jumper.c:119:6:HAL_CAN_RxFifo1MsgPendingCallback	56	static

@@ -75,3 +75,10 @@ release
 
 # eeprom dump tool output - kept in repo (not a build artifact)
 !Firmware/dump_to_binary/output.bin
+
+# STM32CubeIDE build output: ignorar todo o Firmware/Debug (o Debug/** de
+# cima esta ancorado a raiz e nao apanha este). So o elf/bin da compilacao
+# ficam no repo - todo o resto (.o .d .su .cyclo .mk .list .map makefile) fora
+Firmware/Debug/**
+!Firmware/Debug/lart_bms.elf
+!Firmware/Debug/lart_bms.bin

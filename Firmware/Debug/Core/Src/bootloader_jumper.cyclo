@@ -1,4 +1,0 @@
-../Core/Src/bootloader_jumper.c:38:6:JumpToBootloader	2
-../Core/Src/bootloader_jumper.c:91:6:Programmer_CAN_RX	6
-../Core/Src/bootloader_jumper.c:110:6:Setup_Bootloader_Jumper	1
-../Core/Src/bootloader_jumper.c:119:6:HAL_CAN_RxFifo1MsgPendingCallback	6

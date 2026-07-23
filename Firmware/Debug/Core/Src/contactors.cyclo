@@ -1,7 +1,0 @@
-../Core/Src/contactors.c:9:6:OpenAllContactors	1
-../Core/Src/contactors.c:17:6:OpenPreCarga	1
-../Core/Src/contactors.c:23:6:OpenAIR_negativo	1
-../Core/Src/contactors.c:29:6:OpenAIR_positivo	1
-../Core/Src/contactors.c:39:6:ClosePreCarga	1
-../Core/Src/contactors.c:45:6:CloseAIR_negativo	1
-../Core/Src/contactors.c:51:6:CloseAIR_positivo	1

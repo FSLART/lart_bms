@@ -1,8 +1,0 @@
-../Core/Src/gpio_expander.c:51:6:MCP23017_Write_Register	56	static
-../Core/Src/gpio_expander.c:70:9:MCP23017_Read_Register	56	static
-../Core/Src/gpio_expander.c:92:6:MCP23017_Init	8	static
-../Core/Src/gpio_expander.c:137:6:MCP23017_LED	80	static,ignoring_inline_asm
-../Core/Src/gpio_expander.c:188:6:MCP23017_Flush	8	static
-../Core/Src/gpio_expander.c:205:9:MCP23017_Read_DIP	40	static
-../Core/Src/gpio_expander.c:224:6:MCP23017_All_LEDs_Off	8	static
-../Core/Src/gpio_expander.c:235:6:MCP23017_StartupAnimation_Update	24	static
