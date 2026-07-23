@@ -19,7 +19,7 @@
 
 #define SAFETY_CELL_OV_V   4.20
 #define SAFETY_CELL_UV_V   2.80
-#define SAFETY_CELL_OT_C   60.0
+#define SAFETY_CELL_OT_C   50.0
 
 //Cache for the delta, since it is in another message grouped with other adbms stuff
 int s_module_voltage_delta[12];
@@ -109,7 +109,7 @@ void BMS_SafetyCheck(void) {
 					continue;
 				}
 
-				if (cell_t > SAFETY_CELL_OT_C) {
+				if (cell_t >= SAFETY_CELL_OT_C) {
 					RAISE_ERROR(FAULT_OVERTEMPERATURE, .slave_idx = module + 1, .channel_idx = ntc + 1, .measured_value = cell_t, .threshold_value = SAFETY_CELL_OT_C);
 					ovuvot_fault_now = 1;
 				}
