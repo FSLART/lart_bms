@@ -316,13 +316,40 @@ HAL_StatusTypeDef Master_CAN_SendPrecharge(CAN_HandleTypeDef *hcan) {
 	POWERTRAIN_T26_MASTER_PRE_CHARGE_ID_1_LENGTH, data);
 }
 
+HAL_StatusTypeDef Master_CAN_Send_SDC_Feedback(CAN_HandleTypeDef *hcan) {
+	if (hcan == NULL) {
+		return HAL_ERROR;
+	}
+
+	struct powertrain_t26_ams_sdc_feedback_t msg = { 0 };
+	uint8_t data[POWERTRAIN_T26_AMS_SDC_FEEDBACK_LENGTH];
+	int packed_length;
+
+	// PC7 (MCU_SDC_FB): HIGH = SDC ok (1), LOW = SDC aberto (0)
+	if (HAL_GPIO_ReadPin(MCU_SDC_FB_GPIO_Port, MCU_SDC_FB_Pin) == GPIO_PIN_SET) {
+		msg.sdc_state = 1;
+	} else {
+		msg.sdc_state = 0;
+	}
+
+	packed_length = powertrain_t26_ams_sdc_feedback_pack(data, &msg, sizeof(data));
+	if (packed_length < 0) {
+		return HAL_ERROR;
+	}
+
+	return CAN_TX_Add_To_Queue(hcan,
+	POWERTRAIN_T26_AMS_SDC_FEEDBACK_FRAME_ID,
+	POWERTRAIN_T26_AMS_SDC_FEEDBACK_LENGTH, data);
+}
+
 HAL_StatusTypeDef Master_CAN_SendAll(CAN_HandleTypeDef *hcan) {
 	HAL_StatusTypeDef result_msc1 = Master_CAN_Send_MSC_1(hcan);
 	HAL_StatusTypeDef result_msc2 = Master_CAN_Send_MSC_2(hcan);
 	HAL_StatusTypeDef result_msc4 = Master_CAN_Send_MSC_4(hcan);
 	HAL_StatusTypeDef result_precharge = Master_CAN_SendPrecharge(hcan);
+	HAL_StatusTypeDef result_sdc = Master_CAN_Send_SDC_Feedback(hcan);
 
-	if (result_msc1 != HAL_OK || result_msc2 != HAL_OK || result_precharge != HAL_OK || result_msc4 != HAL_OK) {
+	if (result_msc1 != HAL_OK || result_msc2 != HAL_OK || result_precharge != HAL_OK || result_msc4 != HAL_OK || result_sdc != HAL_OK) {
 		return HAL_ERROR;
 	}
 
