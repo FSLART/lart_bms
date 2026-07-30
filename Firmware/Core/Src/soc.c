@@ -18,7 +18,7 @@
  * +1 : the As value goes UP when the pack is being discharged
  * -1 : the As value goes DOWN when the pack is being discharged
  */
-#define DISCHARGE_SIGN (+1)
+#define DISCHARGE_SIGN (-1)
 
 /*
  * Pack capacity:
