@@ -58,6 +58,17 @@ uint32_t lastTime = 0;
 uint32_t lastTimeCan2 = 0;
 static uint8_t can2_isa_seen = 0;
 
+/* valores da ISA do CAN2 (handcart). Usados para o corte 8A / settle do
+ * carregamento (a corrente de carga passa por esta ISA, nao pela do pack)
+ * e para display. NUNCA alimenta o SOC/As do pack (regra das duas ISAs) */
+static struct {
+	int32_t iBatt;        // mA
+	int32_t vBatt;        // mV (U1)
+	int32_t power;        // W
+	int32_t temp;         // 0.1 C
+	int32_t coulombs_As;  // As
+} ivt_can2;
+
 /**
  * @brief  Configures FDCAN filters for IVT-S sensor data and starts the controller.
  * @details Sets up individual mask filters to accept only the specific IVT-S CAN IDs
@@ -97,19 +108,69 @@ void IVT_CAN_Setup(CAN_HandleTypeDef *hcan) {
 	 }*/
 }
 
-/* Deteta so a PRESENCA da ISA no CAN2 (frames de resultado 0x521..0x528).
- * Nao desempacota nem alimenta o ivt - o SOC/corrente do pack vem so da
- * ISA do CAN1. Usado pelo timeout combinado: basta uma ISA viva num dos
- * barramentos para nao dar erro */
+/* ISA no CAN2 (handcart): desempacota os frames de resultado (0x521..0x528)
+ * para a struct ivt_can2 e carimba a presenca para o timeout combinado.
+ * NUNCA chama SOC nem Check_PackVoltage_and_Current - e um sensor diferente
+ * do pack e nao pode contaminar o estado (regra das duas ISAs). O SOC/As do
+ * pack vem so da ISA do CAN1 */
 void IVT_CAN2_Presence_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 
-	(void) data;
-
-	if (hdr == 0) {
+	if ((hdr == 0) || (data == 0)) {
 		return;
 	}
 
-	if ((hdr->IDE == CAN_ID_STD) && (hdr->StdId >= IVT_RESULTI_CANID) && (hdr->StdId <= IVT_RESULTWH_CANID)) {
+	if (hdr->IDE != CAN_ID_STD) {
+		return;
+	}
+
+	switch (hdr->StdId) {
+
+	case IVT_RESULTI_CANID: {
+		struct powertrain_t26_ivt_msg_result_i_t r;
+		if (powertrain_t26_ivt_msg_result_i_unpack(&r, data, 8) == 0) {
+			ivt_can2.iBatt = r.ivt_result_i;
+		}
+		break;
+	}
+
+	case IVT_RESULTU1_CANID: {
+		struct powertrain_t26_ivt_msg_result_u1_t r;
+		if (powertrain_t26_ivt_msg_result_u1_unpack(&r, data, 8) == 0) {
+			ivt_can2.vBatt = r.ivt_result_u1;
+		}
+		break;
+	}
+
+	case IVT_RESULTT_CANID: {
+		struct powertrain_t26_ivt_msg_result_t_t r;
+		if (powertrain_t26_ivt_msg_result_t_unpack(&r, data, 8) == 0) {
+			ivt_can2.temp = r.ivt_result_t;
+		}
+		break;
+	}
+
+	case IVT_RESULTW_CANID: {
+		struct powertrain_t26_ivt_msg_result_w_t r;
+		if (powertrain_t26_ivt_msg_result_w_unpack(&r, data, 8) == 0) {
+			ivt_can2.power = r.ivt_result_w;
+		}
+		break;
+	}
+
+	case IVT_RESULTAS_CANID: {
+		struct powertrain_t26_ivt_msg_result_as_t r;
+		if (powertrain_t26_ivt_msg_result_as_unpack(&r, data, 8) == 0) {
+			ivt_can2.coulombs_As = r.ivt_result_as;   // SO display, sem SOC
+		}
+		break;
+	}
+
+	default:
+		break;
+	}
+
+	/* presenca: qualquer frame de resultado conta para o timeout combinado */
+	if ((hdr->StdId >= IVT_RESULTI_CANID) && (hdr->StdId <= IVT_RESULTWH_CANID)) {
 		lastTimeCan2 = HAL_GetTick();
 		can2_isa_seen = 1;
 	}
@@ -427,6 +488,27 @@ int32_t IVT_GetPower_W(void) {
 
 int32_t IVT_GetCoulombs_As(void) {
 	return ivt.coulombs_As;     // As
+}
+
+/* --- ISA do CAN2 (handcart): corrente de carga + display, separada do pack --- */
+int32_t IVT_GetCurrentCan2_mA(void) {
+	return ivt_can2.iBatt;     // mA
+}
+
+int32_t IVT_GetPackVoltageCan2_mV(void) {
+	return ivt_can2.vBatt;     // mV (U1)
+}
+
+int32_t IVT_GetTemperatureCan2_dC(void) {
+	return ivt_can2.temp;     // x0.1 ºC
+}
+
+int32_t IVT_GetPowerCan2_W(void) {
+	return ivt_can2.power;     // W
+}
+
+int32_t IVT_GetCoulombsCan2_As(void) {
+	return ivt_can2.coulombs_As;     // As
 }
 
 void Check_PackVoltage_and_Current(void) {

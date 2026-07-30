@@ -76,6 +76,13 @@ uint32_t IVT_GetLastRxAgeMsCan2(void);
 uint32_t IVT_GetLastRxAgeMsAny(void);
 void IVT_CAN2_Presence_Init(void);
 void IVT_CAN2_Presence_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data);
+
+/* ISA do CAN2 (handcart): corrente de carga (corte 8A/settle) + display */
+int32_t IVT_GetCurrentCan2_mA(void);
+int32_t IVT_GetPackVoltageCan2_mV(void);
+int32_t IVT_GetTemperatureCan2_dC(void);
+int32_t IVT_GetPowerCan2_W(void);
+int32_t IVT_GetCoulombsCan2_As(void);
 void IVT_PROCESS_SYSERRORS(const struct powertrain_t26_ivt_msg_response_t *resp);
 void IVT_PROCESS_MEASURERRORS(const struct powertrain_t26_ivt_msg_response_t *resp);
 

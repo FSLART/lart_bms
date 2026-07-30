@@ -153,7 +153,9 @@ void Charger_CAN_Requests_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
  * corrente da ISA morrer (<500 mA), com um maximo de 5 s a espera */
 static bool Charger_SettleDone(uint32_t now) {
 
-	int32_t settle_mA = IVT_GetCurrent_mA();
+	// corrente de carga = ISA do handcart (CAN2); a do pack (CAN1) nao ve
+	// a corrente de carregamento
+	int32_t settle_mA = IVT_GetCurrentCan2_mA();
 	if (settle_mA < 0)
 		settle_mA = -settle_mA;
 
@@ -242,8 +244,9 @@ void Charger_Update(void) {
 			break;
 		}
 
-		// charging current too high (ISA reads charge current as negative)
-		int32_t ivt_mA = IVT_GetCurrent_mA();
+		// charging current too high. Corrente de carga = ISA do handcart
+		// (CAN2); a do pack (CAN1) nao ve a corrente de carregamento
+		int32_t ivt_mA = IVT_GetCurrentCan2_mA();
 		if (ivt_mA < 0)
 			ivt_mA = -ivt_mA;
 

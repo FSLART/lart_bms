@@ -109,14 +109,29 @@ typedef struct {
 	uint8_t     worst_cell;             // 1-based, 0 = none
 } live_debug_balancing_t;
 
+/* --- todas as celulas e todos os NTC, por slave (para Live Expressions) --- */
+#define LIVE_DEBUG_MEAS_IC     12
+#define LIVE_DEBUG_MEAS_CELLS  12
+#define LIVE_DEBUG_MEAS_NTC    6
+
+typedef struct {
+	/* tensao de cada celula em mV [slave][celula]. Negativo = sentinela de
+	 * reset/open-wire (0x8000), util para debug */
+	int16_t cell_mV[LIVE_DEBUG_MEAS_IC][LIVE_DEBUG_MEAS_CELLS];
+	/* temperatura de cada NTC em C [slave][ntc]. ~2 = NTC aberto, ~150 = curto */
+	float   ntc_c[LIVE_DEBUG_MEAS_IC][LIVE_DEBUG_MEAS_NTC];
+} live_debug_meas_t;
+
 typedef struct {
 	live_debug_brain_t      brain;
 	live_debug_adbms_t      adbms;
-	live_debug_ivt_t        ivt;
+	live_debug_ivt_t        ivt_can1;   // ISA do pack (CAN1) - alimenta SOC
+	live_debug_ivt_t        ivt_can2;   // ISA do handcart (CAN2) - carga/display
 	live_debug_contactors_t contactors;
 	live_debug_board_t      board;
 	live_debug_can_t        can;
 	live_debug_balancing_t  balancing;
+	live_debug_meas_t       meas;
 } live_debug_t;
 
 extern live_debug_t live_debug;

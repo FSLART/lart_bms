@@ -41,12 +41,40 @@ void LiveDebug_Update(void) {
 	live_debug.adbms.pack_tmin_cC        = g_pack_tmin_cC;
 	live_debug.adbms.pack_voltage_sum_mV = g_pack_voltage_sum_mV;
 
-	/* ISA IVT-S current sensor */
-	live_debug.ivt.current_mA    = IVT_GetCurrent_mA();
-	live_debug.ivt.u1_voltage_mV = IVT_GetPackVoltage_mV();
-	live_debug.ivt.power_W       = IVT_GetPower_W();
-	live_debug.ivt.coulombs_As   = IVT_GetCoulombs_As();
-	live_debug.ivt.temp_dC       = IVT_GetTemperature_dC();
+	/* ISA IVT-S do pack (CAN1) - a que alimenta o SOC */
+	live_debug.ivt_can1.current_mA    = IVT_GetCurrent_mA();
+	live_debug.ivt_can1.u1_voltage_mV = IVT_GetPackVoltage_mV();
+	live_debug.ivt_can1.power_W       = IVT_GetPower_W();
+	live_debug.ivt_can1.coulombs_As   = IVT_GetCoulombs_As();
+	live_debug.ivt_can1.temp_dC       = IVT_GetTemperature_dC();
+
+	/* ISA IVT-S do handcart (CAN2) - corrente de carga, separada do pack */
+	live_debug.ivt_can2.current_mA    = IVT_GetCurrentCan2_mA();
+	live_debug.ivt_can2.u1_voltage_mV = IVT_GetPackVoltageCan2_mV();
+	live_debug.ivt_can2.power_W       = IVT_GetPowerCan2_W();
+	live_debug.ivt_can2.coulombs_As   = IVT_GetCoulombsCan2_As();
+	live_debug.ivt_can2.temp_dC       = IVT_GetTemperatureCan2_dC();
+
+	/* todas as celulas (mV) e todos os NTC (C) por slave. Slaves acima de
+	 * slaves_found ficam a 0. Usa o SLAVE[] (snapshot coerente) */
+	for (uint8_t m = 0; m < LIVE_DEBUG_MEAS_IC; m++) {
+
+		for (uint8_t c = 0; c < LIVE_DEBUG_MEAS_CELLS; c++) {
+			if (m < slaves_found) {
+				live_debug.meas.cell_mV[m][c] = (int16_t) (1500.0f + (float) SLAVE[m].cell.c_codes[c] * 0.15f);
+			} else {
+				live_debug.meas.cell_mV[m][c] = 0;
+			}
+		}
+
+		for (uint8_t n = 0; n < LIVE_DEBUG_MEAS_NTC; n++) {
+			if (m < slaves_found) {
+				live_debug.meas.ntc_c[m][n] = getTemperatureCAN(SLAVE[m].raux.ra_codes[n]);
+			} else {
+				live_debug.meas.ntc_c[m][n] = 0.0f;
+			}
+		}
+	}
 
 	/* precharge + contactor feedbacks */
 	live_debug.contactors.precharge_state = Precharge_GetState();
