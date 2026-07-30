@@ -15,10 +15,15 @@
 #include "dbc/powertrain_t26.h"
 
 /*
- * +1 : the As value goes UP when the pack is being discharged
- * -1 : the As value goes DOWN when the pack is being discharged
+ * Convencao da ISA (pack, CAN1): descarga = corrente NEGATIVA, carga =
+ * POSITIVA. Logo o contador As DESCE ao descarregar (as_now < as_baseline).
+ *
+ * DISCHARGE_SIGN converte (as_now - as_baseline) em "carga retirada"
+ * (positiva ao descarregar), para que soc = initial - retirada:
+ *   +1 : usar se o As SOBE ao descarregar
+ *   -1 : usar se o As DESCE ao descarregar   <- este caso
  */
-#define DISCHARGE_SIGN (+1)
+#define DISCHARGE_SIGN (-1)
 
 /*
  * Pack capacity:
