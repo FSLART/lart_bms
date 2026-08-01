@@ -113,7 +113,9 @@ void LiveDebug_Update(void) {
 
 		for (uint8_t n = 0; n < LIVE_DEBUG_MEAS_NTC; n++) {
 			if (m < slaves_found) {
-				live_debug.meas.ntc_c[m][n] = getTemperatureCAN(SLAVE[m].raux.ra_codes[n]);
+				/* NTC desativado herda o valor do anterior, igual ao CAN */
+				uint8_t src = NTC_ResolveSource((uint8_t) (m + 1), (uint8_t) (n + 1));
+				live_debug.meas.ntc_c[m][n] = getTemperatureCAN(SLAVE[m].raux.ra_codes[src - 1]);
 			} else {
 				live_debug.meas.ntc_c[m][n] = 0.0f;
 			}

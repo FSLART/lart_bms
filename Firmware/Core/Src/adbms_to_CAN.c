@@ -544,14 +544,15 @@ HAL_StatusTypeDef ADBMS_CAN_SendTemperatures_Module(CAN_HandleTypeDef *hcan, uin
 
 	/* RAUX has 6 channels: ic->raux.ra_codes[0..5]
 	 * getTemperatureCAN() doesnt account for DBC factor
-	 * NTC desativado (NTC_IsBypassed) -> manda 0, nao o lixo 2.0 do raux
+	 * NTC desativado herda o valor do anterior (NTC_ResolveSource), em vez
+	 * de mandar 0 ou o lixo 2.0 do raux
 	 */
-	int t1 = NTC_IsBypassed(slave, 1) ? 0 : (int) (100 * getTemperatureCAN(ic->raux.ra_codes[0]));
-	int t2 = NTC_IsBypassed(slave, 2) ? 0 : (int) (100 * getTemperatureCAN(ic->raux.ra_codes[1]));
-	int t3 = NTC_IsBypassed(slave, 3) ? 0 : (int) (100 * getTemperatureCAN(ic->raux.ra_codes[2]));
-	int t4 = NTC_IsBypassed(slave, 4) ? 0 : (int) (100 * getTemperatureCAN(ic->raux.ra_codes[3]));
-	int t5 = NTC_IsBypassed(slave, 5) ? 0 : (int) (100 * getTemperatureCAN(ic->raux.ra_codes[4]));
-	int t6 = NTC_IsBypassed(slave, 6) ? 0 : (int) (100 * getTemperatureCAN(ic->raux.ra_codes[5]));
+	int t1 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[NTC_ResolveSource(slave, 1) - 1]));
+	int t2 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[NTC_ResolveSource(slave, 2) - 1]));
+	int t3 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[NTC_ResolveSource(slave, 3) - 1]));
+	int t4 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[NTC_ResolveSource(slave, 4) - 1]));
+	int t5 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[NTC_ResolveSource(slave, 5) - 1]));
+	int t6 = (int) (100 * getTemperatureCAN(ic->raux.ra_codes[NTC_ResolveSource(slave, 6) - 1]));
 
 	int temps[6] = { t1, t2, t3, t4, t5, t6 };
 

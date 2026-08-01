@@ -1603,6 +1603,34 @@ uint8_t NTC_IsBypassed(uint8_t slave_1b, uint8_t ntc_1b) {
 	return 0;
 }
 
+/* Qual o NTC a ler no lugar deste. Um NTC desativado herda o valor do
+ * anterior, em cascata: NTC3 -> NTC2, NTC4 -> NTC3 -> NTC2. Assim os
+ * canais mortos mostram a temperatura do vizinho em vez de lixo/zero.
+ * Devolve indice 1-based (1..6) */
+uint8_t NTC_ResolveSource(uint8_t slave_1b, uint8_t ntc_1b) {
+
+	if (!NTC_IsBypassed(slave_1b, ntc_1b)) {
+		return ntc_1b;
+	}
+
+	// primeiro NTC valido para tras
+	for (uint8_t n = ntc_1b; n > 1; n--) {
+		if (!NTC_IsBypassed(slave_1b, (uint8_t) (n - 1))) {
+			return (uint8_t) (n - 1);
+		}
+	}
+
+	// nao ha nenhum antes (ex: NTC1 desativado) -> procurar para a frente
+	for (uint8_t n = (uint8_t) (ntc_1b + 1); n <= 6; n++) {
+		if (!NTC_IsBypassed(slave_1b, n)) {
+			return n;
+		}
+	}
+
+	// slave inteiro desativado: nao ha substituto possivel
+	return ntc_1b;
+}
+
 void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
 
 	KILL_ERROR(FAULT_OW_DETECTED_RTH); //Garantir novos erros caso detectados

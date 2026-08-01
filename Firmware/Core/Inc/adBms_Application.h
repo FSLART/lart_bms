@@ -113,6 +113,10 @@ uint8_t adBms6830_daisychain_device_counter(void);
  * adBms_Application.c). 1-based: slave 1..12, ntc 1..6 */
 uint8_t NTC_IsBypassed(uint8_t slave_1b, uint8_t ntc_1b);
 
+/* NTC desativado herda o valor do anterior (NTC3->NTC2, NTC4->NTC3->NTC2).
+ * Devolve o indice 1-based do NTC a ler no lugar deste */
+uint8_t NTC_ResolveSource(uint8_t slave_1b, uint8_t ntc_1b);
+
 #endif
 /** @}*/
 /** @}*/
