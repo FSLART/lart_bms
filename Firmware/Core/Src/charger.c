@@ -33,14 +33,16 @@ extern CAN_HandleTypeDef hcan2;
 #define CHARGER_MAX_VOLTAGE_V 600  // 144s: o corte real e a celula mais alta
                                    // chegar aos 4.15V (600/144 = 4.17V/cel,
                                    // por isso e sempre o BMS que corta primeiro)
-#define CHARGER_MAX_CURRENT_A 6   // corrente baixa para testes de bancada
+#define CHARGER_MAX_CURRENT_A 6   // 600V @ 6A (maximo do modelo 650-6)
 
 //charging protection limits
 #define CHARGER_CELL_TARGET_MV      4150   // stop charging when highest cell gets here
                                            // (abaixo dos 4.20V do OV permanente, para a
                                            // carga completa nunca tocar na protecao)
 #define CHARGER_MAX_TEMP_cC         6000   // 60.00 C, g_pack_tmax_cC is in centi-degrees
-#define CHARGER_MAX_CURRENT_CUT_mA  8000   // 8 A from the ISA, cut charging above this
+#define CHARGER_MAX_CURRENT_CUT_mA  15000  // 15 A da ISA (valor absoluto), cortar acima disto
+#define CHARGER_ISA_TIMEOUT_MS      1000   // ISA do CAN2 calada mais que isto -> cortar carga
+#define CHARGER_BUS_VOLTAGE_TOL_PCT 20     // desvio maximo ISA vs soma das celulas, em %
 #define CHARGER_STOP_SETTLE_MS      5000   // max wait after the stop command before opening contactors
 #define CHARGER_STOP_CURRENT_mA     500    // below this ISA current the contactors can open right away
 
@@ -160,6 +162,30 @@ void Charger_CAN_Requests_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 
 /* Depois de mandar o carregador parar: contactores podem abrir assim que a
  * corrente da ISA morrer (<500 mA), com um maximo de 5 s a espera */
+/* Depois da precarga (HV_ON): a tensao lida pela ISA do CAN2 tem de bater
+ * com a soma das celulas medida pelos ADBMS. Aceita ate 20% de desvio; fora
+ * disso algo esta mal (contactor aberto, sensor avariado, ligacao errada)
+ * e nao se comeca a carregar */
+static bool Charger_BusVoltagePlausible(void) {
+
+	int32_t isa_mV = IVT_GetPackVoltageCan2_mV();
+	if (isa_mV < 0)
+		isa_mV = -isa_mV;
+
+	int32_t pack_mV = (int32_t) g_pack_voltage_sum_mV;
+
+	// sem leitura do pack nao ha com o que comparar -> nao arrancar
+	if (pack_mV <= 0) {
+		return false;
+	}
+
+	int32_t diff_mV = isa_mV - pack_mV;
+	if (diff_mV < 0)
+		diff_mV = -diff_mV;
+
+	return ((diff_mV * 100) <= (pack_mV * CHARGER_BUS_VOLTAGE_TOL_PCT));
+}
+
 static bool Charger_SettleDone(uint32_t now) {
 
 	// corrente de carga = ISA do handcart (CAN2); a do pack (CAN1) nao ve
@@ -218,6 +244,17 @@ void Charger_Update(void) {
 	case CHARGER_ST_WAIT_HV:
 		// precharge is started by the Handcart, we just wait for HV
 		if (Precharge_GetState() == HV_ON) {
+
+			// precarga acabou: a tensao da ISA tem de bater com a soma das
+			// celulas antes de deixar o carregador arrancar
+			if (!Charger_BusVoltagePlausible()) {
+				printfDebug("Charger: ISA %ld mV vs pack %lu mV (tol %d%%) -> nao arranca\r\n", IVT_GetPackVoltageCan2_mV(), g_pack_voltage_sum_mV, CHARGER_BUS_VOLTAGE_TOL_PCT);
+				Charger_SendRequest(false);
+				Precharge_ForceKill();
+				charge_state = CHARGER_ST_DONE;
+				break;
+			}
+
 			printfDebug("Charger: HV_ON confirmed -> control=1 for 5 s\r\n");
 			Charger_SendRequest(false);
 			prestart_stop_start_ms = now;
@@ -247,6 +284,28 @@ void Charger_Update(void) {
 		break;
 
 	case CHARGER_ST_CHARGING:
+
+		// SDC aberto (PC7 LOW) -> mandar Control=1 JA. Os contactores ja
+		// cairam por hardware, mas o Precharge_GetState() so da por isso
+		// segundos depois; ate la o carregador continuaria a receber
+		// Control=0 e a tentar empurrar corrente para um circuito aberto
+		if (HAL_GPIO_ReadPin(MCU_SDC_FB_GPIO_Port, MCU_SDC_FB_Pin) == GPIO_PIN_RESET) {
+			printfDebug("Charger: SDC open -> charge STOP\r\n");
+			Charger_SendRequest(false);
+			Precharge_ForceKill();
+			charge_state = CHARGER_ST_DONE;
+			break;
+		}
+
+		// ISA do CAN2 calada -> o corte de corrente fica cego (ficaria a ler
+		// o ultimo valor para sempre), por isso parar a carga
+		if (IVT_GetLastRxAgeMsCan2() > CHARGER_ISA_TIMEOUT_MS) {
+			printfDebug("Charger: ISA CAN2 timeout -> charge CUT\r\n");
+			Charger_SendRequest(false);
+			Precharge_ForceKill();
+			charge_state = CHARGER_ST_DONE;
+			break;
+		}
 
 		// HV dropped on its own (precharge fault) -> stop asking for charge
 		if (Precharge_GetState() != HV_ON) {
