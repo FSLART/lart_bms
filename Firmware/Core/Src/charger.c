@@ -25,6 +25,7 @@
 extern CAN_HandleTypeDef hcan2;
 
 #define CHARGER_COMMAND_PERIOD_MS 1000
+#define CHARGER_PRESTART_STOP_MS  5000
 
 #define CHARGER_STATUS_TIMEOUT_MS  3000
 
@@ -32,7 +33,7 @@ extern CAN_HandleTypeDef hcan2;
 #define CHARGER_MAX_VOLTAGE_V 600  // 144s: o corte real e a celula mais alta
                                    // chegar aos 4.15V (600/144 = 4.17V/cel,
                                    // por isso e sempre o BMS que corta primeiro)
-#define CHARGER_MAX_CURRENT_A 6
+#define CHARGER_MAX_CURRENT_A 6   // corrente baixa para testes de bancada
 
 //charging protection limits
 #define CHARGER_CELL_TARGET_MV      4150   // stop charging when highest cell gets here
@@ -46,12 +47,14 @@ extern CAN_HandleTypeDef hcan2;
 //internal charging sequence, only runs while the VCU keeps the request on
 typedef enum {
 	CHARGER_ST_WAIT_HV = 0,  // wait for the precharge to reach HV_ON
+	CHARGER_ST_PRESTART_STOP, // send control=1 for 5 s before requesting charge
 	CHARGER_ST_CHARGING,     // request charge and watch voltage/temp/current
 	CHARGER_ST_STOPPING,     // stop sent, waiting settle before opening contactors
 	CHARGER_ST_DONE          // latched, nothing more until the VCU toggles the request
 } ChargerChargeState_t;
 
 ChargerChargeState_t charge_state = CHARGER_ST_WAIT_HV;
+uint32_t prestart_stop_start_ms = 0;
 uint32_t stop_settle_start_ms = 0;
 
 uint8_t charger_is_requested = 0;
@@ -63,7 +66,13 @@ int32_t last_charger_command_ms = 0;
 uint8_t handcart_feedback_seen = 0;
 uint32_t last_switch_feedback_ms = 0;
 
-struct handcart_t26_charger_status_t last_charger_status;
+/* O carregador EV Europe do carro fala o Protocolo 1000/1200:
+ *   BMS -> carregador : 0x1806E5F4  (BMS_ChargingRequest_P1000)
+ *   carregador -> BMS : 0x18FF50E5  (Charger_Status_P1000)
+ * Por isso todo o dialogo usa os simbolos _p1000 do DBC. Os simbolos base
+ * do handcart_t26.h sao do Protocolo 997 (0x1806E8F4 / 0x18FF50E8) e NAO
+ * servem para este carregador */
+struct handcart_t26_charger_status_p1000_t last_charger_status;
 uint8_t charger_status_valid = 0;
 uint32_t last_charger_status_ms = 0;
 
@@ -74,8 +83,8 @@ void Charger_CAN_Init(void) {
 	CAN2_RegisterRxCallback(Charger_CAN_Requests_RX);
 	CAN2_RegisterRxCallback(Charger_CAN_Comms_RX);
 
-	requested_voltage_raw = handcart_t26_bms_charging_request_max_charging_voltage_encode(CHARGER_MAX_VOLTAGE_V);
-	requested_current_raw = handcart_t26_bms_charging_request_max_charging_current_encode(CHARGER_MAX_CURRENT_A);
+	requested_voltage_raw = handcart_t26_bms_charging_request_p1000_max_charging_voltage_encode(CHARGER_MAX_VOLTAGE_V);
+	requested_current_raw = handcart_t26_bms_charging_request_p1000_max_charging_current_encode(CHARGER_MAX_CURRENT_A);
 }
 
 void Charger_CAN_Comms_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
@@ -84,9 +93,9 @@ void Charger_CAN_Comms_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 	}
 
 	// Status from the EV Europe
-	if ((hdr->IDE == CAN_ID_EXT) && (hdr->ExtId == HANDCART_T26_CHARGER_STATUS_FRAME_ID)) {
+	if ((hdr->IDE == CAN_ID_EXT) && (hdr->ExtId == HANDCART_T26_CHARGER_STATUS_P1000_FRAME_ID)) {
 
-		if (handcart_t26_charger_status_unpack(&last_charger_status, data, hdr->DLC) == 0) {
+		if (handcart_t26_charger_status_p1000_unpack(&last_charger_status, data, hdr->DLC) == 0) {
 
 			charger_status_valid = 1;
 			last_charger_status_ms = HAL_GetTick();
@@ -139,9 +148,9 @@ void Charger_CAN_Requests_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 	}
 
 	// Status from the EV Europe
-	if ((hdr->IDE == CAN_ID_EXT) && (hdr->ExtId == HANDCART_T26_CHARGER_STATUS_FRAME_ID)) {
+	if ((hdr->IDE == CAN_ID_EXT) && (hdr->ExtId == HANDCART_T26_CHARGER_STATUS_P1000_FRAME_ID)) {
 
-		if (handcart_t26_charger_status_unpack(&last_charger_status, data, hdr->DLC) == 0) {
+		if (handcart_t26_charger_status_p1000_unpack(&last_charger_status, data, hdr->DLC) == 0) {
 
 			charger_status_valid = 1;
 			last_charger_status_ms = HAL_GetTick();
@@ -209,10 +218,31 @@ void Charger_Update(void) {
 	case CHARGER_ST_WAIT_HV:
 		// precharge is started by the Handcart, we just wait for HV
 		if (Precharge_GetState() == HV_ON) {
-			printfDebug("Charger: HV_ON confirmed -> start charging\r\n");
+			printfDebug("Charger: HV_ON confirmed -> control=1 for 5 s\r\n");
+			Charger_SendRequest(false);
+			prestart_stop_start_ms = now;
+			last_charger_command_ms = now;
+			charge_state = CHARGER_ST_PRESTART_STOP;
+		}
+		break;
+
+	case CHARGER_ST_PRESTART_STOP:
+		// Keep the charger stopped for 5 s before changing control from 1 to 0.
+		if (Precharge_GetState() != HV_ON) {
+			printfDebug("Charger: lost HV_ON during pre-start delay\r\n");
+			Charger_SendRequest(false);
+			charge_state = CHARGER_ST_WAIT_HV;
+			break;
+		}
+
+		if ((now - prestart_stop_start_ms) >= CHARGER_PRESTART_STOP_MS) {
+			printfDebug("Charger: pre-start delay done -> control=0, start charging\r\n");
 			Charger_SendRequest(true);
 			last_charger_command_ms = now;
 			charge_state = CHARGER_ST_CHARGING;
+		} else if ((now - last_charger_command_ms) >= CHARGER_COMMAND_PERIOD_MS) {
+			Charger_SendRequest(false);
+			last_charger_command_ms = now;
 		}
 		break;
 
@@ -319,25 +349,25 @@ void Charger_SendRequest(bool enable) {
 	uint8_t data[8];
 	int len;
 
-	struct handcart_t26_bms_charging_request_t msg;
-	handcart_t26_bms_charging_request_init(&msg);
+	struct handcart_t26_bms_charging_request_p1000_t msg;
+	handcart_t26_bms_charging_request_p1000_init(&msg);
 
 	msg.max_charging_voltage = requested_voltage_raw;
 	msg.max_charging_current = requested_current_raw;
 
-	// 0 - charge, 1 - no charge para carregador
+	// Polaridade indicada pelo datasheet: 0 = charge, 1 = stop.
 	if (enable != false) {
 		msg.control = 0;
 	} else {
 		msg.control = 1;
 	}
 
-	len = handcart_t26_bms_charging_request_pack(data, &msg, sizeof(data));
+	len = handcart_t26_bms_charging_request_p1000_pack(data, &msg, sizeof(data));
 	if (len < 0) {
 		return;
 	}
 
-	CAN_TX_Add_Extended_To_Queue(&hcan2, HANDCART_T26_BMS_CHARGING_REQUEST_FRAME_ID, (uint8_t) len, data);
+	CAN_TX_Add_Extended_To_Queue(&hcan2, HANDCART_T26_BMS_CHARGING_REQUEST_P1000_FRAME_ID, (uint8_t) len, data);
 }
 
 bool Charger_IsRequestedCurrentOK(void) {

@@ -140,6 +140,12 @@ static const char* fault_name(FaultCode_t code)
     return "UNKNOWN";
 }
 
+/* nome legivel do fault, para o live debug mostrar o que disparou */
+const char* FaultManager_GetName(FaultCode_t code)
+{
+    return fault_name(code);
+}
+
 /* ═══════════════════════════════════════════════════════════════
  *  PUBLIC API – LIFECYCLE
  * ═══════════════════════════════════════════════════════════════ */

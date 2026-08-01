@@ -109,6 +109,21 @@ typedef struct {
 	uint8_t     worst_cell;             // 1-based, 0 = none
 } live_debug_balancing_t;
 
+/* --- estado da linha AMS_ERROR + o que a disparou --------------------
+ * state_name diz logo em que pe esta a linha; faults[] lista pelo nome os
+ * faults ativos no registry, para identificar a causa sem decifrar mascaras */
+#define LIVE_DEBUG_FAULT_LIST 8
+
+typedef struct {
+	uint8_t     active;        // 1 = linha AMS_ERROR em erro
+	uint8_t     permanent;     // 1 = latch permanente (so power cycle limpa)
+	const char *state_name;    // "OK" / "ERROR" / "ERROR_PERMANENT"
+	uint8_t     fault_count;   // quantos faults ativos no fault manager
+	uint32_t    fault_mask_lo; // mascara de faults ativos, bits 0..31
+	uint32_t    fault_mask_hi; // mascara de faults ativos, bits 32..63
+	const char *faults[LIVE_DEBUG_FAULT_LIST];  // nomes dos faults ativos
+} live_debug_ams_error_t;
+
 /* --- todas as celulas e todos os NTC, por slave (para Live Expressions) --- */
 #define LIVE_DEBUG_MEAS_IC     12
 #define LIVE_DEBUG_MEAS_CELLS  12
@@ -124,6 +139,7 @@ typedef struct {
 
 typedef struct {
 	live_debug_brain_t      brain;
+	live_debug_ams_error_t  ams_error;
 	live_debug_adbms_t      adbms;
 	live_debug_ivt_t        ivt_can1;   // ISA do pack (CAN1) - alimenta SOC
 	live_debug_ivt_t        ivt_can2;   // ISA do handcart (CAN2) - carga/display

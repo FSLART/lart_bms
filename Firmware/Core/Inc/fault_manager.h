@@ -207,6 +207,9 @@ bool FaultManager_IsActive(FaultCode_t code);
  */
 uint64_t FaultManager_GetActiveMask(void);
 
+/* nome legivel de um fault (para live debug / UI) */
+const char* FaultManager_GetName(FaultCode_t code);
+
 /** Returns true if ANY fault is currently active. */
 bool FaultManager_AnyActive(void);
 

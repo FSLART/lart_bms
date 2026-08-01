@@ -1594,8 +1594,9 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
  *   slave_1b, ntc_1b sao 1-based (slave 1..12, NTC 1..6) */
 uint8_t NTC_IsBypassed(uint8_t slave_1b, uint8_t ntc_1b) {
 
-	// slave 10: NTC3 e NTC4 desativados
-	if ((slave_1b == 10) && ((ntc_1b == 3) || (ntc_1b == 4))) {
+	// slave 3: NTC3 e NTC4 desativados (harness partido; era o slave 10
+	// antes da nova disposicao dos slaves)
+	if ((slave_1b == 3) && ((ntc_1b == 3) || (ntc_1b == 4))) {
 		return 1;
 	}
 

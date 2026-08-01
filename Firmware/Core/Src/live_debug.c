@@ -13,6 +13,8 @@
 #include "fan_management.h"  // Get_Fan_PWM()
 #include "analog_readings.h" // AnalogReadings_Get()
 #include "can.h"             // CAN_IsStarted(), CanTx_GetQueueDepth()
+#include "ams_error.h"       // AMS_Error_IsActive() / IsPermanent()
+#include "fault_manager.h"   // FaultManager_GetActiveMask() / GetName()
 #include "adBms_Application.h" // IC[], balanceStage, global_min_mV, Balancing_GetPhase()
 #include "cell_balancing.h"    // cell_code_to_mV(), BALANCING_CELL_COUNT
 
@@ -30,6 +32,48 @@ void LiveDebug_Update(void) {
 	live_debug.brain.runtime_s          = getRuntimeSeconds();
 	live_debug.brain.active_fault_count = count_active_faults();
 	live_debug.brain.watchdog_flag      = watchdog_flag;
+
+	/* linha AMS_ERROR + faults que a podem ter disparado */
+	live_debug.ams_error.active    = AMS_Error_IsActive();
+	live_debug.ams_error.permanent = AMS_Error_IsPermanent();
+
+	if (live_debug.ams_error.permanent != 0) {
+		live_debug.ams_error.state_name = "ERROR_PERMANENT";
+	} else if (live_debug.ams_error.active != 0) {
+		live_debug.ams_error.state_name = "ERROR";
+	} else {
+		live_debug.ams_error.state_name = "OK";
+	}
+
+	uint64_t fault_mask = FaultManager_GetActiveMask();
+
+	live_debug.ams_error.fault_mask_lo = (uint32_t) (fault_mask & 0xFFFFFFFFu);
+	live_debug.ams_error.fault_mask_hi = (uint32_t) (fault_mask >> 32);
+
+	uint8_t fault_listed = 0;
+	uint8_t fault_total = 0;
+
+	for (uint8_t code = 0; code < FAULT_COUNT; code++) {
+
+		if ((fault_mask & (1ULL << code)) == 0) {
+			continue;
+		}
+
+		fault_total++;
+
+		if (fault_listed < LIVE_DEBUG_FAULT_LIST) {
+			live_debug.ams_error.faults[fault_listed] = FaultManager_GetName((FaultCode_t) code);
+			fault_listed++;
+		}
+	}
+
+	live_debug.ams_error.fault_count = fault_total;
+
+	/* limpar o resto da lista para nao ficarem nomes velhos la */
+	while (fault_listed < LIVE_DEBUG_FAULT_LIST) {
+		live_debug.ams_error.faults[fault_listed] = 0;
+		fault_listed++;
+	}
 
 	/* adbms driver + pack overalls */
 	live_debug.adbms.slaves_found        = slaves_found;

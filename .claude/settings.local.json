@@ -32,7 +32,8 @@
       "Bash(bash -n /c/Users/jpser/Documents/GitHub/lart_bms/sync_dbc.sh)",
       "Bash(git -C /c/Users/jpser/Documents/GitHub/lart_bms add sync_dbc.sh)",
       "Bash(git -C /c/Users/jpser/Documents/GitHub/lart_bms commit -m ' *)",
-      "Bash(git -C /c/Users/jpser/Documents/GitHub/lart_bms log --oneline -2)"
+      "Bash(git -C /c/Users/jpser/Documents/GitHub/lart_bms log --oneline -2)",
+      "Bash(python -c ' *)"
     ]
   }
 }
