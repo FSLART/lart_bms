@@ -214,7 +214,14 @@ void IVT_CAN_Config(void) {
 
 void IVT_CAN_OnMessage(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 
-	lastTime = HAL_GetTick();
+	/* So as frames de resultado da ISA contam como "ISA viva". Este callback
+	 * esta registado como callback geral do CAN1 e recebe TODAS as tramas do
+	 * barramento; carimbar o lastTime em todas fazia o timeout nunca disparar
+	 * enquanto houvesse qualquer trafego no CAN1 (VCU, inversor, ...).
+	 * Mesmo criterio do detetor do CAN2 */
+	if ((hdr->StdId >= IVT_RESULTI_CANID) && (hdr->StdId <= IVT_RESULTWH_CANID)) {
+		lastTime = HAL_GetTick();
+	}
 
 	switch (hdr->StdId) {
 
