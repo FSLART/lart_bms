@@ -19,6 +19,11 @@
 
 #define SAFETY_CELL_OV_V   4.20
 #define SAFETY_CELL_UV_V   2.80
+/* Abaixo disto nao e uma celula em subtensao, e um fio de sense partido: a
+ * P45B nunca desce dos 2.5V em servico, e um tap aberto colapsa a leitura
+ * para perto de 0. Deteta OW muito mais depressa que as fases dedicadas do
+ * ADBMS (7 fases x 50ms = 350ms+), porque a tensao e lida em todos os ciclos */
+#define SAFETY_CELL_OW_V   2.30
 #define SAFETY_CELL_OT_C   50.0
 
 //Cache for the delta, since it is in another message grouped with other adbms stuff
@@ -78,7 +83,12 @@ void BMS_SafetyCheck(void) {
 					ovuvot_fault_now = 1;
 				}
 
-				if (cell_v < SAFETY_CELL_UV_V) {
+				// colapsada = fio de sense partido, nao subtensao real
+				if (cell_v < SAFETY_CELL_OW_V) {
+					RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_OW_V);
+					ovuvot_fault_now = 1;
+
+				} else if (cell_v < SAFETY_CELL_UV_V) {
 					RAISE_ERROR(FAULT_UNDERVOLTAGE, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_UV_V);
 					ovuvot_fault_now = 1;
 				}

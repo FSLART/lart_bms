@@ -1521,8 +1521,11 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 			if (voltage_mV < OWC_Threshold) {
 
 				ic[slave].diag_result.cell_ow[cell] = 1;
-				printfDebug("OW FAULT: IC%u Cell%u (%ldmV)\r\n", slave + 1, cell + 1, voltage_mV);
+				// seguranca primeiro, log depois: o printfDebug formata 256
+				// bytes por chamada e pode ser chamado 144x por ciclo
 				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_mV);
+				AMS_Error_Trigger();
+				printfDebug("OW FAULT: IC%u Cell%u (%ldmV)\r\n", slave + 1, cell + 1, voltage_mV);
 
 				// fio de sense partido -> marca OW presente (AMS_ERROR
 				// clearable, limpa quando deixar de haver OW)
@@ -1531,8 +1534,9 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 			} else if (voltage_delta > OWC_Threshold_Delta) {
 
 				ic[slave].diag_result.cell_ow[cell] = 1;
-				printfDebug("OW FAULT: IC%u Cell%u DELTA(%ldmV)\r\n", slave + 1, cell + 1, voltage_delta);
 				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_delta);
+				AMS_Error_Trigger();
+				printfDebug("OW FAULT: IC%u Cell%u DELTA(%ldmV)\r\n", slave + 1, cell + 1, voltage_delta);
 
 				ow_found = 1;
 
@@ -1665,8 +1669,10 @@ void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
 			//TODO: DEFINIR THESHOLDS PARA OPEN WIRE NO GPIO
 			if (pup > 10000 || pdown > 0) {
 				ic[slave].diag_result.aux_ow[gpio] = 1;
-				printfDebug("AUX OW FAULT: IC%u GPIO%u diff (%ldmV) \r\n", slave + 1, gpio + 1, pdown);
+				// seguranca primeiro, log depois
 				RAISE_ERROR(FAULT_OW_DETECTED_RTH, .slave_idx = slave + 1, .channel_idx = gpio + 1, .channel_mask = (uint16_t)(1U << (gpio + 1)), .measured_value = (float )pdown);
+				AMS_Error_Trigger();
+				printfDebug("AUX OW FAULT: IC%u GPIO%u diff (%ldmV) \r\n", slave + 1, gpio + 1, pdown);
 
 				// NTC sem fio -> marca OW presente (canais desativados ja
 				// sairam no continue acima); AMS_ERROR clearable

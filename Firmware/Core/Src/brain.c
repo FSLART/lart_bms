@@ -59,20 +59,22 @@ uint32_t timeStart = 0;
 bool toggleHeartbeat = false;
 
 /* timeouts de sensores (corre no faultCheck, 250ms):
- * - ISA: basta estar viva num dos barramentos (CAN1 do pack OU CAN2 do
- *   handcart). So da erro se >1s sem frames de ISA em NENHUM CAN
+ * - ISA do pack (CAN1): esta sempre presente, logo >600ms sem frames dela
+ *   e AMS_ERROR. A ISA do CAN2 (handcart) nao entra aqui - so existe durante
+ *   o carregamento e e vigiada a parte pelo charger.c
  * - 0x084 do handcart (CAN2): so vigiado durante o carregamento; se o
  *   stream de 100ms morrer >1s com a carga a decorrer = AMS_ERROR
  * Clear so na transicao morto->vivo (edge), para nao andar a limpar a
  * cada tick um erro clearable posto por outra fonte qualquer */
-#define SENSOR_TIMEOUT_MS 1000
+#define ISA_TIMEOUT_MS      600    // ISA do pack (CAN1): frames ciclicas de 50-100ms
+#define SENSOR_TIMEOUT_MS   1000   // 0x084 do handcart: stream de 100ms
 
 static void SensorTimeouts_Check(void) {
 
 	static uint8_t isa_dead = 0;
 	static uint8_t handcart_dead = 0;
 
-	uint8_t isa_dead_now = (IVT_GetLastRxAgeMsAny() > SENSOR_TIMEOUT_MS) ? 1 : 0;
+	uint8_t isa_dead_now = (IVT_GetLastRxAgeMs() > ISA_TIMEOUT_MS) ? 1 : 0;
 
 	if (isa_dead_now != 0) {
 		AMS_Error_Trigger();
@@ -210,7 +212,10 @@ void brain_loop(void) {
 
 	case CHARGING:
 
-		if ((getRuntimeMsDiff(timeStart) > 50) || (AMS_Previous_State != AMS_Current_State)) {
+		// 25ms: acelera o ciclo de OW (7 fases) de ~350ms para ~175ms.
+		// NAO baixar abaixo de ~20ms - a fase OW_READ_EVEN_START_ODD precisa
+		// de 15ms de conversao e um gate mais curto liaria dados invalidos
+		if ((getRuntimeMsDiff(timeStart) > 25) || (AMS_Previous_State != AMS_Current_State)) {
 			timeStart = getRuntimeMs();
 
 			adbms_main(AMS_Current_State);
@@ -329,10 +334,16 @@ void brain_loop(void) {
 		Master_CAN_SendAll(&hcan1);
 
 		// repetir a telemetria toda no CAN2 para o handcart/carregador
-		// tambem a ver tensoes/temperaturas (IDs 0x600-0x706, sem conflito
-		// com nada que viva no barramento do carregador)
-		ADBMS_CAN_SendAll(&hcan2, AMS_Current_State);
-		Master_CAN_SendAll(&hcan2);
+		// tambem verem tensoes/temperaturas (IDs 0x600-0x706, sem conflito
+		// com nada que viva no barramento do carregador).
+		// SO durante o carregamento: no carro o CAN2 nao tem nenhum no, logo
+		// ninguem daria ACK, as mailboxes ficariam presas e a fila do CAN2
+		// enchia para sempre - o que fazia o check das duas filas cheias
+		// degenerar em "so o CAN1" e disparar AMS_ERROR sem motivo
+		if (AMS_Current_State == CHARGING) {
+			ADBMS_CAN_SendAll(&hcan2, AMS_Current_State);
+			Master_CAN_SendAll(&hcan2);
+		}
 		//FaultManager_CAN_Send(&hcan1);
 
 		Fan_Update();
