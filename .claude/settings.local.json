@@ -33,7 +33,12 @@
       "Bash(git -C /c/Users/jpser/Documents/GitHub/lart_bms add sync_dbc.sh)",
       "Bash(git -C /c/Users/jpser/Documents/GitHub/lart_bms commit -m ' *)",
       "Bash(git -C /c/Users/jpser/Documents/GitHub/lart_bms log --oneline -2)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(echo \"=== ficheiros de memoria atuais ===\")",
+      "Bash(ls -la /c/Users/jpser/.claude/projects/C--Users-jpser-Documents-GitHub-lart-bms/memory)",
+      "Bash(echo)",
+      "Bash(echo \"=== MEMORY.md \\(indice\\) ===\")",
+      "Bash(cat /c/Users/jpser/.claude/projects/C--Users-jpser-Documents-GitHub-lart-bms/memory/MEMORY.md)"
     ]
   }
 }
