@@ -40,7 +40,9 @@
       "Bash(echo \"=== MEMORY.md \\(indice\\) ===\")",
       "Bash(cat /c/Users/jpser/.claude/projects/C--Users-jpser-Documents-GitHub-lart-bms/memory/MEMORY.md)",
       "Bash(git -C /c/Users/jpser/Documents/GitHub/lart_bms log --oneline -3)",
-      "Bash(git -C /c/Users/jpser/Documents/GitHub/lart_bms status -sb)"
+      "Bash(git -C /c/Users/jpser/Documents/GitHub/lart_bms status -sb)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }
