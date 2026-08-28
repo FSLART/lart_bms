@@ -1,184 +1,90 @@
-# BMS STM32F412 - ADBMS6822 - ADBMS6830 Project
+# BMS STM32F412 + ADBMS6830
 
-## 📘 Overview
+![Master V2 PCB](PCB/master_v2.png)
 
-This project implements a Battery Management System (BMS) interface using the **Analog Devices ADBMS6822** IC, with the **STM32F412RET** MCU.  
-It handles communication with the daisy-chained ADBMS6830 over **isoSPI**, retrieves battery monitoring data, manages EEPROM over I²C, monitors IVT sensor data via **Classic CAN**, and streams measurements to a **Node-RED dashboard** via UART.
+Simple Battery Management System firmware for an STM32F412 master board using Analog Devices ADBMS6830 battery-monitor ICs.
 
-The system is designed to:
-- Communicate with a daisy-chained stack of ADBMS6830 devices.
-- Perform wake-up, configuration, and data readout cycles.
-- Handle CAN communication with an IVT sensor and charger.
-- Store configuration or log data in an external EEPROM (via I²C).
-- Use periodic timers for scheduled tasks and delay measurements.
-- Stream data over UART for real-time dashboards.
+The project reads cell voltages, temperatures, current sensor data and contactor feedback, then sends the important information over CAN to the Powertrain Bus.
 
----
+## Main hardware
 
-## 🛠️ Hardware Setup
+- STM32F412RET6 microcontroller
+- ADBMS6830 battery monitoring ICs
+- isoSPI daisy chain for the BMS slaves
+- CAN bus for telemetry and commands
+- External EEPROM for saved configuration
+- IVT-S current / voltage sensor
+- Precharge, AIR+, AIR- and discharge contactors
+- PWM fan output
 
-- **MCU:** STM32F412RETx
-- **Communication:**
-  - **SPI1** – Communication with ADBMS6822 (2 Mbps)
-  - **CAN1** – Communication with POWERTRAIN network (1 Mbps)
-  - **CAN2** – Communication with Battery Charger (125 Kbps)
-  - **I²C** – EEPROM (24xx series)
-  - **USART1 (DMA)** – Data stream to Node-RED (230400 baud)
-- **Peripherals:**
-  - **TIM2, TIM5** – microsecond timers for delay functions
-  - **TIM8** – periodic interrupt every 800 ms
-  - **GPIO PC13** – user push button (external interrupt)
+## Main features
 
----
+- Cell voltage measurement
+- Thermistor temperature measurement
+- Open-wire detection
+- Passive cell balancing
+- Precharge state machine
+- Contactor feedback service
+- CAN telemetry using `powertrain_t26.dbc`
+- Fault manager with active fault tracking
+- SOC estimate using cell voltage and IVT-S ampere-second counter
+- UART debug output using DMA
+- Watchdog reset detection
+- CAN bootloader jump command
 
-## 📦 Features
+## Basic firmware flow
 
-- ✅ SPI communication with ADBMS6822 (includes wake-up and PEC handling)
-- ✅ Classic CAN communication (bxCAN)
-- ✅ EEPROM driver with RTOS-aware delay and locking
-- ✅ UART streaming to Node-RED dashboards
-- ✅ External interrupt handling for user button
-- ✅ Multiple periodic timers
-- ✅ CRC10/CRC15 calculation for PEC integrity checks
+1. `main.c` initializes the STM32 peripherals.
+2. `brain_start()` initializes CAN, EEPROM, fan control, analog readings, IVT-S, precharge and fault handling.
+3. `brain_loop()` runs forever.
+4. Depending on the BMS state, the firmware reads the ADBMS6830 chain, balances cells, checks faults and sends CAN messages.
+5. If a serious fault happens, the system can open the contactors and move to a safe state.
 
----
+## CAN communication
 
-## 🌀 SPI Communication (ADBMS6822)
+The firmware uses the `powertrain_t26.dbc` and `handcart_t26.dbc` files.
 
-- **Baud rate:** 2 Mbps  
-- **Mode:** SPI Mode 3 (CPOL = 1, CPHA = 1)  
-- **NSS:** Controlled manually via GPIO (software chip select)  
+CAN is used for:
 
-Wake-up example:
+- Slave cell voltages
+- Slave temperatures
+- Module status
+- Master board status
+- Fault reporting
+- IVT-S sensor readings
+- Precharge commands
+- Cell balancing commands
+- Bootloader jump command
 
-```c
-void bms_wakeupChain(void) {
-    for (uint8_t ic = 0; ic < TOTAL_IC; ic++) {
-        bms_csLow();
-        HAL_Delay(1);
-        bms_csHigh();
-        HAL_Delay(1);
-    }
-}
+## Cell balancing
+
+Balancing is passive and controlled through the ADBMS6830 discharge outputs.
+
+The firmware:
+
+- Finds the lowest valid cell voltage in the Accumulator
+- Compares every cell against that minimum
+- Enables discharge on cells that are too high
+- Stops balancing when the cells are inside the configured delta
+
+## Fault handling
+
+The fault manager tracks active faults and stores context such as:
+
+- Time of the fault
+- Measured value
+- Threshold value
+- Slave index
+- Cell index
+- CAN channel
+- Contactor mismatch bits
+
+Faults are also sent over CAN.
+
+## Build target
+
+This project is made for STM32CubeIDE / STM32 HAL and targets:
+
+```text
+STM32F412RET6
 ```
-
-### 🛠️ Tips for avoiding PEC errors:
-- Verify SPI mode and timing match ADBMS6822 datasheet.  
-- Ensure CS toggling meets wake-up timing specs.  
-- Validate CRC10/CRC15 functions.  
-- Confirm delay timers (`bms_delayUs`, `bms_delayMsActive`) are accurate.  
-
----
-
-## ⏱️ Timers
-
-| Timer | Purpose                 | Interval    |
-|-------|-------------------------|-------------|
-| TIM2  | Delay functions (µs)    | µs scale    |
-| TIM5  | Delay / wake-up counter | µs scale    |
-| TIM8  | Periodic task scheduler | 800 ms      |
-
-Example configuration:
-
-```c
-htim8.Instance = TIM8;
-htim8.Init.Prescaler = 63999;  // 64 MHz / 64000 = 1 kHz
-htim8.Init.Period = 799;       // 1 kHz / 800 = 1.25 Hz (~800 ms)
-HAL_TIM_Base_Start_IT(&htim8);
-```
-
----
-
-## 🧠 External Interrupt (User Button)
-
-```c
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-    if (GPIO_Pin == GPIO_PIN_13) {
-        bmsState = (bmsState == ACTIVE) ? INACTIVE : ACTIVE;
-    }
-}
-```
-
-➡ Make sure **EXTI15_10_IRQn** is enabled in `stm32f4xx_it.c`.
-
----
-
-## 🗃️ EEPROM (24xx Series)
-
-EEPROM driver initialization example:
-
-```c
-EE24_HandleTypeDef ee24;
-EE24_Init(&ee24, &hi2c1, 0xA0);
-```
-
-Supports both bare-metal and RTOS modes, with built-in lock and delay handling.
-
----
-
-## 📊 Node-RED Integration via UART
-
-The firmware streams data to Node-RED over **USART1 (DMA)** at **230400 baud**.  
-Data is sent as JSON-formatted strings and can be parsed directly in Node-RED dashboards.
-
-Example payload:
-
-```json
-{
-  "dieTemp": 24.5,
-  "SegVoltage": 37.47,
-  "rth_temps": { "ic": 1, "temps": [23.4, 24.1, 25.0] }
-}
-```
-
-The included **`flows.json`** file provides a prebuilt Node-RED dashboard with:
-- Real-time gauges for temperatures and voltages
-- Per-cell voltage tables
-- Line charts for temperature sensors
-- Fault and CAN status indicators
-- Debug console for raw UART logs
-
-👉 To use: Import `flows.json` into Node-RED via **Import > Clipboard**.
-
----
-
-## 🧪 Debugging PEC Errors
-
-If you see:
-
-```
-WARNING! PEC ERROR - IC: 1, IC1: 0xF3, 0xFF, 0xFF, 0xFF, 0xFF, 0xFB, CC: 61
-```
-
-✔ Check SPI polarity (CPOL=1) and phase (CPHA=1)  
-✔ Verify manual CS timing between transactions  
-✔ Validate CRC10/CRC15 calculation in `bms_utility.c`  
-✔ Ensure correct wake-up delay (use `bms_delayUs()`)  
-
----
-
-## 📁 Project Structure
-
----
-
-## 🧰 Build Notes
-
-- Enable float support for `printf`: add **`-u _printf_float`** to linker flags.  
-- Ensure SPI runs near 2 Mbps by adjusting APB2 clock and SPI prescaler.
-
----
-
-## ✅ Status
-
-- [x] SPI communication with ADBMS6822 verified  
-- [x] PEC (CRC10/CRC15) verified  
-- [x] CAN communication functional  
-- [x] EEPROM read/write functional  
-- [x] UART communication with Node-RED operational  
-- [x] Timers and EXTI working  
-
----
-
-## 📜 License
-
-This project is intended for internal development and testing of BMS communication firmware using STM32F4 microcontrollers.

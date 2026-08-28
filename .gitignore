@@ -1,0 +1,84 @@
+.generated_files/
+build/
+dist/
+nbproject/
+Makefile*
+Package-*
+private/
+cmake/**/CMake*
+cmake/**/.generated/*
+!cmake/**/user.cmake
+_build/
+
+#settings
+.settings/
+
+#metadata
+.metadata/
+
+#Debug
+Debug/**
+debug/**
+Release/
+release
+
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+*.bin
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# STM32CubeIDE project files (machine-specific paths inside)
+.cproject
+.project
+.mxproject
+*.launch
+*.cfg
+
+!Debug/*.bin
+!Debug/*.elf
+
+# eeprom dump tool output - kept in repo (not a build artifact)
+!Firmware/dump_to_binary/output.bin
+
+# STM32CubeIDE build output: ignorar todo o Firmware/Debug (o Debug/** de
+# cima esta ancorado a raiz e nao apanha este). So o elf/bin da compilacao
+# ficam no repo - todo o resto (.o .d .su .cyclo .mk .list .map makefile) fora
+Firmware/Debug/**
+!Firmware/Debug/lart_bms.elf
+!Firmware/Debug/lart_bms.bin

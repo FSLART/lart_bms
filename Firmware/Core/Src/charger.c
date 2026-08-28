@@ -1,0 +1,468 @@
+/*
+ * charger.c
+ *
+ *  Created on: May 10, 2026
+ *      Author: jpser
+ */
+
+#include "charger.h"
+
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "main.h"
+#include "brain.h"
+#include "can.h"
+#include "uartDMA.h"
+#include "handcart_t26.h"
+
+#include "gpio_expander.h"
+
+#include "precharge.h"
+#include "adbms_to_CAN.h"
+#include "isa_ivt-s.h"
+
+extern CAN_HandleTypeDef hcan2;
+
+#define CHARGER_COMMAND_PERIOD_MS 1000
+#define CHARGER_PRESTART_STOP_MS  5000
+
+#define CHARGER_STATUS_TIMEOUT_MS  3000
+
+//set values
+#define CHARGER_MAX_VOLTAGE_V 600  // 144s: o corte real e a celula mais alta
+                                   // chegar aos 4.15V (600/144 = 4.17V/cel,
+                                   // por isso e sempre o BMS que corta primeiro)
+#define CHARGER_MAX_CURRENT_A 6   // 600V @ 6A (maximo do modelo 650-6)
+
+//charging protection limits
+#define CHARGER_CELL_TARGET_MV      4150   // stop charging when highest cell gets here
+                                           // (abaixo dos 4.20V do OV permanente, para a
+                                           // carga completa nunca tocar na protecao)
+#define CHARGER_MAX_TEMP_cC         6000   // 60.00 C, g_pack_tmax_cC is in centi-degrees
+#define CHARGER_MAX_CURRENT_CUT_mA  15000  // 15 A da ISA (valor absoluto), cortar acima disto
+#define CHARGER_ISA_TIMEOUT_MS      1000   // ISA do CAN2 calada mais que isto -> cortar carga
+#define CHARGER_BUS_VOLTAGE_TOL_PCT 20     // desvio maximo ISA vs soma das celulas, em %
+#define CHARGER_STOP_SETTLE_MS      5000   // max wait after the stop command before opening contactors
+#define CHARGER_STOP_CURRENT_mA     500    // below this ISA current the contactors can open right away
+
+//internal charging sequence, only runs while the VCU keeps the request on
+typedef enum {
+	CHARGER_ST_WAIT_HV = 0,  // wait for the precharge to reach HV_ON
+	CHARGER_ST_PRESTART_STOP, // send control=1 for 5 s before requesting charge
+	CHARGER_ST_CHARGING,     // request charge and watch voltage/temp/current
+	CHARGER_ST_STOPPING,     // stop sent, waiting settle before opening contactors
+	CHARGER_ST_DONE          // latched, nothing more until the VCU toggles the request
+} ChargerChargeState_t;
+
+ChargerChargeState_t charge_state = CHARGER_ST_WAIT_HV;
+uint32_t prestart_stop_start_ms = 0;
+uint32_t stop_settle_start_ms = 0;
+
+uint8_t charger_is_requested = 0;
+uint16_t requested_voltage_raw = 0;
+uint16_t requested_current_raw = 0;
+int32_t last_charger_command_ms = 0;
+
+/* heartbeat do handcart: qualquer 0x084 (ON ou OFF) conta como vivo */
+uint8_t handcart_feedback_seen = 0;
+uint32_t last_switch_feedback_ms = 0;
+
+/* O carregador EV Europe do carro fala o Protocolo 1000/1200:
+ *   BMS -> carregador : 0x1806E5F4  (BMS_ChargingRequest_P1000)
+ *   carregador -> BMS : 0x18FF50E5  (Charger_Status_P1000)
+ * Por isso todo o dialogo usa os simbolos _p1000 do DBC. Os simbolos base
+ * do handcart_t26.h sao do Protocolo 997 (0x1806E8F4 / 0x18FF50E8) e NAO
+ * servem para este carregador */
+struct handcart_t26_charger_status_p1000_t last_charger_status;
+uint8_t charger_status_valid = 0;
+uint32_t last_charger_status_ms = 0;
+
+void Charger_CAN_Init(void) {
+
+	// tudo o que e carregamento vive no CAN2 (250k): o pedido de START_CHARGING
+	// do handcart e o dialogo com o carregador chegam ambos por aqui
+	CAN2_RegisterRxCallback(Charger_CAN_Requests_RX);
+	CAN2_RegisterRxCallback(Charger_CAN_Comms_RX);
+
+	requested_voltage_raw = handcart_t26_bms_charging_request_p1000_max_charging_voltage_encode(CHARGER_MAX_VOLTAGE_V);
+	requested_current_raw = handcart_t26_bms_charging_request_p1000_max_charging_current_encode(CHARGER_MAX_CURRENT_A);
+}
+
+void Charger_CAN_Comms_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
+	if ((hdr == 0) || (data == 0)) {
+		return;
+	}
+
+	// Status from the EV Europe
+	if ((hdr->IDE == CAN_ID_EXT) && (hdr->ExtId == HANDCART_T26_CHARGER_STATUS_P1000_FRAME_ID)) {
+
+		if (handcart_t26_charger_status_p1000_unpack(&last_charger_status, data, hdr->DLC) == 0) {
+
+			charger_status_valid = 1;
+			last_charger_status_ms = HAL_GetTick();
+		}
+	}
+}
+
+void Charger_CAN_Requests_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
+	if ((hdr == 0) || (data == 0)) {
+		return;
+	}
+
+	// Charge order from the Handcart switch (0x084, sent every 100 ms)
+	if ((hdr->IDE == CAN_ID_STD) && (hdr->StdId == HANDCART_T26_HANDCART_SWITCH_FEEDBACK_FRAME_ID)) {
+		struct handcart_t26_handcart_switch_feedback_t rx;
+
+		if (handcart_t26_handcart_switch_feedback_unpack(&rx, data, hdr->DLC) != 0) {
+			return;
+		}
+
+		handcart_feedback_seen = 1;
+		last_switch_feedback_ms = HAL_GetTick();
+
+		if (rx.switch_feedback > 0) {
+
+			charger_is_requested = 1;
+
+			if (AMS_State != IDLE || AMS_State == CHARGING) {
+				return;
+			}
+
+			AMS_State = CHARGING;
+
+			MCP23017_LED(LED_CHARGING_STATUS, ON);
+
+			printfDebug("Handcart switch ON -> AMS_State = CHARGING\r\n");
+
+		} else {
+
+			// so marcar o pedido como desligado: a paragem ordenada
+			// (parar carregador -> settle -> KILL) e feita no Charger_Update
+			if (charger_is_requested != 0) {
+				printfDebug("Handcart switch OFF -> stopping charge\r\n");
+			}
+
+			charger_is_requested = 0;
+		}
+
+		return;
+	}
+
+	// Status from the EV Europe
+	if ((hdr->IDE == CAN_ID_EXT) && (hdr->ExtId == HANDCART_T26_CHARGER_STATUS_P1000_FRAME_ID)) {
+
+		if (handcart_t26_charger_status_p1000_unpack(&last_charger_status, data, hdr->DLC) == 0) {
+
+			charger_status_valid = 1;
+			last_charger_status_ms = HAL_GetTick();
+		}
+	}
+}
+
+/* Depois de mandar o carregador parar: contactores podem abrir assim que a
+ * corrente da ISA morrer (<500 mA), com um maximo de 5 s a espera */
+/* Depois da precarga (HV_ON): a tensao lida pela ISA do CAN2 tem de bater
+ * com a soma das celulas medida pelos ADBMS. Aceita ate 20% de desvio; fora
+ * disso algo esta mal (contactor aberto, sensor avariado, ligacao errada)
+ * e nao se comeca a carregar */
+static bool Charger_BusVoltagePlausible(void) {
+
+	int32_t isa_mV = IVT_GetPackVoltageCan2_mV();
+	if (isa_mV < 0)
+		isa_mV = -isa_mV;
+
+	int32_t pack_mV = (int32_t) g_pack_voltage_sum_mV;
+
+	// sem leitura do pack nao ha com o que comparar -> nao arrancar
+	if (pack_mV <= 0) {
+		return false;
+	}
+
+	int32_t diff_mV = isa_mV - pack_mV;
+	if (diff_mV < 0)
+		diff_mV = -diff_mV;
+
+	return ((diff_mV * 100) <= (pack_mV * CHARGER_BUS_VOLTAGE_TOL_PCT));
+}
+
+static bool Charger_SettleDone(uint32_t now) {
+
+	// corrente de carga = ISA do handcart (CAN2); a do pack (CAN1) nao ve
+	// a corrente de carregamento
+	int32_t settle_mA = IVT_GetCurrentCan2_mA();
+	if (settle_mA < 0)
+		settle_mA = -settle_mA;
+
+	if (settle_mA < CHARGER_STOP_CURRENT_mA) {
+		return true;
+	}
+
+	return ((now - stop_settle_start_ms) >= CHARGER_STOP_SETTLE_MS);
+}
+
+void Charger_Update(void) {
+	uint32_t now = HAL_GetTick();
+
+	if (charger_is_requested == 0) {
+
+		// Handcart switch OFF: contactors must NOT open right away, first
+		// stop the charger, let the current die, only then go to KILL
+		switch (charge_state) {
+
+		case CHARGER_ST_CHARGING:
+			Charger_SendRequest(false);
+			stop_settle_start_ms = now;
+			charge_state = CHARGER_ST_STOPPING;
+			break;
+
+		case CHARGER_ST_STOPPING:
+			if (Charger_SettleDone(now)) {
+				Precharge_ForceKill();
+				printfDebug("Charger: switch OFF -> contactors open, back to IDLE\r\n");
+				charge_state = CHARGER_ST_WAIT_HV;
+				MCP23017_LED(LED_CHARGING_STATUS, OFF);
+				AMS_State = IDLE;
+			}
+			break;
+
+		default:
+			// was not charging yet (or already done): no current flowing,
+			// safe to open everything right away
+			Precharge_ForceKill();
+			charge_state = CHARGER_ST_WAIT_HV;
+			MCP23017_LED(LED_CHARGING_STATUS, OFF);
+			AMS_State = IDLE;
+			break;
+		}
+
+		return;
+	}
+
+	switch (charge_state) {
+
+	case CHARGER_ST_WAIT_HV:
+		// precharge is started by the Handcart, we just wait for HV
+		if (Precharge_GetState() == HV_ON) {
+
+			// precarga acabou: a tensao da ISA tem de bater com a soma das
+			// celulas antes de deixar o carregador arrancar
+			if (!Charger_BusVoltagePlausible()) {
+				printfDebug("Charger: ISA %ld mV vs pack %lu mV (tol %d%%) -> nao arranca\r\n", IVT_GetPackVoltageCan2_mV(), g_pack_voltage_sum_mV, CHARGER_BUS_VOLTAGE_TOL_PCT);
+				Charger_SendRequest(false);
+				Precharge_ForceKill();
+				charge_state = CHARGER_ST_DONE;
+				break;
+			}
+
+			printfDebug("Charger: HV_ON confirmed -> control=1 for 5 s\r\n");
+			Charger_SendRequest(false);
+			prestart_stop_start_ms = now;
+			last_charger_command_ms = now;
+			charge_state = CHARGER_ST_PRESTART_STOP;
+		}
+		break;
+
+	case CHARGER_ST_PRESTART_STOP:
+		// Keep the charger stopped for 5 s before changing control from 1 to 0.
+		if (Precharge_GetState() != HV_ON) {
+			printfDebug("Charger: lost HV_ON during pre-start delay\r\n");
+			Charger_SendRequest(false);
+			charge_state = CHARGER_ST_WAIT_HV;
+			break;
+		}
+
+		if ((now - prestart_stop_start_ms) >= CHARGER_PRESTART_STOP_MS) {
+			printfDebug("Charger: pre-start delay done -> control=0, start charging\r\n");
+			Charger_SendRequest(true);
+			last_charger_command_ms = now;
+			charge_state = CHARGER_ST_CHARGING;
+		} else if ((now - last_charger_command_ms) >= CHARGER_COMMAND_PERIOD_MS) {
+			Charger_SendRequest(false);
+			last_charger_command_ms = now;
+		}
+		break;
+
+	case CHARGER_ST_CHARGING:
+
+		// SDC aberto (PC7 LOW) -> mandar Control=1 JA. Os contactores ja
+		// cairam por hardware, mas o Precharge_GetState() so da por isso
+		// segundos depois; ate la o carregador continuaria a receber
+		// Control=0 e a tentar empurrar corrente para um circuito aberto
+		if (HAL_GPIO_ReadPin(MCU_SDC_FB_GPIO_Port, MCU_SDC_FB_Pin) == GPIO_PIN_RESET) {
+			printfDebug("Charger: SDC open -> charge STOP\r\n");
+			Charger_SendRequest(false);
+			Precharge_ForceKill();
+			charge_state = CHARGER_ST_DONE;
+			break;
+		}
+
+		// ISA do CAN2 calada -> o corte de corrente fica cego (ficaria a ler
+		// o ultimo valor para sempre), por isso parar a carga
+		if (IVT_GetLastRxAgeMsCan2() > CHARGER_ISA_TIMEOUT_MS) {
+			printfDebug("Charger: ISA CAN2 timeout -> charge CUT\r\n");
+			Charger_SendRequest(false);
+			Precharge_ForceKill();
+			charge_state = CHARGER_ST_DONE;
+			break;
+		}
+
+		// HV dropped on its own (precharge fault) -> stop asking for charge
+		if (Precharge_GetState() != HV_ON) {
+			printfDebug("Charger: lost HV_ON -> charging paused\r\n");
+			Charger_SendRequest(false);
+			charge_state = CHARGER_ST_WAIT_HV;
+			break;
+		}
+
+		// highest cell reached the target -> normal end of charge
+		if (g_pack_vmax_mV >= CHARGER_CELL_TARGET_MV) {
+			printfDebug("Charger: cell at %u mV (target %u) -> charge complete\r\n", g_pack_vmax_mV, CHARGER_CELL_TARGET_MV);
+			Charger_SendRequest(false);
+			stop_settle_start_ms = now;
+			charge_state = CHARGER_ST_STOPPING;
+			break;
+		}
+
+		// pack too hot -> cut everything now
+		if (g_pack_tmax_cC >= CHARGER_MAX_TEMP_cC) {
+			printfDebug("Charger: pack at %d cC (limit %d) -> charge CUT\r\n", g_pack_tmax_cC, CHARGER_MAX_TEMP_cC);
+			Charger_SendRequest(false);
+			Precharge_ForceKill();
+			charge_state = CHARGER_ST_DONE;
+			break;
+		}
+
+		// charging current too high. Corrente de carga = ISA do handcart
+		// (CAN2); a do pack (CAN1) nao ve a corrente de carregamento
+		int32_t ivt_mA = IVT_GetCurrentCan2_mA();
+		if (ivt_mA < 0)
+			ivt_mA = -ivt_mA;
+
+		if (ivt_mA > CHARGER_MAX_CURRENT_CUT_mA) {
+			printfDebug("Charger: ISA at %ld mA (limit %d) -> charge CUT\r\n", ivt_mA, CHARGER_MAX_CURRENT_CUT_mA);
+			Charger_SendRequest(false);
+			Precharge_ForceKill();
+			charge_state = CHARGER_ST_DONE;
+			break;
+		}
+
+		// charger went quiet (was talking, nothing for 3s) -> cut
+		if (charger_status_valid && !Charger_HasStatus()) {
+			printfDebug("Charger: status timeout -> charge CUT\r\n");
+			Charger_SendRequest(false);
+			Precharge_ForceKill();
+			charge_state = CHARGER_ST_DONE;
+			break;
+		}
+
+		// charger reporting a fault on its side -> cut
+		if (Charger_HasStatus() && (last_charger_status.hw_failure || last_charger_status.temp_otp || last_charger_status.input_voltage_fault || last_charger_status.starting_state_fault)) {
+			printfDebug("Charger: fault flags hw:%u otp:%u vin:%u start:%u -> charge CUT\r\n", last_charger_status.hw_failure, last_charger_status.temp_otp, last_charger_status.input_voltage_fault, last_charger_status.starting_state_fault);
+			Charger_SendRequest(false);
+			Precharge_ForceKill();
+			charge_state = CHARGER_ST_DONE;
+			break;
+		}
+
+		//loop message for charger
+		if ((now - last_charger_command_ms) >= CHARGER_COMMAND_PERIOD_MS) {
+			Charger_SendRequest(true);
+			last_charger_command_ms = now;
+		}
+		break;
+
+	case CHARGER_ST_STOPPING:
+		// let the current die down before opening the contactors
+		if (Charger_SettleDone(now)) {
+			Precharge_ForceKill();
+			printfDebug("Charger: contactors open, charge finished\r\n");
+			charge_state = CHARGER_ST_DONE;
+		}
+		break;
+
+	case CHARGER_ST_DONE:
+		// latched: even if the voltage sags below the target we do not
+		// restart, only a new request from the Handcart resets the sequence
+		break;
+
+	default:
+		charge_state = CHARGER_ST_WAIT_HV;
+		break;
+	}
+}
+
+void Charger_Stop(void) {
+
+	Charger_SendRequest(false);
+	last_charger_command_ms = HAL_GetTick();
+
+	charge_state = CHARGER_ST_WAIT_HV;
+
+	MCP23017_LED(LED_CHARGING_STATUS, OFF);
+
+	AMS_State = IDLE;
+}
+
+void Charger_SendRequest(bool enable) {
+	uint8_t data[8];
+	int len;
+
+	struct handcart_t26_bms_charging_request_p1000_t msg;
+	handcart_t26_bms_charging_request_p1000_init(&msg);
+
+	msg.max_charging_voltage = requested_voltage_raw;
+	msg.max_charging_current = requested_current_raw;
+
+	// Polaridade indicada pelo datasheet: 0 = charge, 1 = stop.
+	if (enable != false) {
+		msg.control = 0;
+	} else {
+		msg.control = 1;
+	}
+
+	len = handcart_t26_bms_charging_request_p1000_pack(data, &msg, sizeof(data));
+	if (len < 0) {
+		return;
+	}
+
+	CAN_TX_Add_Extended_To_Queue(&hcan2, HANDCART_T26_BMS_CHARGING_REQUEST_P1000_FRAME_ID, (uint8_t) len, data);
+}
+
+bool Charger_IsRequestedCurrentOK(void) {
+	//TODO: ASK ISA CURRENT CHECKKKK
+	return true;
+}
+
+uint8_t Charger_IsRequested(void) {
+	return charger_is_requested;
+}
+
+/* idade do ultimo 0x084; 0xFFFFFFFF = handcart nunca visto desde o boot */
+uint32_t Charger_GetSwitchFeedbackAgeMs(void) {
+
+	if (handcart_feedback_seen == 0) {
+		return 0xFFFFFFFFu;
+	}
+
+	return HAL_GetTick() - last_switch_feedback_ms;
+}
+
+uint16_t Charger_GetRequestedCurrentRaw(void) {
+	return requested_current_raw;
+}
+
+uint8_t Charger_HasStatus(void) {
+    uint32_t now = HAL_GetTick();
+
+    if (charger_status_valid == 0) {
+        return 0;
+    }
+
+    if ((now - last_charger_status_ms) > CHARGER_STATUS_TIMEOUT_MS) {
+        return 0;
+    }
+
+    return 1;
+}
+
