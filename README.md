@@ -32,41 +32,6 @@ The project reads cell voltages, temperatures, current sensor data and contactor
 - Watchdog reset detection
 - CAN bootloader jump command
 
-## Important firmware modules
-
-| File | Purpose |
-| --- | --- |
-| `main.c` | STM32 HAL startup and peripheral initialization |
-| `brain.c` | Main BMS state machine |
-| `adBms_Application.c` | ADBMS6830 measurement and balancing flow |
-| `adbms_to_CAN.c` | Sends slave voltage, temperature and status data over CAN |
-| `master_to_CAN.c` | Sends master board status, faults and contactor data over CAN |
-| `precharge.c` | Controls the precharge sequence and contactors |
-| `contactors.c` | Simple open / close functions for contactors |
-| `cell_balancing.c` | Passive balancing logic |
-| `analog_readings.c` | ADC + DMA readings for MCU temperature, VREF and on board current sensor |
-| `isa_ivt-s.c` | IVT-S CAN sensor configuration and decoding |
-| `soc.c` | SOC estimation |
-| `fault_manager.c` | Fault storage, history and CAN fault reporting |
-| `can.c` | CAN RX callbacks and TX queue |
-| `fan_management.c` | Temperature-based PWM fan control |
-| `bms_eeprom_config.c` | EEPROM configuration storage |
-| `bootloader_jumper.c` | Jump to STM32 system bootloader over CAN command |
-| `uartDMA.c` | UART debug / UI output using DMA |
-
-## BMS states
-
-The main state machine is defined in `brain.h`:
-
-```c
-BALANCING
-CHARGING
-IDLE
-ONMISSION
-STARTUP
-FAULT
-```
-
 ## Basic firmware flow
 
 1. `main.c` initializes the STM32 peripherals.
@@ -77,7 +42,7 @@ FAULT
 
 ## CAN communication
 
-The firmware uses the `powertrain_t26.dbc` file.
+The firmware uses the `powertrain_t26.dbc` and `handcart_t26.dbc` files.
 
 CAN is used for:
 
@@ -91,30 +56,16 @@ CAN is used for:
 - Cell balancing commands
 - Bootloader jump command
 
-## Precharge sequence
-
-The precharge module controls the high-voltage startup sequence:
-
-1. Open all contactors
-2. Close AIR-
-3. Close precharge contactor
-4. Check current and bus voltage
-5. Close AIR+
-6. Open precharge contactor
-7. Keep checking contactor feedback
-
-If something is wrong, the firmware opens the contactors and enters a safe state.
-
 ## Cell balancing
 
 Balancing is passive and controlled through the ADBMS6830 discharge outputs.
 
 The firmware:
 
-- Finds the lowest valid cell voltage in the pack
+- Finds the lowest valid cell voltage in the Accumulator
 - Compares every cell against that minimum
 - Enables discharge on cells that are too high
-- Stops balancing when the cells are inside the configured deadband
+- Stops balancing when the cells are inside the configured delta
 
 ## Fault handling
 
@@ -128,7 +79,7 @@ The fault manager tracks active faults and stores context such as:
 - CAN channel
 - Contactor mismatch bits
 
-Faults are also sent over CAN so they can be shown in the dashboard.
+Faults are also sent over CAN.
 
 ## Build target
 
