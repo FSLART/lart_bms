@@ -716,7 +716,9 @@ void CAN_CheckBothSoftwareQueuesFull(void)
 	uint8_t can1_full = CanTx_IsFull(&can1TxQueue);
 	uint8_t can2_full = CanTx_IsFull(&can2TxQueue);
 
-	if (can1_full && can2_full) {
+	/* AMS_ERR_SRC_CAN_QUEUE_FULL=0: nunca entra no ramo do Trigger, e
+	 * queues_full_active fica a 0 logo o Clear tambem nao corre */
+	if (AMS_ERR_SRC_CAN_QUEUE_FULL && can1_full && can2_full) {
 		if (both_full_since_ms == 0) {
 			both_full_since_ms = HAL_GetTick();
 		}

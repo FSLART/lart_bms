@@ -1524,7 +1524,9 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 				// seguranca primeiro, log depois: o printfDebug formata 256
 				// bytes por chamada e pode ser chamado 144x por ciclo
 				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_mV);
-				AMS_Error_Trigger();
+				if (AMS_ERR_SRC_OPENWIRE) {
+					AMS_Error_Trigger();
+				}
 				printfDebug("OW FAULT: IC%u Cell%u (%ldmV)\r\n", slave + 1, cell + 1, voltage_mV);
 
 				// fio de sense partido -> marca OW presente (AMS_ERROR
@@ -1535,7 +1537,9 @@ void adBms6830_evaluate_cell_open_wire(uint8_t tIC, cell_asic *ic) {
 
 				ic[slave].diag_result.cell_ow[cell] = 1;
 				RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = slave + 1, .cell_idx = cell + 1, .measured_value = (float )voltage_delta);
-				AMS_Error_Trigger();
+				if (AMS_ERR_SRC_OPENWIRE) {
+					AMS_Error_Trigger();
+				}
 				printfDebug("OW FAULT: IC%u Cell%u DELTA(%ldmV)\r\n", slave + 1, cell + 1, voltage_delta);
 
 				ow_found = 1;
@@ -1671,7 +1675,9 @@ void adBms6830_evaluate_aux_open_wire(uint8_t tIC, cell_asic *ic) {
 				ic[slave].diag_result.aux_ow[gpio] = 1;
 				// seguranca primeiro, log depois
 				RAISE_ERROR(FAULT_OW_DETECTED_RTH, .slave_idx = slave + 1, .channel_idx = gpio + 1, .channel_mask = (uint16_t)(1U << (gpio + 1)), .measured_value = (float )pdown);
-				AMS_Error_Trigger();
+				if (AMS_ERR_SRC_OPENWIRE) {
+					AMS_Error_Trigger();
+				}
 				printfDebug("AUX OW FAULT: IC%u GPIO%u diff (%ldmV) \r\n", slave + 1, gpio + 1, pdown);
 
 				// NTC sem fio -> marca OW presente (canais desativados ja
@@ -1694,7 +1700,9 @@ static void adBms6830_OpenWire_UpdateAmsError(void) {
 
 	static uint8_t ow_active = 0;
 
-	uint8_t ow_now = (cell_ow_present || aux_ow_present) ? 1 : 0;
+	/* com AMS_ERR_SRC_OPENWIRE=0 fica sempre 0: nem o Trigger nem o Clear de
+	 * borda correm, para nao apagarem um AMS_ERROR posto por outra fonte */
+	uint8_t ow_now = (AMS_ERR_SRC_OPENWIRE && (cell_ow_present || aux_ow_present)) ? 1 : 0;
 
 	if (ow_now != 0) {
 		AMS_Error_Trigger();
@@ -1810,7 +1818,9 @@ uint8_t adBms6830_daisychain_device_counter(void) {
 
 		// menos slaves que o esperado = medicoes em falta -> linha AMS_ERROR
 		// vai a erro e fica latched (nada no loop volta a por OK sozinho)
-		AMS_Error_Trigger();
+		if (AMS_ERR_SRC_SLAVE_COUNT) {
+			AMS_Error_Trigger();
+		}
 
 		MCP23017_LED(LED_ISOSPI, ON);
 	}

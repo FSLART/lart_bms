@@ -300,7 +300,9 @@ void Precharge_Update(void) {
 			// o latch PCB externo e' quem mantem o veiculo em erro ate
 			// ao reset manual, este flag so segue a condicao real)
 			printfDebug("Precharge: contactor mismatch in HV_ON -> AMS_ERROR\r\n");
-			AMS_Error_Trigger();
+			if (AMS_ERR_SRC_CONTACTOR_MISMATCH) {
+				AMS_Error_Trigger();
+			}
 			state = KILL;
 		}
 
@@ -312,7 +314,9 @@ void Precharge_Update(void) {
 		// qualquer falha da sequencia aterra aqui = mismatch de contactor
 		// (clearable, ver nota acima)
 		printfDebug("Precharge: contactor mismatch (WRONG) -> AMS_ERROR\r\n");
-		AMS_Error_Trigger();
+		if (AMS_ERR_SRC_CONTACTOR_MISMATCH) {
+			AMS_Error_Trigger();
+		}
 		state = KILL;
 		break;
 
@@ -321,7 +325,7 @@ void Precharge_Update(void) {
 
 		// contactores confirmados todos abertos -> a condicao que gerou
 		// o mismatch deixou de existir, pode limpar o AMS_ERROR clearable
-		if (IsTheStateOK(OPEN_ALL)) {
+		if (AMS_ERR_SRC_CONTACTOR_MISMATCH && IsTheStateOK(OPEN_ALL)) {
 			AMS_Error_Clear();
 		}
 		break;

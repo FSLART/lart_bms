@@ -24,7 +24,7 @@
  * para perto de 0. Deteta OW muito mais depressa que as fases dedicadas do
  * ADBMS (7 fases x 50ms = 350ms+), porque a tensao e lida em todos os ciclos */
 #define SAFETY_CELL_OW_V   2.30
-#define SAFETY_CELL_OT_C   50.0
+#define SAFETY_CELL_OT_C   60.0
 
 //Cache for the delta, since it is in another message grouped with other adbms stuff
 int s_module_voltage_delta[12];
@@ -78,19 +78,22 @@ void BMS_SafetyCheck(void) {
 				 * que em valor absoluto vira 3.4V e nao dispara UV fantasma */
 				cell_v = fabsf(cell_v);
 
+				/* RAISE_ERROR continua a correr sempre: o fault fica visivel
+				 * no fault manager, no CAN e no dashboard. So a ligacao a
+				 * linha AMS_ERROR e' que segue o switch de ams_error.h */
 				if (cell_v > SAFETY_CELL_OV_V) {
 					RAISE_ERROR(FAULT_OVERVOLTAGE, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_OV_V);
-					ovuvot_fault_now = 1;
+					ovuvot_fault_now |= AMS_ERR_SRC_OVERVOLTAGE;
 				}
 
 				// colapsada = fio de sense partido, nao subtensao real
 				if (cell_v < SAFETY_CELL_OW_V) {
 					RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_OW_V);
-					ovuvot_fault_now = 1;
+					ovuvot_fault_now |= AMS_ERR_SRC_OPENWIRE;
 
 				} else if (cell_v < SAFETY_CELL_UV_V) {
 					RAISE_ERROR(FAULT_UNDERVOLTAGE, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_UV_V);
-					ovuvot_fault_now = 1;
+					ovuvot_fault_now |= AMS_ERR_SRC_UNDERVOLTAGE;
 				}
 			}
 		}
@@ -121,7 +124,7 @@ void BMS_SafetyCheck(void) {
 
 				if (cell_t >= SAFETY_CELL_OT_C) {
 					RAISE_ERROR(FAULT_OVERTEMPERATURE, .slave_idx = module + 1, .channel_idx = ntc + 1, .measured_value = cell_t, .threshold_value = SAFETY_CELL_OT_C);
-					ovuvot_fault_now = 1;
+					ovuvot_fault_now |= AMS_ERR_SRC_OVERTEMPERATURE;
 				}
 			}
 		}
@@ -149,7 +152,9 @@ void BMS_SafetyCheck(void) {
 	 * posto por outra fonte */
 	static uint8_t pec_flood = 0;
 
-	uint8_t pec_flood_now = (pec_error_devices > (slaves_found / 4)) ? 1 : 0;
+	/* com AMS_ERR_SRC_PEC_FLOOD=0 fica sempre 0: nem o Trigger nem o Clear
+	 * de borda chegam a correr, para nao apagarem um AMS_ERROR de outra fonte */
+	uint8_t pec_flood_now = (AMS_ERR_SRC_PEC_FLOOD && (pec_error_devices > (slaves_found / 4))) ? 1 : 0;
 
 	if (pec_flood_now != 0) {
 		AMS_Error_Trigger();

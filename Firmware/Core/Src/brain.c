@@ -74,7 +74,9 @@ static void SensorTimeouts_Check(void) {
 	static uint8_t isa_dead = 0;
 	static uint8_t handcart_dead = 0;
 
-	uint8_t isa_dead_now = (IVT_GetLastRxAgeMs() > ISA_TIMEOUT_MS) ? 1 : 0;
+	/* com AMS_ERR_SRC_ISA_TIMEOUT=0 fica sempre 0: nem o Trigger nem o Clear
+	 * de borda correm, para nao apagarem um AMS_ERROR de outra fonte */
+	uint8_t isa_dead_now = (AMS_ERR_SRC_ISA_TIMEOUT && (IVT_GetLastRxAgeMs() > ISA_TIMEOUT_MS)) ? 1 : 0;
 
 	if (isa_dead_now != 0) {
 		AMS_Error_Trigger();
@@ -86,7 +88,8 @@ static void SensorTimeouts_Check(void) {
 
 	uint8_t handcart_dead_now = 0;
 
-	if (AMS_Current_State == CHARGING) {
+	/* idem: AMS_ERR_SRC_HANDCART_TIMEOUT=0 mantem handcart_dead_now a 0 */
+	if (AMS_ERR_SRC_HANDCART_TIMEOUT && (AMS_Current_State == CHARGING)) {
 
 		uint32_t age = Charger_GetSwitchFeedbackAgeMs();
 
