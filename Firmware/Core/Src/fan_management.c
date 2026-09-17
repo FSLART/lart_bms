@@ -56,7 +56,7 @@ void Fan_Start(void) {
 
 // Histerese: ventoinha liga acima de fan_table[0] e só desliga
 // FAN_HYSTERESIS_C abaixo, para não oscilar com a temperatura no limite
-#define FAN_HYSTERESIS_C 5.0f
+#define FAN_HYSTERESIS_C 2.0f
 
 static uint8_t fan_on = 0;
 
@@ -105,7 +105,7 @@ void Fan_Update(void)
 	// Histerese on/off
 	if (fan_on)
 	{
-		// Só desliga quando descer 5ºC abaixo do limiar de arranque
+		// Só desliga quando descer FAN_HYSTERESIS_C abaixo do limiar de arranque
 		if (temperature <= (fan_table[0].temperature - FAN_HYSTERESIS_C))
 		{
 			fan_on = 0;

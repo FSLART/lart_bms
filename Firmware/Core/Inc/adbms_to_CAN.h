@@ -22,7 +22,10 @@ HAL_StatusTypeDef ADBMS_CAN_Send_Master_MSC_3(CAN_HandleTypeDef *hcan);
 HAL_StatusTypeDef ADBMS_CAN_SendMSC_Module(CAN_HandleTypeDef *hcan, uint8_t module);
 HAL_StatusTypeDef ADBMS_CAN_SendVoltages_Module(CAN_HandleTypeDef *hcan, uint8_t module, AMSStates_t ams_current_state);
 HAL_StatusTypeDef ADBMS_CAN_SendTemperatures_Module(CAN_HandleTypeDef *hcan, uint8_t module);
-HAL_StatusTypeDef ADBMS_CAN_SendAll(CAN_HandleTypeDef *hcan, AMSStates_t ams_current_state);
+/* send_slave_frames = 0 -> salta as 7 tramas por modulo (84 com 12 slaves) e
+ * envia so o Master_MSC_3. Os agregados do pack e a ventoinha continuam a ser
+ * actualizados, porque quem os calcula e' o proprio Master_MSC_3. */
+HAL_StatusTypeDef ADBMS_CAN_SendAll(CAN_HandleTypeDef *hcan, AMSStates_t ams_current_state, uint8_t send_slave_frames);
 
 /* Pack-level overalls cached by ADBMS_CAN_Send_Master_MSC_3, for live debug */
 extern uint16_t g_pack_vmax_mV;
