@@ -33,10 +33,10 @@ extern CAN_HandleTypeDef hcan2;
 #define CHARGER_MAX_VOLTAGE_V 600  // 144s: o corte real e a celula mais alta
                                    // chegar aos 4.15V (600/144 = 4.17V/cel,
                                    // por isso e sempre o BMS que corta primeiro)
-#define CHARGER_MAX_CURRENT_A 6   // 600V @ 6A (maximo do modelo 650-6)
+#define CHARGER_MAX_CURRENT_A 6   // 600V @ A
 
 //charging protection limits
-#define CHARGER_CELL_TARGET_MV      4150   // stop charging when highest cell gets here
+#define CHARGER_CELL_TARGET_MV      4250   // stop charging when highest cell gets here
                                            // (abaixo dos 4.20V do OV permanente, para a
                                            // carga completa nunca tocar na protecao)
 #define CHARGER_MAX_TEMP_cC         6000   // 60.00 C, g_pack_tmax_cC is in centi-degrees
@@ -131,7 +131,7 @@ void Charger_CAN_Requests_RX(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 
 			AMS_State = CHARGING;
 
-			MCP23017_LED(LED_CHARGING_STATUS, ON);
+			//MCP23017_LED(LED_CHARGING_STATUS, ON);
 
 			printfDebug("Handcart switch ON -> AMS_State = CHARGING\r\n");
 

@@ -24,7 +24,7 @@
  * para perto de 0. Deteta OW muito mais depressa que as fases dedicadas do
  * ADBMS (7 fases x 50ms = 350ms+), porque a tensao e lida em todos os ciclos */
 #define SAFETY_CELL_OW_V   2.30
-#define SAFETY_CELL_OT_C   60.0
+#define SAFETY_CELL_OT_C   65.0
 
 //Cache for the delta, since it is in another message grouped with other adbms stuff
 int s_module_voltage_delta[12];
@@ -89,7 +89,7 @@ void BMS_SafetyCheck(void) {
 				// colapsada = fio de sense partido, nao subtensao real
 				if (cell_v < SAFETY_CELL_OW_V) {
 					RAISE_ERROR(FAULT_OW_DETECTED_CELL, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_OW_V);
-					ovuvot_fault_now |= AMS_ERR_SRC_OPENWIRE;
+					ovuvot_fault_now = 1;
 
 				} else if (cell_v < SAFETY_CELL_UV_V) {
 					RAISE_ERROR(FAULT_UNDERVOLTAGE, .slave_idx = module + 1, .cell_idx = cell + 1, .measured_value = cell_v, .threshold_value = SAFETY_CELL_UV_V);
@@ -176,17 +176,33 @@ HAL_StatusTypeDef Slaves_CAN_SendMessage(CAN_HandleTypeDef *hcan, uint32_t canID
 	return CAN_TX_Add_To_Queue(hcan, canID, (uint8_t) dataLength, TxData);
 }
 
-HAL_StatusTypeDef ADBMS_CAN_SendAll(CAN_HandleTypeDef *hcan, AMSStates_t ams_current_state) {
-	for (uint8_t slave = 0; slave < slaves_found && slave < 12; slave++) {
+HAL_StatusTypeDef ADBMS_CAN_SendAll(CAN_HandleTypeDef *hcan, AMSStates_t ams_current_state, uint8_t send_slave_frames) {
 
-		if (ADBMS_CAN_SendVoltages_Module(hcan, slave, ams_current_state) != HAL_OK)
-			return HAL_ERROR;
+	/* As tramas por slave sao 7 por modulo (4 de tensoes + 2 de temperaturas +
+	 * 1 de MSC), ou seja 84 por ciclo com 12 slaves. Em HV_ON isso enche o
+	 * barramento do carro sem necessidade.
+	 *
+	 * Saltar isto NAO perde processamento: o Master_MSC_3 la em baixo percorre
+	 * o SLAVE[] com os seus proprios loops e e' ele que actualiza os agregados
+	 * (g_pack_vmax/vmin/tmax/tmin/voltage_sum) e chama o
+	 * Update_Fan_Temperature(). O BMS_SafetyCheck tambem le o SLAVE[] direto.
+	 *
+	 * O unico acoplamento e' interno ao trio: o SendVoltages_Module escreve o
+	 * s_module_voltage_delta[] e o SendMSC_Module le-o. Por isso saltam-se os
+	 * tres em conjunto, nunca so um deles. */
+	if (send_slave_frames != 0) {
 
-		if (ADBMS_CAN_SendTemperatures_Module(hcan, slave) != HAL_OK)
-			return HAL_ERROR;
+		for (uint8_t slave = 0; slave < slaves_found && slave < 12; slave++) {
 
-		if (ADBMS_CAN_SendMSC_Module(hcan, slave) != HAL_OK)
-			return HAL_ERROR;
+			if (ADBMS_CAN_SendVoltages_Module(hcan, slave, ams_current_state) != HAL_OK)
+				return HAL_ERROR;
+
+			if (ADBMS_CAN_SendTemperatures_Module(hcan, slave) != HAL_OK)
+				return HAL_ERROR;
+
+			if (ADBMS_CAN_SendMSC_Module(hcan, slave) != HAL_OK)
+				return HAL_ERROR;
+		}
 	}
 
 	// Está ca fora pq tem que ir pelos tdos os slaves para realemnte encontrar o maximo e o minimo antes de enviar a mensagem CAN

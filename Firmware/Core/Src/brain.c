@@ -74,8 +74,10 @@ static void SensorTimeouts_Check(void) {
 	static uint8_t isa_dead = 0;
 	static uint8_t handcart_dead = 0;
 
-	/* com AMS_ERR_SRC_ISA_TIMEOUT=0 fica sempre 0: nem o Trigger nem o Clear
-	 * de borda correm, para nao apagarem um AMS_ERROR de outra fonte */
+	/* AMS_ERR_SRC_ISA_TIMEOUT=0 -> fica sempre 0, logo nem o Trigger nem o
+	 * Clear de borda chegam a correr. O Clear tinha de morrer tambem: senao
+	 * apagava um AMS_ERROR posto por outra fonte (sobretensao, OT) na
+	 * transicao morto->vivo da ISA */
 	uint8_t isa_dead_now = (AMS_ERR_SRC_ISA_TIMEOUT && (IVT_GetLastRxAgeMs() > ISA_TIMEOUT_MS)) ? 1 : 0;
 
 	if (isa_dead_now != 0) {
@@ -88,7 +90,7 @@ static void SensorTimeouts_Check(void) {
 
 	uint8_t handcart_dead_now = 0;
 
-	/* idem: AMS_ERR_SRC_HANDCART_TIMEOUT=0 mantem handcart_dead_now a 0 */
+	/* idem para o handcart: AMS_ERR_SRC_HANDCART_TIMEOUT=0 mantem a flag a 0 */
 	if (AMS_ERR_SRC_HANDCART_TIMEOUT && (AMS_Current_State == CHARGING)) {
 
 		uint32_t age = Charger_GetSwitchFeedbackAgeMs();
@@ -332,19 +334,35 @@ void brain_loop(void) {
 		//IVT_FAULT_CHECK();
 		//funcao_de_merda_pq_eu_errei_o_pinout_do_sensor_de_corrente();
 		//bms_openWireCheck(&ow_status);
-		ADBMS_CAN_SendAll(&hcan1, AMS_Current_State);
+		/* Em HV_ON o carro nao precisa das 84 tramas por ciclo dos slaves: o
+		 * que interessa vai no Master_MSC_3 e no Master_CAN_SendAll. Isto so
+		 * corta o ENVIO -- os agregados do pack, a ventoinha e o
+		 * BMS_SafetyCheck continuam a ser calculados na mesma */
+		uint8_t send_slave_frames = (Precharge_GetState() != HV_ON) ? 1U : 0U;
+
+		ADBMS_CAN_SendAll(&hcan1, AMS_Current_State, send_slave_frames);
 		//AnalogReadings_CAN_Send(&hcan1);
 		Master_CAN_SendAll(&hcan1);
 
 		// repetir a telemetria toda no CAN2 para o handcart/carregador
 		// tambem verem tensoes/temperaturas (IDs 0x600-0x706, sem conflito
 		// com nada que viva no barramento do carregador).
-		// SO durante o carregamento: no carro o CAN2 nao tem nenhum no, logo
-		// ninguem daria ACK, as mailboxes ficariam presas e a fila do CAN2
-		// enchia para sempre - o que fazia o check das duas filas cheias
-		// degenerar em "so o CAN1" e disparar AMS_ERROR sem motivo
-		if (AMS_Current_State == CHARGING) {
-			ADBMS_CAN_SendAll(&hcan2, AMS_Current_State);
+		//
+		// O gate e' a PRESENCA do handcart, nao o estado do AMS: o 0x084 chega
+		// a cada 100ms e prova que ha um no no barramento a ouvir e a dar ACK.
+		// Assim a telemetria sai em IDLE e em BALANCING, e nao so em CHARGING.
+		// No carro o CAN2 esta vazio: a idade cresce, nao se transmite nada, e
+		// evita-se o problema original - sem ACK as mailboxes ficavam presas, a
+		// fila do CAN2 enchia para sempre, e o check das duas filas cheias
+		// degenerava em "so o CAN1" e disparava AMS_ERROR sem motivo.
+		//
+		// O timestamp do 0x084 e' carimbado por qualquer trama valida, com o
+		// interruptor ligado ou desligado (charger.c), logo isto mede mesmo
+		// presenca e nao pedido de carga. Se nunca chegou nenhuma, o getter
+		// devolve 0xFFFFFFFF e a comparacao falha sozinha.
+		if (Charger_GetSwitchFeedbackAgeMs() < SENSOR_TIMEOUT_MS) {
+			/* o handcart quer a telemetria toda, incluindo por slave */
+			ADBMS_CAN_SendAll(&hcan2, AMS_Current_State, 1U);
 			Master_CAN_SendAll(&hcan2);
 		}
 		//FaultManager_CAN_Send(&hcan1);
