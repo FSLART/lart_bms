@@ -39,6 +39,9 @@ extern uint16_t global_min_mV;
 /* Fase interna do ciclo de balanceamento (BAL_CYCLE_*), para live debug */
 uint8_t Balancing_GetPhase(void);
 
+/* Ultima mascara DCC calculada do slave (0-based), 0 fora do balanceamento */
+uint16_t Balancing_GetMask(uint8_t module);
+
 void app_main(void);
 void run_command(int cmd);
 void adBms6830_idle_readings(uint8_t tIC, cell_asic *ic);

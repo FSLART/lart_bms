@@ -9,9 +9,6 @@
 #include <string.h>
 
 #include "uartDMA.h"
-#include "can.h"
-#include "brain.h"
-#include "dbc/powertrain_t26.h"
 #include "adBms_Application.h"
 
 
@@ -23,7 +20,8 @@ void Balance_InitDefaultConfig(balance_config_t *cfg) {
 	cfg->min_rough_balacing_mV = 100;  //minimum volts to start a rough balacing, of only high volts cells comapred to minimum cell
 	cfg->deadband_mV = 8; // a deadband é a variação que se ignora, devido as oscilações imprevíosivies na leitua dos adcs
 	cfg->min_cell_mV = 3000; //proteger célulass danificadas, ignorar balanceamento em células abaixo deste valor
-	cfg->max_cell_mV = 4250; //sanity check, acima desta tensão considerar unsafe o balanceamento
+	cfg->max_cell_mV = 4400; //sanity check: acima disto e leitura impossivel/lixo, nao balancear (celulas sobrecarregadas ate aqui descarregam)
+	cfg->start_delta_mV = 30; //auto-arranque com max-min > 30mV; acaba na deadband (8mV) -> histerese
 	cfg->use_filtered_cells = false; //utlizar canal de leitura com filtro digital interno do adbms6830, NOT WORKINGGGGGG
 
 	/*
@@ -62,6 +60,12 @@ uint16_t BatteryPack_FindMinVoltageGlobally(const cell_asic *ic_array, uint8_t t
 	bool valid_found = false;
 
 	for (uint8_t m = 0; m < total_ic; m++) {
+
+		// PEC mau nesta leitura = codes lixo: fora ate' ler limpo outra vez
+		if (ic_array[m].cccrc.acell_pec != 0) {
+			continue;
+		}
+
 		for (uint8_t i = 0; i < BALANCING_CELL_COUNT; i++) {
 			/* Registos de média (RDAC): são estes que o ciclo de balanceamento
 			 * refresca em BAL_CYCLE_READ_AVG; c_codes ficam obsoletos em BALANCING */
@@ -85,6 +89,37 @@ uint16_t BatteryPack_FindMinVoltageGlobally(const cell_asic *ic_array, uint8_t t
 	return global_min_mV;
 }
 
+/* Auto-arranque: ha trabalho se a celula mais alta estiver mais de
+ * start_delta_mV acima da mais baixa. Mesmos registos e mesma janela de
+ * validade que o resto do balanceamento */
+bool BatteryPack_NeedsBalancing(const cell_asic *ic_array, uint8_t total_ic, const balance_config_t *cfg) {
+
+	uint16_t min_mV = BatteryPack_FindMinVoltageGlobally(ic_array, total_ic, cfg);
+
+	if (min_mV == 0xFFFF) {
+		return false;
+	}
+
+	uint16_t max_mV = 0;
+
+	for (uint8_t m = 0; m < total_ic; m++) {
+
+		if (ic_array[m].cccrc.acell_pec != 0) {
+			continue;
+		}
+
+		for (uint8_t i = 0; i < BALANCING_CELL_COUNT; i++) {
+			uint16_t cell_mV = cell_code_to_mV(ic_array[m].acell.ac_codes[i]);
+
+			if ((cell_mV <= cfg->max_cell_mV) && (cell_mV > max_mV)) {
+				max_mV = cell_mV;
+			}
+		}
+	}
+
+	return (max_mV - min_mV) > cfg->start_delta_mV;
+}
+
 balance_stage_t BatteryPack_DetermineBalanceStage(const cell_asic *ic_array, uint8_t total_ic, const balance_config_t *cfg, uint16_t global_min_mV) {
 
 	if ((ic_array == 0) || (cfg == 0) || (global_min_mV == 0) || (total_ic == 0U)) {
@@ -99,8 +134,15 @@ balance_stage_t BatteryPack_DetermineBalanceStage(const cell_asic *ic_array, uin
 
 	bool any_above_deadband = false;
 	bool any_above_rough = false;
+	bool any_pec_skipped = false;
 
 	for (uint8_t m = 0; m < total_ic; m++) {
+
+		if (ic_array[m].cccrc.acell_pec != 0) {
+			any_pec_skipped = true;
+			continue;
+		}
+
 		for (uint8_t i = 0; i < BALANCING_CELL_COUNT; i++) {
 			int16_t code = ic_array[m].acell.ac_codes[i];
 			uint16_t cell_mV = cell_code_to_mV(code);
@@ -133,6 +175,14 @@ balance_stage_t BatteryPack_DetermineBalanceStage(const cell_asic *ic_array, uin
 		return BALANCE_STAGE_FINE;
 	}
 
+	/* Os slaves visiveis ja' convergiram mas ha' um com PEC mau neste ciclo:
+	 * nao dar a sessao por acabada, esperar que volte a ler limpo.
+	 * ponytail: slave com PEC mau para sempre mantem a sessao aberta (mascaras
+	 * a 0, OW e SafetyCheck continuam); a precarga termina-a na mesma */
+	if (any_pec_skipped) {
+		return BALANCE_STAGE_FINE;
+	}
+
 	return BALANCE_END;
 }
 
@@ -146,6 +196,12 @@ void Balance_ComputeModule(const cell_asic *ic, const balance_config_t *cfg, bal
 	//Limpa o output, para garantir que n ter valores random
 	//ong chat pela dica
 	memset(out, 0, sizeof(*out));
+
+	// PEC mau: nao descarregar com base em lixo, mascara 0 so' neste ciclo
+	if (ic->cccrc.acell_pec != 0) {
+		out->balancing_allowed = false;
+		return;
+	}
 
 	//uint16_t min_cell_in_mV = 0xFFFF; //65535 mV (65V) impedir processamento caso variavel não seja utilizada
 	bool valid_found = false; //tracking de pelo menos uma célula que precsiade balanceamanto
@@ -281,36 +337,4 @@ void Balance_ApplyToIc(cell_asic *ic, const balance_result_t *result, uint16_t g
 	printfDebug(" | MIN:%umV\r\n", global_min_mV);
 
 	printfDebug("\r\n");
-}
-
-void CellBalancing_CAN_Init(void) {
-	CAN_RegisterRxCallback(CellBalancing_CAN_Rx);
-}
-
-void CellBalancing_CAN_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
-	if ((hdr == 0) || (data == 0)) {
-		return;
-	}
-
-	if (hdr->IDE != CAN_ID_STD) {
-		return;
-	}
-
-	if (hdr->StdId != POWERTRAIN_T26_START_BALANCING_FRAME_ID) {
-		return;
-	}
-
-	struct powertrain_t26_start_balancing_t msg;
-
-	if (powertrain_t26_start_balancing_unpack(&msg, data, hdr->DLC) < 0) {
-		return;
-	}
-
-	if (msg.balancing_request == 1) {
-		//AMS_State = CHARGING;
-		AMS_State = BALANCING;
-	} else {
-		//AMS_State = STARTUP;
-		balanceStage = BALANCE_END;
-	}
 }

@@ -36,6 +36,7 @@ typedef struct {
 	uint16_t deadband_mV;     // below this delta, no balancing
 	uint16_t min_cell_mV;      // minimum allowed cell voltage for balancing
 	uint16_t max_cell_mV;   // maximum sane cell voltage
+	uint16_t start_delta_mV; // auto-arranque: max-min acima disto comeca a balancear
 	bool use_filtered_cells;  //wqd
 } balance_config_t;
 
@@ -59,6 +60,8 @@ uint16_t BatteryPack_FindMinVoltageGlobally(const cell_asic *ic_array, uint8_t t
 
 balance_stage_t BatteryPack_DetermineBalanceStage(const cell_asic *ic_array, uint8_t total_ic, const balance_config_t *cfg, uint16_t global_min_mV) ;
 
+bool BatteryPack_NeedsBalancing(const cell_asic *ic_array, uint8_t total_ic, const balance_config_t *cfg);
+
 void Balance_InitDefaultConfig(balance_config_t *cfg);
 
 void Balance_ComputeModule(const cell_asic *ic, const balance_config_t *cfg, balance_result_t *out, uint16_t global_min_mV, balance_stage_t balancing_stage);
@@ -66,10 +69,6 @@ void Balance_ComputeModule(const cell_asic *ic, const balance_config_t *cfg, bal
 void Balance_ApplyToIc(cell_asic *ic, const balance_result_t *result, uint16_t global_min_mV, uint8_t ic_index);
 
 void Balance_ForceParity(balance_result_t *result, balance_parity_t forced_parity, balance_output_mode_t mode);
-
-void CellBalancing_CAN_Init(void);
-
-void CellBalancing_CAN_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data);
 
 void Balance_SetOutputMode(balance_config_t *cfg, balance_output_mode_t mode);
 

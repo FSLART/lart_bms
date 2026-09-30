@@ -33,6 +33,9 @@ Fontes que disparam:
 ## Limitação conhecida: flag única partilhada
 Uma só flag para todas as fontes. Se a fonte A dispara e a B faz o seu edge-clear, apaga o erro de A. O edge minimiza mas não elimina. Foi decisão deliberada (o utilizador rejeitou a bitmask de razões: "só quero permanente vs não permanente").
 
+## Corrigido 2026-09-30: KILL limpava por NÍVEL
+O `KILL` do `precharge.c` fazia `AMS_Error_Clear()` a **cada** `Precharge_Update` com contactores abertos → apagava qualquer erro clearable (OT, fail-safe do boot). Como o faultCheck (Trigger) corre antes do `Precharge_Update` no `brain_loop`, em KILL a linha só dava pulsos de ~ms a cada 250 ms. Agora há `mismatch_ams_set`: o KILL só limpa o erro que a própria precarga pôs (WRONG / HV_ON), uma vez. Consequência: com chain incompleta a linha fica em ERRO desde o boot (antes o KILL escondia isso).
+
 ## Diagnóstico
 - `live_debug.ams_error` — `state_name` ("OK"/"ERROR"/"ERROR_PERMANENT") + `faults[8]` com os **nomes** dos faults ativos + máscara em dois uint32.
 - Breakpoint em `ams_error.c` na linha `ams_error_active = 1` com condição `ams_error_active == 0` → o **call stack** diz a fonte. Funcionou várias vezes.

@@ -13,5 +13,6 @@ Vive no repositório (vai no `git push`). Um ficheiro por facto; editar o fichei
 - [Regra do printfDebug](feedback_printfdebug_console.md) — todos os prints por printfDebug (uartDMA.h), nunca printf/printfUI
 - [Regra de segurança do MCP23017](feedback_mcp23017_isr_safety.md) — nunca bloquear I2C em contexto de interrupção
 - [Âmbito do gitignore](feedback_gitignore_scope.md) — graphify-out/ e .claude/ ficam tracked, não voltar a ignorar
+- [Relogios, CAN e watchdog](reference_clocks_can_watchdog.md) — PCLK1 32 MHz, ambos os CAN a 500k, janela do WWDG ~65,5 ms limita o brain_loop
 - [Sync do DBC](reference_dbc_sync.md) — sync_dbc.sh puxa do FSLART/T26_DBC; artefactos de build fora do git
 - [Jump para o bootloader](reference_bootloader_jump.md) — a sequência de deinit do JumpToBootloader é deliberada, não code smell

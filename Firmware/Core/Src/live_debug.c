@@ -161,7 +161,7 @@ void LiveDebug_Update(void) {
 
 	/* cell balancing */
 	static const char *bal_stage_names[] = { "ROUGH", "FINE", "END" };
-	static const char *bal_phase_names[] = { "INIT", "APPLY", "ON_TIME", "STOP_DISCHARGE", "SETTLE", "START_AVG", "WAIT_AVG", "READ_AVG", "COMPUTE" };
+	static const char *bal_phase_names[] = { "INIT", "APPLY", "ON_TIME", "STOP_DISCHARGE", "SETTLE", "START_AVG", "WAIT_AVG", "READ_AVG", "COMPUTE", "OW" };
 
 	live_debug.balancing.active        = (AMS_State == BALANCING) ? 1U : 0U;
 	live_debug.balancing.target_min_mV = global_min_mV;
@@ -170,7 +170,7 @@ void LiveDebug_Update(void) {
 	live_debug.balancing.stage_name = (stage_idx < 3U) ? bal_stage_names[stage_idx] : "?";
 
 	uint8_t phase_idx = Balancing_GetPhase();
-	live_debug.balancing.phase_name = (phase_idx < 9U) ? bal_phase_names[phase_idx] : "?";
+	live_debug.balancing.phase_name = (phase_idx < 10U) ? bal_phase_names[phase_idx] : "?";
 
 	uint8_t  total_on     = 0U;
 	uint16_t bal_vmax     = 0U;

@@ -28,6 +28,13 @@
 #define CONTACTOR_DELAY_MS   300  // tempo de chekagewm da atracagem do contactor
 #define FEEDBACK_DEBOUNCE_MS   200
 
+/* EMI: em HV_ON um mismatch so e' real se aparecer em N checks seguidos.
+ * Depois do primeiro falhanco os re-checks sao feitos a cada RECHECK_MS,
+ * maior que o FEEDBACK_DEBOUNCE_MS, para cada leitura ja ser um feedback
+ * novo e nao o mesmo glitch latched pelo EXTI. */
+#define HV_ON_MISMATCH_CONFIRM_COUNT   3
+#define HV_ON_MISMATCH_RECHECK_MS      CONTACTOR_DELAY_MS
+
 typedef struct {
 	uint8_t pending;          // waiting for debounce to finish
 	uint32_t start_ms;        // when debounce started
@@ -45,6 +52,12 @@ PrechargeState_t state = KILL;
 uint32_t timer;
 uint32_t delayStart = 0;
 uint32_t canRxIgnoreUntil = 0;
+
+/* checks de HV_ON falhados seguidos (reset a cada entrada em HV_ON) */
+static uint8_t hv_on_mismatch_count = 0;
+
+/* 1 = o AMS_ERROR atual foi posto por mismatch de contactor; so' este o KILL limpa */
+static uint8_t mismatch_ams_set = 0;
 
 //BYPASS FEEDBACKS
 bool bypassDischarge = true; //bypasss discharge feedback check
@@ -288,9 +301,10 @@ void Precharge_Update(void) {
 		break;
 
 	case CHECKING_PRECHARGE_IS_OPEN:
-		if (IsTheStateOK(state) || bypassChecks)
+		if (IsTheStateOK(state) || bypassChecks) {
+			hv_on_mismatch_count = 0; // cada entrada em HV_ON comeca a contar do zero
 			state = HV_ON;
-		else
+		} else
 			state = WRONG;
 		break;
 
@@ -302,6 +316,7 @@ void Precharge_Update(void) {
 			printfDebug("Precharge: contactor mismatch in HV_ON -> AMS_ERROR\r\n");
 			if (AMS_ERR_SRC_CONTACTOR_MISMATCH) {
 				AMS_Error_Trigger();
+				mismatch_ams_set = 1;
 			}
 			state = KILL;
 		}
@@ -316,6 +331,7 @@ void Precharge_Update(void) {
 		printfDebug("Precharge: contactor mismatch (WRONG) -> AMS_ERROR\r\n");
 		if (AMS_ERR_SRC_CONTACTOR_MISMATCH) {
 			AMS_Error_Trigger();
+			mismatch_ams_set = 1;
 		}
 		state = KILL;
 		break;
@@ -324,9 +340,12 @@ void Precharge_Update(void) {
 		OpenAllContactors();
 
 		// contactores confirmados todos abertos -> a condicao que gerou
-		// o mismatch deixou de existir, pode limpar o AMS_ERROR clearable
-		if (AMS_ERR_SRC_CONTACTOR_MISMATCH && IsTheStateOK(OPEN_ALL)) {
+		// o mismatch deixou de existir. So' limpar o erro que a PROPRIA
+		// precarga pos, e uma vez: antes limpava a cada chamada e apagava
+		// qualquer AMS_ERROR (OT, fail-safe do boot) com o carro em KILL
+		if (mismatch_ams_set && IsTheStateOK(OPEN_ALL)) {
 			AMS_Error_Clear();
+			mismatch_ams_set = 0;
 		}
 		break;
 
@@ -359,28 +378,45 @@ void Precharge_Update(void) {
  */
 bool OnPrechargeComplete(PrechargeState_t state_guard) {
 
-	bool ok = false;
-
 	static int ticks = 0;
 
 	static int skip_ticks = 10000;
 
-	if (ticks > skip_ticks) {
+	static uint32_t last_check_ms = 0;
 
-		ok = true;
+	uint32_t now = HAL_GetTick();
 
-		if (!IsTheStateOK(state_guard)) {
-			ok = false;
+	if (hv_on_mismatch_count == 0) {
+		// cadencia normal: um check a cada skip_ticks chamadas
+		if (ticks <= skip_ticks) {
+			ticks++;
+			return true;
 		}
-
 		ticks = 0;
-
-	} else {
-		ok = true;
-		ticks++;
+	} else if ((now - last_check_ms) < HV_ON_MISMATCH_RECHECK_MS) {
+		// a confirmar um mismatch: esperar que o debounce do feedback acabe
+		return true;
 	}
 
-	return ok;
+	last_check_ms = now;
+
+	if (IsTheStateOK(state_guard)) {
+		if (hv_on_mismatch_count != 0) {
+			printfDebug("Precharge: HV_ON mismatch nao confirmado (%u/%u), ignorado\r\n", hv_on_mismatch_count, HV_ON_MISMATCH_CONFIRM_COUNT);
+		}
+		hv_on_mismatch_count = 0;
+		return true;
+	}
+
+	hv_on_mismatch_count++;
+	printfDebug("Precharge: HV_ON mismatch %u/%u\r\n", hv_on_mismatch_count, HV_ON_MISMATCH_CONFIRM_COUNT);
+
+	if (hv_on_mismatch_count >= HV_ON_MISMATCH_CONFIRM_COUNT) {
+		hv_on_mismatch_count = 0;
+		return false; // confirmado -> Precharge_Update dispara AMS_ERROR e vai para KILL
+	}
+
+	return true;
 }
 
 /* helper macro builds contactor_bits for the contactors */

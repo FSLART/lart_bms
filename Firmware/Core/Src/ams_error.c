@@ -47,7 +47,7 @@ void AMS_Error_Init(void) {
 void AMS_Error_Trigger(void) {
 
 	if (ams_error_active == 0) {
-		printfDebug("AMS_ERROR line -> ERROR\r\n");
+		printfDebugRaw("AMS_ERROR line -> ERROR\r\n");
 	}
 
 	ams_error_active = 1;
@@ -57,7 +57,7 @@ void AMS_Error_Trigger(void) {
 void AMS_Error_TriggerLatched(void) {
 
 	if (ams_error_permanent == 0) {
-		printfDebug("AMS_ERROR line -> ERROR (PERMANENT, only reboot clears)\r\n");
+		printfDebugRaw("AMS_ERROR line -> ERROR (PERMANENT, only reboot clears)\r\n");
 	}
 
 	ams_error_permanent = 1;
@@ -67,7 +67,7 @@ void AMS_Error_TriggerLatched(void) {
 void AMS_Error_Clear(void) {
 
 	if ((ams_error_active != 0) && (ams_error_permanent == 0)) {
-		printfDebug("AMS_ERROR line -> OK\r\n");
+		printfDebugRaw("AMS_ERROR line -> OK\r\n");
 	}
 
 	ams_error_active = 0;

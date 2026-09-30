@@ -29,9 +29,15 @@
 #include "gpio_expander.h"
 #include "adbms_to_CAN.h"   // g_pack_tmax_cC (cross-check ITMP no balanceamento)
 #include "ams_error.h"
+#include "precharge.h"
 
 /* OW AMS_ERROR (clearable): definido junto aos evaluate, chamado na state machine */
 static void adBms6830_OpenWire_UpdateAmsError(void);
+
+/* Fases de open-wire partilhadas por IDLE, CHARGING e BALANCING: chamar a
+ * cada passagem, devolve true quando a avaliacao acabou */
+static bool OpenWire_Step(void);
+static void OpenWire_Restart(void);
 
 uint8_t slaves_found = 0;
 
@@ -47,9 +53,7 @@ typedef enum {
 	ADBMS_IDLE_READ_AVG_START_AUX,
 	ADBMS_IDLE_READ_AUX_START_RAUX,
 	ADBMS_IDLE_READ_RAUX_STATUS,
-	ADBMS_IDLE_OW_START_EVEN,
-	ADBMS_IDLE_OW_READ_EVEN_START_ODD,
-	ADBMS_IDLE_OW_READ_ODD_EVALUATE
+	ADBMS_IDLE_OW
 } adbms_idle_phase_t;
 
 /* Mesmo ciclo de leitura do IDLE mas sem as fases de open-wire: durante o
@@ -59,9 +63,7 @@ typedef enum {
 	ADBMS_CHARGING_READ_AVG_START_AUX,
 	ADBMS_CHARGING_READ_AUX_START_RAUX,
 	ADBMS_CHARGING_READ_RAUX_SNAPSHOT,
-	ADBMS_CHARGING_OW_START_EVEN,
-	ADBMS_CHARGING_OW_READ_EVEN_START_ODD,
-	ADBMS_CHARGING_OW_READ_ODD_EVALUATE
+	ADBMS_CHARGING_OW
 } adbms_charging_phase_t;
 
 typedef enum {
@@ -73,7 +75,8 @@ typedef enum {
 	BAL_CYCLE_START_AVG,
 	BAL_CYCLE_WAIT_AVG,
 	BAL_CYCLE_READ_AVG,
-	BAL_CYCLE_COMPUTE
+	BAL_CYCLE_COMPUTE,
+	BAL_CYCLE_OW          /* no fim: live_debug indexa nomes por esta ordem */
 } adbms_balancing_phase_t;
 
 typedef enum {
@@ -146,9 +149,56 @@ static const float BALANCE_DIE_TEMP_LIMIT_C = 85.0f;
 /* Latest state returned by adbms_main(), mirrored for live debug snapshot */
 volatile adbms_result_state adbms_current_state = ADBMS_END;
 
+/* Depois de um fim por die OT, o auto-arranque espera isto para arrefecer */
+static const uint32_t BALANCE_DIE_OT_HOLD_MS = 60000;
+static uint32_t bal_hold_start_ms = 0;
+static bool bal_hold_active = false;
+
+/* Ultima mascara DCC calculada por slave (0 fora do balanceamento), para a 0x706 */
+static uint16_t bal_mask[12] = { 0 };
+
 /* balPhase é static; expor só o valor para o live debug */
 uint8_t Balancing_GetPhase(void) {
 	return (uint8_t) balPhase;
+}
+
+uint16_t Balancing_GetMask(uint8_t module) {
+	return (module < 12) ? bal_mask[module] : 0;
+}
+
+/* RDAC A..F com PEC acumulado. O vendor grava acell_pec com o PEC do ULTIMO
+ * grupo lido (=, nao |=), logo um erro nos grupos A..E desaparecia. Aqui
+ * fica 1 se qualquer grupo do slave falhou nesta leitura -> o balanceamento
+ * ignora esse slave neste ciclo e volta a usa-lo quando ler limpo */
+static void ReadAvgCells(void) {
+	uint8_t *cmd[6] = { RDACA, RDACB, RDACC, RDACD, RDACE, RDACF };
+	uint8_t pec_acc[ADBMS_MAX_DEVICES] = { 0 };
+
+	for (uint8_t g = 0; g < 6; g++) {
+		adBmsReadData(slaves_found, &IC[0], cmd[g], AvgCell, (GRP) (A + g));
+
+		for (uint8_t m = 0; m < slaves_found; m++) {
+			pec_acc[m] |= IC[m].cccrc.acell_pec;
+		}
+	}
+
+	for (uint8_t m = 0; m < slaves_found; m++) {
+		IC[m].cccrc.acell_pec = pec_acc[m];
+	}
+}
+
+/* Fim de sessao (convergiu, die OT, precarga a arrancar, AMS_ERROR): DCC a
+ * zero ja' escrita nos ICs, estado limpo e volta a IDLE */
+static void Balancing_Stop(void) {
+	for (uint8_t module = 0; module < slaves_found; module++) {
+		IC[module].tx_cfgb.dcc = 0;
+	}
+	memset(bal_mask, 0, sizeof(bal_mask));
+
+	g_balance_cfg_initialized = false;
+	balPhase = BAL_CYCLE_INIT;
+	AMS_State = IDLE;
+	adBms6830_init_config(slaves_found, &IC[0]);
 }
 
 static adbms_result_state adbms_main_impl(AMSStates_t ams_state);
@@ -164,6 +214,14 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 	switch (ams_state) {
 
 	case BALANCING:
+		/* So' se balanceia com a HV totalmente desligada e sem AMS_ERROR:
+		 * precarga a arrancar corta a DCC ja', sem esperar pelo fim do ciclo */
+		if ((Precharge_GetState() != KILL) || AMS_Error_IsActive()) {
+			printfDebug("BAL STOP: precharge=%d ams_error=%u\r\n", (int) Precharge_GetState(), AMS_Error_IsActive());
+			Balancing_Stop();
+			break;
+		}
+
 		if (!g_balance_cfg_initialized) {
 			Balance_InitDefaultConfig(&g_balance_cfg);
 
@@ -234,6 +292,10 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 							printfDebug("BAL DIE OT: S%u raw=0x%04X %.1fC\r\n", module + 1, (uint16_t) IC[module].stata.itmp, die_c);
 							RAISE_ERROR(FAULT_BALANCING_OVERTEMP, .slave_idx = module + 1, .measured_value = die_c, .threshold_value = BALANCE_DIE_TEMP_LIMIT_C);
 							balanceStage = BALANCE_END;
+
+							// sem isto o auto-arranque reabria a sessao no ciclo seguinte
+							bal_hold_start_ms = getRuntimeMs();
+							bal_hold_active = true;
 						}
 					} else {
 						die_ot_count[module] = 0;
@@ -247,15 +309,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 			}
 
 			if (balanceStage == BALANCE_END) {
-				for (uint8_t module = 0; module < slaves_found; module++) {
-					IC[module].tx_cfgb.dcc = 0;
-				}
-
-				g_balance_cfg_initialized = false;
-				balPhase = BAL_CYCLE_INIT;
-				AMS_State = IDLE;
-				adBms6830_init_config(slaves_found, &IC[0]);
-
+				Balancing_Stop();
 			} else {
 
 				balPhase = BAL_CYCLE_COMPUTE;
@@ -276,6 +330,11 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 				for (uint8_t module = 0; module < slaves_found; module++) {
 					IC[module].tx_cfgb.dcc = 0;
 				}
+			}
+
+			/* mascara que vai mesmo ser aplicada neste ciclo -> 0x706 */
+			for (uint8_t module = 0; module < slaves_found && module < 12; module++) {
+				bal_mask[module] = IC[module].tx_cfgb.dcc;
 			}
 
 			balPhase = BAL_CYCLE_APPLY;
@@ -342,12 +401,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 
 		case BAL_CYCLE_READ_AVG:
 			adBmsWakeupIc(slaves_found);
-			adBmsReadData(slaves_found, &IC[0], RDACA, AvgCell, A);
-			adBmsReadData(slaves_found, &IC[0], RDACB, AvgCell, B);
-			adBmsReadData(slaves_found, &IC[0], RDACC, AvgCell, C);
-			adBmsReadData(slaves_found, &IC[0], RDACD, AvgCell, D);
-			adBmsReadData(slaves_found, &IC[0], RDACE, AvgCell, E);
-			adBmsReadData(slaves_found, &IC[0], RDACF, AvgCell, F);
+			ReadAvgCells();
 
 			adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
 			adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
@@ -365,16 +419,27 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 			adBmsReadData(slaves_found, &IC[0], RDRAXC, RAux, C);
 			adBmsReadData(slaves_found, &IC[0], RDRAXD, RAux, D);
 
-			/*adBmsReadData(slaves_found, &IC[0], RDCVA, Cell, A);
-			 adBmsReadData(slaves_found, &IC[0], RDCVB, Cell, B);
-			 adBmsReadData(slaves_found, &IC[0], RDCVC, Cell, C);
-			 adBmsReadData(slaves_found, &IC[0], RDCVD, Cell, D);
-			 adBmsReadData(slaves_found, &IC[0], RDCVE, Cell, E);
-			 adBmsReadData(slaves_found, &IC[0], RDCVF, Cell, F);*/
+			/* c_codes frescos: o BMS_SafetyCheck (OV/UV/OT), o Master_MSC_3
+			 * e o CAN dos slaves leem-nos, e agora correm em BALANCING */
+			adBmsReadData(slaves_found, &IC[0], RDCVA, Cell, A);
+			adBmsReadData(slaves_found, &IC[0], RDCVB, Cell, B);
+			adBmsReadData(slaves_found, &IC[0], RDCVC, Cell, C);
+			adBmsReadData(slaves_found, &IC[0], RDCVD, Cell, D);
+			adBmsReadData(slaves_found, &IC[0], RDCVE, Cell, E);
+			adBmsReadData(slaves_found, &IC[0], RDCVF, Cell, F);
 
 			memcpy(SLAVE, IC, sizeof(SLAVE));
 
-			balPhase = BAL_CYCLE_INIT;
+			OpenWire_Restart();
+			balPhase = BAL_CYCLE_OW;
+
+			break;
+
+		case BAL_CYCLE_OW:
+			/* DCC ja' esta a 0 desde o STOP_DISCHARGE: OW a cada nova mascara */
+			if (OpenWire_Step()) {
+				balPhase = BAL_CYCLE_INIT;
+			}
 
 			break;
 
@@ -412,12 +477,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 		case ADBMS_IDLE_READ_AVG_START_AUX:
 			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
 				adBmsWakeupIc(slaves_found);
-				adBmsReadData(slaves_found, &IC[0], RDACA, AvgCell, A);
-				adBmsReadData(slaves_found, &IC[0], RDACB, AvgCell, B);
-				adBmsReadData(slaves_found, &IC[0], RDACC, AvgCell, C);
-				adBmsReadData(slaves_found, &IC[0], RDACD, AvgCell, D);
-				adBmsReadData(slaves_found, &IC[0], RDACE, AvgCell, E);
-				adBmsReadData(slaves_found, &IC[0], RDACF, AvgCell, F);
+				ReadAvgCells();
 
 				//Read AUX
 				adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
@@ -456,122 +516,31 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 				adBmsReadData(slaves_found, &IC[0], RDRAXD, RAux, D);
 				//printVoltages(slaves_found, &IC[0], Aux);
 
-				/*  SNAPSHOT   */
-				//memcpy(SLAVE, IC, sizeof(SLAVE));
-				//printfDebug("After READ Aux\r\n");
-				//printVoltages(slaves_found, &IC[0], RAux);
-				//printfDebug("Copy \r\n");
-				//printVoltages(slaves_found, &SLAVE[0], RAux);
-				adbmsPhaseStart = getRuntimeMs();
-				adbmsPhase = ADBMS_IDLE_OW_START_EVEN;
-			}
-			break;
-
-		case ADBMS_IDLE_OW_START_EVEN:
-			if (getRuntimeMsDiff(adbmsPhaseStart) >= 5) {
-
+				/*  SNAPSHOT  antes das conversoes OW mexerem nos registos */
 				memcpy(SLAVE, IC, sizeof(SLAVE));
-
-				adBmsWakeupIc(slaves_found);
-				// Start even-channel OW check
-				adBms6830_Adsv(SINGLE, DCP_OFF, OW_ON_EVEN_CH);
-				// Send ADAX with pull-up current and OW enabled
-				adBms6830_Adax(AUX_OW_ON, PUP_UP, AUX_CH_TO_CONVERT);
+				OpenWire_Restart();
 
 				adbmsPhaseStart = getRuntimeMs();
-				adbmsPhase = ADBMS_IDLE_OW_READ_EVEN_START_ODD;
+				adbmsPhase = ADBMS_IDLE_OW;
 			}
 			break;
 
-		case ADBMS_IDLE_OW_READ_EVEN_START_ODD:
-			if (getRuntimeMsDiff(adbmsPhaseStart) >= 15) {
+		case ADBMS_IDLE_OW:
+			if ((getRuntimeMsDiff(adbmsPhaseStart) >= 5) && OpenWire_Step()) {
 
-				// Read S-volt results with even pull active
-				adBmsWakeupIc(slaves_found);
-				adBmsReadData(slaves_found, &IC[0], RDSVA, S_volt, A);
-				adBmsReadData(slaves_found, &IC[0], RDSVB, S_volt, B);
-				adBmsReadData(slaves_found, &IC[0], RDSVC, S_volt, C);
-				adBmsReadData(slaves_found, &IC[0], RDSVD, S_volt, D);
-				adBmsReadData(slaves_found, &IC[0], RDSVE, S_volt, E);
-				adBmsReadData(slaves_found, &IC[0], RDSVF, S_volt, F);
+				/* auto-arranque do balanceamento: dados do ciclo frescos (ac_codes
+				 * lidos neste ciclo, OW acabado). Pack parado (precarga em KILL),
+				 * sem AMS_ERROR e fora da pausa de arrefecimento do die OT */
+				Balance_InitDefaultConfig(&g_balance_cfg);
 
-				//aux
-				adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
-				adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
-				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
-				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
-
-				// Save even-pull readings for even-numbered cells
-				/*for (uint8_t slave = 0; slave < slaves_found; slave++) {
-				 for (uint8_t cell = 0; cell < CELL; cell++) {
-				 IC[slave].owcell.cell_ow_all[cell] = IC[slave].scell.sc_codes[cell];
-				 }
-				 }*/
-
-				// Save pull-up readings
-				for (uint8_t slave = 0; slave < slaves_found; slave++) {
-					for (uint8_t g = 0; g < AUX; g++) {
-						IC[slave].gpio.aux_pup_up[g] = IC[slave].aux.a_codes[g];
-					}
+				if (bal_hold_active && (getRuntimeMsDiff(bal_hold_start_ms) >= BALANCE_DIE_OT_HOLD_MS)) {
+					bal_hold_active = false;
 				}
 
-				// Start odd-channel OW check
-				adBms6830_Adsv(SINGLE, DCP_OFF, OW_ON_ODD_CH);
-
-				// Now send ADAX with pull-down current
-				adBms6830_Adax(AUX_OW_ON, PUP_DOWN, AUX_CH_TO_CONVERT);
-
-				adbmsPhaseStart = getRuntimeMs();
-				adbmsPhase = ADBMS_IDLE_OW_READ_ODD_EVALUATE;
-			}
-			break;
-
-		case ADBMS_IDLE_OW_READ_ODD_EVALUATE:
-			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
-
-				// Save even-pull readings for even-numbered cells
-				for (uint8_t slave = 0; slave < slaves_found; slave++) {
-					for (uint8_t cell = 0; cell < CELL; cell++) {
-						IC[slave].owcell.cell_ow_even[cell] = IC[slave].scell.sc_codes[cell];
-					}
+				if ((Precharge_GetState() == KILL) && !AMS_Error_IsActive() && !bal_hold_active && BatteryPack_NeedsBalancing(&IC[0], slaves_found, &g_balance_cfg)) {
+					printfDebug("BAL START: auto (delta > %umV)\r\n", g_balance_cfg.start_delta_mV);
+					AMS_State = BALANCING;
 				}
-
-				adBmsWakeupIc(slaves_found);
-				// Read S-volt results with odd pull active
-				adBmsReadData(slaves_found, &IC[0], RDSVA, S_volt, A);
-				adBmsReadData(slaves_found, &IC[0], RDSVB, S_volt, B);
-				adBmsReadData(slaves_found, &IC[0], RDSVC, S_volt, C);
-				adBmsReadData(slaves_found, &IC[0], RDSVD, S_volt, D);
-				adBmsReadData(slaves_found, &IC[0], RDSVE, S_volt, E);
-				adBmsReadData(slaves_found, &IC[0], RDSVF, S_volt, F);
-
-				//auz
-				adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
-				adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
-				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
-				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
-
-				// Save odd-pull readings and check all cells for open wire
-				for (uint8_t slave = 0; slave < slaves_found; slave++) {
-					for (uint8_t cell = 0; cell < CELL; cell++) {
-						IC[slave].owcell.cell_ow_odd[cell] = IC[slave].scell.sc_codes[cell];
-					}
-				}
-
-				// Save pull-down readings
-				for (uint8_t slave = 0; slave < slaves_found; slave++) {
-					for (uint8_t g = 0; g < AUX; g++) {
-						IC[slave].gpio.aux_pup_down[g] = IC[slave].aux.a_codes[g];
-					}
-				}
-
-				// Now evaluate: fill diag_result.cell_ow[]
-				adBms6830_evaluate_cell_open_wire(slaves_found, IC);
-				// Evaluate aux OW measruments
-				adBms6830_evaluate_aux_open_wire(slaves_found, IC);
-
-				// liga/desliga o AMS_ERROR conforme haja OW (clearable)
-				adBms6830_OpenWire_UpdateAmsError();
 
 				adbmsPhaseStart = getRuntimeMs();
 				adbmsPhase = ADBMS_IDLE_READ_PREV;
@@ -608,12 +577,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 		case ADBMS_CHARGING_READ_AVG_START_AUX:
 			if (getRuntimeMsDiff(chargingPhaseStart) >= 10) {
 				adBmsWakeupIc(slaves_found);
-				adBmsReadData(slaves_found, &IC[0], RDACA, AvgCell, A);
-				adBmsReadData(slaves_found, &IC[0], RDACB, AvgCell, B);
-				adBmsReadData(slaves_found, &IC[0], RDACC, AvgCell, C);
-				adBmsReadData(slaves_found, &IC[0], RDACD, AvgCell, D);
-				adBmsReadData(slaves_found, &IC[0], RDACE, AvgCell, E);
-				adBmsReadData(slaves_found, &IC[0], RDACF, AvgCell, F);
+				ReadAvgCells();
 
 				//Read AUX
 				adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
@@ -651,114 +615,19 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 				adBmsReadData(slaves_found, &IC[0], RDRAXC, RAux, C);
 				adBmsReadData(slaves_found, &IC[0], RDRAXD, RAux, D);
 
-				chargingPhaseStart = getRuntimeMs();
-				chargingPhase = ADBMS_CHARGING_OW_START_EVEN;
-			}
-			break;
-
-		case ADBMS_CHARGING_OW_START_EVEN:
-			if (getRuntimeMsDiff(chargingPhaseStart) >= 5) {
-
-				/*  SNAPSHOT  - o charger decide (4.2V / 60C) com base
-				 * nos agregados calculados a partir do SLAVE[], tirado
-				 * antes das conversoes OW mexerem nos registos */
+				/*  SNAPSHOT  - o charger decide (4.2V / 60C) com base nos agregados
+				 * calculados a partir do SLAVE[], tirado antes das conversoes OW
+				 * mexerem nos registos */
 				memcpy(SLAVE, IC, sizeof(SLAVE));
-
-				adBmsWakeupIc(slaves_found);
-				// Start even-channel OW check
-				adBms6830_Adsv(SINGLE, DCP_OFF, OW_ON_EVEN_CH);
-				// Send ADAX with pull-up current and OW enabled
-				adBms6830_Adax(AUX_OW_ON, PUP_UP, AUX_CH_TO_CONVERT);
+				OpenWire_Restart();
 
 				chargingPhaseStart = getRuntimeMs();
-				chargingPhase = ADBMS_CHARGING_OW_READ_EVEN_START_ODD;
+				chargingPhase = ADBMS_CHARGING_OW;
 			}
 			break;
 
-		case ADBMS_CHARGING_OW_READ_EVEN_START_ODD:
-			if (getRuntimeMsDiff(chargingPhaseStart) >= 15) {
-
-				// Read S-volt results with even pull active
-				adBmsWakeupIc(slaves_found);
-				adBmsReadData(slaves_found, &IC[0], RDSVA, S_volt, A);
-				adBmsReadData(slaves_found, &IC[0], RDSVB, S_volt, B);
-				adBmsReadData(slaves_found, &IC[0], RDSVC, S_volt, C);
-				adBmsReadData(slaves_found, &IC[0], RDSVD, S_volt, D);
-				adBmsReadData(slaves_found, &IC[0], RDSVE, S_volt, E);
-				adBmsReadData(slaves_found, &IC[0], RDSVF, S_volt, F);
-
-				//aux
-				adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
-				adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
-				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
-				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
-
-				// Save pull-up readings
-				for (uint8_t slave = 0; slave < slaves_found; slave++) {
-					for (uint8_t g = 0; g < AUX; g++) {
-						IC[slave].gpio.aux_pup_up[g] = IC[slave].aux.a_codes[g];
-					}
-				}
-
-				// Start odd-channel OW check
-				adBms6830_Adsv(SINGLE, DCP_OFF, OW_ON_ODD_CH);
-
-				// Now send ADAX with pull-down current
-				adBms6830_Adax(AUX_OW_ON, PUP_DOWN, AUX_CH_TO_CONVERT);
-
-				chargingPhaseStart = getRuntimeMs();
-				chargingPhase = ADBMS_CHARGING_OW_READ_ODD_EVALUATE;
-			}
-			break;
-
-		case ADBMS_CHARGING_OW_READ_ODD_EVALUATE:
-			if (getRuntimeMsDiff(chargingPhaseStart) >= 10) {
-
-				// Save even-pull readings for even-numbered cells
-				for (uint8_t slave = 0; slave < slaves_found; slave++) {
-					for (uint8_t cell = 0; cell < CELL; cell++) {
-						IC[slave].owcell.cell_ow_even[cell] = IC[slave].scell.sc_codes[cell];
-					}
-				}
-
-				adBmsWakeupIc(slaves_found);
-				// Read S-volt results with odd pull active
-				adBmsReadData(slaves_found, &IC[0], RDSVA, S_volt, A);
-				adBmsReadData(slaves_found, &IC[0], RDSVB, S_volt, B);
-				adBmsReadData(slaves_found, &IC[0], RDSVC, S_volt, C);
-				adBmsReadData(slaves_found, &IC[0], RDSVD, S_volt, D);
-				adBmsReadData(slaves_found, &IC[0], RDSVE, S_volt, E);
-				adBmsReadData(slaves_found, &IC[0], RDSVF, S_volt, F);
-
-				//auz
-				adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
-				adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
-				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
-				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
-
-				// Save odd-pull readings and check all cells for open wire
-				for (uint8_t slave = 0; slave < slaves_found; slave++) {
-					for (uint8_t cell = 0; cell < CELL; cell++) {
-						IC[slave].owcell.cell_ow_odd[cell] = IC[slave].scell.sc_codes[cell];
-					}
-				}
-
-				// Save pull-down readings
-				for (uint8_t slave = 0; slave < slaves_found; slave++) {
-					for (uint8_t g = 0; g < AUX; g++) {
-						IC[slave].gpio.aux_pup_down[g] = IC[slave].aux.a_codes[g];
-					}
-				}
-
-				// Now evaluate: fill diag_result.cell_ow[] (o proprio
-				// evaluate latcha o AMS_ERROR permanente se detetar OW)
-				adBms6830_evaluate_cell_open_wire(slaves_found, IC);
-				// Evaluate aux OW measruments
-				adBms6830_evaluate_aux_open_wire(slaves_found, IC);
-
-				// liga/desliga o AMS_ERROR conforme haja OW (clearable)
-				adBms6830_OpenWire_UpdateAmsError();
-
+		case ADBMS_CHARGING_OW:
+			if ((getRuntimeMsDiff(chargingPhaseStart) >= 5) && OpenWire_Step()) {
 				chargingPhaseStart = getRuntimeMs();
 				chargingPhase = ADBMS_CHARGING_READ_PREV;
 			}
@@ -797,12 +666,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 			if (getRuntimeMsDiff(startupPhaseStart) >= 10) {
 
 				adBmsWakeupIc(slaves_found);
-				adBmsReadData(slaves_found, &IC[0], RDACA, AvgCell, A);
-				adBmsReadData(slaves_found, &IC[0], RDACB, AvgCell, B);
-				adBmsReadData(slaves_found, &IC[0], RDACC, AvgCell, C);
-				adBmsReadData(slaves_found, &IC[0], RDACD, AvgCell, D);
-				adBmsReadData(slaves_found, &IC[0], RDACE, AvgCell, E);
-				adBmsReadData(slaves_found, &IC[0], RDACF, AvgCell, F);
+				ReadAvgCells();
 
 				//Read AUX
 				adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
@@ -1711,6 +1575,125 @@ static void adBms6830_OpenWire_UpdateAmsError(void) {
 	}
 
 	ow_active = ow_now;
+}
+
+typedef enum {
+	OW_START_EVEN = 0, OW_READ_EVEN_START_ODD, OW_READ_ODD_EVALUATE
+} ow_step_t;
+
+static ow_step_t owStep = OW_START_EVEN;
+static uint32_t owStepStart = 0;
+
+/* Chamado quem entra na fase OW: se o estado mudou a meio de um OW (ex.
+ * IDLE -> CHARGING), nao continuar uma conversao de outro contexto */
+static void OpenWire_Restart(void) {
+	owStep = OW_START_EVEN;
+}
+
+/* Open-wire de celula (S-ADC com corrente par/impar) e de NTC (ADAX com
+ * pull-up/pull-down), avaliado no fim. Nao bloqueante: uma fase por chamada.
+ * Devolve true quando acabou a avaliacao */
+static bool OpenWire_Step(void) {
+
+	switch (owStep) {
+
+	case OW_START_EVEN:
+		adBmsWakeupIc(slaves_found);
+		// Start even-channel OW check
+		adBms6830_Adsv(SINGLE, DCP_OFF, OW_ON_EVEN_CH);
+		// Send ADAX with pull-up current and OW enabled
+		adBms6830_Adax(AUX_OW_ON, PUP_UP, AUX_CH_TO_CONVERT);
+
+		owStepStart = getRuntimeMs();
+		owStep = OW_READ_EVEN_START_ODD;
+		break;
+
+	case OW_READ_EVEN_START_ODD:
+		// NAO baixar: a conversao S-ADC com OW precisa de ~15ms
+		if (getRuntimeMsDiff(owStepStart) >= 15) {
+
+			// Read S-volt results with even pull active
+			adBmsWakeupIc(slaves_found);
+			adBmsReadData(slaves_found, &IC[0], RDSVA, S_volt, A);
+			adBmsReadData(slaves_found, &IC[0], RDSVB, S_volt, B);
+			adBmsReadData(slaves_found, &IC[0], RDSVC, S_volt, C);
+			adBmsReadData(slaves_found, &IC[0], RDSVD, S_volt, D);
+			adBmsReadData(slaves_found, &IC[0], RDSVE, S_volt, E);
+			adBmsReadData(slaves_found, &IC[0], RDSVF, S_volt, F);
+
+			adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
+			adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
+			adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
+			adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
+
+			// Save pull-up readings
+			for (uint8_t slave = 0; slave < slaves_found; slave++) {
+				for (uint8_t g = 0; g < AUX; g++) {
+					IC[slave].gpio.aux_pup_up[g] = IC[slave].aux.a_codes[g];
+				}
+			}
+
+			// Start odd-channel OW check
+			adBms6830_Adsv(SINGLE, DCP_OFF, OW_ON_ODD_CH);
+			// Now send ADAX with pull-down current
+			adBms6830_Adax(AUX_OW_ON, PUP_DOWN, AUX_CH_TO_CONVERT);
+
+			owStepStart = getRuntimeMs();
+			owStep = OW_READ_ODD_EVALUATE;
+		}
+		break;
+
+	case OW_READ_ODD_EVALUATE:
+		if (getRuntimeMsDiff(owStepStart) >= 10) {
+
+			// Save even-pull readings for even-numbered cells
+			for (uint8_t slave = 0; slave < slaves_found; slave++) {
+				for (uint8_t cell = 0; cell < CELL; cell++) {
+					IC[slave].owcell.cell_ow_even[cell] = IC[slave].scell.sc_codes[cell];
+				}
+			}
+
+			adBmsWakeupIc(slaves_found);
+			// Read S-volt results with odd pull active
+			adBmsReadData(slaves_found, &IC[0], RDSVA, S_volt, A);
+			adBmsReadData(slaves_found, &IC[0], RDSVB, S_volt, B);
+			adBmsReadData(slaves_found, &IC[0], RDSVC, S_volt, C);
+			adBmsReadData(slaves_found, &IC[0], RDSVD, S_volt, D);
+			adBmsReadData(slaves_found, &IC[0], RDSVE, S_volt, E);
+			adBmsReadData(slaves_found, &IC[0], RDSVF, S_volt, F);
+
+			adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
+			adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
+			adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
+			adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
+
+			// Save odd-pull readings and pull-down readings
+			for (uint8_t slave = 0; slave < slaves_found; slave++) {
+				for (uint8_t cell = 0; cell < CELL; cell++) {
+					IC[slave].owcell.cell_ow_odd[cell] = IC[slave].scell.sc_codes[cell];
+				}
+				for (uint8_t g = 0; g < AUX; g++) {
+					IC[slave].gpio.aux_pup_down[g] = IC[slave].aux.a_codes[g];
+				}
+			}
+
+			adBms6830_evaluate_cell_open_wire(slaves_found, IC);
+			adBms6830_evaluate_aux_open_wire(slaves_found, IC);
+
+			// liga/desliga o AMS_ERROR conforme haja OW (clearable)
+			adBms6830_OpenWire_UpdateAmsError();
+
+			owStep = OW_START_EVEN;
+			return true;
+		}
+		break;
+
+	default:
+		owStep = OW_START_EVEN;
+		break;
+	}
+
+	return false;
 }
 
 uint16_t adBms6830_FindMinVoltageGlobally(void) {

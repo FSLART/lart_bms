@@ -167,7 +167,6 @@ void brain_start(void) {
 
 	//inicializar as callbakc para o CAN
 	Precharge_CAN_Init();
-	CellBalancing_CAN_Init();
 	Charger_CAN_Init();
 
 	// detetor de presenca da 2a ISA no CAN2 (so timeout, nao alimenta SOC)
@@ -324,7 +323,9 @@ void brain_loop(void) {
 	// Fault Check Triggered
 	if (faultCheck) {
 
-		if (AMS_Current_State == IDLE || AMS_Current_State == CHARGING) {
+		// BALANCING tambem: com o balanceamento automatico e' la que o
+		// BMS passa a maior parte do tempo antes da HV (RDCV lido no ciclo)
+		if (AMS_Current_State == IDLE || AMS_Current_State == CHARGING || AMS_Current_State == BALANCING) {
 			BMS_SafetyCheck();
 		}
 

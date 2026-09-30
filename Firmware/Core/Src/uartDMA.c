@@ -166,7 +166,7 @@ int printfUI(const char *format, ...) {
 }
 
 // Function to append formatted data to the ring buffer for BT
-int printfDebug(const char *format, ...) {
+int printfDebugRaw(const char *format, ...) {
 	const int TEMP_BUFF_SIZE = 256;
 
 	char temp_buffer[TEMP_BUFF_SIZE];
@@ -287,20 +287,20 @@ static void jsonSendEscaped(const char *s) {
 }
 
 void RN4871_SetName(void) {
-	printfDebug("Changing RN4871 name...\r\n");
+	printfDebugRaw("Changing RN4871 name...\r\n");
 
 	// no \r\n after $$$
 	HAL_Delay(150);
-	printfDebug("$$$");
+	printfDebugRaw("$$$");
 	HAL_Delay(300);
 
 	//set namre
-	printfDebug("SN,LART Accumulator\r");
+	printfDebugRaw("SN,LART Accumulator\r");
 	HAL_Delay(300);
 
 	//reboot
-	printfDebug("R,1\r");
+	printfDebugRaw("R,1\r");
 	HAL_Delay(1000);
 
-	printfDebug("RN4871 name command sent\r\n");
+	printfDebugRaw("RN4871 name command sent\r\n");
 }

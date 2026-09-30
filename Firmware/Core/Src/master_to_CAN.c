@@ -283,6 +283,22 @@ HAL_StatusTypeDef Master_CAN_Send_MSC_4(CAN_HandleTypeDef *hcan) {
 
 	msg.slaves_detected = (uint8_t) slaves_found;
 
+	/* Mascara de balanceamento: um slave por envio, em roda. Indice separado
+	 * por barramento, senao com o handcart ligado CAN1 e CAN2 viam cada um
+	 * so metade dos slaves */
+	static uint8_t next_slave[2] = { 0, 0 };
+	uint8_t *idx = &next_slave[(hcan->Instance == CAN2) ? 1 : 0];
+
+	if (slaves_found > 0) {
+		if (*idx >= slaves_found) {
+			*idx = 0;
+		}
+
+		msg.bal_bitmask_slave_id = (uint8_t) (*idx + 1);   // 1-based, igual aos Slave_XX
+		msg.bal_bitmask = Balancing_GetMask(*idx);
+		(*idx)++;
+	}
+
 	packed_length = powertrain_t26_master_msc_id_4_pack(data, &msg, sizeof(data));
 	if (packed_length < 0) {
 		return HAL_ERROR;
