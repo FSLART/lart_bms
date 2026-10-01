@@ -196,7 +196,7 @@ void LiveDebug_Update(void) {
 				on_count++;
 			}
 
-			uint16_t mV = cell_code_to_mV(IC[m].acell.ac_codes[i]);
+			uint16_t mV = cell_code_to_mV(IC[m].cell.c_codes[i]);
 
 			/* janela de plausibilidade: ignorar canais abertos/lixo */
 			if ((mV < 2500U) || (mV > 4500U)) {

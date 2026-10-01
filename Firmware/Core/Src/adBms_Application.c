@@ -166,24 +166,31 @@ uint16_t Balancing_GetMask(uint8_t module) {
 	return (module < 12) ? bal_mask[module] : 0;
 }
 
-/* RDAC A..F com PEC acumulado. O vendor grava acell_pec com o PEC do ULTIMO
- * grupo lido (=, nao |=), logo um erro nos grupos A..E desaparecia. Aqui
- * fica 1 se qualquer grupo do slave falhou nesta leitura -> o balanceamento
- * ignora esse slave neste ciclo e volta a usa-lo quando ler limpo */
-static void ReadAvgCells(void) {
-	uint8_t *cmd[6] = { RDACA, RDACB, RDACC, RDACD, RDACE, RDACF };
+/* Grupos A..F de celulas (Cell = RDCV, AvgCell = RDAC) com PEC acumulado.
+ * O vendor grava cell_pec/acell_pec com o PEC do ULTIMO grupo lido (=, nao
+ * |=): o grupo F e' a celula 16, que nao existe com 12s, logo o flag nunca
+ * refletia nenhuma celula real. Aqui fica 1 se qualquer grupo do slave
+ * falhou nesta leitura -> SafetyCheck e balanceamento ignoram esse slave
+ * neste ciclo e voltam a usa-lo quando ler limpo */
+static void ReadCellGroups(TYPE type) {
+	uint8_t *rdcv[6] = { RDCVA, RDCVB, RDCVC, RDCVD, RDCVE, RDCVF };
+	uint8_t *rdac[6] = { RDACA, RDACB, RDACC, RDACD, RDACE, RDACF };
 	uint8_t pec_acc[ADBMS_MAX_DEVICES] = { 0 };
 
 	for (uint8_t g = 0; g < 6; g++) {
-		adBmsReadData(slaves_found, &IC[0], cmd[g], AvgCell, (GRP) (A + g));
+		adBmsReadData(slaves_found, &IC[0], (type == Cell) ? rdcv[g] : rdac[g], type, (GRP) (A + g));
 
 		for (uint8_t m = 0; m < slaves_found; m++) {
-			pec_acc[m] |= IC[m].cccrc.acell_pec;
+			pec_acc[m] |= (type == Cell) ? IC[m].cccrc.cell_pec : IC[m].cccrc.acell_pec;
 		}
 	}
 
 	for (uint8_t m = 0; m < slaves_found; m++) {
-		IC[m].cccrc.acell_pec = pec_acc[m];
+		if (type == Cell) {
+			IC[m].cccrc.cell_pec = pec_acc[m];
+		} else {
+			IC[m].cccrc.acell_pec = pec_acc[m];
+		}
 	}
 }
 
@@ -401,7 +408,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 
 		case BAL_CYCLE_READ_AVG:
 			adBmsWakeupIc(slaves_found);
-			ReadAvgCells();
+			ReadCellGroups(AvgCell);
 
 			adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
 			adBmsReadData(slaves_found, &IC[0], RDAUXB, Aux, B);
@@ -421,12 +428,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 
 			/* c_codes frescos: o BMS_SafetyCheck (OV/UV/OT), o Master_MSC_3
 			 * e o CAN dos slaves leem-nos, e agora correm em BALANCING */
-			adBmsReadData(slaves_found, &IC[0], RDCVA, Cell, A);
-			adBmsReadData(slaves_found, &IC[0], RDCVB, Cell, B);
-			adBmsReadData(slaves_found, &IC[0], RDCVC, Cell, C);
-			adBmsReadData(slaves_found, &IC[0], RDCVD, Cell, D);
-			adBmsReadData(slaves_found, &IC[0], RDCVE, Cell, E);
-			adBmsReadData(slaves_found, &IC[0], RDCVF, Cell, F);
+			ReadCellGroups(Cell);
 
 			memcpy(SLAVE, IC, sizeof(SLAVE));
 
@@ -460,12 +462,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 		case ADBMS_IDLE_READ_PREV:
 
 			adBmsWakeupIc(slaves_found);
-			adBmsReadData(slaves_found, &IC[0], RDCVA, Cell, A);
-			adBmsReadData(slaves_found, &IC[0], RDCVB, Cell, B);
-			adBmsReadData(slaves_found, &IC[0], RDCVC, Cell, C);
-			adBmsReadData(slaves_found, &IC[0], RDCVD, Cell, D);
-			adBmsReadData(slaves_found, &IC[0], RDCVE, Cell, E);
-			adBmsReadData(slaves_found, &IC[0], RDCVF, Cell, F);
+			ReadCellGroups(Cell);
 
 			adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
 			adbmsPhaseStart = getRuntimeMs();
@@ -477,7 +474,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 		case ADBMS_IDLE_READ_AVG_START_AUX:
 			if (getRuntimeMsDiff(adbmsPhaseStart) >= 10) {
 				adBmsWakeupIc(slaves_found);
-				ReadAvgCells();
+				ReadCellGroups(AvgCell);
 
 				//Read AUX
 				adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
@@ -560,12 +557,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 		case ADBMS_CHARGING_READ_PREV:
 
 			adBmsWakeupIc(slaves_found);
-			adBmsReadData(slaves_found, &IC[0], RDCVA, Cell, A);
-			adBmsReadData(slaves_found, &IC[0], RDCVB, Cell, B);
-			adBmsReadData(slaves_found, &IC[0], RDCVC, Cell, C);
-			adBmsReadData(slaves_found, &IC[0], RDCVD, Cell, D);
-			adBmsReadData(slaves_found, &IC[0], RDCVE, Cell, E);
-			adBmsReadData(slaves_found, &IC[0], RDCVF, Cell, F);
+			ReadCellGroups(Cell);
 
 			adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
 			chargingPhaseStart = getRuntimeMs();
@@ -577,7 +569,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 		case ADBMS_CHARGING_READ_AVG_START_AUX:
 			if (getRuntimeMsDiff(chargingPhaseStart) >= 10) {
 				adBmsWakeupIc(slaves_found);
-				ReadAvgCells();
+				ReadCellGroups(AvgCell);
 
 				//Read AUX
 				adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
@@ -648,12 +640,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 			adBms6830_init_config(slaves_found, &IC[0]);
 
 			adBmsWakeupIc(slaves_found);
-			adBmsReadData(slaves_found, &IC[0], RDCVA, Cell, A);
-			adBmsReadData(slaves_found, &IC[0], RDCVB, Cell, B);
-			adBmsReadData(slaves_found, &IC[0], RDCVC, Cell, C);
-			adBmsReadData(slaves_found, &IC[0], RDCVD, Cell, D);
-			adBmsReadData(slaves_found, &IC[0], RDCVE, Cell, E);
-			adBmsReadData(slaves_found, &IC[0], RDCVF, Cell, F);
+			ReadCellGroups(Cell);
 
 			adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
 
@@ -666,7 +653,7 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 			if (getRuntimeMsDiff(startupPhaseStart) >= 10) {
 
 				adBmsWakeupIc(slaves_found);
-				ReadAvgCells();
+				ReadCellGroups(AvgCell);
 
 				//Read AUX
 				adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);

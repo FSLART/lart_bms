@@ -62,14 +62,14 @@ uint16_t BatteryPack_FindMinVoltageGlobally(const cell_asic *ic_array, uint8_t t
 	for (uint8_t m = 0; m < total_ic; m++) {
 
 		// PEC mau nesta leitura = codes lixo: fora ate' ler limpo outra vez
-		if (ic_array[m].cccrc.acell_pec != 0) {
+		if (ic_array[m].cccrc.cell_pec != 0) {
 			continue;
 		}
 
 		for (uint8_t i = 0; i < BALANCING_CELL_COUNT; i++) {
-			/* Registos de média (RDAC): são estes que o ciclo de balanceamento
-			 * refresca em BAL_CYCLE_READ_AVG; c_codes ficam obsoletos em BALANCING */
-			int16_t code = ic_array[m].acell.ac_codes[i];
+			/* c_codes (RDCV): as mesmas tensoes do dashboard e do SafetyCheck,
+			 * lidas em cada ciclo de balanceamento (BAL_CYCLE_READ_AVG) */
+			int16_t code = ic_array[m].cell.c_codes[i];
 
 			uint16_t cell_mV = cell_code_to_mV(code);
 
@@ -104,12 +104,12 @@ bool BatteryPack_NeedsBalancing(const cell_asic *ic_array, uint8_t total_ic, con
 
 	for (uint8_t m = 0; m < total_ic; m++) {
 
-		if (ic_array[m].cccrc.acell_pec != 0) {
+		if (ic_array[m].cccrc.cell_pec != 0) {
 			continue;
 		}
 
 		for (uint8_t i = 0; i < BALANCING_CELL_COUNT; i++) {
-			uint16_t cell_mV = cell_code_to_mV(ic_array[m].acell.ac_codes[i]);
+			uint16_t cell_mV = cell_code_to_mV(ic_array[m].cell.c_codes[i]);
 
 			if ((cell_mV <= cfg->max_cell_mV) && (cell_mV > max_mV)) {
 				max_mV = cell_mV;
@@ -138,13 +138,13 @@ balance_stage_t BatteryPack_DetermineBalanceStage(const cell_asic *ic_array, uin
 
 	for (uint8_t m = 0; m < total_ic; m++) {
 
-		if (ic_array[m].cccrc.acell_pec != 0) {
+		if (ic_array[m].cccrc.cell_pec != 0) {
 			any_pec_skipped = true;
 			continue;
 		}
 
 		for (uint8_t i = 0; i < BALANCING_CELL_COUNT; i++) {
-			int16_t code = ic_array[m].acell.ac_codes[i];
+			int16_t code = ic_array[m].cell.c_codes[i];
 			uint16_t cell_mV = cell_code_to_mV(code);
 
 			if ((cell_mV < cfg->min_cell_mV) || (cell_mV > cfg->max_cell_mV)) {
@@ -198,7 +198,7 @@ void Balance_ComputeModule(const cell_asic *ic, const balance_config_t *cfg, bal
 	memset(out, 0, sizeof(*out));
 
 	// PEC mau: nao descarregar com base em lixo, mascara 0 so' neste ciclo
-	if (ic->cccrc.acell_pec != 0) {
+	if (ic->cccrc.cell_pec != 0) {
 		out->balancing_allowed = false;
 		return;
 	}
@@ -209,8 +209,8 @@ void Balance_ComputeModule(const cell_asic *ic, const balance_config_t *cfg, bal
 	// 1) Ler as tensões das células
 	for (uint8_t i = 0; i < BALANCING_CELL_COUNT; i++) {
 
-		//Registos de média (RDAC), refrescados em cada ciclo de balanceamento
-		int16_t code = ic->acell.ac_codes[i];
+		//c_codes (RDCV), refrescados em cada ciclo de balanceamento
+		int16_t code = ic->cell.c_codes[i];
 
 		//adc pra mv
 		uint16_t cell_in_mv = cell_code_to_mV(code);
