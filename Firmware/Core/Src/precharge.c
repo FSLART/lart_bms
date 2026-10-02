@@ -59,6 +59,11 @@ static uint8_t hv_on_mismatch_count = 0;
 /* 1 = o AMS_ERROR atual foi posto por mismatch de contactor; so' este o KILL limpa */
 static uint8_t mismatch_ams_set = 0;
 
+/* ultimo precharge_request recebido da VCU (CAN1), para o live debug */
+static uint8_t vcu_request = 0;
+static uint8_t vcu_request_seen = 0;
+static uint32_t vcu_request_rx_ms = 0;
+
 //BYPASS FEEDBACKS
 bool bypassDischarge = true; //bypasss discharge feedback check
 bool bypassChecks = false; // bypass feedbacks checks
@@ -138,6 +143,21 @@ void Precharge_CAN_Init(void) {
  */
 PrechargeState_t Precharge_GetState(void) {
 	return state;
+}
+
+/* Ultimo precharge_request da VCU; -1 = nunca recebido desde o boot */
+int8_t Precharge_GetVcuRequest(void) {
+	return vcu_request_seen ? (int8_t) vcu_request : -1;
+}
+
+/* Idade da ultima trama de pedido da VCU; 0xFFFFFFFF = nunca recebida */
+uint32_t Precharge_GetVcuRequestAgeMs(void) {
+	return vcu_request_seen ? (HAL_GetTick() - vcu_request_rx_ms) : 0xFFFFFFFFu;
+}
+
+/* Checks de HV_ON falhados seguidos (EMI vs mismatch real) */
+uint8_t Precharge_GetMismatchCount(void) {
+	return hv_on_mismatch_count;
 }
 
 /**
@@ -814,6 +834,10 @@ void PreCharge_CAN_Rx(CAN_RxHeaderTypeDef *hdr, uint8_t *data) {
 	case POWERTRAIN_T26_START_PRE_CHARGE_FRAME_ID:
 		struct powertrain_t26_start_pre_charge_t prechargeInit;
 		powertrain_t26_start_pre_charge_unpack(&prechargeInit, data, dlc);
+
+		vcu_request = prechargeInit.precharge_request;
+		vcu_request_seen = 1;
+		vcu_request_rx_ms = now;
 
 		/*if (prechargeInit.precharge_request > 0 && start_initiated == false && state == KILL) {
 		 state = RX_CAN;

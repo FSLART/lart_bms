@@ -11,6 +11,10 @@ void printfConsole(const char *format, ...);
  * que TEM de sair mesmo com os prints de debug desligados (ex. AMS_ERROR) */
 int printfDebugRaw(const char *format, ...);
 
+/* Bytes crus para o BT (UART2), tudo ou nada (ex. trama JSON do live debug).
+ * Devolve len, ou 0 se nao coube no ring buffer */
+int uart2Write(const char *data, int len);
+
 /* ---------------------------------------------------------------------------
  * Prints de debug no UART2
  *

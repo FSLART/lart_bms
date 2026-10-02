@@ -404,9 +404,10 @@ void brain_loop(void) {
 	//un-comment this single line to bring the LEDs back.
 	//MCP23017_Flush();
 
-	//refresh live debug snapshot every 500ms (debugger-only, cheap)
+	//refresh live debug snapshot + JSON no UART2 (BT) a cada 1 s.
+	//~3 KB por trama: a 1 s fica dentro do que o RN4871 aguenta sem flow control
 	static uint32_t liveDebugTimer = 0;
-	if (getRuntimeMsDiff(liveDebugTimer) >= 500) {
+	if (getRuntimeMsDiff(liveDebugTimer) >= 1000) {
 		liveDebugTimer = getRuntimeMs();
 		LiveDebug_Update();
 	}

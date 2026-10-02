@@ -24,8 +24,10 @@ typedef struct {
 	AMSStates_t ams_state;           // AMS_State
 	AMSStates_t ams_previous_state;  // AMS_Previous_State
 	uint32_t    runtime_s;           // getRuntimeSeconds()
+	uint32_t    runtime_ms;          // getRuntimeMs()
 	uint8_t     active_fault_count;  // count_active_faults()
 	uint32_t    watchdog_flag;       // RCC->CSR captured at boot
+	uint8_t     wwdg_reset;          // 1 = o ultimo arranque foi reset do WWDG
 } live_debug_brain_t;
 
 /* --- adbms driver : slaves + pack overalls --- */
@@ -47,16 +49,45 @@ typedef struct {
 	int32_t power_W;         // ivt.power
 	int32_t coulombs_As;     // ivt.coulombs_As
 	int32_t temp_dC;         // ivt.temp, 0.1 C units
+	uint32_t rx_age_ms;      // ms desde a ultima trama desta ISA
 } live_debug_ivt_t;
 
 /* --- precharge + contactor feedbacks (1 = closed/LOW feedback) --- */
 typedef struct {
 	PrechargeState_t precharge_state;   // Precharge_GetState()
+	int8_t   vcu_request;               // ultimo precharge_request da VCU (CAN1), -1 = nunca
+	uint32_t vcu_request_age_ms;        // idade desse pedido, 0xFFFFFFFF = nunca
+	uint8_t  hv_on_mismatch_count;      // checks de HV_ON falhados seguidos (3 = dispara)
+	uint8_t  sdc_closed;                // MCU_SDC_FB: 1 = shutdown circuit fechado
 	uint8_t air_pos;
 	uint8_t air_neg;
 	uint8_t precharge;
 	uint8_t discharge;
 } live_debug_contactors_t;
+
+/* --- SOC (coulomb counting sobre a ISA do pack) --- */
+typedef struct {
+	float   percent;          // SOC_GetPercent()
+	int32_t used_charge_As;   // SOC_GetUsedCharge_As()
+	uint8_t ready;            // SOC_IsReady()
+} live_debug_soc_t;
+
+/* --- carregador (handcart + charger P1000 no CAN2) --- */
+typedef struct {
+	uint8_t  state;                 // Charger_GetState(): WAIT_HV/PRESTART_STOP/CHARGING/STOPPING/DONE
+	uint8_t  handcart_switch;       // pedido de carga do switch do handcart (0x084)
+	uint32_t handcart_age_ms;       // idade da ultima 0x084, 0xFFFFFFFF = nunca
+	uint8_t  status_ok;             // status do carregador recebido nos ultimos 3 s
+	uint16_t output_voltage_dV;     // tensao de saida, 0.1 V
+	uint16_t output_current_dA;     // corrente de saida, 0.1 A
+	uint8_t  hw_failure;
+	uint8_t  temp_otp;
+	uint8_t  input_voltage_fault;
+	uint8_t  starting_state_fault;
+	uint8_t  comm_timeout;
+	int16_t  temp_C;                // temperatura do carregador
+	uint16_t requested_current_raw; // corrente maxima pedida (raw DBC)
+} live_debug_charger_t;
 
 /* --- board level : fans + MCU analog --- */
 typedef struct {
@@ -90,7 +121,7 @@ typedef struct {
 	uint8_t  can2_last_error_code;
 } live_debug_can_t;
 
-/* --- cell balancing : whole snapshot from ac_codes + tx_cfgb.dcc --- */
+/* --- cell balancing : c_codes + mascara calculada (Balancing_GetMask) --- */
 #define LIVE_DEBUG_BAL_MAX_IC 12
 
 typedef struct {
@@ -100,9 +131,9 @@ typedef struct {
 	uint16_t    target_min_mV;          // frozen global minimum (balance target)
 	uint8_t     cells_discharging;      // total cells with DCC on, whole pack
 	uint8_t     cells_per_ic[LIVE_DEBUG_BAL_MAX_IC];     // DCC count per slave
-	uint16_t    dcc_mask_per_ic[LIVE_DEBUG_BAL_MAX_IC];  // raw DCC bitmask per slave
-	uint16_t    pack_vmax_mV;           // highest valid cell (avg registers)
-	uint16_t    pack_vmin_mV;           // lowest valid cell (avg registers)
+	uint16_t    dcc_mask_per_ic[LIVE_DEBUG_BAL_MAX_IC];  // mascara do ciclo (= 0x706), bit i = celula i+1
+	uint16_t    pack_vmax_mV;           // highest valid cell (c_codes)
+	uint16_t    pack_vmin_mV;           // lowest valid cell (c_codes)
 	uint16_t    pack_delta_mV;          // vmax - vmin
 	uint16_t    worst_delta_mV;         // biggest (cell - target), 0 = converged
 	uint8_t     worst_slave;            // 1-based, 0 = none
@@ -135,7 +166,22 @@ typedef struct {
 	int16_t cell_mV[LIVE_DEBUG_MEAS_IC][LIVE_DEBUG_MEAS_CELLS];
 	/* temperatura de cada NTC em C [slave][ntc]. ~2 = NTC aberto, ~150 = curto */
 	float   ntc_c[LIVE_DEBUG_MEAS_IC][LIVE_DEBUG_MEAS_NTC];
+	/* temperatura do die de cada ADBMS6830 em 0.1 C (STATA itmp) */
+	int16_t die_dC[LIVE_DEBUG_MEAS_IC];
+	/* PEC da ultima leitura por slave: bit0 cell, bit1 avg cell, bit2 aux,
+	 * bit3 raux, bit4 status. 0 = tudo limpo */
+	uint8_t pec_flags[LIVE_DEBUG_MEAS_IC];
+	/* open-wire do ultimo teste: bit i = celula i+1 / NTC i+1 com fio aberto */
+	uint16_t ow_cell_mask[LIVE_DEBUG_MEAS_IC];
+	uint8_t  ow_ntc_mask[LIVE_DEBUG_MEAS_IC];
 } live_debug_meas_t;
+
+/* --- saida JSON pelo UART2 --- */
+typedef struct {
+	uint32_t frames_sent;     // tramas JSON entregues ao ring buffer
+	uint32_t frames_dropped;  // tramas descartadas (ring buffer cheio / JSON > buffer)
+	uint16_t last_len;        // tamanho da ultima trama, bytes
+} live_debug_json_t;
 
 typedef struct {
 	live_debug_brain_t      brain;
@@ -144,15 +190,19 @@ typedef struct {
 	live_debug_ivt_t        ivt_can1;   // ISA do pack (CAN1) - alimenta SOC
 	live_debug_ivt_t        ivt_can2;   // ISA do handcart (CAN2) - carga/display
 	live_debug_contactors_t contactors;
+	live_debug_soc_t        soc;
+	live_debug_charger_t    charger;
 	live_debug_board_t      board;
 	live_debug_can_t        can;
 	live_debug_balancing_t  balancing;
 	live_debug_meas_t       meas;
+	live_debug_json_t       json;
 } live_debug_t;
 
 extern live_debug_t live_debug;
 
-/* Refresh the whole snapshot from live firmware state. Call periodically. */
+/* Refresh the whole snapshot from live firmware state and send it as one
+ * JSON line on UART2 (BT). Call periodically (brain_loop, 1 s). */
 void LiveDebug_Update(void);
 
 #endif /* INC_LIVE_DEBUG_H_ */

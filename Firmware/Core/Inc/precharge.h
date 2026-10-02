@@ -41,6 +41,10 @@ void Precharge_CAN_Init(void);
 
 PrechargeState_t Precharge_GetState(void);
 
+int8_t Precharge_GetVcuRequest(void);
+uint32_t Precharge_GetVcuRequestAgeMs(void);
+uint8_t Precharge_GetMismatchCount(void);
+
 void Precharge_ForceKill(void);
 
 void Precharge_Update(void);

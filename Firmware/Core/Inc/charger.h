@@ -29,4 +29,9 @@ uint16_t Charger_GetRequestedCurrentRaw(void);
 
 uint8_t Charger_HasStatus(void);
 
+uint8_t Charger_GetState(void);
+
+struct handcart_t26_charger_status_p1000_t;
+const struct handcart_t26_charger_status_p1000_t* Charger_GetLastStatus(void);
+
 #endif /* INC_CHARGER_H_ */

@@ -452,6 +452,16 @@ uint16_t Charger_GetRequestedCurrentRaw(void) {
 	return requested_current_raw;
 }
 
+/* ChargerChargeState_t (WAIT_HV, PRESTART_STOP, CHARGING, STOPPING, DONE) */
+uint8_t Charger_GetState(void) {
+	return (uint8_t) charge_state;
+}
+
+/* Ultimo status do carregador; so' valido com Charger_HasStatus() */
+const struct handcart_t26_charger_status_p1000_t* Charger_GetLastStatus(void) {
+	return &last_charger_status;
+}
+
 uint8_t Charger_HasStatus(void) {
     uint32_t now = HAL_GetTick();
 

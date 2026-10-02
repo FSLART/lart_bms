@@ -26,7 +26,7 @@ bool isFull = false;
 volatile bool isWrapped = false;
 
 bool isFull2 = false;
-bool isWrapped2 = false;
+volatile bool isWrapped2 = false;   // limpo no ISR de TX completo
 
 int tailDma = 0; // Stores the tail index of the buffer being sent
 volatile int tailDma2 = 0; // Stores the tail index of the buffer being sent
@@ -181,38 +181,35 @@ int printfDebugRaw(const char *format, ...) {
 		// Over limit of temp buffer
 		RAISE_ERROR(FAULT_UART2_TX);
 		return 0;
-	} else if (getDataLen2() + written > BUFFER_SIZE) {
-		// Buffer full
+	}
+
+	return uart2Write(temp_buffer, written);
+}
+
+/* Bytes crus para o BT (UART2). Tudo ou nada: se nao couber inteiro no ring
+ * buffer nao escreve nada e devolve 0 (uma trama JSON nunca sai a meio) */
+int uart2Write(const char *data, int len) {
+
+	// >= e nao >: head2 == tail2 significa vazio, nunca pode encher ate ao fim
+	if ((len <= 0) || (getDataLen2() + len >= BUFFER_SIZE)) {
 		RAISE_ERROR(FAULT_UART2_TX);
 		return 0;
 	}
 
-	for (int i = 0; i < written; i++) {
-		buffer2[head2++] = temp_buffer[i];
+	for (int i = 0; i < len; i++) {
+		buffer2[head2++] = data[i];
 
 		if (head2 == BUFFER_SIZE) {
 			isWrapped2 = true;
 			head2 = 0;
 		}
-
-//        // Overflow handling (overwrite oldest data)
-//        if (is_full)
-//        {
-//            tail = (tail + 1) % BUFFER_SIZE;
-//        }
-
-		if (head2 == tail2) {
-			RAISE_ERROR(FAULT_UART2_TX);
-			return 0;
-		}
 	}
 
 	if (HAL_UART_GetState(&uart2Handle) == HAL_UART_STATE_READY) {
 		startUart2DmaTx();
-		///HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
 	}
 
-	return written;
+	return len;
 }
 
 /* One-size function:
