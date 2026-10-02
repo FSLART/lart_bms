@@ -314,6 +314,79 @@ static void jsonSendEscaped(const char *s) {
 	}
 }
 
+/* ---------------------------------------------------------------------------
+ * Reboot periodico do RN4871 (as cegas, decisao do utilizador)
+ *
+ * O modulo as vezes deixa de passar o UART para o BLE e so' tem TX/RX ligados
+ * ao MCU (sem RST_N), logo a unica cura e' por comando: "$$$" (modo de
+ * comandos) + "R,1\r" (reboot). Derruba a ligacao BLE: o telemovel tem de
+ * voltar a ligar. Nao bloqueante (o brain_loop tem ~65 ms de WWDG):
+ *
+ *   IDLE --periodo--> WAIT_SILENCE (JSON em pausa, espera ring vazio + 200 ms)
+ *        --"$$$"--> WAIT_CMD (200 ms) --"R,1\r"--> WAIT_BOOT (2 s) --> IDLE
+ * --------------------------------------------------------------------------- */
+#define RN4871_REBOOT_PERIOD_MS   30000UL   // 30 s
+#define RN4871_SILENCE_MS         200    // linha calada antes do "$$$"
+#define RN4871_CMD_WAIT_MS        200    // tempo para entrar em modo de comandos
+#define RN4871_BOOT_MS            2000   // reboot do modulo (bytes aqui perdiam-se)
+
+typedef enum {
+	RN_IDLE = 0, RN_WAIT_SILENCE, RN_WAIT_CMD, RN_WAIT_BOOT
+} rn4871_state_t;
+
+static rn4871_state_t rnState = RN_IDLE;
+static uint32_t rnT0 = 0;
+static uint32_t rnLastReboot = 0;
+volatile uint32_t rn4871Reboots = 0;
+
+/* 1 = sequencia de reboot em curso: nao mandar JSON (estragava os comandos) */
+uint8_t RN4871_IsBusy(void) {
+	return (rnState != RN_IDLE) ? 1U : 0U;
+}
+
+/* Chamar em cada passagem do brain_loop */
+void RN4871_Service(void) {
+	uint32_t now = HAL_GetTick();
+
+	switch (rnState) {
+
+	case RN_IDLE:
+		if ((now - rnLastReboot) >= RN4871_REBOOT_PERIOD_MS) {
+			rnT0 = now;
+			rnState = RN_WAIT_SILENCE;
+		}
+		break;
+
+	case RN_WAIT_SILENCE:
+		// so' conta silencio com o ring vazio e o DMA parado
+		if ((head2 != tail2) || (uart2Handle.gState != HAL_UART_STATE_READY)) {
+			rnT0 = now;
+		} else if ((now - rnT0) >= RN4871_SILENCE_MS) {
+			uart2Write("$$$", 3);
+			rnT0 = now;
+			rnState = RN_WAIT_CMD;
+		}
+		break;
+
+	case RN_WAIT_CMD:
+		if ((now - rnT0) >= RN4871_CMD_WAIT_MS) {
+			uart2Write("R,1\r", 4);
+			rn4871Reboots++;
+			rnT0 = now;
+			rnState = RN_WAIT_BOOT;
+		}
+		break;
+
+	case RN_WAIT_BOOT:
+	default:
+		if ((now - rnT0) >= RN4871_BOOT_MS) {
+			rnLastReboot = now;
+			rnState = RN_IDLE;
+		}
+		break;
+	}
+}
+
 void RN4871_SetName(void) {
 	printfDebugRaw("Changing RN4871 name...\r\n");
 

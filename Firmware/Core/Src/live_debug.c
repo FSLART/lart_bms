@@ -31,6 +31,7 @@ extern uint8_t slaves_found;     // adBms_Application.c
 extern uint8_t anyPecError;      // adBms6830GenericType.c
 extern volatile uint32_t uart2DmaErrors;    // uartDMA.c
 extern volatile uint32_t uart2DmaRestarts;  // uartDMA.c
+extern volatile uint32_t rn4871Reboots;     // uartDMA.c
 
 live_debug_t live_debug = { 0 };
 
@@ -324,6 +325,7 @@ void LiveDebug_Update(void) {
 
 	live_debug.json.dma_errors   = uart2DmaErrors;
 	live_debug.json.dma_restarts = uart2DmaRestarts;
+	live_debug.json.bt_reboots   = rn4871Reboots;
 
 	LiveDebug_SendJson();
 }
@@ -414,6 +416,12 @@ static void j_slave_u16(const char *key, const uint16_t *v) {
 
 static void LiveDebug_SendJson(void) {
 
+	/* reboot do RN4871 em curso: um JSON no meio do "$$$"/"R,1" estragava os
+	 * comandos e durante o reboot perdia-se de qualquer forma. Salta este */
+	if (RN4871_IsBusy()) {
+		return;
+	}
+
 	const live_debug_t *d = &live_debug;
 	json_len = 0;
 
@@ -471,8 +479,9 @@ static void LiveDebug_SendJson(void) {
 			d->can.can2_hw_error, d->can.can2_tx_queue_depth);
 
 	/* contadores das tramas ANTERIORES (esta ainda nao foi enviada) */
-	j("\"json\":{\"sent\":%lu,\"dropped\":%lu,\"last_len\":%u,\"dma_errors\":%lu,\"dma_restarts\":%lu},", (unsigned long) d->json.frames_sent,
-			(unsigned long) d->json.frames_dropped, d->json.last_len, (unsigned long) d->json.dma_errors, (unsigned long) d->json.dma_restarts);
+	j("\"json\":{\"sent\":%lu,\"dropped\":%lu,\"last_len\":%u,\"dma_errors\":%lu,\"dma_restarts\":%lu,\"bt_reboots\":%lu},", (unsigned long) d->json.frames_sent,
+			(unsigned long) d->json.frames_dropped, d->json.last_len, (unsigned long) d->json.dma_errors, (unsigned long) d->json.dma_restarts,
+			(unsigned long) d->json.bt_reboots);
 
 	/* por slave: [slave][celula] e [slave][ntc] */
 	j("\"cell_mV\":[");

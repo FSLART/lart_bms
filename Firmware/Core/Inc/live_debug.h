@@ -183,6 +183,7 @@ typedef struct {
 	uint16_t last_len;        // tamanho da ultima trama, bytes
 	uint32_t dma_errors;      // HAL_UART_ErrorCallback no UART2
 	uint32_t dma_restarts;    // TX encravado > 2 s -> abort + recomeco
+	uint32_t bt_reboots;      // reboots periodicos do RN4871 ("$$$" + "R,1")
 } live_debug_json_t;
 
 typedef struct {

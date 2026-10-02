@@ -404,6 +404,9 @@ void brain_loop(void) {
 	//un-comment this single line to bring the LEDs back.
 	//MCP23017_Flush();
 
+	//reboot periodico do RN4871 (BT), nao bloqueante
+	RN4871_Service();
+
 	//refresh live debug snapshot + JSON no UART2 (BT) a cada 1 s.
 	//~3 KB por trama: a 1 s fica dentro do que o RN4871 aguenta sem flow control
 	static uint32_t liveDebugTimer = 0;

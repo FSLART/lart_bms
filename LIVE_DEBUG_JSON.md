@@ -249,6 +249,7 @@ Pára sozinho se: precarga sai de `KILL`, AMS_ERROR ativo, die ≥ 85 °C (bloqu
 **`json`**: contadores das tramas **anteriores**. `dropped` a subir = ring buffer do UART2 cheio (o BT não está a escoar).
 `dma_errors` = erros do DMA/UART de TX (reenvia sozinho). `dma_restarts` = TX encravado > 2 s, o firmware fez abort e recomeçou.
 Se o UART2 parar e voltar com `dma_restarts` maior, o encravamento foi no MCU; se voltar igual, foi do lado do RN4871/BLE.
+`bt_reboots` = reboots periódicos do RN4871 (de 30 em 30 s, `"$$$"` + `"R,1\r"`). Em cada um a ligação BLE cai durante ~2 s e o telemóvel tem de voltar a ligar; falta 1–3 tramas.
 
 ---
 

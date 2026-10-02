@@ -1,6 +1,8 @@
 #ifndef INC_UARTDMA_H_
 #define INC_UARTDMA_H_
 
+#include <stdint.h>
+
 
 int printfUI(const char *format, ...);
 
@@ -35,6 +37,12 @@ int uart2Write(const char *data, int len);
 
 //gay ass name changer
 void RN4871_SetName(void);
+
+/* Reboot periodico do RN4871 ("$$$" + "R,1"), nao bloqueante.
+ * Service: chamar em cada passagem do brain_loop.
+ * IsBusy: 1 enquanto a sequencia corre -> nao mandar nada para o UART2 */
+void RN4871_Service(void);
+uint8_t RN4871_IsBusy(void);
 
 
 #endif /* INC_UARTDMA_H_ */
