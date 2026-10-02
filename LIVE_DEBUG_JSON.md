@@ -247,6 +247,8 @@ Pára sozinho se: precarga sai de `KILL`, AMS_ERROR ativo, die ≥ 85 °C (bloqu
 **CAN — `hw_error`** (bits somados): `1` warning · `2` passive · `4` bus-off · `8` stuff · `16` form · `32` ACK · `64` bit rec · `128` bit dom · `256` CRC · `512` overrun FIFO0 · `1024` overrun FIFO1 · `4096`/`16384`/`65536` falha de TX nas mailboxes 0/1/2
 
 **`json`**: contadores das tramas **anteriores**. `dropped` a subir = ring buffer do UART2 cheio (o BT não está a escoar).
+`dma_errors` = erros do DMA/UART de TX (reenvia sozinho). `dma_restarts` = TX encravado > 2 s, o firmware fez abort e recomeçou.
+Se o UART2 parar e voltar com `dma_restarts` maior, o encravamento foi no MCU; se voltar igual, foi do lado do RN4871/BLE.
 
 ---
 

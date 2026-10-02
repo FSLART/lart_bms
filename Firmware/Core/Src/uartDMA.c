@@ -31,6 +31,13 @@ volatile bool isWrapped2 = false;   // limpo no ISR de TX completo
 int tailDma = 0; // Stores the tail index of the buffer being sent
 volatile int tailDma2 = 0; // Stores the tail index of the buffer being sent
 
+/* Vigia do DMA do UART2: o maior bloco possivel (BUFFER_SIZE) demora 0,87 s
+ * a 115200 baud, logo um TX ocupado ha' mais de 2 s esta' encravado */
+#define UART2_TX_STALL_MS 2000
+volatile uint32_t uart2TxStartMs = 0;
+volatile uint32_t uart2DmaErrors = 0;    // HAL_UART_ErrorCallback no UART2
+volatile uint32_t uart2DmaRestarts = 0;  // aborts por TX encravado
+
 int getDataLen(void) {
 	int tempTail = tail;
 
@@ -78,8 +85,21 @@ void startUart2DmaTx(void) {
 
 	tailDma2 = tail2 + dataLen;
 
+	uart2TxStartMs = HAL_GetTick();
 	HAL_UART_Transmit_DMA(&uart2Handle, dataPtr, dataLen);
 	//HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
+}
+
+/* Erro no DMA/UART de TX. O HAL ja' repos o gState em READY (UART_DMAError);
+ * o tail2 nao avancou, logo reenvia-se o mesmo bloco. So' o UART2 */
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
+	if (huart == &uart2Handle) {
+		uart2DmaErrors++;
+
+		if ((head2 != tail2) && (huart->gState == HAL_UART_STATE_READY)) {
+			startUart2DmaTx();
+		}
+	}
 }
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
@@ -190,6 +210,16 @@ int printfDebugRaw(const char *format, ...) {
  * buffer nao escreve nada e devolve 0 (uma trama JSON nunca sai a meio) */
 int uart2Write(const char *data, int len) {
 
+	// vigia ANTES do teste de cheio: com o DMA encravado o ring enche e,
+	// se isto viesse depois, nunca mais se chegava aqui
+	if ((uart2Handle.gState != HAL_UART_STATE_READY) && ((HAL_GetTick() - uart2TxStartMs) > UART2_TX_STALL_MS)) {
+		// TX ocupado ha' demasiado tempo: o DMA encravou. Abortar e
+		// recomecar do tail2 (pode repetir parte de uma linha, nunca perde)
+		HAL_UART_AbortTransmit(&uart2Handle);
+		uart2DmaRestarts++;
+		startUart2DmaTx();
+	}
+
 	// >= e nao >: head2 == tail2 significa vazio, nunca pode encher ate ao fim
 	if ((len <= 0) || (getDataLen2() + len >= BUFFER_SIZE)) {
 		RAISE_ERROR(FAULT_UART2_TX);
@@ -205,7 +235,8 @@ int uart2Write(const char *data, int len) {
 		}
 	}
 
-	if (HAL_UART_GetState(&uart2Handle) == HAL_UART_STATE_READY) {
+	// so o estado de TX: o RX nunca e' armado, mas o GetState() mistura os dois
+	if (uart2Handle.gState == HAL_UART_STATE_READY) {
 		startUart2DmaTx();
 	}
 

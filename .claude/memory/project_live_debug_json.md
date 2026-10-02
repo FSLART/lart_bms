@@ -16,5 +16,6 @@ Regras técnicas:
 - **Só inteiros** (mV, mA, 0,1 °C `_dC`, 0,01 °C `_cC`, `percent_x100`): `%f` no newlib-nano é lento e o brain_loop tem ~65 ms de WWDG. Floats da struct convertidos por `fx()` (NaN/Inf → 0).
 - Buffer `LIVE_DEBUG_JSON_BUF` 6144: típico 3064 B, pior caso absoluto 5886 B (64 faults, tudo no máximo de dígitos).
 - `uart2Write()` (uartDMA.c) é **tudo-ou-nada**: trama que não cabe no ring (10000 B) é descartada inteira → `json.dropped`. Os contadores `json.sent/dropped` numa trama referem-se às anteriores.
+- Vigia do DMA (2026-10-02): `HAL_UART_ErrorCallback` reenvia o bloco (`uart2DmaErrors`); `uart2Write` faz `HAL_UART_AbortTransmit` + recomeço se o TX estiver ocupado > 2 s (`uart2DmaRestarts`), e corre **antes** do teste de ring cheio. Testa `gState` e não `HAL_UART_GetState()`. Ambos no JSON (`json.dma_errors/dma_restarts`) para distinguir encravamento do MCU vs RN4871/BLE.
 - `printfDebug` continua desligado (`UART2_DEBUG_PRINTS 0`); no UART2 só saem o JSON e as transições AMS (`printfDebugRaw`).
 - Validação sem hardware: réplica Python que extrai os format strings do próprio `live_debug.c` e faz `json.loads` (típico + pior caso).

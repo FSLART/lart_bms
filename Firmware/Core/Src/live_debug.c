@@ -29,6 +29,8 @@
 /* Externs owned by other translation units */
 extern uint8_t slaves_found;     // adBms_Application.c
 extern uint8_t anyPecError;      // adBms6830GenericType.c
+extern volatile uint32_t uart2DmaErrors;    // uartDMA.c
+extern volatile uint32_t uart2DmaRestarts;  // uartDMA.c
 
 live_debug_t live_debug = { 0 };
 
@@ -320,6 +322,9 @@ void LiveDebug_Update(void) {
 	live_debug.balancing.worst_slave       = worst_slave;
 	live_debug.balancing.worst_cell        = worst_cell;
 
+	live_debug.json.dma_errors   = uart2DmaErrors;
+	live_debug.json.dma_restarts = uart2DmaRestarts;
+
 	LiveDebug_SendJson();
 }
 
@@ -466,7 +471,8 @@ static void LiveDebug_SendJson(void) {
 			d->can.can2_hw_error, d->can.can2_tx_queue_depth);
 
 	/* contadores das tramas ANTERIORES (esta ainda nao foi enviada) */
-	j("\"json\":{\"sent\":%lu,\"dropped\":%lu,\"last_len\":%u},", (unsigned long) d->json.frames_sent, (unsigned long) d->json.frames_dropped, d->json.last_len);
+	j("\"json\":{\"sent\":%lu,\"dropped\":%lu,\"last_len\":%u,\"dma_errors\":%lu,\"dma_restarts\":%lu},", (unsigned long) d->json.frames_sent,
+			(unsigned long) d->json.frames_dropped, d->json.last_len, (unsigned long) d->json.dma_errors, (unsigned long) d->json.dma_restarts);
 
 	/* por slave: [slave][celula] e [slave][ntc] */
 	j("\"cell_mV\":[");

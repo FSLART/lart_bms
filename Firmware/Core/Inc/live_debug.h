@@ -181,6 +181,8 @@ typedef struct {
 	uint32_t frames_sent;     // tramas JSON entregues ao ring buffer
 	uint32_t frames_dropped;  // tramas descartadas (ring buffer cheio / JSON > buffer)
 	uint16_t last_len;        // tamanho da ultima trama, bytes
+	uint32_t dma_errors;      // HAL_UART_ErrorCallback no UART2
+	uint32_t dma_restarts;    // TX encravado > 2 s -> abort + recomeco
 } live_debug_json_t;
 
 typedef struct {
