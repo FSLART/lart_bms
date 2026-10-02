@@ -17,6 +17,13 @@ Unresolved as of 2026-07-03:
 - Mitigations landed 2026-07-03 (beta-v2): `BMS_SafetyCheck` skips module if `cccrc.cell_pec != 0` — **ineffective until 2026-10-01**: vendor wrote only the LAST group's PEC (group F = cell 16, unpopulated); now `ReadCellGroups()` ORs all 6 groups; `printVoltages` prints `(raw=0x%04X)` after negative Cell/AvgCell values.
 - **Superseded 2026-08-06**: o tratamento do valor negativo passou a ser `cell_v = fabsf(cell_v)` — o sentinela 0x8000 (−3,4152 V) vira +3,4152 V e deixa de disparar UV fantasma. Open-wire passou a ser detetado por **`cell_v < 2,30 V`** (`SAFETY_CELL_OW_V` → `FAULT_OW_DETECTED_CELL`), ver [[project-hardware-quirks]]. Root cause (chain-end signal integrity vs read-length) unproven — waiting raw hex from hardware. raw=0x8000 exact → sentinel/register-reset; anything else → tail corruption.
 
+**⚠️ cell_asic overflow (found 2026-10-02, NOT fixed at the root — user chose read-order workaround, no vendor edit).** `adBms6830Data.h`: `CELL 12`, `AUX 6`, `RAUX 6` size the arrays, but the vendor parsers write 16 / 12 / 10 entries. Arrays are contiguous in `cell_asic`, so each read spills into the next struct:
+- RDCV `c_codes[12..15]` → `ac_codes[0..3]`; RDAC `ac[12..15]` → `sc_codes[0..3]`; RDSV `sc[12..15]` → `fc_codes[0..3]`; RDFC → `a_codes[0..3]`
+- RDAUX `a_codes[6..11]` → `ra_codes[0..5]` (NTCs!); RDRAX `ra_codes[6..9]` → `stata` (vref2, **itmp**, vref3) + 1st field of statb
+- Workaround: every state machine reads **Cell → AvgCell → AUX → RAUX → STAT → memcpy(SLAVE)**. Any new read sequence must keep that order. After the OW phase (RDAUX) `IC[].raux` is dirty until the next RDRAX — read NTCs from `SLAVE[]`.
+- Symptoms it caused: false OW on cells 1–4 of every slave in BALANCING; cells 1–4 never balancing when balance used ac_codes (mask 0xFF0); die temp (itmp) was garbage in IDLE/BALANCING for months → explains the July "S12 ITMP 125.6 °C" hardening of the 85 °C guard.
+- Real fix (declined for now): size arrays 16/12/10 with new defines, keep CELL/AUX/RAUX as populated counts for loops (~6.5 KB RAM).
+
 **CAN_Service recovery throttle** — FIXED 2026-07-03 (beta-v2): `last_try` now pointer to `last_can1_try`/`last_can2_try` static, throttle writes back via `*last_try = now`.
 
 **CAN TX queue race**: `can1TxQueue`/`can2TxQueue` head/tail touched from both ISR (RX callbacks enqueueing responses) and main loop (`CanTx_ProcessSelectedQueue`), not `volatile`, no critical section. Not fixed.

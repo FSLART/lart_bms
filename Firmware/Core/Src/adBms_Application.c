@@ -408,6 +408,15 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 
 		case BAL_CYCLE_READ_AVG:
 			adBmsWakeupIc(slaves_found);
+			/* ORDEM IMPORTA: as arrays do cell_asic (CELL=12, AUX=6, RAUX=6) sao
+			 * menores do que o que o parser do vendor escreve (16/12/10), e cada
+			 * leitura transborda para a struct seguinte:
+			 *   RDCV  -> ac_codes[0..3]   (logo RDAC depois de RDCV)
+			 *   RDAUX -> ra_codes[0..5]   (logo RDRAX depois de RDAUX)
+			 *   RDRAX -> stata.itmp       (logo RDSTAT depois de RDRAX)
+			 * Com RDAC antes de RDCV o open-wire via ac_codes[0..3] estragados e
+			 * marcava as celulas 1-4 de todos os slaves. */
+			ReadCellGroups(Cell);
 			ReadCellGroups(AvgCell);
 
 			adBmsReadData(slaves_found, &IC[0], RDAUXA, Aux, A);
@@ -415,20 +424,16 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 			adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
 			adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
 
-			adBmsReadData(slaves_found, &IC[0], RDSTATA, Status, A);
-			adBmsReadData(slaves_found, &IC[0], RDSTATB, Status, B);
-			adBmsReadData(slaves_found, &IC[0], RDSTATC, Status, C);
-			adBmsReadData(slaves_found, &IC[0], RDSTATD, Status, D);
-			adBmsReadData(slaves_found, &IC[0], RDSTATE, Status, E);
-
 			adBmsReadData(slaves_found, &IC[0], RDRAXA, RAux, A);
 			adBmsReadData(slaves_found, &IC[0], RDRAXB, RAux, B);
 			adBmsReadData(slaves_found, &IC[0], RDRAXC, RAux, C);
 			adBmsReadData(slaves_found, &IC[0], RDRAXD, RAux, D);
 
-			/* c_codes frescos: o BMS_SafetyCheck (OV/UV/OT), o Master_MSC_3
-			 * e o CAN dos slaves leem-nos, e agora correm em BALANCING */
-			ReadCellGroups(Cell);
+			adBmsReadData(slaves_found, &IC[0], RDSTATA, Status, A);
+			adBmsReadData(slaves_found, &IC[0], RDSTATB, Status, B);
+			adBmsReadData(slaves_found, &IC[0], RDSTATC, Status, C);
+			adBmsReadData(slaves_found, &IC[0], RDSTATD, Status, D);
+			adBmsReadData(slaves_found, &IC[0], RDSTATE, Status, E);
 
 			memcpy(SLAVE, IC, sizeof(SLAVE));
 
@@ -491,12 +496,6 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
 				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
 
-				adBmsReadData(slaves_found, &IC[0], RDSTATA, Status, A);
-				adBmsReadData(slaves_found, &IC[0], RDSTATB, Status, B);
-				adBmsReadData(slaves_found, &IC[0], RDSTATC, Status, C);
-				adBmsReadData(slaves_found, &IC[0], RDSTATD, Status, D);
-				adBmsReadData(slaves_found, &IC[0], RDSTATE, Status, E);
-
 				//Read GPIOS
 				adBms6830_Adax2(AUX_CH_TO_CONVERT);
 				adbmsPhaseStart = getRuntimeMs();
@@ -511,6 +510,12 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 				adBmsReadData(slaves_found, &IC[0], RDRAXB, RAux, B);
 				adBmsReadData(slaves_found, &IC[0], RDRAXC, RAux, C);
 				adBmsReadData(slaves_found, &IC[0], RDRAXD, RAux, D);
+				/* RDSTAT depois do RDRAX: o RDRAX transborda para stata.itmp */
+				adBmsReadData(slaves_found, &IC[0], RDSTATA, Status, A);
+				adBmsReadData(slaves_found, &IC[0], RDSTATB, Status, B);
+				adBmsReadData(slaves_found, &IC[0], RDSTATC, Status, C);
+				adBmsReadData(slaves_found, &IC[0], RDSTATD, Status, D);
+				adBmsReadData(slaves_found, &IC[0], RDSTATE, Status, E);
 				//printVoltages(slaves_found, &IC[0], Aux);
 
 				/*  SNAPSHOT  antes das conversoes OW mexerem nos registos */
@@ -586,12 +591,6 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
 				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
 
-				adBmsReadData(slaves_found, &IC[0], RDSTATA, Status, A);
-				adBmsReadData(slaves_found, &IC[0], RDSTATB, Status, B);
-				adBmsReadData(slaves_found, &IC[0], RDSTATC, Status, C);
-				adBmsReadData(slaves_found, &IC[0], RDSTATD, Status, D);
-				adBmsReadData(slaves_found, &IC[0], RDSTATE, Status, E);
-
 				//Read GPIOS
 				adBms6830_Adax2(AUX_CH_TO_CONVERT);
 				chargingPhaseStart = getRuntimeMs();
@@ -606,6 +605,12 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 				adBmsReadData(slaves_found, &IC[0], RDRAXB, RAux, B);
 				adBmsReadData(slaves_found, &IC[0], RDRAXC, RAux, C);
 				adBmsReadData(slaves_found, &IC[0], RDRAXD, RAux, D);
+				/* RDSTAT depois do RDRAX: o RDRAX transborda para stata.itmp */
+				adBmsReadData(slaves_found, &IC[0], RDSTATA, Status, A);
+				adBmsReadData(slaves_found, &IC[0], RDSTATB, Status, B);
+				adBmsReadData(slaves_found, &IC[0], RDSTATC, Status, C);
+				adBmsReadData(slaves_found, &IC[0], RDSTATD, Status, D);
+				adBmsReadData(slaves_found, &IC[0], RDSTATE, Status, E);
 
 				/*  SNAPSHOT  - o charger decide (4.2V / 60C) com base nos agregados
 				 * calculados a partir do SLAVE[], tirado antes das conversoes OW
@@ -672,12 +677,6 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 				adBmsReadData(slaves_found, &IC[0], RDAUXC, Aux, C);
 				adBmsReadData(slaves_found, &IC[0], RDAUXD, Aux, D);
 
-				adBmsReadData(slaves_found, &IC[0], RDSTATA, Status, A);
-				adBmsReadData(slaves_found, &IC[0], RDSTATB, Status, B);
-				adBmsReadData(slaves_found, &IC[0], RDSTATC, Status, C);
-				adBmsReadData(slaves_found, &IC[0], RDSTATD, Status, D);
-				adBmsReadData(slaves_found, &IC[0], RDSTATE, Status, E);
-
 				//Read GPIOS
 				adBms6830_Adax2(AUX_CH_TO_CONVERT);
 
@@ -693,6 +692,12 @@ static adbms_result_state adbms_main_impl(AMSStates_t ams_state) {
 				adBmsReadData(slaves_found, &IC[0], RDRAXB, RAux, B);
 				adBmsReadData(slaves_found, &IC[0], RDRAXC, RAux, C);
 				adBmsReadData(slaves_found, &IC[0], RDRAXD, RAux, D);
+				/* RDSTAT depois do RDRAX: o RDRAX transborda para stata.itmp */
+				adBmsReadData(slaves_found, &IC[0], RDSTATA, Status, A);
+				adBmsReadData(slaves_found, &IC[0], RDSTATB, Status, B);
+				adBmsReadData(slaves_found, &IC[0], RDSTATC, Status, C);
+				adBmsReadData(slaves_found, &IC[0], RDSTATD, Status, D);
+				adBmsReadData(slaves_found, &IC[0], RDSTATE, Status, E);
 
 				memcpy(SLAVE, IC, sizeof(SLAVE));
 
@@ -1571,6 +1576,13 @@ typedef enum {
 static ow_step_t owStep = OW_START_EVEN;
 static uint32_t owStepStart = 0;
 
+/* Espera minima depois de cada ADSV com OW antes de ler o resultado.
+ * NAO baixar de ~20 ms (conversao incompleta = OW falso). 25 ms = o gate do
+ * CHARGING; o IDLE ja' tinha >= 50 ms pelo gate do brain. (O OW falso nas
+ * celulas 1-4 em BALANCING NAO era isto: era a ordem RDAC/RDCV, ver
+ * BAL_CYCLE_READ_AVG) */
+#define OW_CONV_WAIT_MS 25
+
 /* Chamado quem entra na fase OW: se o estado mudou a meio de um OW (ex.
  * IDLE -> CHARGING), nao continuar uma conversao de outro contexto */
 static void OpenWire_Restart(void) {
@@ -1596,8 +1608,7 @@ static bool OpenWire_Step(void) {
 		break;
 
 	case OW_READ_EVEN_START_ODD:
-		// NAO baixar: a conversao S-ADC com OW precisa de ~15ms
-		if (getRuntimeMsDiff(owStepStart) >= 15) {
+		if (getRuntimeMsDiff(owStepStart) >= OW_CONV_WAIT_MS) {
 
 			// Read S-volt results with even pull active
 			adBmsWakeupIc(slaves_found);
@@ -1631,7 +1642,7 @@ static bool OpenWire_Step(void) {
 		break;
 
 	case OW_READ_ODD_EVALUATE:
-		if (getRuntimeMsDiff(owStepStart) >= 10) {
+		if (getRuntimeMsDiff(owStepStart) >= OW_CONV_WAIT_MS) {
 
 			// Save even-pull readings for even-numbered cells
 			for (uint8_t slave = 0; slave < slaves_found; slave++) {
