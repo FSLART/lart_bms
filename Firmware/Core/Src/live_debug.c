@@ -23,7 +23,7 @@
 #include "cell_balancing.h"    // cell_code_to_mV(), BALANCING_CELL_COUNT
 #include "soc.h"               // SOC_GetPercent() ...
 #include "charger.h"           // Charger_GetState() ...
-#include "dbc/handcart_t26.h"  // struct do status do carregador
+#include "handcart_t26.h"  // struct do status do carregador
 #include "uartDMA.h"           // uart2Write()
 
 /* Externs owned by other translation units */

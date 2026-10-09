@@ -12,7 +12,7 @@
 #include "can.h"
 #include "adbms_application.h"
 #include "uartDMA.h"
-#include "dbc/powertrain_t26.h"
+#include "powertrain_t26.h"
 
 /*
  * Convencao da ISA (pack, CAN1): descarga = corrente NEGATIVA, carga =

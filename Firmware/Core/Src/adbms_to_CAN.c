@@ -12,13 +12,13 @@
 #include "ams_error.h"
 
 #include "can.h"
-#include "dbc/powertrain_t26.h"
+#include "powertrain_t26.h"
 
 #include <math.h>
 #include <string.h>
 
-#define SAFETY_CELL_OV_V   4.20
-#define SAFETY_CELL_UV_V   2.80
+#define SAFETY_CELL_OV_V   4.25   // = CHARGER_CELL_TARGET_MV (decisao do utilizador)
+#define SAFETY_CELL_UV_V   2.65
 /* Abaixo disto nao e uma celula em subtensao, e um fio de sense partido: a
  * P45B nunca desce dos 2.5V em servico, e um tap aberto colapsa a leitura
  * para perto de 0. Deteta OW muito mais depressa que as fases dedicadas do

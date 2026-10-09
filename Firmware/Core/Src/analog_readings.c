@@ -11,7 +11,7 @@
 #include "math.h"
 #include "uartDMA.h"
 #include "can.h"
-#include "dbc/powertrain_t26.h"
+#include "powertrain_t26.h"
 
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim3;

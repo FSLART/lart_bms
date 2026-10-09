@@ -37,8 +37,9 @@ extern CAN_HandleTypeDef hcan2;
 
 //charging protection limits
 #define CHARGER_CELL_TARGET_MV      4250   // stop charging when highest cell gets here
-                                           // (abaixo dos 4.20V do OV permanente, para a
-                                           // carga completa nunca tocar na protecao)
+                                           // ponytail: = SAFETY_CELL_OV_V (4.25), margem
+                                           // zero - se a celula passar 4250 mV antes do
+                                           // corte assentar, o OV abre o AMS em carga
 #define CHARGER_MAX_TEMP_cC         6000   // 60.00 C, g_pack_tmax_cC is in centi-degrees
 #define CHARGER_MAX_CURRENT_CUT_mA  15000  // 15 A da ISA (valor absoluto), cortar acima disto
 #define CHARGER_ISA_TIMEOUT_MS      1000   // ISA do CAN2 calada mais que isto -> cortar carga

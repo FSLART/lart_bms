@@ -15,7 +15,7 @@ REF=<tag> ./sync_dbc.sh  # fixa uma versão
 ```
 
 - O T26_DBC gera os `.c/.h` por CI (`convert_to_c.yml`) a cada push do `.dbc`, em `generated/<nome>/` — não é preciso correr o cantools.
-- Sincroniza só **`powertrain_t26`** e **`handcart_t26`** para o split `Firmware/Core/Src/dbc` + `Inc/dbc`. Não re-introduz o `eveurope_charger` (removido de propósito).
+- Sincroniza só **`powertrain_t26`** e **`handcart_t26`** para `Firmware/Core/DBC/` (.c e .h juntos; desde 2026-10-09, antes era o split `Src/dbc` + `Inc/dbc`). Includes são `#include "powertrain_t26.h"` sem prefixo `dbc/`. Não re-introduz o `eveurope_charger` (removido de propósito).
 - Idempotente: compara ignorando line endings e escreve preservando o EOL do destino (senão o CRLF do Windows criava churn a cada corrida).
 - `.gitattributes` força `*.sh` em LF para o script não partir noutra máquina.
 - **Nunca faz commit** — isso é no GitKraken, que é como o utilizador trabalha.

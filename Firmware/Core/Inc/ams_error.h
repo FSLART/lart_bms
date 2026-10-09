@@ -20,9 +20,9 @@
  * 2026-09-09: so a sobretemperatura fica activa, a pedido, para trabalho de
  * bancada. POR TUDO A 1 OUTRA VEZ ANTES DE LEVAR O CARRO A PISTA.
  * --------------------------------------------------------------------------- */
-#define AMS_ERR_SRC_OVERTEMPERATURE   1   /* UNICA proteccao activa */
-#define AMS_ERR_SRC_OVERVOLTAGE       0
-#define AMS_ERR_SRC_UNDERVOLTAGE      0
+#define AMS_ERR_SRC_OVERTEMPERATURE   1
+#define AMS_ERR_SRC_OVERVOLTAGE       1
+#define AMS_ERR_SRC_UNDERVOLTAGE      1
 #define AMS_ERR_SRC_OPENWIRE          0   /* open wire de celula e de NTC */
 #define AMS_ERR_SRC_ISA_TIMEOUT       0   /* ISA do pack, CAN1 (powertrain) */
 #define AMS_ERR_SRC_HANDCART_TIMEOUT  0   /* 0x084 do handcart, CAN2 */

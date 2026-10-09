@@ -17,7 +17,7 @@ import tkinter as tk
 from tkinter import ttk
 
 SLAVES, CELLS = 12, 12
-OV, UV = 4.20, 2.80      # SAFETY_CELL_OV_V / SAFETY_CELL_UV_V em adbms_to_CAN.c
+OV, UV = 4.25, 2.65      # SAFETY_CELL_OV_V / SAFETY_CELL_UV_V em adbms_to_CAN.c
 VMIN, VMAX = 2.7, 4.3    # escala do eixo
 STALE = 5.0              # s sem frame -> ignora; > 12 slaves x ~250 ms da 0x706 em roda
 F = ('Segoe UI', 8)

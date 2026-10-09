@@ -26,6 +26,9 @@ Célula **< 2,3 V** = fio de sense partido (a P45B nunca desce dos 2,5 V em serv
 
 O limiar do aux (`pup > 10000 || pdown > 0`) é hair-trigger e tem `//TODO: DEFINIR THESHOLDS` — o `pdown > 0` oscila com ruído.
 
+## PWM das ventoinhas invertido
+2026-10-06: o utilizador viu o PWM das ventoinhas invertido (high↔low) → TIM12 CH1 passou a `TIM_OCPOLARITY_LOW` (main.c + .ioc, para sobreviver a regenerar no CubeMX). O resto do código (`pwm_8bit`, rampa) fica em lógica positiva. TIM12 corre a ~977 Hz (64 MHz / 65536); ventoinhas 4 fios esperam ~25 kHz.
+
 ## CAN1 com problemas na bancada
 `can1_tx_error_counter = 255` (error-passive), `last_error_code = 1` (stuff error), fila a 1023. Causa provável: sem outro nó a dar ACK e/ou sem terminação de 120 Ω. Diagnóstico exposto em `live_debug.can` (state, bus_off, hw_error, tx/rx error counters, last_error_code).
 

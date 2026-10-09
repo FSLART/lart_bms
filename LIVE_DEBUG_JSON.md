@@ -65,8 +65,8 @@ Os que o código **levanta hoje**:
 
 | Código | Nome | Origem |
 |---|---|---|
-| 0 | `OVERVOLTAGE` | Célula > 4,20 V |
-| 1 | `UNDERVOLTAGE` | Célula < 2,80 V |
+| 0 | `OVERVOLTAGE` | Célula > 4,25 V |
+| 1 | `UNDERVOLTAGE` | Célula < 2,65 V |
 | 2 | `OVERTEMPERATURE` | NTC ≥ 65 °C |
 | 7 | `SLAVE_NOT_DETECTED` | Menos slaves do que os 12 esperados |
 | 8 | `PEC_ERROR` | Qualquer leitura isoSPI com CRC errado |

@@ -14,7 +14,7 @@
 #include "precharge.h"
 #include "brain.h"
 #include "can.h"
-#include "dbc/powertrain_t26.h"
+#include "powertrain_t26.h"
 #include "main.h"
 #include "brain.h"
 #include "fault_manager.h"

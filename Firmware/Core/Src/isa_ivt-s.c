@@ -5,7 +5,7 @@
 #include "uartDMA.h"
 #include "can.h"
 #include "soc.h"
-#include "dbc/powertrain_t26.h"
+#include "powertrain_t26.h"
 
 #define SAFETY_PACK_OV_mV   599000
 #define SAFETY_PACK_UV_mV   2.8 * 144 * 1000

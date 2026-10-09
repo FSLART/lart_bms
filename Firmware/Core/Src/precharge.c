@@ -12,7 +12,7 @@
 
 #include "can.h"
 
-#include "dbc/powertrain_t26.h"
+#include "powertrain_t26.h"
 
 #include "handcart_t26.h"
 

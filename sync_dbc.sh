@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # sync_dbc.sh - puxa os .c/.h DBC gerados mais recentes do repo
-# FSLART/T26_DBC para dentro do lart_bms (layout split Src/dbc + Inc/dbc).
+# FSLART/T26_DBC para dentro do lart_bms (Firmware/Core/DBC).
 #
 # O T26_DBC gera os .c/.h por CI a cada push do .dbc, por isso isto puxa
 # direto o codigo gerado - nao precisas de correr o cantools localmente.
@@ -40,16 +40,15 @@ fi
 
 # raiz do lart_bms (funciona corras de onde correres)
 ROOT="$(git rev-parse --show-toplevel)"
-SRC_DIR="${ROOT}/Firmware/Core/Src/dbc"
-INC_DIR="${ROOT}/Firmware/Core/Inc/dbc"
+DBC_DIR="${ROOT}/Firmware/Core/DBC"
 
 # ficheiros a sincronizar: "caminho_upstream|destino_local"
 # so os que o BMS usa (NAO puxar eveurope - foi removido de proposito)
 FILES=(
-	"generated/powertrain_t26/powertrain_t26.c|${SRC_DIR}/powertrain_t26.c"
-	"generated/powertrain_t26/powertrain_t26.h|${INC_DIR}/powertrain_t26.h"
-	"generated/handcart_t26/handcart_t26.c|${SRC_DIR}/handcart_t26.c"
-	"generated/handcart_t26/handcart_t26.h|${INC_DIR}/handcart_t26.h"
+	"generated/powertrain_t26/powertrain_t26.c|${DBC_DIR}/powertrain_t26.c"
+	"generated/powertrain_t26/powertrain_t26.h|${DBC_DIR}/powertrain_t26.h"
+	"generated/handcart_t26/handcart_t26.c|${DBC_DIR}/handcart_t26.c"
+	"generated/handcart_t26/handcart_t26.h|${DBC_DIR}/handcart_t26.h"
 )
 
 if [ "${CHECK}" -eq 1 ]; then

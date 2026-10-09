@@ -27,7 +27,7 @@ Syntax-check com o gcc do CubeIDE, sem depender do IDE:
 ```
 C:\ST\STM32CubeIDE_1.18.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin\arm-none-eabi-gcc.exe
   -mcpu=cortex-m4 -std=gnu11 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F412Rx -Wall -fsyntax-only
-  -ICore/Inc -ICore/Inc/adbms -ICore/Inc/dbc -ICore/Src -ICore/Src/adbms
+  -ICore/Inc -ICore/Inc/adbms -ICore/DBC -ICore/Src -ICore/Src/adbms
   -IDrivers/STM32F4xx_HAL_Driver/Inc -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy
   -IDrivers/CMSIS/Device/ST/STM32F4xx/Include -IDrivers/CMSIS/Include
 ```

@@ -8,7 +8,7 @@
 #include "fault_manager.h"
 #include "uartDMA.h"
 #include "can.h"
-#include "dbc/powertrain_t26.h"
+#include "powertrain_t26.h"
 
 #include <string.h>
 #include <stddef.h>

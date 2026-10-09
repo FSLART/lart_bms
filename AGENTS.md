@@ -7,7 +7,7 @@ BMS firmware for STM32F412RET6 + ADBMS6830 (Analog Devices) battery monitor ICs.
 - `Firmware/` — STM32CubeIDE project (GNU ARM GCC 13.3.rel1)
   - `Core/Src/`, `Core/Inc/` — application code
   - `Core/Src/adbms/` — ADBMS6830 driver (Analog Devices library)
-  - `Core/Src/dbc/`, `Core/Inc/dbc/` — auto-generated CAN DBC code (`powertrain_t26.dbc`)
+  - `Core/DBC/` — auto-generated CAN DBC code (`powertrain_t26.dbc`)
   - `Core/Startup/` — startup assembly
   - `Debug/` — build artifacts + auto-generated makefile
   - `Drivers/` — STM32F4xx HAL + CMSIS
