@@ -116,8 +116,7 @@ typedef struct {
 	bool        wwdg_reset;           /* o ultimo arranque foi reset do WWDG */
 } bms_system_t;
 
-/* Tudo o que a pagina Configuracao da UI edita, mais a topologia.
- * E isto que vai para a EEPROM. Valores entre parenteses = os da UI. */
+// eeprom configs saved hopefully
 typedef struct {
 	bool     loaded;                  /* lida da EEPROM e validada (false = defaults) */
 	uint8_t  version;                 /* sobe quando o layout muda */
@@ -152,18 +151,18 @@ typedef struct {
 	uint8_t  fan_pwm_min_pct;         /* (20) */
 	uint8_t  fan_pwm_max_pct;         /* (100) */
 	/* pre-carga */
-	uint16_t pre_timeout_ms;          /* tempo maximo da sequencia (10000) */
-	uint8_t  pre_bus_pct;             /* tensao do bus para concluir, % do pack (95) */
-	uint16_t pre_air_wait_ms;         /* espera antes de ler o feedback de cada AIR (500) */
+	uint16_t precharge_timeout_ms;          /* tempo maximo da sequencia (10000) */
+	uint8_t  precharge_bus_percentage;             /* tensao do bus para concluir, % do pack (95) */
+	uint16_t precharge_air_wait_ms;         /* espera antes de ler o feedback de cada AIR (500) */
 	/* SOC */
 	uint16_t capacity_mAh;            /* capacidade nominal (13500) */
 	uint8_t  soc_fit_degree;          /* grau do ajuste mostrado na UI (4) */
 	uint8_t  soc_curve_pct[CFG_SOC_POINTS];    /* 0, 5, 10, 20 ... 100 */
 	uint16_t soc_curve_mV[CFG_SOC_POINTS];     /* tensao em repouso nesse SOC */
 	/* compensacao por temperatura */
-	int8_t   tcomp_temp_C[CFG_TCOMP_POINTS];   /* -20, -10 ... 70 */
-	int16_t  tcomp_adjust_dmV[CFG_TCOMP_POINTS];  /* correcao da tensao lida, 0,1 mV */
-	uint16_t tcomp_r_dmOhm[CFG_TCOMP_POINTS];     /* resistencia interna, 0,1 mOhm */
+	int8_t   temp_compensation_temp_C[CFG_TEMPCOMP_POINTS];   /* -20, -10 ... 70 */
+	int16_t  temp_compensation_adjust_mV[CFG_TEMPCOMP_POINTS];  /* correcao da tensao lida, 0,1 mV */
+	uint16_t temp_compensation_resistance_mOhm[CFG_TEMPCOMP_POINTS];     /* resistencia interna, 0,1 mOhm */
 	/* quais faults disparam a linha AMS_ERROR */
 	bms_faults_t ams_error_enable;
 } bms_config_t;
@@ -191,7 +190,7 @@ typedef struct {
 	uint8_t  cell_min_cell;
 	int16_t  temp_max_dC;
 	int16_t  temp_min_dC;
-	uint32_t updated_ms;              /* HAL_GetTick() da ultima copia valida */
+	uint32_t updated_ms;              /* HAL_GetTick() DO LAST VALUE OBTIDFO */
 } bms_cells_t;
 
 typedef struct {
