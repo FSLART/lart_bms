@@ -1,0 +1,10 @@
+../Core/adbms6830/mcuWrapper.c:46:6:Delay_ms	1
+../Core/adbms6830/mcuWrapper.c:62:6:adBmsCsLow	1
+../Core/adbms6830/mcuWrapper.c:78:6:adBmsCsHigh	1
+../Core/adbms6830/mcuWrapper.c:98:6:spiWriteBytes	1
+../Core/adbms6830/mcuWrapper.c:124:6:spiWriteReadBytes	1
+../Core/adbms6830/mcuWrapper.c:150:6:spiReadBytes	1
+../Core/adbms6830/mcuWrapper.c:166:6:startTimer	1
+../Core/adbms6830/mcuWrapper.c:182:6:stopTimer	1
+../Core/adbms6830/mcuWrapper.c:198:10:getTimCount	1
+../Core/adbms6830/mcuWrapper.c:220:6:adBmsWakeupIc	2

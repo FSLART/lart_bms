@@ -5,14 +5,20 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Core/DBC/autonomous_t26.c \
+../Core/DBC/data_t26.c \
 ../Core/DBC/handcart_t26.c \
 ../Core/DBC/powertrain_t26.c 
 
 OBJS += \
+./Core/DBC/autonomous_t26.o \
+./Core/DBC/data_t26.o \
 ./Core/DBC/handcart_t26.o \
 ./Core/DBC/powertrain_t26.o 
 
 C_DEPS += \
+./Core/DBC/autonomous_t26.d \
+./Core/DBC/data_t26.d \
 ./Core/DBC/handcart_t26.d \
 ./Core/DBC/powertrain_t26.d 
 
@@ -24,7 +30,7 @@ Core/DBC/%.o Core/DBC/%.su Core/DBC/%.cyclo: ../Core/DBC/%.c Core/DBC/subdir.mk
 clean: clean-Core-2f-DBC
 
 clean-Core-2f-DBC:
-	-$(RM) ./Core/DBC/handcart_t26.cyclo ./Core/DBC/handcart_t26.d ./Core/DBC/handcart_t26.o ./Core/DBC/handcart_t26.su ./Core/DBC/powertrain_t26.cyclo ./Core/DBC/powertrain_t26.d ./Core/DBC/powertrain_t26.o ./Core/DBC/powertrain_t26.su
+	-$(RM) ./Core/DBC/autonomous_t26.cyclo ./Core/DBC/autonomous_t26.d ./Core/DBC/autonomous_t26.o ./Core/DBC/autonomous_t26.su ./Core/DBC/data_t26.cyclo ./Core/DBC/data_t26.d ./Core/DBC/data_t26.o ./Core/DBC/data_t26.su ./Core/DBC/handcart_t26.cyclo ./Core/DBC/handcart_t26.d ./Core/DBC/handcart_t26.o ./Core/DBC/handcart_t26.su ./Core/DBC/powertrain_t26.cyclo ./Core/DBC/powertrain_t26.d ./Core/DBC/powertrain_t26.o ./Core/DBC/powertrain_t26.su
 
 .PHONY: clean-Core-2f-DBC
 
