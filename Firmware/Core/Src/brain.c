@@ -14,6 +14,9 @@
 
 /* ================== LOCAL DEFINES / TYPES ================== */
 
+// Snapshot global do BMS (ver brain.h); arranca tudo a zero
+bms_t bms;
+
 //Heatbeat trigger flag
 bool toggleHeartbeat = false;
 
