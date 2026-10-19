@@ -67,9 +67,15 @@ void startUartDmaTx(void) {
 	// get pointer to the tail data
 	uint8_t *dataPtr = (uint8_t*) (buffer + tail);
 
+	// se nao arrancar repoe o fim anterior: depois de um FIFO error o HAL poe
+	// gState READY com o bloco antigo ainda em voo, o Start falha BUSY e o
+	// tailDma desse bloco tem de ficar intacto (senao o TxCplt saltava bytes)
+	int prevTailDma = tailDma;
 	tailDma = tail + dataLen;
 
-	HAL_UART_Transmit_DMA(&uartHandle, dataPtr, dataLen);
+	if (HAL_UART_Transmit_DMA(&uartHandle, dataPtr, dataLen) != HAL_OK) {
+		tailDma = prevTailDma;
+	}
 	//TODO: gpio expander
 	//HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
 }
@@ -83,10 +89,15 @@ void startUart2DmaTx(void) {
 	// get pointer to the tail data
 	uint8_t *dataPtr = (uint8_t*) (buffer2 + tail2);
 
+	uart2TxStartMs = HAL_GetTick();
+
+	// se nao arrancar repoe o fim anterior (ver startUartDmaTx)
+	int prevTailDma2 = tailDma2;
 	tailDma2 = tail2 + dataLen;
 
-	uart2TxStartMs = HAL_GetTick();
-	HAL_UART_Transmit_DMA(&uart2Handle, dataPtr, dataLen);
+	if (HAL_UART_Transmit_DMA(&uart2Handle, dataPtr, dataLen) != HAL_OK) {
+		tailDma2 = prevTailDma2;
+	}
 	//HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
 }
 

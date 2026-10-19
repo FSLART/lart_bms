@@ -342,7 +342,7 @@ void LiveDebug_Update(void) {
 
 /* tipico ~3,1 KB; pior caso absoluto (64 faults, todos os campos no maximo
  * de digitos) ~5,9 KB -> cabe sempre. A 115200 baud 5,9 KB demoram 0,5 s */
-#define LIVE_DEBUG_JSON_BUF 6144
+#define LIVE_DEBUG_JSON_BUF 10000
 
 static char json_buf[LIVE_DEBUG_JSON_BUF];
 static int  json_len;   /* -1 = a trama nao coube no buffer */
