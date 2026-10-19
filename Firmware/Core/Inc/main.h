@@ -61,18 +61,6 @@ extern WWDG_HandleTypeDef hwwdg;
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
 
-//#define TOTAL_IC        2
-#define TOTAL_CELL      12
-//#define TOTAL_AD68      (TOTAL_IC - 1)
-//#define TOTAL_AD68      1
-
-#define RTH_PER_MODULE 6
-
-/*#define OW_RATIO_MIN      0.85f   // intact lower bound (S-ADC OW path)
-#define OW_RATIO_MAX      0.95f   // intact upper bound (S-ADC OW path)
-#define OW_UV_IGNORE_THRESH  0.10f   // Vref below this -> treat as invalid for OW ratio (V)
-#define OW_OPEN_EDGE         0.80f   // clearly open if below this*/
-
 /* USER CODE END EM */
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);

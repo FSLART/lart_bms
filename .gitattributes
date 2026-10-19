@@ -1,3 +1,0 @@
-# Scripts shell tem de ficar sempre em LF, senao o CRLF do Windows parte
-# o interpretador bash noutra maquina (erro tipo "\r: command not found")
-*.sh text eol=lf

@@ -22,7 +22,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "brain.h"
-#include "isa_ivt-s.h"
 
 /* USER CODE END Includes */
 
