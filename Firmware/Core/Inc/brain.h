@@ -13,32 +13,20 @@
 #include <stdint.h>
 
 
-/* ================== SNAPSHOT DO BMS ==================
- * Estado validado do BMS inteiro. Cada modulo mede para variaveis suas, testa
- * (PEC, plausibilidade, timeouts) e so depois copia para aqui: o que esta na
- * struct passou nos testes. CAN, live debug e protecoes leem so isto.
- * Escrita so a partir do brain_loop, nunca de uma interrupcao.
- * Unidades inteiras: mV, mA, dC = 0,1 C, dV = 0,1 V, dA = 0,1 A, x100 = centesimas.
- */
+/* ================== SNAPSHOT DO BMS ================== */
 
-/* So reservam RAM para os arrays (C precisa do tamanho ao compilar).
- * Quantos se usam de facto vem da EEPROM: bms.config.slaves, cells_per_slave,
- * ntcs_per_slave. Os loops usam esses, nunca estes. */
-#define BMS_MAX_SLAVES 16   /* folga para a cadeia */
-#define BMS_MAX_CELLS  16   /* canais de celula do ADBMS6830 */
-#define BMS_MAX_NTCS   10   /* GPIOs do ADBMS6830 */
+//Defines parAA SO LIMITAR NA RAM
+#define BMS_MAX_SLAVES 16
+#define BMS_MAX_CELLS  16
+#define BMS_MAX_NTCS   10
 
-/* Linhas das tabelas da config (iguais as da UI) */
+//tABELAS DE CONFIG
 #define CFG_SOC_POINTS   12   /* curva tensao da celula x SOC */
 #define CFG_TCOMP_POINTS 10   /* compensacao por temperatura, -20..70 C */
 
 typedef enum {
 	AMS_STARTUP = 0,
-	AMS_IDLE,
-	AMS_ONMISSION,
-	AMS_CHARGING,
-	AMS_BALANCING,
-	AMS_FAULT
+	AMS_IDLE
 } ams_state_t;
 
 typedef enum {
@@ -65,22 +53,21 @@ typedef enum {
 } precharge_state_t;
 
 typedef enum {
-	CHG_WAIT_HV = 0,    /* espera pelo HV_ON */
-	CHG_PRESTART_STOP,  /* 5 s com Control=1 antes de pedir carga */
-	CHG_CHARGING,
-	CHG_STOPPING,       /* stop enviado, espera |I| < 500 mA (max 5 s) */
-	CHG_DONE            /* latch: so reinicia com o switch OFF->ON */
+	CHARGER_WAIT_HV = 0,    // espera pelo HV_ON
+	CHARGER_WAIT_HV_PRESTART_STOP,  // 5 s com Control=1 antes de pedir carga
+	CHARGER_WAIT_HV,
+	CHARGER_WAIT_HV_STOPPING,       // stop enviado, espera CORRENTE CAIR
+	CHARGER_WAIT_HVG_DONE            // latch: so reinicia com o switch OFF->ON
 } charger_state_t;
 
 typedef enum {
-	BAL_OFF = 0,
-	BAL_ROUGH,
-	BAL_FINE,
-	BAL_END
+	BALANCING_OFF = 0,
+	BALANCING,
+	BALANCING_FINE,
+	BALANCING_END
 } balancing_stage_t;
 
-/* Uma flag por fault, true = ativo. O mesmo tipo serve para os faults ativos,
- * para os que estao a segurar a linha AMS_ERROR e para a config de quais a disparam. */
+// BIG FAULT STRUCT
 typedef struct {
 	/* celulas */
 	bool cell_overvoltage;
@@ -95,7 +82,7 @@ typedef struct {
 	bool slave_missing;           /* slaves encontrados != esperados */
 	bool pec_error;               /* demasiados erros de PEC */
 	bool adbms_timeout;
-	/* pack */
+	/* accu overall */
 	bool overcurrent;
 	bool pack_voltage_mismatch;   /* ISA vs soma das celulas */
 	bool soc_low;
@@ -117,7 +104,7 @@ typedef struct {
 	/* sistema */
 	bool config_invalid;          /* EEPROM vazia ou corrompida -> defaults */
 	bool watchdog_reset;
-	bool adc_error;
+	bool mcu_adc_error;         //////adcs fo f412 na current sense
 } bms_faults_t;
 
 typedef struct {
