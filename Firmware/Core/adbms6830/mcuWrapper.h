@@ -40,7 +40,10 @@ extern TIM_HandleTypeDef htim5;         /* Mcu dependent TIM handler */
 #define CS_PIN BMS_CS_Pin               /* Mcu dependent chip select */
 #define GPIO_PORT BMS_CS_GPIO_Port      /* Mcu dependent adc chip select port */
 
-void Delay_ms(uint32_t delay);
+uint32_t adBmsTimerClockHz(void);   /* relogio dos timers do APB1 */
+void adBmsTimerInit(void);          /* TIM5 a 1 MHz */
+uint32_t adBmsMicros(void);         /* tempo em us (TIM5) */
+uint32_t adBmsSpiErrors(void);      /* timeouts/erros HAL no SPI desde o arranque */
 void adBmsCsLow(void);
 void adBmsCsHigh(void);
 void spiWriteBytes

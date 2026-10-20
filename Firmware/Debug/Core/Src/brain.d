@@ -35,7 +35,12 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
- ../Core/Inc/brain.h
+ ../Core/Inc/brain.h ../Core/adbms6830/adBms_Application.h \
+ ../Core/adbms6830/adbms_main.h ../Core/adbms6830/common.h \
+ ../Core/adbms6830/adBms6830Data.h \
+ ../Core/adbms6830/adBms6830GenericType.h \
+ ../Core/adbms6830/adBms6830ParseCreate.h ../Core/adbms6830/mcuWrapper.h \
+ ../Core/Inc/stm32f4xx_it.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -74,3 +79,11 @@ Core/Src/brain.o: ../Core/Src/brain.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h:
 ../Core/Inc/brain.h:
+../Core/adbms6830/adBms_Application.h:
+../Core/adbms6830/adbms_main.h:
+../Core/adbms6830/common.h:
+../Core/adbms6830/adBms6830Data.h:
+../Core/adbms6830/adBms6830GenericType.h:
+../Core/adbms6830/adBms6830ParseCreate.h:
+../Core/adbms6830/mcuWrapper.h:
+../Core/Inc/stm32f4xx_it.h:

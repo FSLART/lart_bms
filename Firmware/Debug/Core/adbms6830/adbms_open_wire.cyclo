@@ -1,0 +1,6 @@
+../Core/adbms6830/adBms_Application.h:43:23:ADBMS_CodeToMv	1
+../Core/adbms6830/adBms_Application.h:49:20:ADBMS_CodeValid	3
+../Core/adbms6830/adbms_open_wire.c:15:13:save_pass	5
+../Core/adbms6830/adbms_open_wire.c:35:13:evaluate	13
+../Core/adbms6830/adbms_open_wire.c:70:6:OpenWire_Start	1
+../Core/adbms6830/adbms_open_wire.c:75:6:OpenWire_Step	7

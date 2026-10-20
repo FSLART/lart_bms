@@ -18,34 +18,75 @@ and its licensor.
 */
 #include "common.h"
 #include "mcuWrapper.h"
-#define WAKEUP_DELAY 4                          /* BMS ic wakeup delay  */
 
-
-#define SPI_TIME_OUT HAL_MAX_DELAY              /* SPI Time out delay   */
-#define UART_TIME_OUT HAL_MAX_DELAY             /* UART Time out delay  */
-#define I2C_TIME_OUT HAL_MAX_DELAY              /* I2C Time out delay   */
+/* Tempos do isoSPI, ADBMS6830B datasheet Rev.0 (Tabela 9 e "Waking Up the
+ * Serial Interface"). Sem HAL_Delay: o CS e temporizado pelo TIM5 a 1 MHz */
+#define ISOSPI_READY_HOLD_US 3000u   /* tIDLE min 4,3 ms: abaixo disto a porta ainda esta READY */
+#define WAKE_IDLE_EDGE_US    20u     /* entre flancos do CS: > tREADY (10 us) */
+#define SPI_TIME_OUT         5u      /* ms; maior transacao (16 slaves, 132 B a 1 MHz) ~1,1 ms */
 
 SPI_HandleTypeDef *hspi         = &hspi1;       /* MUC SPI Handler      */
-TIM_HandleTypeDef *htim         = &htim2;       /* Mcu TIM handler */
 
+static uint32_t last_activity_us;   /* fim da ultima transacao (CS em cima) */
+static uint32_t poll_start_us;
+static uint32_t spi_errors;
 
 /**
  *******************************************************************************
- * Function: Delay_ms
- * @brief Delay mili second
+ * Function: adBmsTimerClockHz / adBmsTimerInit / adBmsMicros
+ * @brief Base de tempo em us (TIM5, 32 bits, free-running)
  *
- * @details This function insert delay in ms.
- *     
- * Parameters:
- * @param [in]  delay   Delay_ms
- *
- * @return None
- *
+ * @details O prescaler e calculado a partir do relogio real dos timers do APB1,
+ * para o contador andar sempre a 1 MHz mesmo que o CubeMX mude o relogio.
  *******************************************************************************
 */
-void Delay_ms(uint32_t delay)
+uint32_t adBmsTimerClockHz(void)
 {
-  HAL_Delay(delay);
+  uint32_t timer_clock_hz = HAL_RCC_GetPCLK1Freq();
+  /* com o APB1 dividido, os timers correm ao dobro do PCLK1 */
+  if ((RCC->CFGR & RCC_CFGR_PPRE1) != RCC_CFGR_PPRE1_DIV1)
+  {
+    timer_clock_hz *= 2u;
+  }
+  return timer_clock_hz;
+}
+
+void adBmsTimerInit(void)
+{
+  __HAL_TIM_SET_PRESCALER(&htim5, (adBmsTimerClockHz() / 1000000u) - 1u);
+  htim5.Instance->EGR = TIM_EGR_UG;   /* carrega o prescaler ja */
+  HAL_TIM_Base_Start(&htim5);
+}
+
+uint32_t adBmsMicros(void)
+{
+  /* um contador parado prendia o wait_us para sempre */
+  if ((htim5.Instance->CR1 & TIM_CR1_CEN) == 0u)
+  {
+    adBmsTimerInit();
+  }
+  return __HAL_TIM_GET_COUNTER(&htim5);
+}
+
+static void wait_us(uint32_t wait_time_us)
+{
+  uint32_t start_us = adBmsMicros();
+  while ((adBmsMicros() - start_us) < wait_time_us)
+  {
+  }
+}
+
+uint32_t adBmsSpiErrors(void)
+{
+  return spi_errors;
+}
+
+static void spi_check(HAL_StatusTypeDef status)
+{
+  if (status != HAL_OK)
+  {
+    spi_errors++;
+  }
 }
 
 /**
@@ -78,6 +119,7 @@ void adBmsCsLow()
 void adBmsCsHigh()
 {
   HAL_GPIO_WritePin(GPIO_PORT, CS_PIN, GPIO_PIN_SET);
+  last_activity_us = adBmsMicros();
 }
 
 /**
@@ -89,19 +131,19 @@ void adBmsCsHigh()
  *
  * @param [in]  size            Numberof bytes to be send on the SPI line
  *
- * @param [in]  *tx_Data    Tx data pointer 
+ * @param [in]  *tx_Data    Tx data pointer
  *
  * @return None
  *
  *******************************************************************************
 */
 void spiWriteBytes
-( 
+(
 uint16_t size,                     /*Option: Number of bytes to be written on the SPI port*/
 uint8_t *tx_Data                       /*Array of bytes to be written on the SPI port*/
 )
 {
-  HAL_SPI_Transmit(hspi, tx_Data, size, SPI_TIME_OUT); /* SPI1 , data, size, timeout */ 
+  spi_check(HAL_SPI_Transmit(hspi, tx_Data, size, SPI_TIME_OUT)); /* SPI1 , data, size, timeout */
 }
 
 /**
@@ -113,9 +155,9 @@ uint8_t *tx_Data                       /*Array of bytes to be written on the SPI
  *
  * @param [in]  *tx_data    Tx data pointer
  *
- * @param [in]  *rx_data    Rx data pointer 
+ * @param [in]  *rx_data    Rx data pointer
  *
- * @param [in]  size            Data size 
+ * @param [in]  size            Data size
  *
  * @return None
  *
@@ -128,8 +170,8 @@ uint8_t *rx_data,                   /*Input: array that will store the data read
 uint16_t size                           /*Option: number of bytes*/
 )
 {
-  HAL_SPI_Transmit(hspi, tx_data, 4, SPI_TIME_OUT);
-  HAL_SPI_Receive(hspi, rx_data, size, SPI_TIME_OUT);
+  spi_check(HAL_SPI_Transmit(hspi, tx_data, 4, SPI_TIME_OUT));
+  spi_check(HAL_SPI_Receive(hspi, rx_data, size, SPI_TIME_OUT));
 }
 
 /**
@@ -139,77 +181,52 @@ uint16_t size                           /*Option: number of bytes*/
  *
  * @details This function Read a set number of bytes using the SPI port.
  *
- * @param [in]  size            Data size 
+ * @param [in]  size            Data size
  *
  * @param [in]  *rx_data    Rx data pointer
- * 
+ *
  * @return None
  *
  *******************************************************************************
 */
 void spiReadBytes(uint16_t size, uint8_t *rx_data)
-{   
-  HAL_SPI_Receive(hspi, rx_data, size, SPI_TIME_OUT);
+{
+  spi_check(HAL_SPI_Receive(hspi, rx_data, size, SPI_TIME_OUT));
 }
 
 /**
  *******************************************************************************
- * Function: startTimer()
- * @brief Start timer 
+ * Function: startTimer() / stopTimer() / getTimCount()
+ * @brief Tempo de conversao para o adBmsPollAdc do vendor, em us (TIM5).
  *
- * @details This function start the timer.
- *
- * @return None
- *
+ * @details Antes usava o TIM2 e punha-lhe o contador a 0, o que estragava o
+ * input capture do TIM2. O TIM5 nunca e reposto: so se guarda o inicio.
  *******************************************************************************
 */
 void startTimer()
-{   
-  HAL_TIM_Base_Start(htim);
+{
+  poll_start_us = adBmsMicros();
 }
 
-/**
- *******************************************************************************
- * Function: stopTimer()
- * @brief Stop timer 
- *
- * @details This function stop the timer.
- *
- * @return None
- *
- *******************************************************************************
-*/
 void stopTimer()
-{   
-  HAL_TIM_Base_Stop(htim);
+{
 }
 
-/**
- *******************************************************************************
- * Function: getTimCount()
- * @brief Get Timer Count Value 
- *
- * @details This function return the timer count value.
- *
- * @return tim_count
- *
- *******************************************************************************
-*/
 uint32_t getTimCount()
-{   
-  uint32_t count = 0;
-  count = __HAL_TIM_GetCounter(htim);
-  __HAL_TIM_SetCounter(htim, 0);
-  return(count);
+{
+  return adBmsMicros() - poll_start_us;
 }
 
 
 /**
  *******************************************************************************
  * Function: adBmsWakeupIc
- * @brief Wakeup bms ic using chip select
+ * @brief Acorda a porta isoSPI do IDLE (nucleo em STANDBY).
  *
- * @details This function wakeup thr bms ic using chip select.
+ * @details O vendor chama isto antes de cada transacao. Se houve atividade ha
+ * menos de tIDLE a porta ainda esta READY e nao se faz nada. Senao, um par de
+ * flancos de CS (-1/+1) por slave, separados por mais de tREADY. Acordar do
+ * SLEEP (pulsos > tWAKE) e feito pela maquina de estados ADBMS_WAKE_LOW/HIGH.
  *
  * @param [in]  total_ic    Total_ic
  *
@@ -219,12 +236,16 @@ uint32_t getTimCount()
 */
 void adBmsWakeupIc(uint8_t total_ic)
 {
-  for (uint8_t ic = 0; ic < total_ic; ic++)
+  if ((adBmsMicros() - last_activity_us) < ISOSPI_READY_HOLD_US)
+  {
+    return;
+  }
+  for (uint8_t pulse_counter = 0; pulse_counter < total_ic; pulse_counter++)
   {
     adBmsCsLow();
-    Delay_ms(WAKEUP_DELAY);
+    wait_us(WAKE_IDLE_EDGE_US);
     adBmsCsHigh();
-    Delay_ms(WAKEUP_DELAY);
+    wait_us(WAKE_IDLE_EDGE_US);
   }
 }
 

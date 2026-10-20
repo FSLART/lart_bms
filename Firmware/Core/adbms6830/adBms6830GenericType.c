@@ -24,6 +24,11 @@ Using the BMS Driver Application can:
 */
 #include "common.h"
 #include "adbms_main.h"
+#include "brain.h"
+
+/* Buffers estaticos do tamanho da maior transacao (BMS_MAX_SLAVES slaves) */
+_Static_assert((4u + (BMS_MAX_SLAVES * RX_DATA)) <= 255u, "CMD_LEN e RX_BUFFER sao uint8_t");
+_Static_assert(RDASALL_SIZE <= (BMS_MAX_SLAVES * RX_DATA), "uma leitura ALL_GRP de um slave tem de caber no buffer");
 /**************************************** BMS Driver APIs definitions ********************************************/
 /* Precomputed CRC15 Table */
 const uint16_t Crc15Table[256] = 
@@ -280,20 +285,21 @@ uint8_t *cmd_cntr,
 uint8_t regData_size
 )
 {
-  uint8_t *data, *copyArray, src_address = 0;
+  static uint8_t data[BMS_MAX_SLAVES * RX_DATA];   /* maior leitura: RX_DATA bytes de cada slave */
+  static uint8_t copyArray[RDASALL_SIZE];          /* maior registo: RDASALL */
+  uint8_t src_address = 0;
   uint16_t cmd_pec, received_pec, calculated_pec;
   uint8_t BYTES_IN_REG = regData_size;
   uint8_t RX_BUFFER = (regData_size * tIC);
-  
-  data = (uint8_t *)calloc(RX_BUFFER, sizeof(uint8_t));
-  copyArray = (uint8_t *)calloc(BYTES_IN_REG, sizeof(uint8_t));
-  if((data == NULL) || (copyArray == NULL))
+
+  if((((uint16_t)regData_size * tIC) > sizeof(data)) || (regData_size > sizeof(copyArray)))
   {
-    //printf(" Failed to allocate spi read data memory \n");
-    exit(0);
+    /* Nao cabe nos buffers estaticos: nunca acontece com tIC <= BMS_MAX_SLAVES */
+    return;
   }
   else
   {
+    memset(data, 0, RX_BUFFER);   /* como o calloc: se o SPI falhar a meio, zeros falham o PEC em vez de repetir a leitura anterior */
     uint8_t cmd[4];
     cmd[0] = tx_cmd[0];
     cmd[1] = tx_cmd[1];
@@ -321,11 +327,9 @@ uint8_t regData_size
       calculated_pec = (uint16_t)pec10_calc(true, (BYTES_IN_REG-2), &copyArray[0]);
       /* Match received pec with calculated pec */
       if (received_pec == calculated_pec){ pec_error[current_ic] = 0; }/* If no error is there value set to 0 */
-      else{ pec_error[current_ic] = 1; }                               /* If error is there value set to 1 */                         
+      else{ pec_error[current_ic] = 1; }                               /* If error is there value set to 1 */
     }
   }
-  free(data);
-  free(copyArray);
 }
 
 /**
@@ -352,28 +356,24 @@ uint8_t regData_size
 */
 void adBmsReadData(uint8_t tIC, cell_asic *ic, uint8_t cmd_arg[2], TYPE type, GRP group)
 {
-  uint16_t rBuff_size;
-  uint8_t regData_size;
+  static uint8_t read_buffer[BMS_MAX_SLAVES * RX_DATA], pec_error[BMS_MAX_SLAVES], cmd_count[BMS_MAX_SLAVES];
+  uint8_t regData_size = 0;
   if(group == ALL_GRP)
   {
-    if(type == Rdcvall){rBuff_size = RDCVALL_SIZE; regData_size = RDCVALL_SIZE;}
-    else if(type == Rdsall){rBuff_size = RDSALL_SIZE; regData_size = RDSALL_SIZE;}
-    else if(type == Rdacall){rBuff_size = RDACALL_SIZE; regData_size = RDACALL_SIZE;}
-    else if(type == Rdfcall){rBuff_size = RDFCALL_SIZE; regData_size = RDFCALL_SIZE;}
-    else if(type == Rdcsall){rBuff_size = RDCSALL_SIZE; regData_size = RDCSALL_SIZE;}
-    else if(type == Rdasall){rBuff_size = RDASALL_SIZE; regData_size = RDASALL_SIZE;}
-    else if(type == Rdacsall){rBuff_size = RDACSALL_SIZE; regData_size = RDACSALL_SIZE;}
+    if(type == Rdcvall){regData_size = RDCVALL_SIZE;}
+    else if(type == Rdsall){regData_size = RDSALL_SIZE;}
+    else if(type == Rdacall){regData_size = RDACALL_SIZE;}
+    else if(type == Rdfcall){regData_size = RDFCALL_SIZE;}
+    else if(type == Rdcsall){regData_size = RDCSALL_SIZE;}
+    else if(type == Rdasall){regData_size = RDASALL_SIZE;}
+    else if(type == Rdacsall){regData_size = RDACSALL_SIZE;}
     else{/*printf("Read All cmd wrong type select \n");*/}
   }
-  else{rBuff_size = (tIC * RX_DATA); regData_size = RX_DATA;}
-  uint8_t *read_buffer, *pec_error, *cmd_count;
-  read_buffer = (uint8_t *)calloc(rBuff_size, sizeof(uint8_t));
-  pec_error = (uint8_t *)calloc(tIC, sizeof(uint8_t)); 
-  cmd_count = (uint8_t *)calloc(tIC, sizeof(uint8_t));
-  if((pec_error == NULL) || (cmd_count == NULL) || (read_buffer == NULL))
+  else{regData_size = RX_DATA;}
+  if((regData_size == 0u) || (tIC > BMS_MAX_SLAVES) || (((uint16_t)regData_size * tIC) > sizeof(read_buffer)))
   {
-    //printf(" Failed to allocate memory \n");
-    exit(0);
+    /* Tipo errado ou nao cabe nos buffers estaticos: nunca acontece com tIC <= BMS_MAX_SLAVES */
+    return;
   }
   else
   {
@@ -580,9 +580,6 @@ void adBmsReadData(uint8_t tIC, cell_asic *ic, uint8_t cmd_arg[2], TYPE type, GR
       break;
     }
   }
-  free(read_buffer);
-  free(pec_error); 
-  free(cmd_count); 
 }
 /**
 *******************************************************************************
@@ -612,13 +609,13 @@ uint8_t *data
   uint8_t BYTES_IN_REG = TX_DATA;
   uint8_t CMD_LEN = 4 + (RX_DATA * tIC);
   uint16_t data_pec, cmd_pec;
-  uint8_t *cmd, copyArray[TX_DATA], src_address = 0;
+  static uint8_t cmd[4 + (RX_DATA * BMS_MAX_SLAVES)];   /* comando + PEC, mais 6 bytes de dados + PEC por slave */
+  uint8_t copyArray[TX_DATA], src_address = 0;
   uint8_t cmd_index;
-  cmd = (uint8_t *)calloc(CMD_LEN, sizeof(uint8_t)); 
-  if(cmd == NULL)
+  if(tIC > BMS_MAX_SLAVES)
   {
-    //printf(" Failed to allocate cmd array memory \n");
-    exit(0);
+    /* Nao cabe no buffer estatico: nunca acontece com tIC <= BMS_MAX_SLAVES */
+    return;
   }
   else
   {
@@ -651,7 +648,6 @@ uint8_t *data
     spiWriteBytes(CMD_LEN, &cmd[0]);
     adBmsCsHigh();
   }
-  free(cmd); 
 }
 
 /**
@@ -678,15 +674,16 @@ uint8_t *data
 */
 void adBmsWriteData(uint8_t tIC, cell_asic *ic, uint8_t cmd_arg[2], TYPE type, GRP group)
 {	  
+  static uint8_t write_buffer[TX_DATA * BMS_MAX_SLAVES];
   uint8_t data_len = TX_DATA, write_size = (TX_DATA * tIC);
-  uint8_t *write_buffer = (uint8_t *)calloc(write_size, sizeof(uint8_t));
-  if(write_buffer == NULL)
+  if(tIC > BMS_MAX_SLAVES)
   {
-    //printf(" Failed to allocate write_buffer array memory \n");
-    exit(0);
+    /* Nao cabe no buffer estatico: nunca acontece com tIC <= BMS_MAX_SLAVES */
+    return;
   }
   else
   {
+    memset(write_buffer, 0, write_size);   /* como o calloc: um tipo sem dados envia zeros, nao a escrita anterior */
     switch (type)
     {	   
     case Config:	
@@ -768,8 +765,7 @@ void adBmsWriteData(uint8_t tIC, cell_asic *ic, uint8_t cmd_arg[2], TYPE type, G
     }
   }
   adBmsWakeupIc(tIC);
-  spiWriteData(tIC, cmd_arg, &write_buffer[0]);	
-  free(write_buffer);
+  spiWriteData(tIC, cmd_arg, &write_buffer[0]);
 }
 
 /**

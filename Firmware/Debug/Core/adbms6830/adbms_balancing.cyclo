@@ -1,0 +1,7 @@
+../Core/adbms6830/adbms_balancing.c:13:13:usable	3
+../Core/adbms6830/adbms_balancing.c:20:13:allowed	8
+../Core/adbms6830/adbms_balancing.c:27:17:usable_spread	5
+../Core/adbms6830/adbms_balancing.c:49:13:compute	9
+../Core/adbms6830/adbms_balancing.c:89:13:clear_masks	1
+../Core/adbms6830/adbms_balancing.c:95:6:Balancing_Stop	1
+../Core/adbms6830/adbms_balancing.c:101:6:Balancing_Step	18

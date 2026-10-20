@@ -1,7 +1,6 @@
 Core/adbms6830/adBms_Application.o: ../Core/adbms6830/adBms_Application.c \
- ../Core/adbms6830/common.h ../Core/adbms6830/adBms_Application.h \
- ../Core/adbms6830/adbms_main.h ../Core/Inc/main.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+ ../Core/adbms6830/adBms_Application.h ../Core/adbms6830/adbms_main.h \
+ ../Core/Inc/main.h ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -37,12 +36,13 @@ Core/adbms6830/adBms_Application.o: ../Core/adbms6830/adBms_Application.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h \
- ../Core/adbms6830/adBms6830Data.h \
+ ../Core/adbms6830/common.h ../Core/adbms6830/adBms6830Data.h \
  ../Core/adbms6830/adBms6830GenericType.h \
  ../Core/adbms6830/adBms6830ParseCreate.h ../Core/adbms6830/mcuWrapper.h \
- ../Core/Inc/stm32f4xx_it.h ../Core/adbms6830/adBms6830CmdList.h \
- ../Core/adbms6830/serialPrintResult.h
-../Core/adbms6830/common.h:
+ ../Core/Inc/stm32f4xx_it.h ../Core/Inc/brain.h \
+ ../Core/adbms6830/adBms6830CmdList.h ../Core/adbms6830/adbms_cell_read.h \
+ ../Core/adbms6830/adbms_temp_read.h ../Core/adbms6830/adbms_open_wire.h \
+ ../Core/adbms6830/adbms_balancing.h
 ../Core/adbms6830/adBms_Application.h:
 ../Core/adbms6830/adbms_main.h:
 ../Core/Inc/main.h:
@@ -82,10 +82,15 @@ Core/adbms6830/adBms_Application.o: ../Core/adbms6830/adBms_Application.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h:
+../Core/adbms6830/common.h:
 ../Core/adbms6830/adBms6830Data.h:
 ../Core/adbms6830/adBms6830GenericType.h:
 ../Core/adbms6830/adBms6830ParseCreate.h:
 ../Core/adbms6830/mcuWrapper.h:
 ../Core/Inc/stm32f4xx_it.h:
+../Core/Inc/brain.h:
 ../Core/adbms6830/adBms6830CmdList.h:
-../Core/adbms6830/serialPrintResult.h:
+../Core/adbms6830/adbms_cell_read.h:
+../Core/adbms6830/adbms_temp_read.h:
+../Core/adbms6830/adbms_open_wire.h:
+../Core/adbms6830/adbms_balancing.h:

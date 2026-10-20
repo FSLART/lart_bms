@@ -1,0 +1,10 @@
+../Core/adbms6830/adBms_Application.h:43:23:ADBMS_CodeToMv	1
+../Core/adbms6830/adBms_Application.h:49:20:ADBMS_CodeValid	3
+../Core/adbms6830/adBms_Application.h:55:20:ADBMS_Fresh	3
+../Core/adbms6830/adbms_temp_read.c:33:13:ntc_disabled	1
+../Core/adbms6830/adbms_temp_read.c:40:13:ntc_to_dC	5
+../Core/adbms6830/adbms_temp_read.c:59:13:registers_ok	8
+../Core/adbms6830/adbms_temp_read.c:72:13:publish	14
+../Core/adbms6830/adbms_temp_read.c:118:13:evaluate	12
+../Core/adbms6830/adbms_temp_read.c:164:6:TempRead_Start	1
+../Core/adbms6830/adbms_temp_read.c:169:6:TempRead_Step	6

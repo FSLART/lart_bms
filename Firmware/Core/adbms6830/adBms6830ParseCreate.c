@@ -383,15 +383,9 @@ void adBms6830ParseCell(uint8_t tIC, cell_asic *ic, GRP grp, uint8_t *cv_data)
   uint8_t *data, data_size, address = 0;
   if(grp == ALL_GRP){data_size = RDCVALL_SIZE;}
   else {data_size = RX_DATA;}
-  data = (uint8_t *)calloc(data_size, sizeof(uint8_t));
-  if(data == NULL)
-  {
-    //printf(" Failed to allocate parse cell memory \n");
-    exit(0);
-  }
   for(uint8_t curr_ic = 0; curr_ic < tIC; curr_ic++)
   {
-    memcpy(&data[0], &cv_data[address], data_size); /* dst , src , size */
+    data = &cv_data[address]; /* le direto do buffer recebido, sem copia */
     address = ((curr_ic+1) * (data_size));
     switch (grp)
     {
@@ -452,7 +446,6 @@ void adBms6830ParseCell(uint8_t tIC, cell_asic *ic, GRP grp, uint8_t *cv_data)
       break;
     }
   }
-  free(data);
 }
 
 /**
@@ -481,15 +474,9 @@ void adBms6830ParseAverageCell(uint8_t tIC, cell_asic *ic, GRP grp, uint8_t *acv
   uint8_t *data, data_size, address = 0;
   if(grp == ALL_GRP){data_size = RDACALL_SIZE;}
   else {data_size = RX_DATA;}
-  data = (uint8_t *)calloc(data_size, sizeof(uint8_t));
-  if(data == NULL)
-  {
-    //printf(" Failed to allocate parse avg cell memory \n");
-    exit(0);
-  }
   for(uint8_t curr_ic = 0; curr_ic < tIC; curr_ic++)
   {
-    memcpy(&data[0], &acv_data[address], data_size); /* dst , src , size */
+    data = &acv_data[address]; /* le direto do buffer recebido, sem copia */
     address = ((curr_ic+1) * (data_size));
     switch (grp)
     {
@@ -550,7 +537,6 @@ void adBms6830ParseAverageCell(uint8_t tIC, cell_asic *ic, GRP grp, uint8_t *acv
       break;
     }
   }
-  free(data);
 }
 
 /**
@@ -580,15 +566,9 @@ void adBms6830ParseSCell(uint8_t tIC, cell_asic *ic, GRP grp, uint8_t *scv_data)
   uint8_t *data, data_size, address = 0;
   if(grp == ALL_GRP){data_size = RDSALL_SIZE;}
   else {data_size = RX_DATA;}
-  data = (uint8_t *)calloc(data_size, sizeof(uint8_t));
-  if(data == NULL)
-  {
-    //printf(" Failed to allocate parse scv memory \n");
-    exit(0);
-  }
   for(uint8_t curr_ic = 0; curr_ic < tIC; curr_ic++)
   {
-    memcpy(&data[0], &scv_data[address], data_size); /* dst , src , size */
+    data = &scv_data[address]; /* le direto do buffer recebido, sem copia */
     address = ((curr_ic+1) * (data_size));
     switch (grp)
     {
@@ -649,7 +629,6 @@ void adBms6830ParseSCell(uint8_t tIC, cell_asic *ic, GRP grp, uint8_t *scv_data)
       break;
     }
   }
-  free(data);
 }
 
 /**
@@ -678,15 +657,9 @@ void adBms6830ParseFCell(uint8_t tIC, cell_asic *ic, GRP grp, uint8_t *fcv_data)
   uint8_t *data, data_size, address = 0;
   if(grp == ALL_GRP){data_size = RDFCALL_SIZE;}
   else {data_size = RX_DATA;}
-  data = (uint8_t *)calloc(data_size, sizeof(uint8_t));
-  if(data == NULL)
-  {
-    //printf(" Failed to allocate parse fcell memory \n");
-    exit(0);
-  }
   for(uint8_t curr_ic = 0; curr_ic < tIC; curr_ic++)
   {
-    memcpy(&data[0], &fcv_data[address], data_size); /* dst , src , size */
+    data = &fcv_data[address]; /* le direto do buffer recebido, sem copia */
     address = ((curr_ic+1) * (data_size));
     switch (grp)
     {
@@ -747,7 +720,6 @@ void adBms6830ParseFCell(uint8_t tIC, cell_asic *ic, GRP grp, uint8_t *fcv_data)
       break;
     }
   }
-  free(data);
 }
 
 /**
@@ -776,15 +748,9 @@ void adBms6830ParseAux(uint8_t tIC, cell_asic *ic, GRP grp, uint8_t *aux_data)
   uint8_t *data, data_size, address = 0;
   if(grp == ALL_GRP){data_size = (RDASALL_SIZE-44);}  /* RDASALL_SIZE 68 byte - (RAUX 20 byte + STATUS 24 byte) */
   else {data_size = RX_DATA;}
-  data = (uint8_t *)calloc(data_size, sizeof(uint8_t));
-  if(data == NULL)
-  {
-    //printf(" Failed to allocate parse aux memory \n");
-    exit(0);
-  }
   for(uint8_t curr_ic = 0; curr_ic < tIC; curr_ic++)
   {
-    memcpy(&data[0], &aux_data[address], data_size); /* dst , src , size */
+    data = &aux_data[address]; /* le direto do buffer recebido, sem copia */
     address = ((curr_ic+1) * (data_size));
     switch (grp)
     {
@@ -831,7 +797,6 @@ void adBms6830ParseAux(uint8_t tIC, cell_asic *ic, GRP grp, uint8_t *aux_data)
       break;
     }
   }
-  free(data);
 }
 
 /**
@@ -860,15 +825,9 @@ void adBms6830ParseRAux(uint8_t tIC, cell_asic *ic, GRP grp, uint8_t *raux_data)
   uint8_t *data, data_size, address = 0;
   if(grp == ALL_GRP){data_size = (RDASALL_SIZE-48);}  /* RDASALL_SIZE 68 byte - (AUX 24 byte + STATUS 24 byte) */
   else {data_size = RX_DATA;}
-  data = (uint8_t *)calloc(data_size, sizeof(uint8_t));
-  if(data == NULL)
-  {
-    //printf(" Failed to allocate parse raux memory \n");
-    exit(0);
-  }
   for(uint8_t curr_ic = 0; curr_ic < tIC; curr_ic++)
   {
-    memcpy(&data[0], &raux_data[address], data_size); /* dst , src , size */
+    data = &raux_data[address]; /* le direto do buffer recebido, sem copia */
     address = ((curr_ic+1) * (data_size));
     switch (grp)
     {
@@ -911,7 +870,6 @@ void adBms6830ParseRAux(uint8_t tIC, cell_asic *ic, GRP grp, uint8_t *raux_data)
       break;
     }
   }
-  free(data);
 }
 
 /**

@@ -40,7 +40,7 @@ Core/adbms6830/adBms6830GenericType.o: \
  ../Core/adbms6830/adBms6830Data.h \
  ../Core/adbms6830/adBms6830GenericType.h \
  ../Core/adbms6830/adBms6830ParseCreate.h ../Core/adbms6830/mcuWrapper.h \
- ../Core/Inc/stm32f4xx_it.h
+ ../Core/Inc/stm32f4xx_it.h ../Core/Inc/brain.h
 ../Core/adbms6830/common.h:
 ../Core/adbms6830/adbms_main.h:
 ../Core/Inc/main.h:
@@ -85,3 +85,4 @@ Core/adbms6830/adBms6830GenericType.o: \
 ../Core/adbms6830/adBms6830ParseCreate.h:
 ../Core/adbms6830/mcuWrapper.h:
 ../Core/Inc/stm32f4xx_it.h:
+../Core/Inc/brain.h:

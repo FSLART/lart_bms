@@ -1,4 +1,5 @@
-../Core/Src/brain.c:24:6:brain_start	1
-../Core/Src/brain.c:34:6:brain_loop	1
-../Core/Src/brain.c:43:6:HAL_SYSTICK_Callback	1
-../Core/Src/brain.c:48:6:heartbeat	3
+../Core/Src/brain.c:77:6:brain_start	3
+../Core/Src/brain.c:90:6:brain_loop	2
+../Core/Src/brain.c:105:6:HAL_TIM_PeriodElapsedCallback	2
+../Core/Src/brain.c:113:6:HAL_SYSTICK_Callback	1
+../Core/Src/brain.c:118:6:heartbeat	3

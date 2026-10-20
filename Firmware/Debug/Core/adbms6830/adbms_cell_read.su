@@ -1,0 +1,8 @@
+../Core/adbms6830/adBms_Application.h:43:23:ADBMS_CodeToMv	16	static
+../Core/adbms6830/adBms_Application.h:49:20:ADBMS_CodeValid	16	static
+../Core/adbms6830/adBms_Application.h:55:20:ADBMS_Fresh	16	static
+../Core/adbms6830/adbms_cell_read.c:14:13:cells_ok	32	static
+../Core/adbms6830/adbms_cell_read.c:46:13:publish	24	static
+../Core/adbms6830/adbms_cell_read.c:63:13:evaluate	40	static
+../Core/adbms6830/adbms_cell_read.c:119:6:CellRead_Start	4	static
+../Core/adbms6830/adbms_cell_read.c:124:6:CellRead_Step	16	static

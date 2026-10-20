@@ -1,622 +1,490 @@
-/*******************************************************************************
-Copyright (c) 2020 - Analog Devices Inc. All Rights Reserved.
-This software is proprietary & confidential to Analog Devices, Inc.
-and its licensor.
-******************************************************************************
-* @file:    adbms_Application.c
-* @brief:   adbms application test cases
-* @version: $Revision$
-* @date:    $Date$
-* Developed by: ADIBMS Software team, Bangalore, India
-*****************************************************************************/
-/*! \addtogroup APPLICATION
-*  @{
-*/
+/*
+ * adBms_Application.c
+ */
 
-/*! @addtogroup Application
-*  @{
-*/
-#include "common.h"
 #include "adBms_Application.h"
-#include "adBms6830CmdList.h"
-#include "adBms6830GenericType.h"
-#include "serialPrintResult.h"
-#include "mcuWrapper.h"
-/**
-*******************************************************************************
-* @brief Setup Variables
-* The following variables can be modified to configure the software.
-*******************************************************************************
-*/
+#include "adBms6830CmdList.h"   //os comandos estao definidos no header tho
+#include "adbms_cell_read.h"
+#include "adbms_temp_read.h"
+#include "adbms_open_wire.h"
+#include "adbms_balancing.h"
 
-#define TOTAL_IC 1
-cell_asic IC[TOTAL_IC];
+#define WAKE_SLEEP_EDGE_US 600u		// tWAKE (500 us max) e < tIDLE (4,3 ms min)
+#define READ_RETRIES       2u		// o número de vezes que se repete a leitura de um grupo de registos quando chega com o PEC error
+#define DEAD_CYCLES        2u		// number de detectoes sem slaves detactados pra ser fault
+#define MISSING_RETRIES    2u		// vezes que se volta a acordar a cadeia antes de aceitar slaves != config
+#define FAULT_RETRY_US     1000u	// em FAULT, volta a acordar a cadeia ao fim deste valor
+#define MIN_NTC_PERCENT    30u		// FS 2027 EV 5.8.6
 
-/* ADC Command Configurations */
-RD      REDUNDANT_MEASUREMENT           = RD_OFF;
-CH      AUX_CH_TO_CONVERT               = AUX_ALL;
-CONT    CONTINUOUS_MEASUREMENT          = SINGLE;
-OW_C_S  CELL_OPEN_WIRE_DETECTION        = OW_OFF_ALL_CH;
-OW_AUX  AUX_OPEN_WIRE_DETECTION         = AUX_OW_OFF;
-PUP     OPEN_WIRE_CURRENT_SOURCE        = PUP_DOWN;
-DCP     DISCHARGE_PERMITTED             = DCP_OFF;
-RSTF    RESET_FILTER                    = RSTF_OFF;
-ERR     INJECT_ERR_SPI_READ             = WITHOUT_ERR;
+cell_asic IC[BMS_MAX_SLAVES];
 
-/* Set Under Voltage and Over Voltage Thresholds */
-const float OV_THRESHOLD = 4.2;                 /* Volt */
-const float UV_THRESHOLD = 3.0;                 /* Volt */
-const int OWC_Threshold = 2400;                 /* Cell Open wire threshold(mili volt) */
-const int OWC_Threshold_Delta = 350; /* Cell Open wire threshold(mili volt) */
-const int OWA_Threshold = 50000;                /* Aux Open wire threshold(mili volt) */
-const uint32_t LOOP_MEASUREMENT_COUNT = 1;      /* Loop measurment count */
-const uint16_t MEASUREMENT_LOOP_TIME  = 10;     /* milliseconds(mS)*/
-uint32_t loop_count = 0;
-uint32_t pladc_count;
+extern TIM_HandleTypeDef htim6;        // tick de 200 ms
+static volatile uint32_t tick_count;   // ticks do timer, basicamente conta o numero de resets de overflow do timer6
 
-/*Loop Measurement Setup These Variables are ENABLED or DISABLED Remember ALL CAPS*/
-LOOP_MEASURMENT MEASURE_CELL            = ENABLED;        /*   This is ENABLED or DISABLED       */
-LOOP_MEASURMENT MEASURE_AVG_CELL        = ENABLED;        /*   This is ENABLED or DISABLED       */
-LOOP_MEASURMENT MEASURE_F_CELL          = ENABLED;        /*   This is ENABLED or DISABLED       */
-LOOP_MEASURMENT MEASURE_S_VOLTAGE       = ENABLED;        /*   This is ENABLED or DISABLED       */
-LOOP_MEASURMENT MEASURE_AUX             = DISABLED;        /*   This is ENABLED or DISABLED       */
-LOOP_MEASURMENT MEASURE_RAUX            = DISABLED;        /*   This is ENABLED or DISABLED       */
-LOOP_MEASURMENT MEASURE_STAT            = DISABLED;        /*   This is ENABLED or DISABLED       */
+// TICK DE 200 ms (TIM6)
+void ADBMS_Tick(void) {
 
-void adbms_main()
-{
-  printMenu();
-  adBms6830_init_config(TOTAL_IC, &IC[0]);
-  while(1)
-  {
-    int user_command;
-    scanf("%d", &user_command);
-    //printf("Enter cmd:%d\n", user_command);
-    run_command(user_command);
-  }
+	tick_count++;
 }
 
-void run_command(int cmd)
-{
-  switch(cmd)
-  {
+// compara o timer6 ao ADBMS_CYCLE_MS pra ver se o timer esta incorretmante configurado
+static bool tick_timer_ok(void) {
 
-  case 1:
-    adBms6830_write_read_config(TOTAL_IC, &IC[0]);
-    break;
+	uint32_t tick_hz = adBmsTimerClockHz() / (htim6.Instance->PSC + 1u);
 
-  case 2:
-    adBms6830_read_config(TOTAL_IC, &IC[0]);
-    break;
-
-  case 3:
-    adBms6830_start_adc_cell_voltage_measurment(TOTAL_IC);
-    break;
-
-  case 4:
-    adBms6830_read_cell_voltages(TOTAL_IC, &IC[0]);
-    break;
-
-  case 5:
-    adBms6830_start_adc_s_voltage_measurment(TOTAL_IC);
-    break;
-
-  case 6:
-    adBms6830_read_s_voltages(TOTAL_IC, &IC[0]);
-    break;
-
-  case 7:
-    adBms6830_start_avgcell_voltage_measurment(TOTAL_IC);
-    break;
-
-  case 8:
-    adBms6830_read_avgcell_voltages(TOTAL_IC, &IC[0]);
-    break;
-
-  case 9:
-    adBms6830_start_fcell_voltage_measurment(TOTAL_IC);
-    break;
-
-  case 10:
-    adBms6830_read_fcell_voltages(TOTAL_IC, &IC[0]);
-    break;
-
-  case 11:
-    adBms6830_start_aux_voltage_measurment(TOTAL_IC, &IC[0]);
-    break;
-
-  case 12:
-    adBms6830_read_aux_voltages(TOTAL_IC, &IC[0]);
-    break;
-
-  case 13:
-    adBms6830_start_raux_voltage_measurment(TOTAL_IC, &IC[0]);
-    break;
-
-  case 14:
-    adBms6830_read_raux_voltages(TOTAL_IC, &IC[0]);
-    break;
-
-  case 15:
-    adBms6830_read_status_registers(TOTAL_IC, &IC[0]);
-    break;
-
-  case 16:
-    loop_count = 0;
-    adBmsWakeupIc(TOTAL_IC);
-    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGA, Config, A);
-    adBmsWriteData(TOTAL_IC, &IC[0], WRCFGB, Config, B);
-    adBmsWakeupIc(TOTAL_IC);
-    adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-    adBms6830_Adcv(RD_ON, CONTINUOUS, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-    Delay_ms(1); // ADCs are updated at their conversion rate is 1ms
-    adBms6830_Adsv(CONTINUOUS, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
-    Delay_ms(8); // ADCs are updated at their conversion rate is 8ms
-    while(loop_count < LOOP_MEASUREMENT_COUNT)
-    {
-      measurement_loop();
-      Delay_ms(MEASUREMENT_LOOP_TIME);
-      loop_count = loop_count + 1;
-    }
-    printMenu();
-    break;
-
-  case 17:
-    adBms6830_clear_cell_measurement(TOTAL_IC);
-    break;
-
-  case 18:
-    adBms6830_clear_aux_measurement(TOTAL_IC);
-    break;
-
-  case 19:
-    adBms6830_clear_spin_measurement(TOTAL_IC);
-    break;
-
-  case 20:
-    adBms6830_clear_fcell_measurement(TOTAL_IC);
-    break;
-
-  case 21:
-    adBms6830_write_config(TOTAL_IC, &IC[0]);
-    break;
-
-  case 0:
-    printMenu();
-    break;
-
-  default:
-    //printf("Incorrect Option\n\n");
-    break;
-  }
+	return (tick_hz == 1000u) && ((htim6.Instance->ARR + 1u) == ADBMS_CYCLE_MS);
 }
 
-/**
-*******************************************************************************
-* @brief Set configuration register A. Refer to the data sheet
-*        Set configuration register B. Refer to the data sheet
-*******************************************************************************
-*/
-void adBms6830_init_config(uint8_t tIC, cell_asic *ic)
-{
-  for(uint8_t cic = 0; cic < tIC; cic++)
-  {
-    /* Init config A */
-    ic[cic].tx_cfga.refon = PWR_UP;
-//    ic[cic].cfga.cth = CVT_8_1mV;
-//    ic[cic].cfga.flag_d = ConfigA_Flag(FLAG_D0, FLAG_SET) | ConfigA_Flag(FLAG_D1, FLAG_SET);
-//    ic[cic].cfga.gpo = ConfigA_Gpo(GPO2, GPO_SET) | ConfigA_Gpo(GPO10, GPO_SET);
-    ic[cic].tx_cfga.gpo = 0X3FF; /* All GPIO pull down off */
-//    ic[cic].cfga.soakon = SOAKON_CLR;
-//    ic[cic].cfga.fc = IIR_FPA256;
+// varios tipos de pec error
+static uint8_t* pec_field(TYPE type, uint8_t slave_index) {
 
-    /* Init config B */
-//    ic[cic].cfgb.dtmen = DTMEN_ON;
-    ic[cic].tx_cfgb.vov = SetOverVoltageThreshold(OV_THRESHOLD);
-    ic[cic].tx_cfgb.vuv = SetUnderVoltageThreshold(UV_THRESHOLD);
-//    ic[cic].cfgb.dcc = ConfigB_DccBit(DCC16, DCC_BIT_SET);
-//    SetConfigB_DischargeTimeOutValue(tIC, &ic[cic], RANG_0_TO_63_MIN, TIME_1MIN_OR_0_26HR);
-  }
-  adBmsWakeupIc(tIC);
-  adBmsWriteData(tIC, &ic[0], WRCFGA, Config, A);
-  adBmsWriteData(tIC, &ic[0], WRCFGB, Config, B);
+	switch (type) {
+	case Cell:
+		return &IC[slave_index].cccrc.cell_pec;
+	case S_volt:
+		return &IC[slave_index].cccrc.scell_pec;
+	case Aux:
+		return &IC[slave_index].cccrc.aux_pec;
+	case RAux:
+		return &IC[slave_index].cccrc.raux_pec;
+	case Status:
+		return &IC[slave_index].cccrc.stat_pec;
+	case Config:
+		return &IC[slave_index].cccrc.cfgr_pec;
+	default:
+		return &IC[slave_index].cccrc.sid_pec;
+	}
 }
 
-/**
-*******************************************************************************
-* @brief Write and Read Configuration Register A/B
-*******************************************************************************
-*/
-void adBms6830_write_read_config(uint8_t tIC, cell_asic *ic)
-{
-  adBmsWakeupIc(tIC);
-  adBmsWriteData(tIC, &ic[0], WRCFGA, Config, A);
-  adBmsWriteData(tIC, &ic[0], WRCFGB, Config, B);
-  adBmsReadData(tIC, &ic[0], RDCFGA, Config, A);
-  adBmsReadData(tIC, &ic[0], RDCFGB, Config, B);
-  printWriteConfig(tIC, &ic[0], Config, ALL_GRP);
-  printReadConfig(tIC, &ic[0], Config, ALL_GRP);
+//Lê os varios grupos, checka os pec errors e dá retry caso seja necessario
+static bool read_groups(uint8_t *const commands[], uint8_t group_count, TYPE type, GRP first_group) {
+
+	uint8_t slave_count = bms.cells.slaves_found;
+	uint8_t pec_failed[BMS_MAX_SLAVES] = { 0 };
+	bool all_ok = true;
+
+	for (uint8_t group_index = 0; group_index < group_count; group_index++) {
+
+		uint8_t retry_counter = 0;
+		bool any_pec_error;
+
+		do {
+			adBmsReadData(slave_count, IC, commands[group_index], type, (GRP) (first_group + group_index));
+
+			any_pec_error = false;
+			for (uint8_t slave_index = 0; slave_index < slave_count; slave_index++) {
+				if (*pec_field(type, slave_index) != 0u) {
+					any_pec_error = true;
+					bms.pec.per_slave[slave_index]++;
+					bms.pec.total++;
+				}
+			}
+		} while (any_pec_error && (++retry_counter <= READ_RETRIES));
+
+		for (uint8_t slave_index = 0; slave_index < slave_count; slave_index++) {
+			pec_failed[slave_index] |= *pec_field(type, slave_index);
+		}
+	}
+
+	for (uint8_t slave_index = 0; slave_index < slave_count; slave_index++) {
+		*pec_field(type, slave_index) = pec_failed[slave_index];
+
+		if (pec_failed[slave_index] != 0u) {
+			bms.pec.last_read[slave_index] = true;
+			all_ok = false;
+		}
+	}
+
+	return all_ok;
 }
 
-/**
-*******************************************************************************
-* @brief Write Configuration Register A/B
-*******************************************************************************
-*/
-void adBms6830_write_config(uint8_t tIC, cell_asic *ic)
-{
-  adBmsWakeupIc(tIC);
-  adBmsWriteData(tIC, &ic[0], WRCFGA, Config, A);
-  adBmsWriteData(tIC, &ic[0], WRCFGB, Config, B);
-  printWriteConfig(tIC, &ic[0], Config, ALL_GRP);
+//start cell readings
+void ADBMS_StartCells(void) {
+
+	adBmsWakeupIc(bms.cells.slaves_found);
+
+	/* RD=1: o S-ADC mede em paralelo e o ADBMS compara (CSxFLT). Os DCC ja
+	 * estao a 0 desde o CONFIG: o DCP=0 sozinho nao os desliga */
+	adBms6830_Adcv(RD_ON, SINGLE, DCP_OFF, RSTF_OFF, OW_OFF_ALL_CH);
 }
 
-/**
-*******************************************************************************
-* @brief Read Configuration Register A/B
-*******************************************************************************
-*/
-void adBms6830_read_config(uint8_t tIC, cell_asic *ic)
-{
-  adBmsWakeupIc(tIC);
-  adBmsReadData(tIC, &ic[0], RDCFGA, Config, A);
-  adBmsReadData(tIC, &ic[0], RDCFGB, Config, B);
-  printReadConfig(tIC, &ic[0], Config, ALL_GRP);
+//start aux readings
+void ADBMS_StartAux(void) {
+
+	adBmsWakeupIc(bms.cells.slaves_found);
+	adBms6830_Adax(AUX_OW_OFF, PUP_DOWN, AUX_ALL);   // GPIOs, VREF2, ITMP, VA, VD
+	adBms6830_Adax2(AUX_ALL);                        // GPIOs pelo caminho redundante
 }
 
-/**
-*******************************************************************************
-* @brief Start ADC Cell Voltage Measurement
-*******************************************************************************
-*/
-void adBms6830_start_adc_cell_voltage_measurment(uint8_t tIC)
-{
-  adBmsWakeupIc(tIC);
-  adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-  pladc_count = adBmsPollAdc(PLADC);
-  //printf("Cell conversion completed\n");
-  printPollAdcConvTime(pladc_count);
+//read cell readings
+bool ADBMS_ReadCells(void) {
+
+	static uint8_t *const rdcv[] = { RDCVA, RDCVB, RDCVC, RDCVD, RDCVE, RDCVF };
+	static uint8_t *const rdstatc[] = { RDSTATC };
+
+	bool cells_ok = read_groups(rdcv, 6u, Cell, A);
+	bool status_ok = read_groups(rdstatc, 1u, Status, C);   // CSxFLT da comparacao C vs S
+
+	return cells_ok && status_ok;
 }
 
-/**
-*******************************************************************************
-* @brief Read Cell Voltages
-*******************************************************************************
-*/
-void adBms6830_read_cell_voltages(uint8_t tIC, cell_asic *ic)
-{
-  adBmsWakeupIc(tIC);
-  adBmsReadData(tIC, &ic[0], RDCVA, Cell, A);
-  adBmsReadData(tIC, &ic[0], RDCVB, Cell, B);
-  adBmsReadData(tIC, &ic[0], RDCVC, Cell, C);
-  adBmsReadData(tIC, &ic[0], RDCVD, Cell, D);
-  adBmsReadData(tIC, &ic[0], RDCVE, Cell, E);
-  adBmsReadData(tIC, &ic[0], RDCVF, Cell, F);
-  printVoltages(tIC, &ic[0], Cell);
+//read aux readings
+bool ADBMS_ReadAuxAndStatus(void) {
+
+	static uint8_t *const rdaux[] = { RDAUXA, RDAUXB, RDAUXC, RDAUXD };
+	static uint8_t *const rdrax[] = { RDRAXA, RDRAXB, RDRAXC, RDRAXD };
+	static uint8_t *const rdstat[] = { RDSTATA, RDSTATB, RDSTATC, RDSTATD, RDSTATE };
+
+	bool aux_ok = read_groups(rdaux, 4u, Aux, A);
+	bool raux_ok = read_groups(rdrax, 4u, RAux, A);
+	bool status_ok = read_groups(rdstat, 5u, Status, A);
+
+	return aux_ok && raux_ok && status_ok;
 }
 
-/**
-*******************************************************************************
-* @brief Start ADC S-Voltage Measurement
-*******************************************************************************
-*/
-void adBms6830_start_adc_s_voltage_measurment(uint8_t tIC)
-{
-  adBmsWakeupIc(tIC);
-  adBms6830_Adsv(CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, CELL_OPEN_WIRE_DETECTION);
-  pladc_count = adBmsPollAdc(PLADC);
-  //printf("S-Voltage conversion completed\n");
-  printPollAdcConvTime(pladc_count);
+//start ow readings
+void ADBMS_StartOpenWire(OW_C_S channels) {
+
+	adBmsWakeupIc(bms.cells.slaves_found);
+	adBms6830_Adsv(SINGLE, DCP_OFF, channels);
 }
 
-/**
-*******************************************************************************
-* @brief Read S-Voltages
-*******************************************************************************
-*/
-void adBms6830_read_s_voltages(uint8_t tIC, cell_asic *ic)
-{
-  adBmsWakeupIc(tIC);
-  adBmsReadData(tIC, &ic[0], RDSVA, S_volt, A);
-  adBmsReadData(tIC, &ic[0], RDSVB, S_volt, B);
-  adBmsReadData(tIC, &ic[0], RDSVC, S_volt, C);
-  adBmsReadData(tIC, &ic[0], RDSVD, S_volt, D);
-  adBmsReadData(tIC, &ic[0], RDSVE, S_volt, E);
-  adBmsReadData(tIC, &ic[0], RDSVF, S_volt, F);
-  printVoltages(tIC, &ic[0], S_volt);
+//read ow cell results
+bool ADBMS_ReadSCells(void) {
+
+	static uint8_t *const rdsv[] = { RDSVA, RDSVB, RDSVC, RDSVD, RDSVE, RDSVF };
+
+	return read_groups(rdsv, 6u, S_volt, A);
 }
 
-/**
-*******************************************************************************
-* @brief Start Avarage Cell Voltage Measurement
-*******************************************************************************
-*/
-void adBms6830_start_avgcell_voltage_measurment(uint8_t tIC)
-{
-  adBmsWakeupIc(tIC);
-  adBms6830_Adcv(RD_ON, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-  pladc_count = adBmsPollAdc(PLADC);
-  //printf("Avg Cell voltage conversion completed\n");
-  printPollAdcConvTime(pladc_count);
+//write discharge mask
+bool ADBMS_WriteDcc(void) {
+
+	static uint8_t *const rdcfgb[] = { RDCFGB };
+	uint8_t slave_count = bms.cells.slaves_found;
+	bool all_ok = true;
+
+	for (uint8_t slave_index = 0; slave_index < slave_count; slave_index++) {
+		IC[slave_index].tx_cfgb.dcc = bms.balancing.dcc_mask[slave_index];
+	}
+
+	adBmsWriteData(slave_count, IC, WRCFGB, Config, B);
+	(void) read_groups(rdcfgb, 1u, Config, B);
+
+	for (uint8_t slave_index = 0; slave_index < slave_count; slave_index++) {
+
+		const cell_asic *chip = &IC[slave_index];
+
+		if ((chip->cccrc.cfgr_pec != 0u) || (chip->rx_cfgb.dcc != chip->tx_cfgb.dcc)) {
+			all_ok = false;
+		}
+	}
+
+	return all_ok;
 }
 
-/**
-*******************************************************************************
-* @brief Read Avarage Cell Voltages
-*******************************************************************************
-*/
-void adBms6830_read_avgcell_voltages(uint8_t tIC, cell_asic *ic)
-{
-  adBmsWakeupIc(tIC);
-  adBmsReadData(tIC, &ic[0], RDACA, AvgCell, A);
-  adBmsReadData(tIC, &ic[0], RDACB, AvgCell, B);
-  adBmsReadData(tIC, &ic[0], RDACC, AvgCell, C);
-  adBmsReadData(tIC, &ic[0], RDACD, AvgCell, D);
-  adBmsReadData(tIC, &ic[0], RDACE, AvgCell, E);
-  adBmsReadData(tIC, &ic[0], RDACF, AvgCell, F);
-  printVoltages(tIC, &ic[0], AvgCell);
+/* Config de todos os slaves, reescrita em cada ciclo (um ADBMS que reiniciou
+ * volta a ficar certo):
+ *  - REFON: referencia sempre ligada, sem os ate 4,4 ms de tREFUP por conversao
+ *  - CTH 8,1 mV: limite da comparacao C-ADC vs S-ADC (o default do datasheet)
+ *  - GPO todos a 1: GPIOs sem pull-down, sao as entradas analogicas dos NTC
+ *  - VOV/VUV: comparadores do proprio ADBMS com os limites da config
+ *  - DCC a 0: o ADCV e o open-wire medem sem descarga. O DCP=0 so corta a
+ *    descarga por PWM, os DCC tem prioridade (datasheet Tabela 27); com um
+ *    switch ligado o S-ADC nao bate com o C-ADC (CSxFLT) e o open-wire falha.
+ *    O Balancing_Step volta a liga-los depois do open-wire
+ * Depois limpa as flags de diagnostico da STATC (CSxFLT, SPIFLT, SLEEP...) para
+ * a leitura deste ciclo so mostrar falhas novas, e le a config de volta */
+static void write_config(void) {
+
+	static uint8_t *const rdcfg[] = { RDCFGA, RDCFGB };
+	uint8_t slave_count = bms.cells.slaves_found;
+	uint16_t vov_code = SetOverVoltageThreshold((float) bms.config.cell_max_mV / 1000.0f);
+	uint16_t vuv_code = SetUnderVoltageThreshold((float) bms.config.cell_min_mV / 1000.0f);
+
+	for (uint8_t slave_index = 0; slave_index < slave_count; slave_index++) {
+
+		cell_asic *chip = &IC[slave_index];
+
+		chip->tx_cfga.refon = PWR_UP;
+		chip->tx_cfga.cth = CVT_8_1mV;
+		chip->tx_cfga.gpo = 0x3FFu;
+		chip->tx_cfgb.vov = vov_code;
+		chip->tx_cfgb.vuv = vuv_code;
+		chip->tx_cfgb.dcc = 0u;
+		memset(&chip->clflag, 0xFF, sizeof(chip->clflag));
+	}
+
+	adBmsWriteData(slave_count, IC, WRCFGA, Config, A);
+	adBmsWriteData(slave_count, IC, WRCFGB, Config, B);
+	adBmsWriteData(slave_count, IC, CLRFLAG, Clrflag, NONE);
+	(void) read_groups(rdcfg, 2u, Config, A);
+
+	for (uint8_t slave_index = 0; slave_index < slave_count; slave_index++) {
+
+		const cell_asic *chip = &IC[slave_index];
+		bool config_ok = (chip->cccrc.cfgr_pec == 0u) && (chip->rx_cfga.refon == chip->tx_cfga.refon) && (chip->rx_cfga.cth == chip->tx_cfga.cth)
+				&& (chip->rx_cfga.gpo == chip->tx_cfga.gpo) && (chip->rx_cfgb.vov == (chip->tx_cfgb.vov & 0x0FFFu))
+				&& (chip->rx_cfgb.vuv == (chip->tx_cfgb.vuv & 0x0FFFu)) && (chip->rx_cfgb.dcc == chip->tx_cfgb.dcc);
+
+		if (!config_ok) {
+			bms.adbms.config_errors++;
+		}
+		bms.adbms.config_ok[slave_index] = config_ok;
+	}
 }
 
-/**
-*******************************************************************************
-* @brief Start Filtered Cell Voltages Measurement
-*******************************************************************************
-*/
-void adBms6830_start_fcell_voltage_measurment(uint8_t tIC)
-{
-  adBmsWakeupIc(tIC);
-  adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-  pladc_count = adBmsPollAdc(PLADC);
-  //printf("F Cell voltage conversion completed\n");
-  printPollAdcConvTime(pladc_count);
+//verificar se o sid é válido
+static bool sid_valid(const uint8_t *sid) {
+
+	bool all_00 = true;
+	bool all_ff = true;
+
+	for (uint8_t byte_index = 0; byte_index < RSID; byte_index++) {
+		if (sid[byte_index] != 0x00u) {
+			all_00 = false;
+		}
+		if (sid[byte_index] != 0xFFu) {
+			all_ff = false;
+		}
+	}
+
+	return !all_00 && !all_ff;
 }
 
-/**
-*******************************************************************************
-* @brief Read Filtered Cell Voltages
-*******************************************************************************
-*/
-void adBms6830_read_fcell_voltages(uint8_t tIC, cell_asic *ic)
-{
-  adBmsWakeupIc(tIC);
-  adBmsReadData(tIC, &ic[0], RDFCA, F_volt, A);
-  adBmsReadData(tIC, &ic[0], RDFCB, F_volt, B);
-  adBmsReadData(tIC, &ic[0], RDFCC, F_volt, C);
-  adBmsReadData(tIC, &ic[0], RDFCD, F_volt, D);
-  adBmsReadData(tIC, &ic[0], RDFCE, F_volt, E);
-  adBmsReadData(tIC, &ic[0], RDFCF, F_volt, F);
-  printVoltages(tIC, &ic[0], F_volt);
+// encontrar o numero de dispositivos na isospi daisychain
+static uint8_t count_slaves(void) {
+
+	uint8_t detected_slaves = 0;
+
+	adBmsReadData(BMS_MAX_SLAVES, IC, RDSID, Sid, NONE);
+
+	while ((detected_slaves < BMS_MAX_SLAVES) && (IC[detected_slaves].cccrc.sid_pec == 0u) && sid_valid(IC[detected_slaves].sid.sid)) {
+		detected_slaves++;
+	}
+
+	return detected_slaves;
 }
 
-/**
-*******************************************************************************
-* @brief Start AUX, VMV, V+ Voltages Measurement
-*******************************************************************************
-*/
-void adBms6830_start_aux_voltage_measurment(uint8_t tIC, cell_asic *ic)
-{
-  for(uint8_t cic = 0; cic < tIC; cic++)
-  {
-    /* Init config A */
-    ic[cic].tx_cfga.refon = PWR_UP;
-    ic[cic].tx_cfga.gpo = 0X3FF; /* All GPIO pull down off */
-  }
-  adBmsWakeupIc(tIC);
-  adBmsWriteData(tIC, &ic[0], WRCFGA, Config, A);
-  adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
-  pladc_count = adBmsPollAdc(PLADC);
-  //printf("Aux voltage conversion completed\n");
-  printPollAdcConvTime(pladc_count);
+// sem slaves nao ha medicoes e sem comandos o ADBMS entra em sleep ao fim de tSLEEP
+static void enter_fault(void) {
+
+	adBmsCsHigh();
+	bms.cells.slaves_found = 0u;
+	bms.faults.slave_missing = true;
+	Balancing_Stop();
+	bms.adbms.step_us = adBmsMicros();
+	bms.adbms.state = ADBMS_FAULT;
 }
 
-/**
-*******************************************************************************
-* @brief Read AUX, VMV, V+ Voltages
-*******************************************************************************
-*/
-void adBms6830_read_aux_voltages(uint8_t tIC, cell_asic *ic)
-{
-  adBmsWakeupIc(tIC);
-  adBmsReadData(tIC, &ic[0], RDAUXA, Aux, A);
-  adBmsReadData(tIC, &ic[0], RDAUXB, Aux, B);
-  adBmsReadData(tIC, &ic[0], RDAUXC, Aux, C);
-  adBmsReadData(tIC, &ic[0], RDAUXD, Aux, D);
-  printVoltages(tIC, &ic[0], Aux);
+// serve como watchdog, verifica o quão recente são os dados
+static void check_timeouts(void) {
+
+	uint32_t now_ms = HAL_GetTick();
+	bool any_late = false;
+
+	for (uint8_t slave_index = 0; slave_index < bms.config.slaves; slave_index++) {
+		if (!ADBMS_Fresh(bms.adbms.cells_valid_ms[slave_index], now_ms) || !ADBMS_Fresh(bms.adbms.temps_valid_ms[slave_index], now_ms)) {
+			any_late = true;
+		}
+	}
+
+	bms.faults.adbms_timeout = any_late;
 }
 
-/**
-*******************************************************************************
-* @brief Start Redundant GPIO Voltages Measurement
-*******************************************************************************
-*/
-void adBms6830_start_raux_voltage_measurment(uint8_t tIC,  cell_asic *ic)
-{
-  for(uint8_t cic = 0; cic < tIC; cic++)
-  {
-    /* Init config A */
-    ic[cic].tx_cfga.refon = PWR_UP;
-    ic[cic].tx_cfga.gpo = 0X3FF; /* All GPIO pull down off */
-  }
-  adBmsWakeupIc(tIC);
-  adBmsWriteData(tIC, &ic[0], WRCFGA, Config, A);
-  adBms6830_Adax2(AUX_CH_TO_CONVERT);
-  pladc_count = adBmsPollAdc(PLADC);
-  //printf("RAux voltage conversion completed\n");
-  printPollAdcConvTime(pladc_count);
+// inicialização, valida os vaslores nas configs, reset á maquina de estados e start timers
+bool ADBMS_Init(void) {
+
+	bms_config_t *config = &bms.config;
+	bool config_ok = true;
+
+	// topologia da arquitetura
+	if ((config->slaves == 0u) || (config->slaves > BMS_MAX_SLAVES)) {
+		config->slaves = BMS_MAX_SLAVES;
+		config_ok = false;
+	}
+	if ((config->cells_per_slave == 0u) || (config->cells_per_slave > BMS_MAX_CELLS)) {
+		config->cells_per_slave = BMS_MAX_CELLS;
+		config_ok = false;
+	}
+	if (config->ntcs_per_slave > BMS_MAX_NTCS) {
+		config->ntcs_per_slave = BMS_MAX_NTCS;
+		config_ok = false;
+	}
+
+	// FS 2027 EV 5.8.6: NTC 30 % das celulas
+	for (uint8_t slave_index = 0; slave_index < config->slaves; slave_index++) {
+
+		uint16_t disabled_ntcs = config->ntc_disabled_mask[slave_index] & (uint16_t) ((1u << config->ntcs_per_slave) - 1u);
+		uint32_t enabled_ntcs = (uint32_t) config->ntcs_per_slave - (uint32_t) __builtin_popcount(disabled_ntcs);
+
+		if ((enabled_ntcs * 100u) < ((uint32_t) config->cells_per_slave * MIN_NTC_PERCENT)) {
+			config_ok = false;
+		}
+	}
+
+	// tick com outro periodo = medicoes fora do tempo que a FS 2027 pede
+	if (!tick_timer_ok()) {
+		config_ok = false;
+	}
+
+	memset(&bms.adbms, 0, sizeof(bms.adbms));   // state = ADBMS_INIT
+	bms.adbms.tick_seen = tick_count;           // os ticks antes do init nao contam
+	adBmsTimerInit();
+	HAL_TIM_Base_Start_IT(&htim6);
+
+	return config_ok;
 }
 
-/**
-*******************************************************************************
-* @brief Read Redundant GPIO Voltages
-*******************************************************************************
-*/
-void adBms6830_read_raux_voltages(uint8_t tIC, cell_asic *ic)
-{
-  adBmsWakeupIc(tIC);
-  adBmsReadData(tIC, &ic[0], RDRAXA, RAux, A);
-  adBmsReadData(tIC, &ic[0], RDRAXB, RAux, B);
-  adBmsReadData(tIC, &ic[0], RDRAXC, RAux, C);
-  adBmsReadData(tIC, &ic[0], RDRAXD, RAux, D);
-  printVoltages(tIC, &ic[0], RAux);
+void ADBMS_Run(void) {
+
+	uint32_t now_us = adBmsMicros();
+	uint32_t waited_us = now_us - bms.adbms.step_us;
+
+	switch (bms.adbms.state) {
+
+	// arcordar a daisychain com o chipselect
+	case ADBMS_INIT:
+		bms.adbms.wake_pulses = BMS_MAX_SLAVES;
+		adBmsCsLow();
+		bms.adbms.step_us = now_us;
+		bms.adbms.state = ADBMS_WAKE_LOW;
+		break;
+
+	case ADBMS_WAKE_LOW:
+		if (waited_us >= WAKE_SLEEP_EDGE_US) {
+			adBmsCsHigh();
+			bms.adbms.step_us = now_us;
+			bms.adbms.state = ADBMS_WAKE_HIGH;
+		}
+		break;
+
+	case ADBMS_WAKE_HIGH:
+		if (waited_us >= WAKE_SLEEP_EDGE_US) {
+
+			bms.adbms.wake_pulses--;
+
+			if (bms.adbms.wake_pulses > 0u) {
+				adBmsCsLow();
+				bms.adbms.step_us = now_us;
+				bms.adbms.state = ADBMS_WAKE_LOW;
+			} else {
+				bms.adbms.state = ADBMS_DETECT;   // muda pro detect pra avalaiar o numero de devices da chain
+			}
+		}
+		break;
+
+	case ADBMS_WAIT_TICK: {
+		uint32_t tick_now = tick_count;
+
+		if (tick_now != bms.adbms.tick_seen) {
+
+			// mais que um tick desde o ultimo ciclo means o ciclo passou dos 200 ms
+			if ((bms.adbms.cycles > 0u) && ((tick_now - bms.adbms.tick_seen) > 1u)) {
+				bms.adbms.overruns += (tick_now - bms.adbms.tick_seen) - 1u;
+			}
+
+			bms.adbms.tick_seen = tick_now;
+			bms.adbms.state = ADBMS_DETECT;
+		}
+		break;
+	}
+
+	case ADBMS_DETECT: {
+		bms.adbms.cycle_start_us = now_us;
+		memset(bms.pec.last_read, 0, sizeof(bms.pec.last_read));
+
+		uint8_t detected_slaves = count_slaves();
+		bms.cells.slaves_found = detected_slaves;
+
+		if (detected_slaves == 0u) {
+			if (++bms.adbms.dead_count >= DEAD_CYCLES) {
+				enter_fault();
+			} else {
+				bms.adbms.state = ADBMS_INIT;   //chain pode tar em sleep, wakepu just in case
+			}
+			break;
+		}
+		bms.adbms.dead_count = 0u;
+
+		if (detected_slaves != bms.config.slaves) {
+
+			// um slave ainda sleep, pd n ser necessariamnte slave em falta
+			if (bms.adbms.missing_count < MISSING_RETRIES) {
+				bms.adbms.missing_count++;
+				bms.adbms.state = ADBMS_INIT;
+				break;
+			}
+
+			// continua a medir os que respondem; o fault fica ate a cadeia bater certo
+			bms.faults.slave_missing = true;
+		} else {
+			bms.adbms.missing_count = 0u;
+			bms.faults.slave_missing = false;
+		}
+
+		bms.adbms.state = ADBMS_CONFIG;
+		break;
+	}
+
+	case ADBMS_CONFIG:
+		write_config();
+		CellRead_Start();
+		bms.adbms.state = ADBMS_CELL_READ;
+		break;
+
+	case ADBMS_CELL_READ:
+		if (CellRead_Step()) {
+			OpenWire_Start();
+			bms.adbms.state = ADBMS_OPEN_WIRE;
+		}
+		break;
+
+	case ADBMS_OPEN_WIRE:
+		if (OpenWire_Step()) {
+			bms.adbms.state = ADBMS_BALANCING;
+		}
+		break;
+
+	// depois das medicoes que precisam dos DCC a 0, vamos experimentar fazer discharge durante a leitura das ntcs que é AUX e nao Cell
+	case ADBMS_BALANCING:
+		Balancing_Step();
+		TempRead_Start();
+		bms.adbms.state = ADBMS_TEMP_READ;
+		break;
+
+	case ADBMS_TEMP_READ: {
+		if (!TempRead_Step()) {
+			break;
+		}
+
+		bool pec_failed = false;
+		for (uint8_t slave_index = 0; slave_index < bms.cells.slaves_found; slave_index++) {
+			pec_failed = pec_failed || bms.pec.last_read[slave_index];
+		}
+		bms.faults.pec_error = pec_failed;
+
+		bms.adbms.spi_errors = adBmsSpiErrors();
+		bms.adbms.cycles++;
+		bms.adbms.cycle_us = adBmsMicros() - bms.adbms.cycle_start_us;
+		bms.adbms.state = ADBMS_WAIT_TICK;
+		break;
+	}
+
+	case ADBMS_FAULT:
+		if (waited_us >= FAULT_RETRY_US) {
+			bms.adbms.missing_count = 0u;
+			bms.adbms.dead_count = 0u;
+			bms.adbms.state = ADBMS_INIT;
+		}
+		break;
+
+	default:
+		//se esta aqui, ta tudo fdd
+		enter_fault();
+		break;
+	}
+
+	// verificar o quão old sao os dados devido a mas leituras, n dependendo de um eestado especifico da state machine
+	check_timeouts();
 }
-
-/**
-*******************************************************************************
-* @brief Read Status Reg. A, B, C, D and E.
-*******************************************************************************
-*/
-void adBms6830_read_status_registers(uint8_t tIC, cell_asic *ic)
-{
-  adBmsWakeupIc(tIC);
-  adBmsWriteData(tIC, &ic[0], WRCFGA, Config, A);
-  adBmsWriteData(tIC, &ic[0], WRCFGB, Config, B);
-  adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
-  pladc_count = adBmsPollAdc(PLADC);
-  adBms6830_Adcv(REDUNDANT_MEASUREMENT, CONTINUOUS_MEASUREMENT, DISCHARGE_PERMITTED, RESET_FILTER, CELL_OPEN_WIRE_DETECTION);
-  pladc_count = pladc_count + adBmsPollAdc(PLADC);
-
-  adBmsReadData(tIC, &ic[0], RDSTATA, Status, A);
-  adBmsReadData(tIC, &ic[0], RDSTATB, Status, B);
-  adBmsReadData(tIC, &ic[0], RDSTATC, Status, C);
-  adBmsReadData(tIC, &ic[0], RDSTATD, Status, D);
-  adBmsReadData(tIC, &ic[0], RDSTATE, Status, E);
-  printPollAdcConvTime(pladc_count);
-  printStatus(tIC, &ic[0], Status, ALL_GRP);
-}
-
-/**
-*******************************************************************************
-* @brief Loop measurment.
-*******************************************************************************
-*/
-void measurement_loop()
-{
-  if(MEASURE_CELL == ENABLED)
-  {
-    adBmsReadData(TOTAL_IC, &IC[0], RDCVA, Cell, A);
-    adBmsReadData(TOTAL_IC, &IC[0], RDCVB, Cell, B);
-    adBmsReadData(TOTAL_IC, &IC[0], RDCVC, Cell, C);
-    adBmsReadData(TOTAL_IC, &IC[0], RDCVD, Cell, D);
-    adBmsReadData(TOTAL_IC, &IC[0], RDCVE, Cell, E);
-    adBmsReadData(TOTAL_IC, &IC[0], RDCVF, Cell, F);
-    printVoltages(TOTAL_IC, &IC[0], Cell);
-  }
-
-  if(MEASURE_AVG_CELL == ENABLED)
-  {
-    adBmsReadData(TOTAL_IC, &IC[0], RDACA, AvgCell, A);
-    adBmsReadData(TOTAL_IC, &IC[0], RDACB, AvgCell, B);
-    adBmsReadData(TOTAL_IC, &IC[0], RDACC, AvgCell, C);
-    adBmsReadData(TOTAL_IC, &IC[0], RDACD, AvgCell, D);
-    adBmsReadData(TOTAL_IC, &IC[0], RDACE, AvgCell, E);
-    adBmsReadData(TOTAL_IC, &IC[0], RDACF, AvgCell, F);
-    printVoltages(TOTAL_IC, &IC[0], AvgCell);
-  }
-
-  if(MEASURE_F_CELL == ENABLED)
-  {
-    adBmsReadData(TOTAL_IC, &IC[0], RDFCA, F_volt, A);
-    adBmsReadData(TOTAL_IC, &IC[0], RDFCB, F_volt, B);
-    adBmsReadData(TOTAL_IC, &IC[0], RDFCC, F_volt, C);
-    adBmsReadData(TOTAL_IC, &IC[0], RDFCD, F_volt, D);
-    adBmsReadData(TOTAL_IC, &IC[0], RDFCE, F_volt, E);
-    adBmsReadData(TOTAL_IC, &IC[0], RDFCF, F_volt, F);
-    printVoltages(TOTAL_IC, &IC[0], F_volt);
-  }
-
-  if(MEASURE_S_VOLTAGE == ENABLED)
-  {
-    adBmsReadData(TOTAL_IC, &IC[0], RDSVA, S_volt, A);
-    adBmsReadData(TOTAL_IC, &IC[0], RDSVB, S_volt, B);
-    adBmsReadData(TOTAL_IC, &IC[0], RDSVC, S_volt, C);
-    adBmsReadData(TOTAL_IC, &IC[0], RDSVD, S_volt, D);
-    adBmsReadData(TOTAL_IC, &IC[0], RDSVE, S_volt, E);
-    adBmsReadData(TOTAL_IC, &IC[0], RDSVF, S_volt, F);
-    printVoltages(TOTAL_IC, &IC[0], S_volt);
-  }
-
-  if(MEASURE_AUX == ENABLED)
-  {
-    adBms6830_Adax(AUX_OPEN_WIRE_DETECTION, OPEN_WIRE_CURRENT_SOURCE, AUX_CH_TO_CONVERT);
-    adBmsPollAdc(PLAUX1);
-    adBmsReadData(TOTAL_IC, &IC[0], RDAUXA, Aux, A);
-    adBmsReadData(TOTAL_IC, &IC[0], RDAUXB, Aux, B);
-    adBmsReadData(TOTAL_IC, &IC[0], RDAUXC, Aux, C);
-    adBmsReadData(TOTAL_IC, &IC[0], RDAUXD, Aux, D);
-    printVoltages(TOTAL_IC, &IC[0], Aux);
-  }
-
-  if(MEASURE_RAUX == ENABLED)
-  {
-    adBmsWakeupIc(TOTAL_IC);
-    adBms6830_Adax2(AUX_CH_TO_CONVERT);
-    adBmsPollAdc(PLAUX2);
-    adBmsReadData(TOTAL_IC, &IC[0], RDRAXA, RAux, A);
-    adBmsReadData(TOTAL_IC, &IC[0], RDRAXB, RAux, B);
-    adBmsReadData(TOTAL_IC, &IC[0], RDRAXC, RAux, C);
-    adBmsReadData(TOTAL_IC, &IC[0], RDRAXD, RAux, D);
-    printVoltages(TOTAL_IC, &IC[0], RAux);
-  }
-
-  if(MEASURE_STAT == ENABLED)
-  {
-    adBmsReadData(TOTAL_IC, &IC[0], RDSTATA, Status, A);
-    adBmsReadData(TOTAL_IC, &IC[0], RDSTATB, Status, B);
-    adBmsReadData(TOTAL_IC, &IC[0], RDSTATC, Status, C);
-    adBmsReadData(TOTAL_IC, &IC[0], RDSTATD, Status, D);
-    adBmsReadData(TOTAL_IC, &IC[0], RDSTATE, Status, E);
-    printStatus(TOTAL_IC, &IC[0], Status, ALL_GRP);
-  }
-}
-
-/**
-*******************************************************************************
-* @brief Clear Cell measurement reg.
-*******************************************************************************
-*/
-void adBms6830_clear_cell_measurement(uint8_t tIC)
-{
-  adBmsWakeupIc(tIC);
-  spiSendCmd(CLRCELL);
-  //printf("Cell Registers Cleared\n\n");
-}
-
-/**
-*******************************************************************************
-* @brief Clear Aux measurement reg.
-*******************************************************************************
-*/
-void adBms6830_clear_aux_measurement(uint8_t tIC)
-{
-  adBmsWakeupIc(tIC);
-  spiSendCmd(CLRAUX);
-  //printf("Aux Registers Cleared\n\n");
-}
-
-/**
-*******************************************************************************
-* @brief Clear spin measurement reg.
-*******************************************************************************
-*/
-void adBms6830_clear_spin_measurement(uint8_t tIC)
-{
-  adBmsWakeupIc(tIC);
-  spiSendCmd(CLRSPIN);
-  //printf("Spin Registers Cleared\n\n");
-}
-
-/**
-*******************************************************************************
-* @brief Clear fcell measurement reg.
-*******************************************************************************
-*/
-void adBms6830_clear_fcell_measurement(uint8_t tIC)
-{
-  adBmsWakeupIc(tIC);
-  spiSendCmd(CLRFC);
-  //printf("Fcell Registers Cleared\n\n");
-}
-
-/** @}*/
-/** @}*/

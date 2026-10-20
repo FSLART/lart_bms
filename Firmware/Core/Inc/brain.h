@@ -67,6 +67,40 @@ typedef enum {
 	BALANCING_END
 } balancing_stage_t;
 
+// maquina principal da cadeia ADBMS6822 -> ADBMS6830B (adBms_Application.c)
+typedef enum {
+	ADBMS_INIT = 0,        // prepara o acordar da cadeia
+	ADBMS_WAKE_LOW,        // CS em baixo: pulso -1, um por slave (acorda do SLEEP)
+	ADBMS_WAKE_HIGH,       // CS em cima: pulso +1
+	ADBMS_WAIT_TICK,       // espera pelo tick de 200 ms do TIM6
+	ADBMS_DETECT,          // conta os slaves com RDSID
+	ADBMS_CONFIG,          // escreve e verifica CFGA/CFGB (DCC a 0), limpa as flags de diagnostico
+	ADBMS_CELL_READ,       // maquina de leitura das celulas (adbms_cell_read.c)
+	ADBMS_OPEN_WIRE,       // maquina de open-wire (adbms_open_wire.c)
+	ADBMS_BALANCING,       // maquina de balanceamento (adbms_balancing.c), volta a ligar os DCC
+	ADBMS_TEMP_READ,       // maquina de leitura das temperaturas (adbms_temp_read.c)
+	ADBMS_FAULT            // cadeia muda: espera e volta a acordar
+} adbms_state_t;
+
+typedef enum {
+	CELL_READ_START = 0,   // ADCV com redundancia (C-ADC + S-ADC)
+	CELL_READ_WAIT,        // espera a conversao (8 ms)
+	CELL_READ_DONE
+} cell_read_state_t;
+
+typedef enum {
+	TEMP_READ_START = 0,   // ADAX + ADAX2: NTC pelos dois caminhos, VREF2, die
+	TEMP_READ_WAIT,        // espera o AUX2 (ate 91 ms)
+	TEMP_READ_DONE
+} temp_read_state_t;
+
+typedef enum {
+	OPEN_WIRE_START = 0,   // ADSV com a corrente de OW nos canais pares
+	OPEN_WIRE_WAIT_EVEN,
+	OPEN_WIRE_WAIT_ODD,
+	OPEN_WIRE_DONE
+} open_wire_state_t;
+
 // BIG FAULT STRUCT
 typedef struct {
 	// celulas
@@ -132,6 +166,7 @@ typedef struct {
 	uint8_t  slaves;                  // ADBMS6830 na cadeia
 	uint8_t  cells_per_slave;
 	uint8_t  ntcs_per_slave;
+	uint16_t ntc_disabled_mask[BMS_MAX_SLAVES];  // bit n = NTC n+1 desligado (harness partido)
 	// limites de celula, por paralelo
 	uint16_t cell_min_mV;             // falha UV
 	uint16_t cell_low_warn_mV;        // (2800)
@@ -252,8 +287,31 @@ typedef struct {
 	uint8_t  worst_slave;             // 1-based, 0 = nenhum
 	uint8_t  worst_cell;
 	bool     die_ot_hold;             // bloqueado 60 s apos OT do die
+	uint32_t hold_since_ms;
 	uint32_t started_ms;
 } bms_balancing_t;
+
+// estado das maquinas ADBMS e diagnostico da cadeia
+typedef struct {
+	adbms_state_t     state;
+	cell_read_state_t cell_read;
+	temp_read_state_t temp_read;
+	open_wire_state_t open_wire;
+	uint32_t step_us;                         // TIM5 (us) no inicio da espera atual
+	uint8_t  wake_pulses;                     // pulsos de CS que faltam
+	uint8_t  missing_count;                   // ciclos seguidos com slaves != config
+	uint8_t  dead_count;                      // ciclos seguidos sem nenhum slave
+	uint32_t tick_seen;                       // ultimo tick de 200 ms tratado
+	uint32_t cycles;                          // ciclos completos
+	uint32_t overruns;                        // ticks perdidos (ciclo > 200 ms)
+	uint32_t cycle_start_us;
+	uint32_t cycle_us;                        // duracao do ultimo ciclo
+	uint32_t config_errors;                   // CFGA/CFGB lidos != escritos
+	uint32_t spi_errors;                      // timeouts/erros HAL no SPI
+	bool     config_ok[BMS_MAX_SLAVES];       // config verificada neste ciclo
+	uint32_t cells_valid_ms[BMS_MAX_SLAVES];  // ultima leitura de celulas valida
+	uint32_t temps_valid_ms[BMS_MAX_SLAVES];  // ultima leitura de NTC valida
+} bms_adbms_t;
 
 typedef struct {
 	charger_state_t state;
@@ -317,6 +375,7 @@ typedef struct {
 	bms_ams_error_t ams_error;
 	bms_cells_t     cells;
 	bms_pec_t       pec;
+	bms_adbms_t     adbms;            // maquinas de estado da cadeia ADBMS
 	bms_accu_t      accu;
 	bms_soc_t       soc;
 	bms_precharge_t precharge;
