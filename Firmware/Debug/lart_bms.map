@@ -21598,31 +21598,31 @@ LOAD C:/ST/STM32CubeIDE_1.18.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_line    0x000179b4     0x263e ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o
  .debug_line    0x00019ff2      0x886 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_wwdg.o
 
-.debug_str      0x00000000    0xd8e95
- .debug_str     0x00000000    0xd8e95 ./Core/Src/brain.o
-                              0xd0dd9 (size before relaxing)
- .debug_str     0x000d8e95    0xcdd69 ./Core/Src/main.o
- .debug_str     0x000d8e95    0xcd8a4 ./Core/Src/stm32f4xx_hal_msp.o
- .debug_str     0x000d8e95    0xcce8c ./Core/Src/stm32f4xx_it.o
- .debug_str     0x000d8e95     0x99dc ./Core/Src/syscalls.o
- .debug_str     0x000d8e95     0x777a ./Core/Src/sysmem.o
- .debug_str     0x000d8e95    0xcbc45 ./Core/Src/system_stm32f4xx.o
- .debug_str     0x000d8e95       0x7c ./Core/Startup/startup_stm32f412retx.o
- .debug_str     0x000d8e95    0xcc7a3 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
- .debug_str     0x000d8e95    0xcc20e ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.o
- .debug_str     0x000d8e95    0xcc262 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.o
- .debug_str     0x000d8e95    0xcc31b ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.o
- .debug_str     0x000d8e95    0xcc4fb ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o
- .debug_str     0x000d8e95    0xcc03b ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o
- .debug_str     0x000d8e95    0xcbdc6 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o
- .debug_str     0x000d8e95    0xccc44 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.o
- .debug_str     0x000d8e95    0xcc07e ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o
- .debug_str     0x000d8e95    0xcbf7e ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o
- .debug_str     0x000d8e95    0xcc4df ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o
- .debug_str     0x000d8e95    0xccfab ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o
- .debug_str     0x000d8e95    0xcc7b7 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o
- .debug_str     0x000d8e95    0xcc636 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o
- .debug_str     0x000d8e95    0xcbb76 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_wwdg.o
+.debug_str      0x00000000    0xd8e94
+ .debug_str     0x00000000    0xd8e94 ./Core/Src/brain.o
+                              0xd0dd8 (size before relaxing)
+ .debug_str     0x000d8e94    0xcdd69 ./Core/Src/main.o
+ .debug_str     0x000d8e94    0xcd8a4 ./Core/Src/stm32f4xx_hal_msp.o
+ .debug_str     0x000d8e94    0xcce8c ./Core/Src/stm32f4xx_it.o
+ .debug_str     0x000d8e94     0x99dc ./Core/Src/syscalls.o
+ .debug_str     0x000d8e94     0x777a ./Core/Src/sysmem.o
+ .debug_str     0x000d8e94    0xcbc45 ./Core/Src/system_stm32f4xx.o
+ .debug_str     0x000d8e94       0x7c ./Core/Startup/startup_stm32f412retx.o
+ .debug_str     0x000d8e94    0xcc7a3 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
+ .debug_str     0x000d8e94    0xcc20e ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.o
+ .debug_str     0x000d8e94    0xcc262 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.o
+ .debug_str     0x000d8e94    0xcc31b ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.o
+ .debug_str     0x000d8e94    0xcc4fb ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o
+ .debug_str     0x000d8e94    0xcc03b ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o
+ .debug_str     0x000d8e94    0xcbdc6 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o
+ .debug_str     0x000d8e94    0xccc44 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.o
+ .debug_str     0x000d8e94    0xcc07e ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o
+ .debug_str     0x000d8e94    0xcbf7e ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o
+ .debug_str     0x000d8e94    0xcc4df ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.o
+ .debug_str     0x000d8e94    0xccfab ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o
+ .debug_str     0x000d8e94    0xcc7b7 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o
+ .debug_str     0x000d8e94    0xcc636 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o
+ .debug_str     0x000d8e94    0xcbb76 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_wwdg.o
 
 .comment        0x00000000       0x43
  .comment       0x00000000       0x43 ./Core/Src/brain.o
