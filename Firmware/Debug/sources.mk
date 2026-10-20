@@ -28,5 +28,4 @@ Core/Src \
 Core/Startup \
 Core/adbms6830 \
 Drivers/STM32F4xx_HAL_Driver/Src \
-Core/Src/adbms \
 
