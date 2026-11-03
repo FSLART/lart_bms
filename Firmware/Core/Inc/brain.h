@@ -23,6 +23,9 @@
 
 // versao no CAN (0x701 master_firmware_version, VAL_ do DBC: 13 = "alpha-v3")
 #define BMS_FIRMWARE_VERSION 13u
+// o resto da versao do descritor da imagem (boot_ctrl.c): major = BMS_FIRMWARE_VERSION
+#define BMS_FIRMWARE_MINOR   1u
+#define BMS_FIRMWARE_PATCH   0u
 
 //Defines parAA SO LIMITAR NA RAM
 #define BMS_MAX_SLAVES 16
@@ -341,6 +344,8 @@ typedef struct {
 	// quais faults disparam a linha AMS_ERROR (os da FS 2027 EV 5.8 estao sempre ligados)
 	bms_faults_t ams_error_enable;
 	uint16_t ams_error_min_on_ms;     // a linha fica em erro pelo menos isto
+	// bootloader CAN
+	uint16_t boot_confirm_s;          // uma imagem nova confirma-se ao fim disto a correr
 } bms_config_t;
 
 typedef struct {
@@ -615,6 +620,27 @@ typedef struct {
 	bool     reboot_pending;          // ha parametros que so mudam depois de reiniciar
 } bms_eeprom_t;
 
+/* O bootloader CAN visto da aplicacao (Bootloader/, BOOTLOADER.md). Dono:
+ * boot_ctrl */
+typedef struct {
+	bool     bootloader;              // arrancou pelo bootloader (area partilhada na RAM valida)
+	uint8_t  run;                     // boot_run_t: CONFIRMED, PENDING (em teste), EXTERNAL (ST-LINK), UNKNOWN
+	uint8_t  event;                   // o que o bootloader fez neste arranque (boot_event_t)
+	uint8_t  attempts;                // arranques desta imagem em teste
+	uint8_t  failures;                // desses, quantos acabaram num reset do watchdog
+	uint8_t  last_reason;             // BOOT_ERR_* do ultimo registo do journal (porque o ultimo rollback)
+	bool     iwdg;                    // o bootloader armou o IWDG (imagem em teste)
+	bool     backup_valid;            // ha um firmware anterior para onde voltar
+	bool     confirmed_now;           // esta imagem confirmou-se neste arranque
+	bool     confirm_failed;          // o registo de confirmacao nao entrou
+	uint32_t exec_id;                 // 4 primeiros bytes do SHA-256 desta imagem (0 se RAW)
+	uint32_t boot_version;            // versao do bootloader: major << 16 | minor << 8 | patch
+	uint32_t backup_version;          // versao do backup: major << 24 | minor << 16 | revision (0 = nenhum)
+	uint16_t updates;                 // imagens instaladas por CAN
+	uint16_t rollbacks;
+	uint16_t confirm_left_s;          // ate a confirmacao (0 = nada pendente)
+} bms_boot_t;
+
 typedef struct {
 	bms_system_t    system;
 	bms_config_t    config;
@@ -639,6 +665,7 @@ typedef struct {
 	bms_link_t      uart2;            // RN4871
 	bms_bt_t        bt;
 	bms_eeprom_t    eeprom;
+	bms_boot_t      boot;
 } bms_t;
 
 extern bms_t bms;

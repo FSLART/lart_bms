@@ -47,6 +47,7 @@ extern GPIO_TypeDef fake_gpioa;
 #define RCC_CFGR_PPRE1_DIV1           0u
 #define RCC_CFGR_PPRE1_DIV2           (0x4u << 10)
 #define RCC_CSR_WWDGRSTF              (1u << 30)
+#define RCC_CSR_IWDGRSTF              (1u << 29)
 #define TIM6_IRQn                     54
 
 #define __HAL_TIM_GET_FLAG(h, f)       ((((h)->Instance->SR) & (f)) == (f))

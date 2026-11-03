@@ -35,6 +35,7 @@
 #include "rn4871.h"
 #include "console.h"
 #include "live_json.h"
+#include "boot_ctrl.h"
 
 #include <stdbool.h>
 #include <string.h>
@@ -51,7 +52,8 @@ volatile bool toggleHeartbeat = false;
 typedef enum {
 	REQUEST_NONE = 0,
 	REQUEST_RESET,
-	REQUEST_BOOTLOADER
+	REQUEST_BOOTLOADER,
+	REQUEST_ROLLBACK
 } system_request_t;
 
 static uint32_t start_ms;
@@ -93,9 +95,9 @@ void brain_start(void) {
 	pending_request = REQUEST_NONE;
 	request_ms = 0;
 
-	// Watchdog Fault Acknoledge: fica visivel ate ao proximo arranque
+	// Watchdog Fault Acknoledge: fica visivel ate ao proximo arranque (o IWDG e o do bootloader nas imagens em teste)
 	bms.system.reset_flags = watchdog_flag;
-	bms.system.wwdg_reset = (watchdog_flag & RCC_CSR_WWDGRSTF) != 0u;
+	bms.system.wwdg_reset = (watchdog_flag & (RCC_CSR_WWDGRSTF | RCC_CSR_IWDGRSTF)) != 0u;
 	bms.faults.watchdog_reset = bms.system.wwdg_reset;
 	bms.system.state = AMS_STARTUP;
 	bms.system.previous_state = AMS_STARTUP;
@@ -107,6 +109,7 @@ void brain_start(void) {
 
 	ConfigStore_Load();                       // EEPROM -> bms.config (ou defaults + config_invalid)
 	ConfigStore_SetAdbmsCheck(ADBMS_Init());  // topologia, regra dos 30 % de NTC e o tick do TIM6
+	BootCtrl_Init(now_ms);                    // o que o bootloader deixou na RAM e no journal
 
 	Precharge_Init(now_ms);
 	Charger_Init();
@@ -153,17 +156,19 @@ static void update_state(uint32_t now_ms) {
 	}
 }
 
-/* reboot e bootloader (consola ou 0x0DC): so com a HV desligada e fora de
- * um carregamento. Um pedido com a HV ligada e deitado fora (nao fica a
- * espera para disparar mais tarde). Pequeno atraso para a resposta sair */
+/* reboot, bootloader (consola, 0x0DC ou 0x601) e voltar ao firmware
+ * anterior: so com a HV desligada e fora de um carregamento. Um pedido com a
+ * HV ligada e deitado fora (nao fica a espera para disparar mais tarde).
+ * Pequeno atraso para a resposta sair */
 static void service_requests(uint32_t now_ms) {
 
 	bool safe = bms.system.hv_safe && !Charger_SessionActive();
 	bool bootloader = CanMessages_TakeBootloaderRequest() | Console_TakeBootloaderRequest();
+	bool rollback = Console_TakeRollbackRequest();
 	bool reboot = Console_TakeRebootRequest();
 
-	if (safe && (bootloader || reboot) && (pending_request == REQUEST_NONE)) {
-		pending_request = bootloader ? REQUEST_BOOTLOADER : REQUEST_RESET;
+	if (safe && (bootloader || rollback || reboot) && (pending_request == REQUEST_NONE)) {
+		pending_request = bootloader ? REQUEST_BOOTLOADER : (rollback ? REQUEST_ROLLBACK : REQUEST_RESET);
 		request_ms = now_ms;
 	}
 
@@ -176,11 +181,15 @@ static void service_requests(uint32_t now_ms) {
 	}
 
 	if ((now_ms - request_ms) >= RESET_DELAY_MS) {
-		if (pending_request == REQUEST_BOOTLOADER) {
-			Bsp_JumpToBootloader();
-		} else {
-			Bsp_SystemReset();
+		system_request_t request = pending_request;
+
+		pending_request = REQUEST_NONE;
+		if (request == REQUEST_BOOTLOADER) {
+			BootCtrl_RequestBootloader();   // o bootloader ve o pedido na RAM e fica
+		} else if ((request == REQUEST_ROLLBACK) && !BootCtrl_Reject()) {
+			return;                         // o journal nao aceitou: nao reinicia
 		}
+		Bsp_SystemReset();
 	}
 }
 
@@ -190,6 +199,7 @@ void brain_loop(void) {
 	uint32_t now_ms = HAL_GetTick();
 
 	bms.system.uptime_ms = now_ms;
+	Bsp_IwdgRefresh();
 
 	// entradas
 	Contactors_ReadInputs(now_ms);
@@ -209,6 +219,7 @@ void brain_loop(void) {
 	Fans_Step(now_ms);
 	update_state(now_ms);
 	AmsError_Step(now_ms);
+	BootCtrl_Step(now_ms);
 
 	// saidas
 	Contactors_Apply();

@@ -49,6 +49,7 @@
 									<listOptionValue builtIn="false" value="../Core/config"/>
 									<listOptionValue builtIn="false" value="../Core/comms"/>
 									<listOptionValue builtIn="false" value="../Core/app"/>
+									<listOptionValue builtIn="false" value="../Core/boot"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/DBC}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Core/Src}&quot;"/>
@@ -137,6 +138,7 @@
 									<listOptionValue builtIn="false" value="../Core/config"/>
 									<listOptionValue builtIn="false" value="../Core/comms"/>
 									<listOptionValue builtIn="false" value="../Core/app"/>
+									<listOptionValue builtIn="false" value="../Core/boot"/>
 									<listOptionValue builtIn="false" value="../Core/DBC"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"/>

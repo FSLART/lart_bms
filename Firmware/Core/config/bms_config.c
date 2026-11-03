@@ -115,7 +115,7 @@ const bms_config_t config_defaults = {
 	.can_master_ms = 100,
 	.can_slaves_ms = 250,
 	.can2_mirror_charging = true,
-	.bootloader_can_mask = 0x02,      // 0x0DC so no CAN2, como o firmware antigo
+	.bootloader_can_mask = 0x03,      // 0x0DC nos dois bus (o bootloader CAN escuta nos dois); 0x601 so no CAN2
 	// comunicacao externa
 	.bt_name = "LART Accumulator",
 	.live_period_ms = 1000,           // RN4871 sem flow control: ~3 kB/s e o maximo seguro
@@ -137,6 +137,7 @@ const bms_config_t config_defaults = {
 		.isa_pack_timeout = true,
 	},
 	.ams_error_min_on_ms = 500,
+	.boot_confirm_s = 30,
 };
 
 /* ================== TABELA ================== */
@@ -273,6 +274,8 @@ const cfg_param_t config_params[] = {
 	// AMS_ERROR
 	PARAM("ams_error_enable", ams_error_enable, CFG_FAULTS, 0, 0, HEX, "faults"),
 	PARAM("ams_error_min_on_ms", ams_error_min_on_ms, CFG_U16, 0, 10000, 0, "ms"),
+	// bootloader CAN
+	PARAM("boot_confirm_s", boot_confirm_s, CFG_U16, 5, 600, 0, "s"),
 };
 
 const uint16_t config_param_count = (uint16_t) (sizeof(config_params) / sizeof(config_params[0]));

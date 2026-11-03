@@ -1,7 +1,7 @@
 # Configuração do BMS
 
 Tudo o que se pode afinar sem recompilar está na EEPROM 24FC08 (1 KB) e muda-se
-pela consola, no **BLE (RN4871)** ou no **cabo (UART1, 230400 8N1)**. São 101
+pela consola, no **BLE (RN4871)** ou no **cabo (UART1, 230400 8N1)**. São 102
 parâmetros; a tabela completa está no fim deste ficheiro e sai também na
 consola com `get all`.
 
@@ -50,7 +50,9 @@ o JSON.
 | `bt reboot` | reinicia o RN4871 |
 | `eeprom` | dump da EEPROM em hexadecimal |
 | `version` | firmware, versão do esquema, número de parâmetros, data de compilação |
-| `reboot` / `bootloader` | só com a HV desligada e fora de um carregamento |
+| `reboot` / `bootloader` | só com a HV desligada e fora de um carregamento (`bootloader` = o bootloader CAN, [BOOTLOADER.md](BOOTLOADER.md)) |
+| `boot` | estado do bootloader: imagem em teste ou confirmada, backup, rollbacks |
+| `boot confirm` / `boot rollback` | confirma já a imagem em teste / volta ao firmware anterior (HV desligada) |
 | `unlock <pin>` | no BLE, se `bt_pin` ≠ 0 |
 
 ### PIN do BLE
@@ -58,7 +60,7 @@ o JSON.
 Com `bt_pin = 0` (o default) qualquer telemóvel ligado ao RN4871 pode mudar a
 configuração quando a HV está desligada. Com um PIN (1..9999) os comandos que
 mudam alguma coisa (`set`, `apply`, `save`, `revert`, `defaults`, `reboot`,
-`bootloader`, `fan`, `bt`) pedem `unlock <pin>` uma vez por ligação; ao
+`bootloader`, `boot confirm`, `boot rollback`, `fan`, `bt`) pedem `unlock <pin>` uma vez por ligação; ao
 desligar volta a trancar. Três PIN errados bloqueiam 10 s. Pelo cabo nunca
 pede PIN.
 
@@ -261,7 +263,7 @@ Estes defaults não vinham de nenhum valor testado:
 | 89 | `can_master_ms` | `100` | 0..10000 | ms |  |
 | 90 | `can_slaves_ms` | `250` | 0..10000 | ms |  |
 | 91 | `can2_mirror_charging` | `1` | 0..1 |  |  |
-| 92 | `bootloader_can_mask` | `0x2` | 0x0..0x3 | bits |  |
+| 92 | `bootloader_can_mask` | `0x3` | 0x0..0x3 | bits |  |
 | 93 | `bt_name` | `LART Accumulator` | ate 20 caracteres |  | sim |
 | 94 | `live_period_ms` | `1000` | 0..10000 | ms |  |
 | 95 | `live_uart1_ms` | `1000` | 0..10000 | ms |  |
@@ -270,4 +272,5 @@ Estes defaults não vinham de nenhum valor testado:
 | 98 | `bt_pin` | `0` | 0..9999 |  |  |
 | 99 | `ams_error_enable` | `0x00000000000106BF` | mascara de faults | faults |  |
 | 100 | `ams_error_min_on_ms` | `500` | 0..10000 | ms |  |
+| 101 | `boot_confirm_s` | `30` | 5..600 | s |  |
 

@@ -15,6 +15,11 @@
 #include "handcart_t26.h"
 #include <string.h>
 
+/* ENTER_BOOT do protocolo do bootloader da ACU (mcu_boot bootloader.dbc):
+ * 0x601, DLC 8, 01 00 00 00 00 00 00 00. So no CAN2: no CAN1 o 0x601 e o
+ * SLAVE_01_VOLTAGE_ID_2 que o proprio BMS envia */
+#define ENTER_BOOT_FRAME_ID 0x601u
+
 #define DBC_SLAVES        12u   // o DBC so tem Slave_01..Slave_12
 #define FRAMES_PER_SLAVE  7u    // 0x600 + 7 x slave + k
 #define SLAVE_IDLE        0xFFu
@@ -56,6 +61,15 @@ static void on_programmer(uint8_t bus, const can_frame_t *frame) {
 		return;
 	}
 	if ((powertrain_t26_start_programmer_unpack(&message, frame->data, frame->dlc) == 0) && (message.programming_request != 0u)) {
+		bootloader_requested = true;
+	}
+}
+
+static void on_enter_boot(const can_frame_t *frame) {
+
+	static const uint8_t enter[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
+
+	if ((((bms.config.bootloader_can_mask >> CAN_BUS_2) & 1u) != 0u) && (frame->dlc == 8u) && (memcmp(frame->data, enter, sizeof(enter)) == 0)) {
 		bootloader_requested = true;
 	}
 }
@@ -132,6 +146,10 @@ static void process_can2(const can_frame_t *frame, uint32_t now_ms) {
 
 	case POWERTRAIN_T26_START_PROGRAMMER_FRAME_ID:
 		on_programmer(CAN_BUS_2, frame);
+		break;
+
+	case ENTER_BOOT_FRAME_ID:
+		on_enter_boot(frame);
 		break;
 
 	default:

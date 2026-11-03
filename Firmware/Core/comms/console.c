@@ -15,6 +15,8 @@
 #include "precharge.h"
 #include "charger.h"
 #include "bsp.h"
+#include "boot_ctrl.h"
+#include "boot_names.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,6 +54,7 @@ typedef struct {
 static console_t consoles[CONSOLE_COUNT];
 static bool reboot_requested;
 static bool bootloader_requested;
+static bool rollback_requested;
 static int8_t save_console = -1;          // quem pediu o save (para o resultado)
 static eeprom_state_t eeprom_seen;
 
@@ -327,11 +330,51 @@ static void command_live(uint8_t console, char *arguments) {
 	(void) reply(console, "#OK live=%ld", (long) consoles[console].live_period_ms);
 }
 
+// boot | boot confirm | boot rollback: o bootloader CAN visto daqui
+static void command_boot(uint8_t console, char *cursor) {
+
+	const bms_boot_t *boot = &bms.boot;
+	char *what = next_word(&cursor);
+	char backup[16];
+
+	lowercase(what);
+	BootCtrl_VersionText(boot->backup_version, backup, sizeof(backup));
+
+	if (what[0] == '\0') {
+		(void) reply(console, "#BOOT bootloader=%s%u.%u.%u run=%s event=%s attempts=%u failures=%u confirm_in_s=%u fw=%u.%u.%u backup=%s updates=%u rollbacks=%u last=%s",
+				boot->bootloader ? "" : "nao ", (unsigned) ((boot->boot_version >> 16) & 0xFFu), (unsigned) ((boot->boot_version >> 8) & 0xFFu),
+				(unsigned) (boot->boot_version & 0xFFu), BootNames_Run(boot->run), BootNames_Event(boot->event), boot->attempts, boot->failures,
+				boot->confirm_left_s, BMS_FIRMWARE_VERSION, BMS_FIRMWARE_MINOR, BMS_FIRMWARE_PATCH, boot->backup_valid ? backup : "nenhum", boot->updates,
+				boot->rollbacks, BootNames_Error(boot->last_reason));
+	} else if (strcmp(what, "confirm") == 0) {
+		if (boot->run != BOOT_RUN_PENDING) {
+			(void) reply(console, "#ERR boot confirm: a imagem nao esta em teste (%s)", BootNames_Run(boot->run));
+		} else if (BootCtrl_Confirm()) {
+			(void) reply(console, "#OK boot confirm");
+		} else {
+			(void) reply(console, "#ERR boot confirm: o journal nao aceitou");
+		}
+	} else if (strcmp(what, "rollback") == 0) {
+		const char *problem = BootCtrl_CanRollback();
+
+		if (problem != NULL) {
+			(void) reply(console, "#ERR boot rollback: %s", problem);
+		} else if (!bms.system.hv_safe || Charger_SessionActive()) {
+			(void) reply(console, "#ERR HV ligada");
+		} else {
+			rollback_requested = true;
+			(void) reply(console, "#OK boot rollback: reinicia com o firmware %s", backup);
+		}
+	} else {
+		(void) reply(console, "#ERR boot [confirm|rollback]");
+	}
+}
+
 static void command_help(uint8_t console) {
 
 	(void) reply(console, "#HELP status | get <nome|all> | set <nome>[i] <valor> | diff | apply | save | revert | defaults");
 	(void) reply(console, "#HELP faults | live <on|off|ms> | json | fan <cells|lv> <max|auto> | bt reboot | eeprom");
-	(void) reply(console, "#HELP version | reboot | bootloader | unlock <pin>");
+	(void) reply(console, "#HELP version | reboot | bootloader | boot [confirm|rollback] | unlock <pin>");
 }
 
 void Console_Execute(uint8_t console, char *line) {
@@ -349,7 +392,7 @@ void Console_Execute(uint8_t console, char *line) {
 	// o que altera alguma coisa pede o PIN no BLE
 	bool changes = (strcmp(command, "set") == 0) || (strcmp(command, "apply") == 0) || (strcmp(command, "save") == 0) || (strcmp(command, "revert") == 0)
 			|| (strcmp(command, "defaults") == 0) || (strcmp(command, "reboot") == 0) || (strcmp(command, "bootloader") == 0) || (strcmp(command, "fan") == 0)
-			|| (strcmp(command, "bt") == 0);
+			|| (strcmp(command, "bt") == 0) || ((strcmp(command, "boot") == 0) && (cursor[0] != '\0'));
 
 	if (changes && locked(console)) {
 		(void) reply(console, "#ERR bloqueado: unlock <pin>");
@@ -417,6 +460,8 @@ void Console_Execute(uint8_t console, char *line) {
 			bootloader_requested = bootloader;
 			(void) reply(console, "#OK %s", command);
 		}
+	} else if (strcmp(command, "boot") == 0) {
+		command_boot(console, cursor);
 	} else if (strcmp(command, "unlock") == 0) {
 		command_unlock(console, cursor, now_ms);
 	} else if (strcmp(command, "help") == 0) {
@@ -504,6 +549,7 @@ void Console_Init(void) {
 	}
 	reboot_requested = false;
 	bootloader_requested = false;
+	rollback_requested = false;
 	save_console = -1;
 	eeprom_seen = bms.eeprom.state;
 }
@@ -609,5 +655,13 @@ bool Console_TakeBootloaderRequest(void) {
 	bool requested = bootloader_requested;
 
 	bootloader_requested = false;
+	return requested;
+}
+
+bool Console_TakeRollbackRequest(void) {
+
+	bool requested = rollback_requested;
+
+	rollback_requested = false;
 	return requested;
 }

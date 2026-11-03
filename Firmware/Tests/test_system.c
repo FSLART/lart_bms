@@ -18,6 +18,10 @@
 #include "soc.h"
 #include "console.h"
 #include "live_json.h"
+#include "boot_ctrl.h"
+#include "boot_image.h"
+#include "boot_journal.h"
+#include "boot_shared.h"
 #include "powertrain_t26.h"
 #include "handcart_t26.h"
 #include <stdio.h>
@@ -838,18 +842,226 @@ static void test_can_telemetry(void) {
 	CHECK(master.master_firmware_version == BMS_FIRMWARE_VERSION);
 }
 
+/* ================== BOOTLOADER CAN ================== */
+
+#define TEST_EXEC_ID 0xCAFEF00Du
+
+/* o que o bootloader deixa antes de saltar para a aplicacao: o journal na
+ * flash e a area partilhada nos ultimos 32 B da RAM */
+static void bootloader_handoff(uint8_t exec_state, uint8_t run, bool backup, uint32_t reset_flags) {
+
+	boot_journal_t journal;
+	boot_record_t record;
+	boot_shared_t shared;
+
+	fake_flash_erase_all();
+	BootJournal_Load(&journal);
+	memset(&record, 0, sizeof(record));
+	record.exec_state = exec_state;
+	record.exec_id = TEST_EXEC_ID;
+	record.exec_length = 100000u;
+	record.attempts = (run == BOOT_RUN_PENDING) ? 1u : 0u;
+	record.updates = 2;
+	record.event = BOOT_EVENT_TRIAL;
+	if (backup) {
+		boot_image_header_t header = { BOOT_IMAGE_MAGIC, 0, BOOT_HEADER_SIZE, 0, 1000, 0, 13, 0, 4, 0, 0 };
+
+		record.backup_state = BOOT_BACKUP_VALID;
+		record.backup_length = 90000u;
+		record.backup_id = 0x12345678u;
+		memcpy(&boot_test_flash[BOOT_BACKUP_ADDRESS - BOOT_FLASH_BASE], &header, sizeof(header));
+	}
+	CHECK(BootJournal_Write(&journal, &record, false));
+
+	memset(&shared, 0, sizeof(shared));
+	shared.can1_kbps = 500;
+	shared.can2_kbps = 500;
+	shared.reset_flags = reset_flags;
+	shared.run = run;
+	shared.event = BOOT_EVENT_TRIAL;
+	shared.attempts = record.attempts;
+	shared.flags = (uint8_t) (((run == BOOT_RUN_PENDING) ? BOOT_SHARED_FLAG_IWDG : 0u) | (backup ? BOOT_SHARED_FLAG_BACKUP : 0u));
+	shared.boot_version = BOOT_VERSION_PACKED;
+	shared.exec_id = TEST_EXEC_ID;
+	BootShared_Seal(&shared);
+	BootShared_Write(&shared);
+
+	watchdog_flag = BootCtrl_ResetFlags(0);   // o que o main.c faz
+}
+
+static uint8_t journal_exec_state(void) {
+
+	boot_journal_t journal;
+
+	BootJournal_Load(&journal);
+	return journal.found ? journal.state.exec_state : 0xFFu;
+}
+
 static void test_bootloader_over_can(void) {
 
 	uint8_t request[1] = { 1 };
+	uint8_t enter[8] = { 1, 0, 0, 0, 0, 0, 0, 0 };
+	boot_shared_t shared;
 
+	// 0x0DC nos dois bus (bootloader_can_mask = 0x03 por omissao)
+	bootloader_handoff(BOOT_EXEC_CONFIRMED, BOOT_RUN_CONFIRMED, false, 0);
 	boot();
 	fake_can_inject(CAN_BUS_1, POWERTRAIN_T26_START_PROGRAMMER_FRAME_ID, false, request, 1);
 	run_ms(300);
-	CHECK(!board.bootloader_requested);       // no CAN1 nao (bootloader_can_mask = CAN2)
+	CHECK(board.reset_requested && board.bootloader_requested);
+	BootShared_Read(&shared);
+	CHECK(BootShared_Valid(&shared) && (shared.request == BOOT_REQUEST_MAGIC) && (shared.can1_kbps == 500u) && (shared.can2_kbps == 500u));
+	CHECK(board.safe_at_reset);
 
+	// so no CAN2: o 0x0DC do CAN1 e ignorado
+	bootloader_handoff(BOOT_EXEC_CONFIRMED, BOOT_RUN_CONFIRMED, false, 0);
+	boot();
+	console_uart("set bootloader_can_mask 2");
+	console_uart("apply");
+	fake_can_inject(CAN_BUS_1, POWERTRAIN_T26_START_PROGRAMMER_FRAME_ID, false, request, 1);
+	run_ms(300);
+	CHECK(!board.reset_requested);
 	fake_can_inject(CAN_BUS_2, POWERTRAIN_T26_START_PROGRAMMER_FRAME_ID, false, request, 1);
 	run_ms(300);
 	CHECK(board.bootloader_requested);
+
+	// ENTER_BOOT 0x601 (o uploader da ACU) so no CAN2 e so com 01 00 00 00 00 00 00 00
+	bootloader_handoff(BOOT_EXEC_CONFIRMED, BOOT_RUN_CONFIRMED, false, 0);
+	boot();
+	fake_can_inject(CAN_BUS_1, 0x601u, false, enter, 8);   // no CAN1 e a telemetria do slave 1
+	run_ms(300);
+	CHECK(!board.reset_requested);
+	enter[3] = 0x12;
+	fake_can_inject(CAN_BUS_2, 0x601u, false, enter, 8);
+	run_ms(300);
+	CHECK(!board.reset_requested);
+	enter[3] = 0;
+	fake_can_inject(CAN_BUS_2, 0x601u, false, enter, 7);
+	run_ms(300);
+	CHECK(!board.reset_requested);
+	fake_can_inject(CAN_BUS_2, 0x601u, false, enter, 8);
+	run_ms(300);
+	CHECK(board.bootloader_requested);
+
+	// com a HV ligada nao
+	bootloader_handoff(BOOT_EXEC_CONFIRMED, BOOT_RUN_CONFIRMED, false, 0);
+	boot();
+	vcu_request(1);
+	run_ms(50);
+	fake_can_inject(CAN_BUS_2, 0x601u, false, enter, 8);
+	run_ms(300);
+	CHECK(!board.reset_requested);
+}
+
+static void test_boot_confirm_after_uptime(void) {
+
+	// imagem nova em teste, arrancada pelo bootloader com o IWDG armado
+	bootloader_handoff(BOOT_EXEC_PENDING, BOOT_RUN_PENDING, true, 0);
+	boot();
+	CHECK(bms.boot.bootloader && (bms.boot.run == BOOT_RUN_PENDING) && bms.boot.iwdg);
+	CHECK(bms.boot.backup_valid && (bms.boot.backup_version == 0x0D000004u) && (bms.boot.updates == 2u));
+	CHECK(board.iwdg_refreshes > 0u);
+	CHECK((bms.boot.confirm_left_s > 25u) && (bms.boot.confirm_left_s <= 30u));
+
+	// a area partilhada passa a ter so os bitrates desta config
+	boot_shared_t shared;
+
+	BootShared_Read(&shared);
+	CHECK(BootShared_Valid(&shared) && (shared.run == BOOT_RUN_UNKNOWN) && (shared.can1_kbps == 500u) && (shared.request == 0u));
+
+	run_ms(20000);
+	CHECK(journal_exec_state() == BOOT_EXEC_PENDING);
+	run_ms(10500);
+	CHECK(journal_exec_state() == BOOT_EXEC_CONFIRMED);
+	CHECK((bms.boot.run == BOOT_RUN_CONFIRMED) && bms.boot.confirmed_now && (bms.boot.confirm_left_s == 0u));
+
+	// "boot" na consola
+	fake_uart_clear(UART_LINK_1);
+	console_uart("boot");
+	CHECK(output_has(UART_LINK_1, "#BOOT bootloader=1.0.0 run=CONFIRMED"));
+	CHECK(output_has(UART_LINK_1, "backup=13.0.4"));
+
+	// confirmar a mao, mais cedo
+	bootloader_handoff(BOOT_EXEC_PENDING, BOOT_RUN_PENDING, true, 0);
+	boot();
+	fake_uart_clear(UART_LINK_1);
+	console_uart("boot confirm");
+	CHECK(output_has(UART_LINK_1, "#OK boot confirm"));
+	CHECK(journal_exec_state() == BOOT_EXEC_CONFIRMED);
+	console_uart("boot confirm");
+	CHECK(output_has(UART_LINK_1, "#ERR boot confirm"));
+
+	// gravada pelo ST-LINK: nada a confirmar
+	bootloader_handoff(BOOT_EXEC_NONE, BOOT_RUN_EXTERNAL, false, 0);
+	boot();
+	run_ms(31000);
+	CHECK((bms.boot.run == BOOT_RUN_EXTERNAL) && !bms.boot.confirmed_now && (board.flash_programs == 0u));
+
+	// sem bootloader (arranque direto pelo debugger): area partilhada invalida
+	fake_flash_erase_all();
+	watchdog_flag = BootCtrl_ResetFlags(0);
+	boot();
+	CHECK(!bms.boot.bootloader && (bms.boot.run == BOOT_RUN_UNKNOWN));
+}
+
+static void test_boot_reset_flags_from_bootloader(void) {
+
+	// o bootloader limpa o RCC->CSR e passa as flags pela RAM: um reset do WWDG continua a ver-se
+	bootloader_handoff(BOOT_EXEC_CONFIRMED, BOOT_RUN_CONFIRMED, false, RCC_CSR_WWDGRSTF);
+	boot();
+	CHECK(bms.system.wwdg_reset && bms.faults.watchdog_reset);
+	CHECK(bms.system.reset_flags == RCC_CSR_WWDGRSTF);
+}
+
+static void test_boot_rollback_command(void) {
+
+	// sem backup nao ha para onde voltar
+	bootloader_handoff(BOOT_EXEC_CONFIRMED, BOOT_RUN_CONFIRMED, false, 0);
+	boot();
+	fake_uart_clear(UART_LINK_1);
+	console_uart("boot rollback");
+	CHECK(output_has(UART_LINK_1, "#ERR boot rollback: nao ha backup"));
+	run_ms(300);
+	CHECK(!board.reset_requested && (journal_exec_state() == BOOT_EXEC_CONFIRMED));
+
+	// com a HV ligada nao
+	bootloader_handoff(BOOT_EXEC_CONFIRMED, BOOT_RUN_CONFIRMED, true, 0);
+	boot();
+	vcu_request(1);
+	run_ms(50);
+	fake_uart_clear(UART_LINK_1);
+	console_uart("boot rollback");
+	CHECK(output_has(UART_LINK_1, "#ERR HV ligada"));
+	run_ms(300);
+	CHECK(!board.reset_requested && (journal_exec_state() == BOOT_EXEC_CONFIRMED));
+
+	// com backup e a HV desligada: marca REJECTED e reinicia (sem o pedido do bootloader)
+	bootloader_handoff(BOOT_EXEC_CONFIRMED, BOOT_RUN_CONFIRMED, true, 0);
+	boot();
+	fake_uart_clear(UART_LINK_1);
+	console_uart("boot rollback");
+	CHECK(output_has(UART_LINK_1, "#OK boot rollback: reinicia com o firmware 13.0.4"));
+	CHECK(journal_exec_state() == BOOT_EXEC_CONFIRMED);   // so na hora do reset
+	run_ms(300);
+	CHECK(board.reset_requested && !board.bootloader_requested);
+	CHECK(journal_exec_state() == BOOT_EXEC_REJECTED);
+
+	// no BLE com PIN: pede o unlock
+	bootloader_handoff(BOOT_EXEC_CONFIRMED, BOOT_RUN_CONFIRMED, true, 0);
+	boot();
+	console_uart("set bt_pin 1234");
+	console_uart("apply");
+	fake_uart_clear(UART_LINK_1);
+
+	char line[32];
+
+	snprintf(line, sizeof(line), "boot rollback");
+	Console_Execute(CONSOLE_BLE, line);
+	run_ms(300);
+	CHECK(!board.reset_requested);
+	snprintf(line, sizeof(line), "boot");
+	Console_Execute(CONSOLE_BLE, line);   // ler o estado nao precisa de PIN
+	CHECK(journal_exec_state() == BOOT_EXEC_CONFIRMED);
 }
 
 /* ================== JSON ================== */
@@ -885,7 +1097,7 @@ static void test_live_json(void) {
 	const char *keys[] = { "\"bms\":{\"state\":\"IDLE\"", "\"ams_error\":{", "\"precharge\":{\"state\":\"KILL\"", "\"isa_pack\":{", "\"isa_handcart\":{",
 			"\"soc\":{", "\"charger\":{\"state\":\"WAIT_HV\"", "\"pack\":{\"slaves_found\":12", "\"balancing\":{", "\"board\":{", "\"can1\":{",
 			"\"can2\":{", "\"json\":{\"sent\":", "\"cell_mV\":[[3700,", "\"ntc_dC\":[[", "\"die_dC\":[", "\"pec_flags\":[", "\"ow_cell_mask\":[",
-			"\"ow_ntc_mask\":[" };
+			"\"ow_ntc_mask\":[", "\"boot\":{\"bootloader\":" };
 	for (size_t key = 0; key < (sizeof(keys) / sizeof(keys[0])); key++) {
 		if (strstr(line, keys[key]) == NULL) {
 			printf("  falta %s\n", keys[key]);
@@ -945,8 +1157,13 @@ int main(void) {
 		TEST(test_charger_switch_off),
 		TEST(test_can_telemetry),
 		TEST(test_bootloader_over_can),
+		TEST(test_boot_confirm_after_uptime),
+		TEST(test_boot_reset_flags_from_bootloader),
+		TEST(test_boot_rollback_command),
 		TEST(test_live_json),
 	};
+
+	fake_flash_erase_all();
 
 	for (size_t test_index = 0; test_index < sizeof(tests) / sizeof(tests[0]); test_index++) {
 		int failures_before = failures;

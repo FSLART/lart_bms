@@ -16,7 +16,7 @@ CPU="-mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb --specs=nano.spe
 DEFS="-DDEBUG -DUSE_HAL_DRIVER -DSTM32F412Rx"
 WARN="-Wall ${EXTRA_WARN:-}"
 INC=""
-for dir in Core/Inc Core/adbms6830 Core/DBC Core/Src Core/config Core/comms Core/app \
+for dir in Core/Inc Core/adbms6830 Core/DBC Core/Src Core/config Core/comms Core/app Core/boot \
 	Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy \
 	Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include; do
 	[ -d "$dir" ] && INC="$INC -I$dir"

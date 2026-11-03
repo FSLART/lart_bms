@@ -7,7 +7,9 @@
  * RX, CAN1: 0x083 START_PRE_CHARGE (VCU), 0x750 VCU_STATES (VCU viva),
  *           0x521..0x528 ISA do pack, 0x0DC START_PROGRAMMER
  * RX, CAN2: 0x084 HANDCART_SWITCH_FEEDBACK, 0x18FF50E5 CHARGER_STATUS_P1000,
- *           0x521..0x528 ISA do handcart, 0x0DC START_PROGRAMMER
+ *           0x521..0x528 ISA do handcart, 0x0DC START_PROGRAMMER,
+ *           0x601 ENTER_BOOT (o do uploader da ACU, 01 00 00 00 00 00 00 00)
+ * O 0x0DC e o 0x601 levam ao bootloader CAN, nos bus de bootloader_can_mask
  * TX, CAN1 (e CAN2 a carregar, se can2_mirror_charging):
  *   a cada can_master_ms: 0x701 MSC_1, 0x702 PRE_CHARGE, 0x703 MSC_2 (faults),
  *   0x704 MSC_3, 0x705 SOC, 0x706 MSC_4 (balanceamento, um slave de cada vez),
@@ -25,6 +27,6 @@
 void CanMessages_Init(void);
 void CanMessages_Process(uint32_t now_ms);    // RX dos dois barramentos
 void CanMessages_Transmit(uint32_t now_ms);   // periodicos
-bool CanMessages_TakeBootloaderRequest(void); // 0x0DC com programming_request = 1 (consome o pedido)
+bool CanMessages_TakeBootloaderRequest(void); // 0x0DC com programming_request = 1 ou 0x601 (consome o pedido)
 
 #endif /* COMMS_CAN_MESSAGES_H_ */

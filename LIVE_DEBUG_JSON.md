@@ -41,6 +41,7 @@ Para além do JSON só saem:
 | `board` | `fan_pwm` e `fan_lv_pwm` (0..255), `mcu_temp_dC`, `vdda_mV`, `master_current_mA` |
 | `can1`, `can2` | `started`, `kbps`, `bus_off`, `error_passive`, `tx_errors`, `rx_errors`, `last_error`, `tx_queue`, `tx_frames`, `rx_frames`, `tx_dropped`, `rx_dropped` |
 | `eeprom` | `present`, `loaded` (config da EEPROM ou defaults), `bank` (0 = A, 1 = B, 255 = nenhum), `sequence`, `state`, `dirty`, `reboot_pending`, `writes`, `failures` |
+| `boot` | o bootloader CAN ([BOOTLOADER.md](BOOTLOADER.md)): `bootloader` (arrancou por ele), `bl_version` (major << 16 \| minor << 8 \| patch), `run` (CONFIRMED, PENDING = em teste, EXTERNAL = gravada pelo ST-LINK, UNKNOWN), `event` (o que o bootloader fez neste arranque: TRIAL, ROLLBACK, ...), `attempts`, `failures`, `confirm_in_s`, `iwdg`, `backup`, `backup_version`, `updates`, `rollbacks`, `last_reason` |
 | `bt` | `state` (BOOT, ENTER_CMD, GET_NAME, SET_NAME, EXIT_CMD, DATA, PROBE_ENTER, PROBE_EXIT, REBOOT), `connected`, `alive`, `probes`, `probe_failures` |
 | `json` | `sent` (avança um por linha: a UI usa como sequência), `dropped`, `last_len`, `dma_errors`, `dma_restarts`, `bt_reboots` — contadores das linhas **anteriores** desta ligação |
 

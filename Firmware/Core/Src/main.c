@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "brain.h"
+#include "boot_ctrl.h"
 
 /* USER CODE END Includes */
 
@@ -91,7 +92,7 @@ static void MX_TIM6_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+extern const uint32_t g_pfnVectors[];   // startup_stm32f412retx.s: 0x08010200 com o bootloader
 /* USER CODE END 0 */
 
 /**
@@ -102,7 +103,11 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+	/* a aplicacao arranca do bootloader CAN (0x08000000) e vive em 0x08010200:
+	 * as interrupcoes usam a tabela de vetores daqui (o bootloader ja a pos,
+	 * isto cobre um arranque direto pelo debugger) */
+	SCB->VTOR = (uint32_t) g_pfnVectors;
+	__DSB();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -117,13 +122,14 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-	/* GAURDA O ESTADO ANTES DE DAR RESET E ANTES DE INICIALIZARO WATCHDOG */
-	watchdog_flag = RCC->CSR; //O RCC->CSR é um registo de 32 bits sem sinal, com int o bit 31 seria interpretado como sinal negativo
+	/* GAURDA O ESTADO ANTES DE DAR RESET E ANTES DE INICIALIZARO WATCHDOG
+	 * (o bootloader guarda o RCC->CSR na RAM e limpa-o: vem de la) */
+	watchdog_flag = BootCtrl_ResetFlags(RCC->CSR); //O RCC->CSR é um registo de 32 bits sem sinal, com int o bit 31 seria interpretado como sinal negativo
 	__HAL_RCC_CLEAR_RESET_FLAGS();
 
-	//matar o watchdog caso esteja em debug mode
+	//matar o watchdog caso esteja em debug mode (o IWDG e o do bootloader nas imagens em teste)
 	if (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) {
-		DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_WWDG_STOP;
+		DBGMCU->APB1FZ |= DBGMCU_APB1_FZ_DBG_WWDG_STOP | DBGMCU_APB1_FZ_DBG_IWDG_STOP;
 	}
   /* USER CODE END SysInit */
 

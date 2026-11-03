@@ -51,7 +51,13 @@ bool Bsp_EepromWritePage(uint16_t address, const uint8_t *data, uint8_t length);
 bool Bsp_EepromReady(void);                                     // acabou a escrita interna
 void Bsp_EepromRecover(void);                                   // reinicia o I2C depois de um erro
 
+// contactores abertos, AMS_ERROR em erro e reset (o bootloader arranca primeiro)
 void Bsp_SystemReset(void);
-void Bsp_JumpToBootloader(void);
+
+// IWDG: o bootloader arma-o nas imagens em teste; refrescar sem estar armado nao faz nada
+void Bsp_IwdgRefresh(void);
+
+/* A flash do journal do bootloader (boot_layout.h): BootFlash_Program com o
+ * HAL. BootFlash_EraseSector recusa sempre: apagar para o CPU demasiado tempo */
 
 #endif /* APP_BSP_H_ */

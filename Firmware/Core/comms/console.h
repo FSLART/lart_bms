@@ -19,7 +19,10 @@
  *   bt reboot                    reinicia o RN4871
  *   eeprom                       dump da EEPROM em hexadecimal
  *   version | help
- *   reboot | bootloader          so com a HV desligada
+ *   reboot | bootloader          so com a HV desligada (bootloader = o CAN, BOOTLOADER.md)
+ *   boot                         estado do bootloader: imagem em teste, backup, rollbacks
+ *   boot confirm                 confirma ja a imagem em teste
+ *   boot rollback                volta ao firmware anterior (o backup), so com a HV desligada
  *   unlock <pin>                 no BLE, se bt_pin != 0, antes de alterar o que quer que seja
  */
 
@@ -41,6 +44,7 @@ int32_t Console_LivePeriod(uint8_t console);              // periodo do JSON nes
 bool Console_TakeJsonRequest(uint8_t console);            // pedido "json" pendente
 bool Console_TakeRebootRequest(void);                     // consomem o pedido
 bool Console_TakeBootloaderRequest(void);
+bool Console_TakeRollbackRequest(void);
 
 // executa uma linha (sem o \r\n); exposto para os testes
 void Console_Execute(uint8_t console, char *line);

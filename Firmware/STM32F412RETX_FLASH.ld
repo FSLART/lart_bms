@@ -36,16 +36,22 @@
 ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
-_estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
+_estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory: 0x2003FFE0 */
 
 _Min_Heap_Size = 0x200; /* required amount of heap */
 _Min_Stack_Size = 0x400; /* required amount of stack */
 
-/* Memories definition */
+/* Memories definition
+ * Bootloader CAN (BOOTLOADER.md, Firmware/Core/boot/boot_layout.h):
+ *   FLASH  0x08000000 bootloader (32 KB), 0x08008000 journal (32 KB),
+ *          0x08010000 EXEC: cabecalho MCUboot (512 B) + esta aplicacao a
+ *          partir de 0x08010200, ate 0x0803FFFF menos o TLV (40 B) no fim
+ *   RAM    os ultimos 32 B (0x2003FFE0) sao a area partilhada com o bootloader
+ */
 MEMORY
 {
-  RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 256K
-  FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 512K
+  RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 256K - 32
+  FLASH    (rx)    : ORIGIN = 0x08010200,   LENGTH = 0x2FD00
 }
 
 /* Sections */
@@ -57,6 +63,13 @@ SECTIONS
     . = ALIGN(4);
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
+  } >FLASH
+
+  /* Descritor da aplicacao (boot_ctrl.c): sempre 0x200 depois dos vetores
+   * (0x08010400). O bootloader so arranca imagens com ele */
+  .app_info ORIGIN(FLASH) + 0x200 :
+  {
+    KEEP(*(.app_info))
   } >FLASH
 
   /* The program code and other data into "FLASH" Rom type memory */

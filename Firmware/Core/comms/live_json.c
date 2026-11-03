@@ -13,6 +13,8 @@
 #include "ams_error.h"
 #include "precharge.h"
 #include "charger.h"
+#include "boot_ctrl.h"
+#include "boot_names.h"
 #include <string.h>
 
 #define MAX_DEPTH 8u
@@ -367,6 +369,25 @@ uint16_t LiveJson_Build(char *out, uint16_t size, uint8_t console, uint32_t now_
 	field_bool(&json, "reboot_pending", bms.eeprom.reboot_pending);
 	field_uint(&json, "writes", bms.eeprom.writes);
 	field_uint(&json, "failures", bms.eeprom.failures);
+	json_close(&json, '}');
+
+	char backup_version[16];
+
+	BootCtrl_VersionText(bms.boot.backup_version, backup_version, sizeof(backup_version));
+	json_open(&json, "boot", '{');
+	field_bool(&json, "bootloader", bms.boot.bootloader);
+	field_uint(&json, "bl_version", bms.boot.boot_version);
+	field_str(&json, "run", BootNames_Run(bms.boot.run));
+	field_str(&json, "event", BootNames_Event(bms.boot.event));
+	field_uint(&json, "attempts", bms.boot.attempts);
+	field_uint(&json, "failures", bms.boot.failures);
+	field_uint(&json, "confirm_in_s", bms.boot.confirm_left_s);
+	field_bool(&json, "iwdg", bms.boot.iwdg);
+	field_bool(&json, "backup", bms.boot.backup_valid);
+	field_str(&json, "backup_version", bms.boot.backup_valid ? backup_version : "");
+	field_uint(&json, "updates", bms.boot.updates);
+	field_uint(&json, "rollbacks", bms.boot.rollbacks);
+	field_str(&json, "last_reason", BootNames_Error(bms.boot.last_reason));
 	json_close(&json, '}');
 
 	json_open(&json, "bt", '{');

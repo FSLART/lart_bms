@@ -7,6 +7,7 @@
 
 #include "bsp.h"
 #include "main.h"
+#include "boot_layout.h"
 #include "mcuWrapper.h"   // adBmsTimerClockHz()
 #include <string.h>
 
@@ -239,58 +240,49 @@ void Bsp_EepromRecover(void) {
 
 void Bsp_SystemReset(void) {
 
+	// o bootloader poe isto logo no arranque; ate la, que nao fique nada pendurado
+	Bsp_SetContactors(false, false, false);
+	Bsp_SetAmsError(true);
 	NVIC_SystemReset();
 }
 
-/* Salto para o bootloader de sistema (AN2606), sequencia do firmware antigo,
- * baseada em FSLART/can_stm32_programmer (gonzabrusco_jump_to_bootloader.md):
- * os deinit, o remap e as barreiras sao todos precisos, nao e code smell */
-#define BOOTLOADER_BASE_ADDR 0x1FFF0000u
+void Bsp_IwdgRefresh(void) {
 
-void Bsp_JumpToBootloader(void) {
+	IWDG->KR = 0xAAAAu;
+}
 
-	typedef void (*jump_t)(void);
+/* ================== FLASH (journal do bootloader) ================== */
 
-	uint32_t bootloader_stack = *(__IO uint32_t*) BOOTLOADER_BASE_ADDR;
-	jump_t bootloader_entry = (jump_t) *(__IO uint32_t*) (BOOTLOADER_BASE_ADDR + 4u);
+bool BootFlash_EraseSector(uint32_t sector_address) {
 
-	// contactores abertos e linha em erro antes de largar tudo
-	Bsp_SetContactors(false, false, false);
-	Bsp_SetAmsError(true);
+	(void) sector_address;
+	return false;   // so o bootloader apaga
+}
 
-	// 1. DeInit com o SysTick ainda vivo
-	HAL_CAN_Stop(&hcan1);
-	HAL_CAN_Stop(&hcan2);
-	HAL_CAN_DeInit(&hcan1);
-	HAL_CAN_DeInit(&hcan2);
-	HAL_DeInit();
-	HAL_RCC_DeInit();
+bool BootFlash_Program(uint32_t address, const void *data, uint32_t length) {
 
-	// 2. SysTick e interrupcoes
-	__disable_irq();
-	SysTick->CTRL = 0;
-	SysTick->LOAD = 0;
-	SysTick->VAL = 0;
+	const uint8_t *bytes = (const uint8_t*) data;
+	bool ok = ((address & 3u) == 0u) && ((length & 3u) == 0u) && (address >= BOOT_JOURNAL_A_ADDRESS)
+			&& ((address + length) <= (BOOT_JOURNAL_B_ADDRESS + BOOT_JOURNAL_SIZE));
 
-	for (uint32_t register_index = 0; register_index < 8u; register_index++) {
-		NVIC->ICER[register_index] = 0xFFFFFFFFu;
-		NVIC->ICPR[register_index] = 0xFFFFFFFFu;
+	if (!ok || (HAL_FLASH_Unlock() != HAL_OK)) {
+		return false;
 	}
+	__HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
 
-	// 3. memoria de sistema em 0x00000000 e tabela de vetores do bootloader
-	__HAL_RCC_SYSCFG_CLK_ENABLE();
-	__HAL_SYSCFG_REMAPMEMORY_SYSTEMFLASH();
-	SCB->VTOR = 0x00000000u;
+	for (uint32_t index = 0; ok && (index < length); index += 4u) {
 
-	// 4. Thread mode com o MSP do bootloader
-	__set_CONTROL(0x00u);
-	__ISB();
-	__set_MSP(bootloader_stack);
-	__DSB();
-	__ISB();
+		uint32_t word;
 
-	bootloader_entry();
-
-	while (1) {
+		memcpy(&word, &bytes[index], sizeof(word));
+		ok = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, address + index, word) == HAL_OK;
 	}
+	(void) HAL_FLASH_Lock();
+
+	// a cache de dados pode ter o conteudo de antes
+	__HAL_FLASH_DATA_CACHE_DISABLE();
+	__HAL_FLASH_DATA_CACHE_RESET();
+	__HAL_FLASH_DATA_CACHE_ENABLE();
+
+	return ok && (memcmp((const void*) address, data, length) == 0);
 }

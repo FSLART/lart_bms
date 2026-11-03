@@ -37,7 +37,10 @@ typedef struct {
 	uint32_t eeprom_max_page_bytes;
 	// sistema
 	bool     reset_requested;
-	bool     bootloader_requested;
+	bool     bootloader_requested;     // reset com o pedido do bootloader na RAM
+	bool     safe_at_reset;            // contactores abertos e AMS_ERROR em erro no instante do reset
+	uint32_t iwdg_refreshes;
+	uint32_t flash_programs;           // escritas no journal do bootloader
 	// RN4871
 	bool     rn_dead;                  // nao responde a nada
 	char     rn_name[32];
@@ -59,6 +62,11 @@ void fake_can_inject(uint8_t bus, uint32_t id, bool extended, const uint8_t *dat
 uint32_t fake_can_sent(uint8_t bus, uint32_t id);              // tramas enviadas com esse ID
 bool fake_can_last(uint8_t bus, uint32_t id, can_frame_t *out);
 void fake_can_clear(void);
+
+/* Flash do bootloader (boot_test_flash, 512 KB) e a area partilhada na RAM
+ * (boot_test_shared): o fake_board_reset nao lhes toca, como um reset nao
+ * apaga a flash nem os ultimos 32 B da RAM */
+void fake_flash_erase_all(void);             // flash toda a 0xFF e a area partilhada a zeros
 
 // UART (link 0 = UART1, 1 = UART2/RN4871 em modo de dados)
 void fake_uart_inject(uint8_t link, const char *text);

@@ -3,6 +3,7 @@
  */
 
 #include "fake_board.h"
+#include "boot_shared.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -157,12 +158,49 @@ void Bsp_EepromRecover(void) {
 
 void Bsp_SystemReset(void) {
 
+	// como o bsp.c: saidas seguras antes do reset
+	Bsp_SetContactors(false, false, false);
+	Bsp_SetAmsError(true);
+	board.safe_at_reset = board.ams_error && !board.air_pos && !board.air_neg && !board.precharge;
 	board.reset_requested = true;
+	board.bootloader_requested = (boot_test_shared.request == BOOT_REQUEST_MAGIC);
 }
 
-void Bsp_JumpToBootloader(void) {
+void Bsp_IwdgRefresh(void) {
 
-	board.bootloader_requested = true;
+	board.iwdg_refreshes++;
+}
+
+/* ================== FLASH E RAM DO BOOTLOADER ================== */
+
+uint8_t boot_test_flash[BOOT_FLASH_SIZE];
+boot_shared_t boot_test_shared;
+
+void fake_flash_erase_all(void) {
+
+	memset(boot_test_flash, 0xFF, sizeof(boot_test_flash));
+	memset(&boot_test_shared, 0, sizeof(boot_test_shared));
+}
+
+bool BootFlash_EraseSector(uint32_t sector_address) {
+
+	(void) sector_address;
+	return false;   // como o bsp.c: a aplicacao nunca apaga
+}
+
+bool BootFlash_Program(uint32_t address, const void *data, uint32_t length) {
+
+	const uint8_t *bytes = (const uint8_t*) data;
+	uint8_t *cell = &boot_test_flash[address - BOOT_FLASH_BASE];
+
+	if (((address & 3u) != 0u) || ((length & 3u) != 0u) || (address < BOOT_JOURNAL_A_ADDRESS) || ((address + length) > (BOOT_JOURNAL_B_ADDRESS + BOOT_JOURNAL_SIZE))) {
+		return false;
+	}
+	for (uint32_t index = 0; index < length; index++) {
+		cell[index] &= bytes[index];   // NOR: so passa bits a 0
+	}
+	board.flash_programs++;
+	return memcmp(cell, data, length) == 0;
 }
 
 /* ================== CAN ================== */
