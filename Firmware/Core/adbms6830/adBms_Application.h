@@ -11,8 +11,10 @@
 //cada ciclo a 200ms o que da um coeficimente de seguranca de 2.5
 #define ADBMS_CYCLE_MS 200u
 
-// tempo maximo com dados fudidos dos slave
-#define ADBMS_DATA_TIMEOUT_MS 600u
+/* tempo maximo com dados fudidos dos slave: vem da config
+ * (adbms_data_timeout_ms); este e so o valor antes de haver config.
+ * FS 2027 T 11.9 / EV 5.8.13: perda de medicao abre o SDC em 500 ms */
+#define ADBMS_DATA_TIMEOUT_MS 300u
 
 // raw results from the spi buffer
 extern cell_asic IC[BMS_MAX_SLAVES];
@@ -43,10 +45,15 @@ static inline bool ADBMS_CodeValid(int16_t code)
 	return (code != INT16_MAX) && (code != INT16_MIN);
 }
 
+static inline uint32_t ADBMS_DataTimeoutMs(void)
+{
+	return (bms.config.adbms_data_timeout_ms != 0u) ? bms.config.adbms_data_timeout_ms : ADBMS_DATA_TIMEOUT_MS;
+}
+
 // dados sao fresh, nao old
 static inline bool ADBMS_Fresh(uint32_t valid_ms, uint32_t now)
 {
-	return (valid_ms != 0u) && ((now - valid_ms) <= ADBMS_DATA_TIMEOUT_MS);
+	return (valid_ms != 0u) && ((now - valid_ms) <= ADBMS_DataTimeoutMs());
 }
 
 #endif

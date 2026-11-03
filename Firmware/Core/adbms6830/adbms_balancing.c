@@ -7,8 +7,9 @@
 #include "adbms_balancing.h"
 #include "adBms_Application.h"
 
-#define BAL_ROUGH_MV 100u     // ROUGH: so as celulas mais de 100 mV acima do alvo (menos calor por slave)
-#define BAL_HOLD_MS  60000u   // depois de um OT do die, 60 s sem balancear (senao oscila no limite)
+/* da config: bal_rough_mV (ROUGH: so as celulas mais de 100 mV acima do alvo,
+ * menos calor por slave) e bal_die_hold_s (depois de um OT do die, 60 s sem
+ * balancear, senao oscila no limite) */
 
 static bool usable(uint16_t cell_mV) {
 
@@ -19,8 +20,8 @@ static bool usable(uint16_t cell_mV) {
  * de todos os slaves: nunca descarregar as cegas */
 static bool allowed(void) {
 
-	return (bms.precharge.state == KILL) && !bms.ams_error.active && !bms.faults.adbms_timeout && !bms.faults.slave_missing && !bms.faults.cell_open_wire
-			&& !bms.faults.die_overtemperature && !bms.balancing.die_ot_hold;
+	return bms.config.bal_enabled && (bms.precharge.state == KILL) && !bms.ams_error.active && !bms.faults.adbms_timeout && !bms.faults.slave_missing
+			&& !bms.faults.cell_open_wire && !bms.faults.die_overtemperature && !bms.balancing.die_ot_hold;
 }
 
 /* menor celula utilizavel e delta max-min, so com celulas dentro da janela */
@@ -108,7 +109,7 @@ void Balancing_Step(void) {
 	if (bms.faults.die_overtemperature) {
 		balancing->die_ot_hold = true;
 		balancing->hold_since_ms = now_ms;
-	} else if (balancing->die_ot_hold && ((now_ms - balancing->hold_since_ms) >= BAL_HOLD_MS)) {
+	} else if (balancing->die_ot_hold && ((now_ms - balancing->hold_since_ms) >= ((uint32_t) bms.config.bal_die_hold_s * 1000u))) {
 		balancing->die_ot_hold = false;
 	}
 
@@ -139,8 +140,8 @@ void Balancing_Step(void) {
 	}
 
 	if (balancing->stage == BALANCING_ROUGH) {
-		compute(BAL_ROUGH_MV);
-		if (balancing->worst_delta_mV <= BAL_ROUGH_MV) {
+		compute(bms.config.bal_rough_mV);
+		if (balancing->worst_delta_mV <= bms.config.bal_rough_mV) {
 			balancing->stage = BALANCING_FINE;
 		}
 	}

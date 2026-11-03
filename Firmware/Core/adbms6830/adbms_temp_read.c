@@ -12,10 +12,9 @@
  * em 20 ms. ADBMS6830B datasheet Rev.0, Tabelas 3 e 4 */
 #define AUX_CONV_US 100000u
 
-/* NTC Amphenol NKA502C1 (5 k a 25 C, B 3977) para o V-, 10 k para o VREF2 */
-#define NTC_R_FIXED_OHM 10000.0f
-#define NTC_R25_OHM     5000.0f
-#define NTC_BETA        3977.0f
+/* NTC para o V-, resistencia fixa para o VREF2: da config (ntc_beta,
+ * ntc_r25_ohm, ntc_r_fixed_ohm); defaults Amphenol NKA502C1, 5 k a 25 C,
+ * B 3977, com 10 k para o VREF2 */
 
 /* Plausibilidade: FS 2027 T 11.9.2c, sinal fora de gama e uma falha */
 #define VREF2_MIN_MV 2950   // datasheet: 2,994..3,006 V
@@ -24,7 +23,7 @@
 #define NTC_MAX_DC   1200
 #define DIE_MIN_DC   -400
 #define DIE_MAX_DC   1500
-#define AUX_MATCH_MV 20     // AUX vs AUX2 do mesmo GPIO: 2,8 + 6 mV de erro maximo + ruido
+// AUX vs AUX2 do mesmo GPIO: config ntc_aux_match_mV (20 = 2,8 + 6 mV de erro maximo + ruido)
 
 /* FS 2027 EV 5.8: temperatura critica durante 1 s abre o SDC. Pior caso aqui:
  * um ciclo + deteccao/config/celulas/open-wire (~80 ms) + a conversao do AUX2 */
@@ -43,8 +42,8 @@ static bool ntc_to_dC(int32_t gpio_mV, int32_t vref_mV, int16_t *temperature_dC)
 		return false;
 	}
 
-	float ntc_ohm = NTC_R_FIXED_OHM * (float) gpio_mV / (float) (vref_mV - gpio_mV);
-	float kelvin = 1.0f / ((1.0f / 298.15f) + (logf(ntc_ohm / NTC_R25_OHM) / NTC_BETA));
+	float ntc_ohm = (float) bms.config.ntc_r_fixed_ohm * (float) gpio_mV / (float) (vref_mV - gpio_mV);
+	float kelvin = 1.0f / ((1.0f / 298.15f) + (logf(ntc_ohm / (float) bms.config.ntc_r25_ohm) / (float) bms.config.ntc_beta));
 	long decicelsius = lroundf((kelvin - 273.15f) * 10.0f);
 
 	if ((decicelsius < NTC_MIN_DC) || (decicelsius > NTC_MAX_DC)) {
@@ -101,7 +100,7 @@ static void publish(uint32_t now_ms) {
 				aux_difference_mV = -aux_difference_mV;
 			}
 
-			bool sensor_bad = !ADBMS_CodeValid(aux_code) || !ADBMS_CodeValid(aux2_code) || (aux_difference_mV > AUX_MATCH_MV)
+			bool sensor_bad = !ADBMS_CodeValid(aux_code) || !ADBMS_CodeValid(aux2_code) || (aux_difference_mV > (int32_t) bms.config.ntc_aux_match_mV)
 					|| !ntc_to_dC(ADBMS_CodeToMv(aux_code), vref_mV, &temperature_dC);
 
 			bms.cells.ntc_open_wire[slave_index][ntc_index] = sensor_bad;
@@ -119,6 +118,11 @@ static void evaluate(uint32_t now_ms) {
 
 	int16_t hottest_dC = INT16_MIN;
 	int16_t coldest_dC = INT16_MAX;
+	int16_t hottest_die_dC = INT16_MIN;
+	uint8_t hottest_slave = 0;
+	uint8_t hottest_ntc = 0;
+	uint8_t coldest_slave = 0;
+	uint8_t coldest_ntc = 0;
 	bool any_reading = false;
 	bool sensor_fault = false;
 	bool die_overtemperature = false;
@@ -132,6 +136,9 @@ static void evaluate(uint32_t now_ms) {
 		if (bms.cells.die_dC[slave_index] > bms.config.bal_die_stop_dC) {
 			die_overtemperature = true;
 		}
+		if (bms.cells.die_dC[slave_index] > hottest_die_dC) {
+			hottest_die_dC = bms.cells.die_dC[slave_index];
+		}
 
 		for (uint8_t ntc_index = 0; ntc_index < bms.config.ntcs_per_slave; ntc_index++) {
 
@@ -144,8 +151,16 @@ static void evaluate(uint32_t now_ms) {
 			}
 
 			int16_t temperature_dC = bms.cells.ntc_dC[slave_index][ntc_index];
-			hottest_dC = (temperature_dC > hottest_dC) ? temperature_dC : hottest_dC;
-			coldest_dC = (temperature_dC < coldest_dC) ? temperature_dC : coldest_dC;
+			if (temperature_dC > hottest_dC) {
+				hottest_dC = temperature_dC;
+				hottest_slave = (uint8_t) (slave_index + 1u);
+				hottest_ntc = (uint8_t) (ntc_index + 1u);
+			}
+			if (temperature_dC < coldest_dC) {
+				coldest_dC = temperature_dC;
+				coldest_slave = (uint8_t) (slave_index + 1u);
+				coldest_ntc = (uint8_t) (ntc_index + 1u);
+			}
 			any_reading = true;
 		}
 	}
@@ -153,10 +168,18 @@ static void evaluate(uint32_t now_ms) {
 	if (any_reading) {
 		bms.cells.temp_max_dC = hottest_dC;
 		bms.cells.temp_min_dC = coldest_dC;
+		bms.cells.temp_max_slave = hottest_slave;
+		bms.cells.temp_max_ntc = hottest_ntc;
+		bms.cells.temp_min_slave = coldest_slave;
+		bms.cells.temp_min_ntc = coldest_ntc;
+	}
+	if (hottest_die_dC != INT16_MIN) {
+		bms.cells.die_max_dC = hottest_die_dC;
 	}
 
 	bms.faults.overtemperature = any_reading && (hottest_dC > bms.config.temp_max_dC);
 	bms.faults.undertemperature = any_reading && (coldest_dC < bms.config.temp_min_dC);
+	bms.faults.temperature_warning = any_reading && ((hottest_dC > bms.config.temp_high_warn_dC) || (coldest_dC < bms.config.temp_low_warn_dC));
 	bms.faults.ntc_open_wire = sensor_fault;
 	bms.faults.die_overtemperature = die_overtemperature;
 }

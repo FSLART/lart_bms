@@ -69,6 +69,7 @@ static void evaluate(uint32_t now_ms) {
 	uint16_t lowest_mV = UINT16_MAX;
 	bool overvoltage = false;
 	bool undervoltage = false;
+	bool warning = false;
 
 	for (uint8_t slave_index = 0; slave_index < cells->slaves_found; slave_index++) {
 
@@ -100,6 +101,9 @@ static void evaluate(uint32_t now_ms) {
 			if (cell_mV < bms.config.cell_min_mV) {
 				undervoltage = true;
 			}
+			if ((cell_mV > bms.config.cell_high_warn_mV) || (cell_mV < bms.config.cell_low_warn_mV)) {
+				warning = true;
+			}
 		}
 	}
 
@@ -114,6 +118,7 @@ static void evaluate(uint32_t now_ms) {
 
 	bms.faults.cell_overvoltage = overvoltage;
 	bms.faults.cell_undervoltage = undervoltage;
+	bms.faults.cell_voltage_warning = warning;
 }
 
 void CellRead_Start(void) {

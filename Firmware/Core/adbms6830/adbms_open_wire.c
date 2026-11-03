@@ -7,8 +7,9 @@
 #include "adBms_Application.h"
 #include <limits.h>
 
-#define OW_CONV_US      20000u   // menos de 20 ms dava fake fault de openwire
-#define OW_MIN_GAIN_PCT 70       // gain during open wire detection - ta no datsheet n faço puto de ideia
+/* da config: ow_conv_ms (espera de cada ADSV; menos de 20 ms dava fake fault
+ * de openwire) e ow_min_gain_pct (o S-ADC com a corrente de OW tem de ficar
+ * acima desta % da celula; datasheet: 85..95 % com o fio bom) */
 #define OW_PASS_INVALID INT_MIN  // pec error, n fazer evaluation
 
 // guarda cada leitura
@@ -56,7 +57,7 @@ static void evaluate(void) {
 				int32_t lowest_pass_mV = (even_mV < odd_mV) ? even_mV : odd_mV;
 
 				bms.cells.cell_open_wire[slave_index][cell_index] = (cell_mV < bms.config.cell_open_wire_mV)
-						|| ((lowest_pass_mV * 100) < (cell_mV * OW_MIN_GAIN_PCT));
+						|| ((lowest_pass_mV * 100) < (cell_mV * (int32_t) bms.config.ow_min_gain_pct));
 			}
 
 			any_open_wire = any_open_wire || bms.cells.cell_open_wire[slave_index][cell_index];
@@ -76,6 +77,7 @@ bool OpenWire_Step(void) {
 
 	uint32_t now_us = adBmsMicros();
 	uint32_t waited_us = now_us - bms.adbms.step_us;
+	uint32_t conversion_us = (uint32_t) ((bms.config.ow_conv_ms >= 20u) ? bms.config.ow_conv_ms : 20u) * 1000u;
 
 	switch (bms.adbms.open_wire) {
 
@@ -86,7 +88,7 @@ bool OpenWire_Step(void) {
 		return false;
 
 	case OPEN_WIRE_WAIT_EVEN:
-		if (waited_us < OW_CONV_US) {
+		if (waited_us < conversion_us) {
 			return false;
 		}
 		(void) ADBMS_ReadSCells();
@@ -97,7 +99,7 @@ bool OpenWire_Step(void) {
 		return false;
 
 	case OPEN_WIRE_WAIT_ODD:
-		if (waited_us < OW_CONV_US) {
+		if (waited_us < conversion_us) {
 			return false;
 		}
 		(void) ADBMS_ReadSCells();

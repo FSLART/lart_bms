@@ -8,6 +8,7 @@
  */
 
 #include "fake_chain.h"
+#include "fake_board.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -17,13 +18,14 @@ static int checks;
 
 #define CHECK(cond) do { checks++; if (!(cond)) { printf("  FALHOU %s:%d: %s\n", __FILE__, __LINE__, #cond); failures++; } } while (0)
 
-/* arranque limpo e um ciclo completo (acordar ~20 ms + ciclo ~155 ms) */
+/* arranque limpo, ate a linha AMS_ERROR sair do erro de arranque: primeira
+ * leitura completa (~200 ms) e ams_error_min_on_ms (500 ms) */
 static void boot(void) {
 
 	fake_reset();
 	memset(&bms, 0, sizeof(bms));
 	brain_start();
-	run_ms(300);
+	run_ms(700);
 }
 
 /* corre ate acabarem cycle_count ciclos completos (limite 10 s, para um teste
@@ -472,10 +474,14 @@ static void test_open_wire_pec_keeps_result(void) {
 
 static void test_balancing_needs_hv_off(void) {
 
+	const uint8_t request[1] = { 1 };
+
 	boot();
+	fake_can_inject(CAN_BUS_1, 0x083u, false, request, 1);   // a VCU pede a HV
 	chain.cell_mV[0][0] = 3760;
 	run_cycles(2);
 
+	CHECK(bms.precharge.state != KILL);
 	CHECK(bms.balancing.stage == BALANCING_OFF);    // precarga nao esta em KILL
 	CHECK(bms.balancing.dcc_mask[0] == 0u);
 }
@@ -537,6 +543,7 @@ static void test_balancing_ignores_out_of_window(void) {
 
 	boot();
 	bms.precharge.state = KILL;
+	bms.config.cell_max_mV = 4400;                  // sem OV (o OV abria o AMS_ERROR e parava tudo)
 	chain.cell_mV[1][0] = 4300;                     // acima dos 4,25 V da config: lixo, nao se descarrega
 	chain.cell_mV[1][1] = 3760;
 	run_cycles(2);
@@ -553,8 +560,10 @@ static void test_balancing_stops_on_hv(void) {
 	run_cycles(2);
 	CHECK(bms.balancing.cells_discharging > 0u);
 
-	bms.precharge.state = SWITCH_HVNEG;             // a precarga arrancou
+	const uint8_t request[1] = { 1 };              // a VCU pede a HV: a precarga arranca
+	fake_can_inject(CAN_BUS_1, 0x083u, false, request, 1);
 	run_cycles(2);
+	CHECK(bms.precharge.state != KILL);
 	CHECK(bms.balancing.cells_discharging == 0u);
 	CHECK(chain.cfgb[0].dcc == 0u);
 }

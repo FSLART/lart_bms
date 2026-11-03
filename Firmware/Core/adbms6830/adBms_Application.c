@@ -10,11 +10,11 @@
 #include "adbms_balancing.h"
 
 #define WAKE_SLEEP_EDGE_US 600u		// tWAKE (500 us max) e < tIDLE (4,3 ms min)
-#define READ_RETRIES       2u		// o número de vezes que se repete a leitura de um grupo de registos quando chega com o PEC error
-#define DEAD_CYCLES        2u		// number de detectoes sem slaves detactados pra ser fault
-#define MISSING_RETRIES    2u		// vezes que se volta a acordar a cadeia antes de aceitar slaves != config
 #define FAULT_RETRY_US     1000u	// em FAULT, volta a acordar a cadeia ao fim deste valor
-#define MIN_NTC_PERCENT    30u		// FS 2027 EV 5.8.6
+#define MIN_NTC_PERCENT    30u		// FS 2027 EV 5.8.3
+/* da config: adbms_read_retries (repeticoes de um grupo com PEC errado),
+ * adbms_dead_cycles (detecoes sem slaves antes do FAULT), adbms_missing_retries
+ * (vezes que se volta a acordar a cadeia antes de aceitar slaves != config) */
 
 cell_asic IC[BMS_MAX_SLAVES];
 
@@ -56,6 +56,25 @@ static uint8_t* pec_field(TYPE type, uint8_t slave_index) {
 	}
 }
 
+// bit de bms.pec.flags de cada tipo de leitura
+static uint8_t pec_flag(TYPE type) {
+
+	switch (type) {
+	case Cell:
+		return PEC_FLAG_CELL;
+	case S_volt:
+		return PEC_FLAG_SCELL;
+	case Aux:
+		return PEC_FLAG_AUX;
+	case RAux:
+		return PEC_FLAG_RAUX;
+	case Status:
+		return PEC_FLAG_STATUS;
+	default:
+		return PEC_FLAG_CONFIG;
+	}
+}
+
 //Lê os varios grupos, checka os pec errors e dá retry caso seja necessario
 static bool read_groups(uint8_t *const commands[], uint8_t group_count, TYPE type, GRP first_group) {
 
@@ -79,7 +98,7 @@ static bool read_groups(uint8_t *const commands[], uint8_t group_count, TYPE typ
 					bms.pec.total++;
 				}
 			}
-		} while (any_pec_error && (++retry_counter <= READ_RETRIES));
+		} while (any_pec_error && (++retry_counter <= bms.config.adbms_read_retries));
 
 		for (uint8_t slave_index = 0; slave_index < slave_count; slave_index++) {
 			pec_failed[slave_index] |= *pec_field(type, slave_index);
@@ -91,6 +110,7 @@ static bool read_groups(uint8_t *const commands[], uint8_t group_count, TYPE typ
 
 		if (pec_failed[slave_index] != 0u) {
 			bms.pec.last_read[slave_index] = true;
+			bms.pec.flags[slave_index] |= pec_flag(type);
 			all_ok = false;
 		}
 	}
@@ -186,7 +206,7 @@ bool ADBMS_WriteDcc(void) {
 /* Config de todos os slaves, reescrita em cada ciclo (um ADBMS que reiniciou
  * volta a ficar certo):
  *  - REFON: referencia sempre ligada, sem os ate 4,4 ms de tREFUP por conversao
- *  - CTH 8,1 mV: limite da comparacao C-ADC vs S-ADC (o default do datasheet)
+ *  - CTH: limite da comparacao C-ADC vs S-ADC (config adbms_cth, 8,1 mV por omissao)
  *  - GPO todos a 1: GPIOs sem pull-down, sao as entradas analogicas dos NTC
  *  - VOV/VUV: comparadores do proprio ADBMS com os limites da config
  *  - DCC a 0: o ADCV e o open-wire medem sem descarga. O DCP=0 so corta a
@@ -207,7 +227,7 @@ static void write_config(void) {
 		cell_asic *chip = &IC[slave_index];
 
 		chip->tx_cfga.refon = PWR_UP;
-		chip->tx_cfga.cth = CVT_8_1mV;
+		chip->tx_cfga.cth = (uint8_t) (bms.config.adbms_cth & 0x07u);
 		chip->tx_cfga.gpo = 0x3FFu;
 		chip->tx_cfgb.vov = vov_code;
 		chip->tx_cfgb.vuv = vuv_code;
@@ -283,11 +303,18 @@ static void check_timeouts(void) {
 	uint32_t now_ms = HAL_GetTick();
 	bool any_late = false;
 
+	bool cells_late = false;
+	bool temps_late = false;
+
 	for (uint8_t slave_index = 0; slave_index < bms.config.slaves; slave_index++) {
-		if (!ADBMS_Fresh(bms.adbms.cells_valid_ms[slave_index], now_ms) || !ADBMS_Fresh(bms.adbms.temps_valid_ms[slave_index], now_ms)) {
-			any_late = true;
-		}
+		cells_late = cells_late || !ADBMS_Fresh(bms.adbms.cells_valid_ms[slave_index], now_ms);
+		temps_late = temps_late || !ADBMS_Fresh(bms.adbms.temps_valid_ms[slave_index], now_ms);
 	}
+	any_late = cells_late || temps_late;
+
+	// para os outros modulos (SOC, precarga, ventoinhas): o resumo do pack vale?
+	bms.cells.cells_valid = !cells_late && (bms.cells.slaves_found >= bms.config.slaves);
+	bms.cells.temps_valid = !temps_late && (bms.cells.slaves_found >= bms.config.slaves);
 
 	bms.faults.adbms_timeout = any_late;
 }
@@ -393,12 +420,13 @@ void ADBMS_Run(void) {
 	case ADBMS_DETECT: {
 		bms.adbms.cycle_start_us = now_us;
 		memset(bms.pec.last_read, 0, sizeof(bms.pec.last_read));
+		memset(bms.pec.flags, 0, sizeof(bms.pec.flags));
 
 		uint8_t detected_slaves = count_slaves();
 		bms.cells.slaves_found = detected_slaves;
 
 		if (detected_slaves == 0u) {
-			if (++bms.adbms.dead_count >= DEAD_CYCLES) {
+			if (++bms.adbms.dead_count >= bms.config.adbms_dead_cycles) {
 				enter_fault();
 			} else {
 				bms.adbms.state = ADBMS_INIT;   //chain pode tar em sleep, wakepu just in case
@@ -410,7 +438,7 @@ void ADBMS_Run(void) {
 		if (detected_slaves != bms.config.slaves) {
 
 			// um slave ainda sleep, pd n ser necessariamnte slave em falta
-			if (bms.adbms.missing_count < MISSING_RETRIES) {
+			if (bms.adbms.missing_count < bms.config.adbms_missing_retries) {
 				bms.adbms.missing_count++;
 				bms.adbms.state = ADBMS_INIT;
 				break;

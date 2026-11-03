@@ -3,6 +3,7 @@
  */
 
 #include "fake_chain.h"
+#include "fake_board.h"
 #include <math.h>
 #include <string.h>
 
@@ -31,6 +32,7 @@ int32_t fake_ntc_mV(double temp_c) {
 
 void fake_reset(void) {
 
+	fake_board_reset();   // placa saudavel: SDC fechado, ISA do pack a falar, EEPROM vazia
 	memset(&chain, 0, sizeof(chain));
 	chain.present = 12;
 	chain.pec_type = Comm;   // nenhuma leitura usada pelo BMS: sem PEC injetado
