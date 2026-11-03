@@ -113,15 +113,40 @@ make -C Bootloader
 
 ## Testes no PC
 
-O código do firmware corre no PC tal como está; só o hardware é simulado (a
-cadeia ADBMS, os pinos, a EEPROM, o CAN, os UART, o próprio RN4871 e as ISA).
+O código do firmware e do bootloader corre no PC tal como está; só o hardware
+é simulado (a cadeia ADBMS ao nível do SPI, os pinos, a EEPROM, o CAN, os UART,
+o próprio RN4871, as ISA e, para o bootloader, o STM32F412 inteiro).
 
 ```bash
 Firmware/Tests/run_tests.sh
 ```
 
-- `test_adbms`: a cadeia ADBMS (células, temperaturas, open-wire, balanceamento, PEC, tempos da FS)
-- `test_system`: EEPROM A/B e corte de energia a meio da gravação, consola, PIN, RN4871, pré-carga (completa, AIR soldado, AIR- morto, bus que não sobe, SDC aberto, lockout), AMS_ERROR, ISA, SOC, carregamento, CAN, o JSON e o lado da aplicação do bootloader
-- `test_wrapper`: o `mcuWrapper` (tempos do isoSPI)
-- `test_boot`: o bootloader CAN numa flash simulada, com cortes de energia em cada escrita de um update
-- `test_can_upload.py`: o uploader contra o bootloader num bus CAN virtual (se houver python-can e cantools)
+| Teste | O que testa |
+|---|---|
+| `test_adbms` | a camada ADBMS (células, temperaturas, open-wire, balanceamento, PEC, tempos da FS) |
+| `test_adi` | o driver da ADI contra uma cadeia de ADBMS6830 ao nível do SPI: PEC15/PEC10 conferidos com uma implementação própria do datasheet, ordem dos slaves, bits de cada registo, todos os grupos de leitura, comandos ADC |
+| `test_system` | EEPROM A/B e corte de energia a meio da gravação, consola, PIN, RN4871, pré-carga (completa, AIR soldado, AIR- morto, bus que não sobe, SDC aberto, lockout), AMS_ERROR, ISA, SOC, carregamento, CAN, o JSON e o lado da aplicação do bootloader |
+| `test_config` | a tabela de parâmetros, parse/format, todas as regras de validação, os bancos A/B da EEPROM e gravações que falham |
+| `test_comms` | a consola (todos os comandos), o RN4871, a receção CAN e o JSON |
+| `test_modules` | ISA, SOC, ventoinhas, contactores, carregador, pré-carga, faltas, AMS_ERROR, brain e boot_ctrl, um a um |
+| `test_drivers` | `can_bus.c`, `uart_link.c` e `bsp.c` contra um HAL falso (`Tests/hal`) |
+| `test_wrapper` | o `mcuWrapper` (tempos do isoSPI) |
+| `test_boot` | a lógica do bootloader numa flash simulada, com cortes de energia e erros da flash em cada operação de um update e de um rollback |
+| `test_boot_hw` | o bootloader inteiro, registos incluídos, num STM32F412 simulado (só x86-64 Linux; ver [BOOTLOADER.md](BOOTLOADER.md#testes)) |
+| `test_can_upload.py` | o uploader: imagens, HEX, protocolo, erros, e uploads contra o bootloader num bus CAN virtual (precisa do python-can e do cantools) |
+
+Com AddressSanitizer e UBSan (o `test_boot_hw` salta com o ASan):
+
+```bash
+EXTRA_FLAGS="-fsanitize=address,undefined" Firmware/Tests/run_tests.sh
+```
+
+Cobertura (gcovr para o C, coverage.py para o uploader):
+
+```bash
+pip install gcovr coverage
+```
+
+```bash
+Firmware/Tests/coverage.sh --html
+```

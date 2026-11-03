@@ -34,12 +34,17 @@ static void put_number(line_t *line, uint32_t value, uint32_t base, uint32_t wid
 		value /= base;
 	} while ((value > 0u) && (count < sizeof(digits)));
 
-	if (negative) {
-		digits[count++] = '-';
+	uint32_t length = count + (negative ? 1u : 0u);
+
+	if (negative && (pad == '0')) {
+		put(line, '-');   // o sinal antes dos zeros: -0003
 	}
-	while (width > count) {
+	while (width > length) {
 		put(line, pad);
 		width--;
+	}
+	if (negative && (pad != '0')) {
+		put(line, '-');
 	}
 	while (count > 0u) {
 		put(line, digits[--count]);
@@ -93,7 +98,7 @@ void BlLog(const char *format, ...) {
 			break;
 		case 'd': {
 			int32_t value = va_arg(arguments, int32_t);
-			put_number(&line, (value < 0) ? (uint32_t) (-value) : (uint32_t) value, 10u, width, pad, value < 0);
+			put_number(&line, (value < 0) ? (0u - (uint32_t) value) : (uint32_t) value, 10u, width, pad, value < 0);   // -INT32_MIN nao existe
 			break;
 		}
 		case 'x':

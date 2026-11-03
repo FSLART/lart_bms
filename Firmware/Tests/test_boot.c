@@ -13,12 +13,14 @@
 #include "bl_core.h"
 #include "bl_protocol.h"
 #include "bl_port.h"
+#include "bl_log.h"
 #include "boot_hash.h"
 #include "boot_image.h"
 #include "boot_journal.h"
 #include "boot_shared.h"
 #include "boot_names.h"
 #include <setjmp.h>
+#include <stdint.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,9 +39,13 @@ boot_shared_t boot_test_shared;
 static uint32_t now_ms;
 static long flash_ops;          // palavras programadas + setores apagados
 static long cut_at = -1;        // corta a energia nesta operacao
+static long fail_at = -1;       // a partir desta operacao a flash da erro (sem mudar nada)...
+static long fail_count = 1;     // ...nestas seguidas
 static jmp_buf power_cut;
 static int overwrites;          // programar por cima de bits ja a 0 com outro valor (erro de logica)
 static int verbose;
+static char log_text[8192];      // o que o bootloader escreveu no UART
+static uint32_t log_length;
 
 uint32_t BlPort_Millis(void) {
 
@@ -51,6 +57,16 @@ void BlPort_Write(const char *text, uint32_t length) {
 	if (verbose) {
 		fwrite(text, 1, length, stdout);
 	}
+	if ((log_length + length) < sizeof(log_text)) {
+		memcpy(&log_text[log_length], text, length);
+		log_length += length;
+		log_text[log_length] = 0;
+	}
+}
+
+static bool flash_fails(void) {
+
+	return (fail_at >= 0) && (flash_ops >= fail_at) && (flash_ops < (fail_at + fail_count));
 }
 
 void BlPort_DiagFlush(void) {
@@ -79,12 +95,16 @@ bool BootFlash_EraseSector(uint32_t address) {
 	}
 
 	uint32_t size = BootLayout_SectorSize(sector);
+	bool fail = flash_fails();
 
 	if ((cut_at >= 0) && (flash_ops == cut_at)) {
 		// apagar a meio: metade do setor apagado, o resto como estava
 		memset(flash_at(address), 0xFF, size / 2u);
 	}
 	maybe_cut();
+	if (fail) {
+		return false;
+	}
 	memset(flash_at(address), 0xFF, size);
 	return true;
 }
@@ -99,11 +119,15 @@ bool BootFlash_Program(uint32_t address, const void *data, uint32_t length) {
 	for (uint32_t index = 0; index < length; index += 4u) {
 
 		uint8_t *cell = flash_at(address + index);
+		bool fail = flash_fails();
 
 		if ((cut_at >= 0) && (flash_ops == cut_at)) {
 			cell[0] &= bytes[index];   // palavra a meio: so o primeiro byte pegou
 		}
 		maybe_cut();
+		if (fail) {
+			return false;
+		}
 		for (uint32_t byte = 0; byte < 4u; byte++) {
 			if ((cell[byte] & bytes[index + byte]) != bytes[index + byte]) {
 				overwrites++;
@@ -182,7 +206,11 @@ static void blank_device(void) {
 	now_ms = 0;
 	flash_ops = 0;
 	cut_at = -1;
+	fail_at = -1;
+	fail_count = 1;
 	overwrites = 0;
+	log_length = 0;
+	log_text[0] = 0;
 }
 
 /* ================== BOOTLOADER ================== */
@@ -942,6 +970,364 @@ static void test_power_cut_everywhere(void) {
 	CHECK((new_boots > 0) && (old_boots > 0));
 }
 
+/* ================== ERROS DA FLASH ================== */
+
+static uint8_t update_with_errors(long fail, long count) {
+
+	fail_at = fail;
+	fail_count = count;
+	flash_ops = 0;
+	enter_bootloader();
+
+	uint8_t status = upload(small_image_v3, small_length_v3, ~0u);
+
+	fail_at = -1;
+	return status;
+}
+
+/* A flash da erro numa operacao do update (ou em 3 seguidas: o journal tenta
+ * duas vezes e depois muda de setor). O update pode falhar, mas o arranque
+ * seguinte arranca sempre o v2 ou o v3, e o v3 so se o upload acabou bem */
+static void test_flash_errors_everywhere(void) {
+
+	blank_device();
+	debugger_flash(app_v1, sizeof(app_v1));
+	enter_bootloader();
+	CHECK(upload(small_image_v2, small_length_v2, ~0u) == BL_OK);
+	CHECK(power_on(BL_RESET_POR).booted);
+	CHECK(app_confirm());
+	memcpy(snapshot, boot_test_flash, sizeof(snapshot));
+
+	CHECK(update_with_errors(-1, 1) == BL_OK);
+	long total = flash_ops;
+	int bad = 0;
+	int failed = 0;
+	int new_boots = 0;
+
+	for (long count = 1; count <= 3; count += 2) {
+		for (long fail = 0; fail < total; fail++) {
+
+			memcpy(boot_test_flash, snapshot, sizeof(snapshot));
+			overwrites = 0;
+
+			uint8_t status = update_with_errors(fail, count);
+			boot_result_t result = power_on(BL_RESET_POR);
+			bool ok = result.booted && ((result.major == 2) || ((result.major == 3) && (status == BL_OK)));
+
+			if (ok) {
+				ok = power_on(BL_RESET_POR).booted;
+			}
+			if (!ok || (overwrites != 0)) {
+				if (bad++ < 5) {
+					printf("  erro na operacao %ld (x%ld): status %u, booted=%d v%u reason %s\n", fail, count, status, result.booted, result.major,
+							BootNames_Error(result.reason));
+				}
+			}
+			failed += (status != BL_OK) ? 1 : 0;
+			new_boots += (result.major == 3) ? 1 : 0;
+		}
+	}
+	printf("  %ld operacoes com erro (x1 e x3): %d updates falharam, %d arrancaram o v3\n", total, failed, new_boots);
+	CHECK(bad == 0);
+	CHECK((failed > 0) && (new_boots > 0));
+}
+
+// o rollback de um upload interrompido com erros na flash: fica no bootloader e o arranque seguinte consegue
+static void test_rollback_with_flash_errors(void) {
+
+	blank_device();
+	debugger_flash(app_v1, sizeof(app_v1));
+	enter_bootloader();
+	CHECK(upload(small_image_v2, small_length_v2, ~0u) == BL_OK);
+	CHECK(power_on(BL_RESET_POR).booted);
+	CHECK(app_confirm());
+	enter_bootloader();
+	CHECK(upload(small_image_v3, small_length_v3, 1000u) == 0xFD);   // o uploader foi-se embora a meio
+	memcpy(snapshot, boot_test_flash, sizeof(snapshot));
+
+	flash_ops = 0;
+	boot_result_t clean = power_on(BL_RESET_POR);
+	long total = flash_ops;
+
+	CHECK(clean.booted && (clean.major == 2) && (clean.event == BOOT_EVENT_ROLLBACK));
+
+	int bad = 0;
+	int stayed = 0;
+
+	for (long count = 1; count <= 3; count += 2) {
+		for (long fail = 0; fail < total; fail++) {
+
+			memcpy(boot_test_flash, snapshot, sizeof(snapshot));
+			fail_at = fail;
+			fail_count = count;
+			flash_ops = 0;
+
+			boot_result_t first = power_on(BL_RESET_POR);
+
+			fail_at = -1;
+			boot_result_t second = power_on(BL_RESET_POR);
+
+			stayed += first.booted ? 0 : 1;
+			if (!second.booted || (second.major != 2) || (first.booted && (first.major != 2))) {
+				if (bad++ < 5) {
+					printf("  rollback com erro em %ld (x%ld): %d/v%u e %d/v%u\n", fail, count, first.booted, first.major, second.booted, second.major);
+				}
+			}
+		}
+	}
+	CHECK(bad == 0);
+	CHECK(stayed > 0);
+}
+
+// a flash muda entre a verificacao do arranque e o uso (bit que se estraga, debugger por cima)
+static void test_flash_changes_after_checks(void) {
+
+	uint8_t reply[8];
+
+	// v2 instalado e confirmado, v1 no BACKUP
+	blank_device();
+	debugger_flash(app_v1, sizeof(app_v1));
+	enter_bootloader();
+	CHECK(upload(small_image_v2, small_length_v2, ~0u) == BL_OK);
+	CHECK(power_on(BL_RESET_POR).booted);
+	CHECK(app_confirm());
+	memcpy(snapshot, boot_test_flash, sizeof(snapshot));
+
+	// o EXEC estraga-se depois do arranque do bootloader: a copia para o BACKUP nao confere
+	enter_bootloader();
+	*flash_at(BOOT_APP_ADDRESS + 1000u) ^= 0x10u;
+	CHECK(send(0, BL_CMD_BEGIN, small_length_v3, NULL, reply) == BL_FLASH_ERROR);
+	CHECK(bl_diag.error_code == BOOT_ERR_HASH);
+	CHECK(strstr(log_text, "a copia no BACKUP nao confere") != NULL);
+
+	// o EXEC trocado por outra imagem valida do mesmo tamanho: a copia e valida mas nao e a que foi verificada
+	static uint8_t twin_app[sizeof(small_v2)];
+	static uint8_t twin_image[sizeof(small_image_v2)];
+
+	make_app(twin_app, sizeof(twin_app), 2, 1, 55);
+	CHECK(package(twin_image, twin_app, sizeof(twin_app), 2, 1, 0, 0) == small_length_v2);
+	memcpy(boot_test_flash, snapshot, sizeof(snapshot));
+	enter_bootloader();
+	memcpy(flash_at(BOOT_EXEC_ADDRESS), twin_image, small_length_v2);
+	CHECK(send(0, BL_CMD_BEGIN, small_length_v3, NULL, reply) == BL_FLASH_ERROR);
+	CHECK(bl_diag.error_code == BOOT_ERR_HASH);
+
+	// o BACKUP estraga-se entre a decisao e o rollback: nao arranca, fica no bootloader
+	memcpy(boot_test_flash, snapshot, sizeof(snapshot));
+	enter_bootloader();
+	CHECK(upload(small_image_v3, small_length_v3, 400u) == 0xFD);
+	memset(&bl_diag, 0, sizeof(bl_diag));
+	BlCore_Start(&core, BL_RESET_POR, false, 500, 500);
+	CHECK(core.action == BL_ACTION_RESTORE);
+	*flash_at(BOOT_BACKUP_ADDRESS + BOOT_HEADER_SIZE + 500u) ^= 0x01u;
+	CHECK(!BlCore_PrepareBoot(&core));
+	CHECK(((core.entry_flags & BL_ENTRY_RECOVERY) != 0u) && (bl_diag.error_code == BOOT_ERR_HASH));
+	CHECK(strstr(log_text, "a copia nao confere") != NULL);
+	CHECK(!BlCore_PrepareBoot(&core));   // e depois disso nao ha nada para arrancar
+
+	// o journal diz que o BACKUP e o v1 mas la esta outra imagem valida do mesmo tamanho: nao serve para rollback
+	static uint8_t other_app[sizeof(app_v1)];
+	static uint8_t other_image[sizeof(app_v1) + 1024u];
+	uint32_t other_length;
+
+	make_app(other_app, sizeof(other_app), 1, 9, 77);
+	other_length = package(other_image, other_app, sizeof(other_app), 1, 9, 0, 0);
+	memcpy(boot_test_flash, snapshot, sizeof(snapshot));
+	memset(flash_at(BOOT_BACKUP_ADDRESS), 0xFF, BOOT_BACKUP_SIZE);
+	memcpy(flash_at(BOOT_BACKUP_ADDRESS), other_image, other_length);
+	memset(&bl_diag, 0, sizeof(bl_diag));
+	log_length = 0;
+	BlCore_Start(&core, BL_RESET_POR, false, 500, 500);
+	CHECK(!core.backup_ok && core.exec_ok);
+	CHECK(strstr(log_text, "BACKUP: invalido (HASH") != NULL);
+}
+
+// END com uma imagem cujo SHA-256 nao bate (o CRC do transporte bate): recusada, e volta ao v1
+static void test_end_rejects_bad_image(void) {
+
+	static uint8_t bad_image[8192];
+
+	blank_device();
+	debugger_flash(app_v1, sizeof(app_v1));
+	enter_bootloader();
+	memcpy(bad_image, small_image_v2, small_length_v2);
+	bad_image[BOOT_HEADER_SIZE + 100u] ^= 0xFFu;
+	CHECK(upload(bad_image, small_length_v2, ~0u) == BL_BAD_IMAGE);
+	CHECK(bl_diag.error_code == BOOT_ERR_HASH);
+	CHECK(strstr(log_text, "END: imagem rejeitada") != NULL);
+
+	boot_result_t result = power_on(BL_RESET_POR);
+
+	CHECK(result.booted && (result.major == 1) && (result.event == BOOT_EVENT_ROLLBACK));
+}
+
+// uma RAW do debugger tao grande que com cabecalho ja nao cabe: o update segue sem BACKUP
+static uint8_t big_app[BOOT_EXEC_SIZE - BOOT_HEADER_SIZE - 4u];
+
+static void test_raw_too_big_for_backup(void) {
+
+	make_app(big_app, sizeof(big_app), 1, 5, 9);
+	blank_device();
+	debugger_flash(big_app, sizeof(big_app));
+	enter_bootloader();
+	CHECK(core.exec_ok && (core.exec.kind == BOOT_IMAGE_RAW));
+	CHECK(upload(small_image_v2, small_length_v2, ~0u) == BL_OK);
+	CHECK(strstr(log_text, "nao cabe no EXEC com cabecalho") != NULL);
+	CHECK(*flash_at(BOOT_BACKUP_ADDRESS) == 0xFFu);
+
+	boot_result_t result = power_on(BL_RESET_POR);
+
+	CHECK(result.booted && (result.major == 2));
+}
+
+// o debugger volta a gravar a RAW que ja esta no BACKUP: o BEGIN nao a copia outra vez
+static void test_backup_already_has_raw(void) {
+
+	uint8_t reply[8];
+
+	blank_device();
+	debugger_flash(app_v1, sizeof(app_v1));
+	enter_bootloader();
+	CHECK(upload(small_image_v2, small_length_v2, ~0u) == BL_OK);
+	debugger_flash(app_v1, sizeof(app_v1));
+	enter_bootloader();
+	CHECK(core.backup_ok && core.exec_ok && (core.exec.kind == BOOT_IMAGE_RAW));
+	memcpy(snapshot, flash_at(BOOT_BACKUP_ADDRESS), BOOT_BACKUP_SIZE);
+	CHECK(send(0, BL_CMD_BEGIN, small_length_v3, NULL, reply) == BL_OK);
+	CHECK(strstr(log_text, "o BACKUP ja tem este firmware") != NULL);
+	CHECK(memcmp(snapshot, flash_at(BOOT_BACKUP_ADDRESS), BOOT_BACKUP_SIZE) == 0);
+}
+
+// journal: o registo nao pega duas vezes e o apagar do outro setor tambem falha
+static void test_journal_write_failures(void) {
+
+	boot_journal_t journal;
+	boot_record_t record;
+
+	blank_device();
+	BootJournal_Load(&journal);
+	record = journal.state;
+	record.updates = 7;
+	CHECK(BootJournal_Write(&journal, &record, true));
+
+	// uma falha: tenta o registo seguinte
+	fail_at = flash_ops;
+	fail_count = 1;
+	record.updates = 8;
+	CHECK(BootJournal_Write(&journal, &record, true));
+
+	// tres (as duas tentativas e o apagar): falha e o que la estava fica
+	fail_at = flash_ops;
+	fail_count = 3;
+	record.updates = 9;
+	CHECK(!BootJournal_Write(&journal, &record, true));
+	fail_at = flash_ops;
+	fail_count = 2;
+	record.updates = 10;
+	CHECK(!BootJournal_Write(&journal, &record, false));   // sem poder apagar
+	fail_at = flash_ops;
+	fail_count = 1;
+	CHECK(!BootJournal_Compact(&journal));
+	fail_at = -1;
+
+	boot_journal_t reloaded;
+
+	BootJournal_Load(&reloaded);
+	CHECK(reloaded.found && (reloaded.state.updates == 8u));
+
+	// e o PrepareBoot de um bootloader que decidiu ficar diz logo que nao
+	BlCore_Start(&core, BL_RESET_POR, false, 500, 500);
+	CHECK(!BlCore_CanBoot(&core) && !BlCore_PrepareBoot(&core));
+}
+
+// verificacao das imagens: descritor que nao cabe e TLV estragados
+static void test_image_edge_cases(void) {
+
+	boot_image_t image;
+	uint8_t tiny[0x100];
+
+	// RAW pequena demais para ter o descritor em 0x200
+	blank_device();
+	memset(tiny, 0, sizeof(tiny));
+	put32(&tiny[0], BOOT_STACK_TOP);
+	put32(&tiny[4], BOOT_APP_ADDRESS + 0x41u);
+	put32(&tiny[sizeof(tiny) - 4u], 0x0BADF00Du);
+	memcpy(flash_at(BOOT_APP_ADDRESS), tiny, sizeof(tiny));
+	CHECK(BootImage_Check(BOOT_EXEC_ADDRESS, BOOT_EXEC_SIZE, 0, true, &image) == BOOT_ERR_BOARD);
+	CHECK(image.kind == BOOT_IMAGE_NONE);
+
+	uint32_t tlv = BOOT_EXEC_ADDRESS + BOOT_HEADER_SIZE + sizeof(small_v2);
+
+	// TLV com o total a acabar a meio da entrada
+	blank_device();
+	memcpy(flash_at(BOOT_EXEC_ADDRESS), small_image_v2, small_length_v2);
+	put32(flash_at(tlv), BOOT_TLV_INFO_MAGIC | (7u << 16));
+	CHECK(BootImage_Check(BOOT_EXEC_ADDRESS, BOOT_EXEC_SIZE, 0, false, &image) == BOOT_ERR_TLV);
+
+	// SHA-256 com 16 bytes
+	memcpy(flash_at(BOOT_EXEC_ADDRESS), small_image_v2, small_length_v2);
+	put32(flash_at(tlv), BOOT_TLV_INFO_MAGIC | (24u << 16));
+	put32(flash_at(tlv + 4u), BOOT_TLV_SHA256 | (16u << 16));
+	CHECK(BootImage_Check(BOOT_EXEC_ADDRESS, BOOT_EXEC_SIZE, 0, false, &image) == BOOT_ERR_TLV);
+
+	// nenhuma entrada SHA-256
+	memcpy(flash_at(BOOT_EXEC_ADDRESS), small_image_v2, small_length_v2);
+	put32(flash_at(tlv + 4u), 0x0020u | (32u << 16));
+	CHECK(BootImage_Check(BOOT_EXEC_ADDRESS, BOOT_EXEC_SIZE, 0, false, &image) == BOOT_ERR_TLV);
+
+	// o SHA-256 conta o comprimento em 64 bits (o de cima so mexe depois de 4 GB)
+	boot_sha256_t sha;
+	uint8_t block[128];
+
+	memset(block, 0xA5, sizeof(block));
+	BootSha256_Init(&sha);
+	sha.length_low = 0xFFFFFFC0u;
+	BootSha256_Update(&sha, block, sizeof(block));
+	CHECK((sha.length_high == 1u) && (sha.length_low == 0x40u));
+}
+
+// o formatador dos logs (o printf do bootloader)
+static void test_log_format(void) {
+
+	log_length = 0;
+	BlLog("%c|%d|%d|%5d|%05d|%x|%08x|%s|%s|%u|%%|%q|%", 'A', -42, (int32_t) INT32_MIN, -3, -3, 0xBEEFu, 0x12u, "texto", (const char*) NULL, 4000000000u);
+	CHECK(strcmp(log_text, "[boot] A|-42|-2147483648|   -3|-0003|beef|00000012|texto||4000000000|%|q|\r\n") == 0);
+
+	// linha comprida: corta e fica o \r\n
+	char longer[300];
+
+	memset(longer, 'x', sizeof(longer) - 1u);
+	longer[sizeof(longer) - 1u] = 0;
+	log_length = 0;
+	BlLog("%s", longer);
+	CHECK((log_length == 120u) && (log_text[118] == '\r') && (log_text[119] == '\n'));
+}
+
+// diagnosticos: a trama da flash e bits pendentes que nao existem
+static void test_diag_frames(void) {
+
+	uint32_t id;
+	uint8_t data[8];
+	int kind;
+	bool seen = false;
+
+	memset(&bl_diag, 0, sizeof(bl_diag));
+	BlDiag_FlashError(BOOT_ERR_FLASH_WRITE, 0x1234u, 0x80u);
+	memset(bl_diag.pending, 0, sizeof(bl_diag.pending));
+	BlDiag_Snapshot();   // volta a marcar a da flash (o erro veio da flash)
+	while ((kind = BlDiag_Next(0, &id, data)) >= 0) {
+		if (kind == BL_DIAG_FLASH) {
+			seen = (id == (BL_CAN_DIAG_BASE_ID + BL_DIAG_FLASH)) && (data[0] == 0x34u) && (data[1] == 0x12u) && (data[4] == 0x80u);
+		}
+		BlDiag_Sent(0, kind);
+	}
+	CHECK(seen);
+
+	bl_diag.pending[1] = 0x8000u;
+	CHECK(BlDiag_Next(1, &id, data) < 0);
+	CHECK(bl_diag.pending[1] == 0u);
+}
+
 int main(int argc, char **argv) {
 
 	verbose = (argc > 1) && (strcmp(argv[1], "-v") == 0);
@@ -960,6 +1346,16 @@ int main(int argc, char **argv) {
 	test_no_backup_accepts_image();
 	test_journal_reserve_for_app();
 	test_power_cut_everywhere();
+	test_flash_errors_everywhere();
+	test_rollback_with_flash_errors();
+	test_flash_changes_after_checks();
+	test_end_rejects_bad_image();
+	test_raw_too_big_for_backup();
+	test_backup_already_has_raw();
+	test_journal_write_failures();
+	test_image_edge_cases();
+	test_log_format();
+	test_diag_frames();
 
 	printf("%d verificacoes, %d falhas\n", checks, failures);
 	return (failures == 0) ? 0 : 1;

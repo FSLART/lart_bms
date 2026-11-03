@@ -13,6 +13,7 @@
 #include "adbms_main.h"
 #include "brain.h"
 #include "adBms6830CmdList.h"   // as tabelas de comandos (so se incluem num ficheiro)
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -432,6 +433,176 @@ static void test_out_of_range_requests(void) {
 	CHECK(spi_chain.transactions == transactions);
 }
 
+/* ================== todos os grupos de leitura ================== */
+
+typedef struct {
+	const uint8_t *command;
+	TYPE    type;
+	GRP     group;
+	size_t  array;        // offsetof do array de codigos em cell_asic
+	uint8_t first;        // primeiro indice que o grupo enche
+	uint8_t count;
+	size_t  pec;          // offsetof da flag de PEC em cell_asic
+} read_case_t;
+
+#define CODES(field)  offsetof(cell_asic, field)
+#define PEC(field)    offsetof(cell_asic, cccrc.field)
+
+static const read_case_t read_cases[] = {
+	{ RDCVA, Cell, A, CODES(cell.c_codes), 0, 3, PEC(cell_pec) },
+	{ RDCVB, Cell, B, CODES(cell.c_codes), 3, 3, PEC(cell_pec) },
+	{ RDCVC, Cell, C, CODES(cell.c_codes), 6, 3, PEC(cell_pec) },
+	{ RDCVD, Cell, D, CODES(cell.c_codes), 9, 3, PEC(cell_pec) },
+	{ RDCVE, Cell, E, CODES(cell.c_codes), 12, 3, PEC(cell_pec) },
+	{ RDCVF, Cell, F, CODES(cell.c_codes), 15, 1, PEC(cell_pec) },
+	{ RDACA, AvgCell, A, CODES(acell.ac_codes), 0, 3, PEC(acell_pec) },
+	{ RDACB, AvgCell, B, CODES(acell.ac_codes), 3, 3, PEC(acell_pec) },
+	{ RDACC, AvgCell, C, CODES(acell.ac_codes), 6, 3, PEC(acell_pec) },
+	{ RDACD, AvgCell, D, CODES(acell.ac_codes), 9, 3, PEC(acell_pec) },
+	{ RDACE, AvgCell, E, CODES(acell.ac_codes), 12, 3, PEC(acell_pec) },
+	{ RDACF, AvgCell, F, CODES(acell.ac_codes), 15, 1, PEC(acell_pec) },
+	{ RDSVA, S_volt, A, CODES(scell.sc_codes), 0, 3, PEC(scell_pec) },
+	{ RDSVB, S_volt, B, CODES(scell.sc_codes), 3, 3, PEC(scell_pec) },
+	{ RDSVC, S_volt, C, CODES(scell.sc_codes), 6, 3, PEC(scell_pec) },
+	{ RDSVD, S_volt, D, CODES(scell.sc_codes), 9, 3, PEC(scell_pec) },
+	{ RDSVE, S_volt, E, CODES(scell.sc_codes), 12, 3, PEC(scell_pec) },
+	{ RDSVF, S_volt, F, CODES(scell.sc_codes), 15, 1, PEC(scell_pec) },
+	{ RDFCA, F_volt, A, CODES(fcell.fc_codes), 0, 3, PEC(fcell_pec) },
+	{ RDFCB, F_volt, B, CODES(fcell.fc_codes), 3, 3, PEC(fcell_pec) },
+	{ RDFCC, F_volt, C, CODES(fcell.fc_codes), 6, 3, PEC(fcell_pec) },
+	{ RDFCD, F_volt, D, CODES(fcell.fc_codes), 9, 3, PEC(fcell_pec) },
+	{ RDFCE, F_volt, E, CODES(fcell.fc_codes), 12, 3, PEC(fcell_pec) },
+	{ RDFCF, F_volt, F, CODES(fcell.fc_codes), 15, 1, PEC(fcell_pec) },
+	{ RDAUXA, Aux, A, CODES(aux.a_codes), 0, 3, PEC(aux_pec) },
+	{ RDAUXB, Aux, B, CODES(aux.a_codes), 3, 3, PEC(aux_pec) },
+	{ RDAUXC, Aux, C, CODES(aux.a_codes), 6, 3, PEC(aux_pec) },
+	{ RDAUXD, Aux, D, CODES(aux.a_codes), 9, 3, PEC(aux_pec) },
+	{ RDRAXA, RAux, A, CODES(raux.ra_codes), 0, 3, PEC(raux_pec) },
+	{ RDRAXB, RAux, B, CODES(raux.ra_codes), 3, 3, PEC(raux_pec) },
+	{ RDRAXC, RAux, C, CODES(raux.ra_codes), 6, 3, PEC(raux_pec) },
+	{ RDRAXD, RAux, D, CODES(raux.ra_codes), 9, 1, PEC(raux_pec) },
+	{ RDCVALL, Rdcvall, ALL_GRP, CODES(cell.c_codes), 0, 16, PEC(cell_pec) },
+	{ RDACALL, Rdacall, ALL_GRP, CODES(acell.ac_codes), 0, 16, PEC(acell_pec) },
+	{ RDSALL, Rdsall, ALL_GRP, CODES(scell.sc_codes), 0, 16, PEC(scell_pec) },
+	{ RDFCALL, Rdfcall, ALL_GRP, CODES(fcell.fc_codes), 0, 16, PEC(fcell_pec) },
+};
+
+static int16_t code_at(const cell_asic *chip, size_t array, uint8_t index) {
+
+	int16_t value;
+
+	memcpy(&value, (const uint8_t*) chip + array + (index * sizeof(int16_t)), sizeof(value));
+	return value;
+}
+
+// cada grupo vai para os indices certos do array certo, nos dois slaves, sem mexer nos outros
+static void test_every_read_group(void) {
+
+	int wrong = 0;
+
+	for (size_t number = 0; number < (sizeof(read_cases) / sizeof(read_cases[0])); number++) {
+
+		const read_case_t *test = &read_cases[number];
+		int16_t codes[16];
+
+		spi_chain_reset(2);
+		memset(chips, 0x55, sizeof(chips));   // o que nao for escrito fica com 0x5555
+		for (uint8_t device = 0; device < 2u; device++) {
+			for (uint8_t slot = 0; slot < test->count; slot++) {
+				codes[slot] = (int16_t) ((number * 500u) + (device * 100u) + slot + 1u);
+			}
+			put_codes(spi_chain.devices[device].regs[code_of(test->command)], codes, test->count);
+		}
+		adBmsReadData(2, chips, (uint8_t*) test->command, test->type, test->group);
+
+		for (uint8_t device = 0; device < 2u; device++) {
+			for (uint8_t index = 0; index < 16u; index++) {
+
+				bool inside = (index >= test->first) && (index < (test->first + test->count));
+				int16_t expected = inside ? (int16_t) ((number * 500u) + (device * 100u) + (index - test->first) + 1u) : (int16_t) 0x5555;
+
+				if ((index < ((test->array == CODES(raux.ra_codes)) ? 10u : ((test->array == CODES(aux.a_codes)) ? 12u : 16u)))
+						&& (code_at(&chips[device], test->array, index) != expected)) {
+					wrong++;
+				}
+			}
+			if (*((const uint8_t*) &chips[device] + test->pec) != 0u) {
+				wrong++;
+			}
+		}
+	}
+	CHECK(wrong == 0);
+
+	// celulas + S de uma vez (66 B por slave: o buffer leva um)
+	const uint8_t *both[2] = { RDCSALL, RDACSALL };
+	TYPE types[2] = { Rdcsall, Rdacsall };
+	size_t first_array[2] = { CODES(cell.c_codes), CODES(acell.ac_codes) };
+
+	for (uint8_t round = 0; round < 2u; round++) {
+
+		int16_t codes[32];
+
+		spi_chain_reset(1);
+		memset(chips, 0, sizeof(chips));
+		for (uint8_t index = 0; index < 32u; index++) {
+			codes[index] = (int16_t) (20000 + (round * 100) + index);
+		}
+		put_codes(spi_chain.devices[0].regs[code_of(both[round])], codes, 32);
+		adBmsReadData(1, chips, (uint8_t*) both[round], types[round], ALL_GRP);
+		CHECK((code_at(&chips[0], first_array[round], 0) == codes[0]) && (code_at(&chips[0], first_array[round], 15) == codes[15]));
+		CHECK((chips[0].scell.sc_codes[0] == codes[16]) && (chips[0].scell.sc_codes[15] == codes[31]));
+		CHECK(chips[0].cccrc.scell_pec == 0u);
+	}
+
+	// estado B (VD, VA, VR4K)
+	spi_chain_reset(1);
+	memcpy(spi_chain.devices[0].regs[code_of(RDSTATB)], "\x10\x27\x20\x4E\x30\x75", 6);
+	adBmsReadData(1, chips, RDSTATB, Status, B);
+	CHECK((chips[0].statb.vd == 10000u) && (chips[0].statb.va == 20000u) && (chips[0].statb.vr4k == 30000u));
+}
+
+// grupos e tipos que nao existem: o driver le (ou escreve zeros) e nao mexe em nada
+static void test_unknown_groups(void) {
+
+	cell_asic before;
+
+	spi_chain_reset(2);
+	memset(chips, 0x33, sizeof(chips));
+	memcpy(&before, &chips[0], sizeof(before));
+	adBmsReadData(2, chips, RDCFGA, Config, C);
+	adBmsReadData(2, chips, RDCVA, Cell, NONE);
+	adBmsReadData(2, chips, RDACA, AvgCell, NONE);
+	adBmsReadData(2, chips, RDSVA, S_volt, NONE);
+	adBmsReadData(2, chips, RDFCA, F_volt, NONE);
+	adBmsReadData(2, chips, RDAUXA, Aux, E);
+	adBmsReadData(2, chips, RDRAXA, RAux, E);
+	adBmsReadData(2, chips, RDSTATA, Status, F);
+	adBmsReadData(2, chips, RDPWM1, Pwm, C);
+	adBmsReadData(2, chips, RDCVA, Clrflag, A);   // tipo sem leitura
+	CHECK(memcmp(&before.cell, &chips[0].cell, sizeof(before.cell)) == 0);
+	CHECK(memcmp(&before.aux, &chips[0].aux, sizeof(before.aux)) == 0);
+	CHECK(memcmp(&before.stata, &chips[0].stata, sizeof(before.stata)) == 0);
+	CHECK(memcmp(&before.PwmA, &chips[0].PwmA, sizeof(before.PwmA)) == 0);
+	CHECK(spi_chain.bad_command_pec == 0u);
+
+	// PWM num grupo que nao existe: escreve zeros
+	memset(spi_chain.devices[0].regs[code_of(RDPWM1)], 0x77, 6);
+	adBmsWriteData(2, chips, WRPWM1, Pwm, C);
+	CHECK(memcmp(spi_chain.devices[0].regs[code_of(RDPWM1)], "\0\0\0\0\0\0", 6) == 0);
+
+	// as funcoes de baixo com mais slaves do que os buffers: nada no SPI
+	uint8_t buffer[8];
+	uint8_t pec[BMS_MAX_SLAVES + 1u];
+	uint8_t counters[BMS_MAX_SLAVES + 1u];
+	uint8_t data[6 * (BMS_MAX_SLAVES + 1u)];
+	uint32_t transactions = spi_chain.transactions;
+
+	memset(data, 0, sizeof(data));
+	spiReadData(BMS_MAX_SLAVES, RDCVALL, buffer, pec, counters, RDCVALL_SIZE);
+	spiWriteData(BMS_MAX_SLAVES + 1u, WRCFGA, data);
+	CHECK(spi_chain.transactions == transactions);
+}
+
 /* ================== COMANDOS ADC ================== */
 
 static void test_adc_command_encoding(void) {
@@ -529,6 +700,8 @@ int main(void) {
 	test_read_aux_status_sid();
 	test_read_all_aux_status();
 	test_out_of_range_requests();
+	test_every_read_group();
+	test_unknown_groups();
 	test_adc_command_encoding();
 	test_helpers();
 

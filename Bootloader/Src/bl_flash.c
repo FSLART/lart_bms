@@ -81,7 +81,7 @@ bool BootFlash_EraseSector(uint32_t sector_address) {
 	uint32_t size = BootLayout_SectorSize(sector);
 
 	for (uint32_t index = 0; index < size; index += 4u) {
-		if (*(volatile const uint32_t*) (sector_address + index) != 0xFFFFFFFFu) {
+		if (*(volatile const uint32_t*) (uintptr_t) (sector_address + index) != 0xFFFFFFFFu) {
 			BlDiag_FlashError(BOOT_ERR_FLASH_ERASE, offset + index, 0u);
 			return false;
 		}
@@ -110,7 +110,7 @@ bool BootFlash_Program(uint32_t address, const void *data, uint32_t length) {
 		uint32_t word;
 
 		memcpy(&word, &bytes[index], sizeof(word));
-		*(volatile uint32_t*) (address + index) = word;
+		*(volatile uint32_t*) (uintptr_t) (address + index) = word;
 		__DSB();
 		while ((FLASH->SR & FLASH_SR_BSY) != 0u) {
 		}
@@ -119,7 +119,7 @@ bool BootFlash_Program(uint32_t address, const void *data, uint32_t length) {
 	lock();
 	flush_caches();
 
-	if ((errors != 0u) || (memcmp((const void*) address, data, length) != 0)) {
+	if ((errors != 0u) || (memcmp((const void*) (uintptr_t) address, data, length) != 0)) {
 		BlDiag_FlashError(BOOT_ERR_FLASH_WRITE, offset, errors);
 		return false;
 	}

@@ -10,7 +10,8 @@
 # testes proprios: test_adi (driver da ADI contra uma cadeia ao nivel do SPI),
 # test_wrapper (mcuWrapper) e test_drivers (HAL falso em Tests/hal). O
 # test_boot corre a logica do bootloader CAN (Bootloader/Src) numa flash
-# simulada.
+# simulada; o test_boot_hw corre o bootloader inteiro, registos incluidos,
+# num STM32F412 simulado (Tests/stm32_model.c).
 #
 # Com sanitizers: EXTRA_FLAGS="-fsanitize=address,undefined" Tests/run_tests.sh
 
@@ -46,8 +47,15 @@ mkdir -p "$OUT"
 # o driver da ADI (PEC, registos, comandos) contra uma cadeia de ADBMS6830 ao nivel do SPI
 "$CC" $FLAGS $INC -o "$OUT/test_adi" Tests/test_adi.c Tests/fake_spi_chain.c \
 	Core/adbms6830/adBms6830GenericType.c Core/adbms6830/adBms6830ParseCreate.c
-# o bootloader (Bootloader/Src) com a flash simulada; -O1 porque corta a energia em cada escrita
-"$CC" $FLAGS -O1 $DEFS -ICore/boot -I../Bootloader/Src -o "$OUT/test_boot" Tests/test_boot.c $BOOT $BOOTLOADER
+# o bootloader (Bootloader/Src) com a flash simulada; -O1 porque corta a energia em cada escrita (antes das
+# FLAGS: o -O0 do coverage.sh ganha, senao o gcov conta mal as linhas)
+"$CC" -O1 $FLAGS $DEFS -ICore/boot -I../Bootloader/Src -o "$OUT/test_boot" Tests/test_boot.c $BOOT $BOOTLOADER
+# o bootloader inteiro (startup, main, bl_hw, bl_can, bl_flash) num STM32F412 simulado (Tests/stm32_model.c,
+# so x86-64 Linux; nos outros salta). O _edata do PC e do linker: o startup.c usa outro nome
+"$CC" $FLAGS -DSTM32F412Rx -Dmain=bootloader_main -D_edata=stm32_edata -ITests/stm32 -IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
+	-ICore/boot -I../Bootloader/Src -ITests -o "$OUT/test_boot_hw" Tests/test_boot_hw.c Tests/stm32_model.c \
+	../Bootloader/Src/startup.c ../Bootloader/Src/main.c ../Bootloader/Src/bl_hw.c ../Bootloader/Src/bl_can.c ../Bootloader/Src/bl_flash.c \
+	$BOOT $BOOTLOADER
 # os drivers do HAL (can_bus, uart_link, bsp) com o main.h verdadeiro e um HAL falso (Tests/hal)
 "$CC" $FLAGS -ITests/hal -ITests -ICore/Inc -ICore/comms -ICore/app -ICore/boot -ICore/config -ICore/DBC -ICore/adbms6830 \
 	-o "$OUT/test_drivers" Tests/test_drivers.c Tests/fake_hal.c Core/comms/can_bus.c Core/comms/uart_link.c Core/app/bsp.c
@@ -61,6 +69,8 @@ echo "== test_modules"; "$OUT/test_modules" || status=1
 echo "== test_wrapper"; "$OUT/test_wrapper" || status=1
 echo "== test_adi";     "$OUT/test_adi"     || status=1
 echo "== test_boot";    "$OUT/test_boot"    || status=1
+echo "== test_boot_hw"; "$OUT/test_boot_hw" > "$OUT/test_boot_hw.log" 2>&1 || { cat "$OUT/test_boot_hw.log"; status=1; }
+tail -1 "$OUT/test_boot_hw.log"
 echo "== test_drivers"; "$OUT/test_drivers" || status=1
 # o uploader (Python) contra o bootloader num bus CAN virtual, se houver python-can e cantools
 if python3 -c "import can, cantools" 2>/dev/null; then

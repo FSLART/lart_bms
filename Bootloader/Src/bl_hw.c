@@ -185,17 +185,22 @@ void BlHw_Reset(void) {
 	}
 }
 
+#if defined(__arm__)
 __attribute__((noreturn, naked)) static void start_application(uint32_t sp __attribute__((unused)), uint32_t pc __attribute__((unused))) {
 
 	__asm volatile(
 			"msr msp, r0\n"
 			"bx r1\n");
 }
+#else
+// no PC (Firmware/Tests/test_boot_hw.c) o modelo do F412 apanha o salto
+void start_application(uint32_t sp, uint32_t pc) __attribute__((noreturn));
+#endif
 
 void BlHw_Jump(uint32_t vectors) {
 
-	uint32_t sp = *(volatile const uint32_t*) vectors;
-	uint32_t pc = *(volatile const uint32_t*) (vectors + 4u);
+	uint32_t sp = *(volatile const uint32_t*) (uintptr_t) vectors;
+	uint32_t pc = *(volatile const uint32_t*) (uintptr_t) (vectors + 4u);
 
 	uart_drain();
 

@@ -199,10 +199,29 @@ usa 250 kbit/s); o do BMS fala o mesmo protocolo.
 `Firmware/Tests/run_tests.sh` corre também:
 
 - `test_boot`: a lógica do bootloader (`Bootloader/Src/bl_core.c`,
-  `bl_protocol.c`) numa flash simulada: protocolo, journal, imagens, rollback
-  por watchdog, por arranques sem confirmar, por upload interrompido, manual,
-  flash estragada, e corte de energia em cada escrita de um update
-- `test_can_upload.py`: o uploader contra o bootloader real num bus CAN virtual
-  (precisa do python-can e do cantools)
+  `bl_protocol.c`, `bl_log.c`) numa flash simulada: protocolo, journal,
+  imagens, rollback por watchdog, por arranques sem confirmar, por upload
+  interrompido, manual, flash estragada, corte de energia em cada escrita de
+  um update, e erros da flash (uma operação ou três seguidas) em cada operação
+  de um update e de um rollback. Depois de cada falha o arranque seguinte tem
+  de arrancar o firmware antigo ou o novo, nunca ficar sem nada
+- `test_boot_hw`: o bootloader inteiro (`startup.c`, `main.c`, `bl_hw.c`,
+  `bl_can.c`, `bl_flash.c` e a lógica) num STM32F412 simulado
+  (`Firmware/Tests/stm32_model.c`). Os registos ficam nos endereços
+  verdadeiros e cada escrita é apanhada (page fault + um passo do CPU), sem
+  mudar o código do bootloader. Cada arranque corre num processo novo, com a
+  flash e a RAM partilhadas entre arranques como no chip. Verifica a ordem das
+  saídas seguras, o relógio (HSE, PLL, latência da flash), o TIM2 a contar ms,
+  o bit timing e os filtros do bxCAN, a FIFO a transbordar, o CAN sem ACK ou
+  sem bus, o driver da flash com erros injetados, o IWDG, o salto para a
+  aplicação (VTOR, MSP, relógio e periféricos repostos), e um upload completo
+  trama a trama. O modelo regista o que o RM0402 não deixa fazer (escrever num
+  periférico sem relógio, filtros fora do FINIT, BTR fora do modo de init,
+  programar sem apagar, latência curta para o HCLK, ...) e o teste exige zero.
+  Só corre em x86-64 Linux; nos outros diz que salta
+- `test_can_upload.py`: o uploader (imagens, HEX, cabeçalho, TLV, SHA-256,
+  repetições, timeouts, recusas, diagnósticos, `--status`, `--reset`) e uploads
+  contra o bootloader real num bus CAN virtual (precisa do python-can e do
+  cantools)
 - no `test_system`: o lado da aplicação (confirmação, `boot`, rollback, 0x0DC e
   0x601, flags do reset)
