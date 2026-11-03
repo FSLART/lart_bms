@@ -28,12 +28,20 @@ __attribute__((section(".app_info"), used)) const boot_app_info_t boot_app_info 
 
 static uint32_t start_ms;
 
+/* Escrita pelo bootloader neste arranque: valida e com a versao dele. A
+ * aplicacao reescreve-a no arranque so com os bitrates (versao 0): um reset
+ * que nao passe pelo bootloader (debugger) ja nao a le como dele */
+static bool from_bootloader(const boot_shared_t *shared) {
+
+	return BootShared_Valid(shared) && (shared->boot_version != 0u);
+}
+
 uint32_t BootCtrl_ResetFlags(uint32_t rcc_csr) {
 
 	boot_shared_t shared;
 
 	BootShared_Read(&shared);
-	return BootShared_Valid(&shared) ? shared.reset_flags : rcc_csr;
+	return from_bootloader(&shared) ? shared.reset_flags : rcc_csr;
 }
 
 // o que o journal diz (contadores, backup)
@@ -64,7 +72,7 @@ void BootCtrl_Init(uint32_t now_ms) {
 	memset(&bms.boot, 0, sizeof(bms.boot));
 
 	BootShared_Read(&shared);
-	if (BootShared_Valid(&shared)) {
+	if (from_bootloader(&shared)) {
 		bms.boot.bootloader = true;
 		bms.boot.run = shared.run;
 		bms.boot.event = shared.event;

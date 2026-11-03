@@ -284,5 +284,5 @@ bool BootFlash_Program(uint32_t address, const void *data, uint32_t length) {
 	__HAL_FLASH_DATA_CACHE_RESET();
 	__HAL_FLASH_DATA_CACHE_ENABLE();
 
-	return ok && (memcmp((const void*) address, data, length) == 0);
+	return ok && (memcmp((const void*) (uintptr_t) address, data, length) == 0);
 }

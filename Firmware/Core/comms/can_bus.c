@@ -249,9 +249,13 @@ bool CanBus_Receive(uint8_t bus, can_frame_t *frame) {
 
 uint16_t CanBus_FreeSlots(uint8_t bus, bool high_priority) {
 
+	if (bus >= CAN_BUS_COUNT) {
+		return 0u;   // antes de fazer &tx_high[bus]: fora do array ja e UB
+	}
+
 	const frame_ring_t *ring = high_priority ? &tx_high[bus] : &tx_low[bus];
 
-	return (bus < CAN_BUS_COUNT) ? (uint16_t) (ring->size - 1u - ring_count(ring)) : 0u;
+	return (uint16_t) (ring->size - 1u - ring_count(ring));
 }
 
 bool CanBus_Send(uint8_t bus, const can_frame_t *frame, bool high_priority) {
@@ -272,6 +276,17 @@ static void fill_mailboxes(uint8_t bus, uint32_t now_ms) {
 
 	CAN_HandleTypeDef *hcan = handle_of(bus);
 	bms_can_t *status = status_of(bus);
+
+	/* Mailboxes todas presas (sem ACK, cabo solto) mais de 1 s: abortar e
+	 * seguir. Uma mailbox livre ANTES de encher = alguma trama saiu desde a
+	 * ultima volta: com o bus a andar e a fila sempre cheia nao se aborta */
+	if (HAL_CAN_GetTxMailboxesFreeLevel(hcan) > 0u) {
+		last_free_ms[bus] = now_ms;
+	} else if ((now_ms - last_free_ms[bus]) > MAILBOX_STUCK_MS) {
+		(void) HAL_CAN_AbortTxRequest(hcan, CAN_TX_MAILBOX0 | CAN_TX_MAILBOX1 | CAN_TX_MAILBOX2);
+		status->tx_dropped += 3u;
+		last_free_ms[bus] = now_ms;
+	}
 
 	while (HAL_CAN_GetTxMailboxesFreeLevel(hcan) > 0u) {
 
@@ -298,15 +313,6 @@ static void fill_mailboxes(uint8_t bus, uint32_t now_ms) {
 
 		ring_drop(queue);
 		status->tx_frames++;
-	}
-
-	// mailboxes todas presas (sem ACK, cabo solto): abortar e seguir
-	if (HAL_CAN_GetTxMailboxesFreeLevel(hcan) > 0u) {
-		last_free_ms[bus] = now_ms;
-	} else if ((now_ms - last_free_ms[bus]) > MAILBOX_STUCK_MS) {
-		(void) HAL_CAN_AbortTxRequest(hcan, CAN_TX_MAILBOX0 | CAN_TX_MAILBOX1 | CAN_TX_MAILBOX2);
-		status->tx_dropped += 3u;
-		last_free_ms[bus] = now_ms;
 	}
 }
 

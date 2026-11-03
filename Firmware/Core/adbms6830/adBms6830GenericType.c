@@ -199,33 +199,6 @@ uint16_t adi_pec10_calc_table(bool bIsRxCmd, uint8_t nLength, uint8_t *pDataBuf)
     return ((uint16_t)(nRemainder & 0x3FFu));
 }
 
-/* Method to calculate the pec 10 for given byte array 
-  param "pDataBuf" : Input, Array of bytes 
-  returns: uint16_t value of calculated PEC */
-uint16_t CalcPEC10(bool bIsRxCmd, uint8_t nLength, uint8_t *pDataBuf)
-{
-    const uint16_t pecD10 = 0x0200, XOR = 0x08F;
-    int maxBit = ((nLength - 2) * 8) + 6;
-    int bitCounter = 0;
-    uint16_t pec = 0x0010;
-    int nBytes = nLength;
-    while (true)
-    {
-        nBytes--;
-        if (nBytes < 0) return pec;
-        uint8_t iter8 = pDataBuf[nLength];
-        for (uint8_t mask = 0x80; mask > 0x00; mask >>= 1, bitCounter++)
-        {
-            if (bitCounter == maxBit) return pec;
-            bool wantXOR = ((mask & iter8) != 0) ^ ((pec & pecD10) != 0);
-            pec <<= 1;
-            if (wantXOR) pec ^= XOR;
-            pec &= 0x3FF;
-        }
-    }
-}
-
-
 /**
 *******************************************************************************
 * Function: spiSendCmd
@@ -294,7 +267,7 @@ uint8_t regData_size
 
   if((((uint16_t)regData_size * tIC) > sizeof(data)) || (regData_size > sizeof(copyArray)))
   {
-    /* Nao cabe nos buffers estaticos: nunca acontece com tIC <= BMS_MAX_SLAVES */
+    /* Nao cabe nos buffers estaticos (ver adBmsReadData) */
     return;
   }
   else
@@ -372,7 +345,8 @@ void adBmsReadData(uint8_t tIC, cell_asic *ic, uint8_t cmd_arg[2], TYPE type, GR
   else{regData_size = RX_DATA;}
   if((regData_size == 0u) || (tIC > BMS_MAX_SLAVES) || (((uint16_t)regData_size * tIC) > sizeof(read_buffer)))
   {
-    /* Tipo errado ou nao cabe nos buffers estaticos: nunca acontece com tIC <= BMS_MAX_SLAVES */
+    /* Tipo errado, ou um RD*ALL de mais slaves do que cabem nos buffers estaticos
+     * (RDCVALL: 3, RDCSALL/RDASALL: 1). A aplicacao le grupo a grupo, que cabe sempre. */
     return;
   }
   else
@@ -709,6 +683,8 @@ void adBmsWriteData(uint8_t tIC, cell_asic *ic, uint8_t cmd_arg[2], TYPE type, G
           }		
         }
         break;
+      default:   /* outro grupo: o buffer vai a zeros */
+        break;
       }
       break;
       
@@ -745,6 +721,8 @@ void adBmsWriteData(uint8_t tIC, cell_asic *ic, uint8_t cmd_arg[2], TYPE type, G
             write_buffer[(cic * data_len) + data] = ic[cic].pwmb.tx_data[data];
           }	
         }
+        break;
+      default:   /* outro grupo: o buffer vai a zeros */
         break;
       }
       break;

@@ -6,15 +6,20 @@
 #
 # O codigo do firmware entra todo tal como esta, menos o que fala com o HAL:
 # o driver da ADI e o mcuWrapper (fake_chain.c), o bsp.c, o can_bus.c e o
-# uart_link.c (fake_board.c, que tambem faz de RN4871 e de ISA). O test_boot
-# corre a logica do bootloader CAN (Bootloader/Src) numa flash simulada.
+# uart_link.c (fake_board.c, que tambem faz de RN4871 e de ISA). Esses tem
+# testes proprios: test_adi (driver da ADI contra uma cadeia ao nivel do SPI),
+# test_wrapper (mcuWrapper) e test_drivers (HAL falso em Tests/hal). O
+# test_boot corre a logica do bootloader CAN (Bootloader/Src) numa flash
+# simulada.
+#
+# Com sanitizers: EXTRA_FLAGS="-fsanitize=address,undefined" Tests/run_tests.sh
 
 set -e
 cd "$(dirname "$0")/.."
 
 CC="${CC:-gcc}"
 OUT="${OUT:-${TMPDIR:-/tmp}/lart_bms_tests}"   # fora do repo: nada para ignorar no git
-FLAGS="-std=gnu11 -Wall -Wextra -g -Wno-unused-parameter"
+FLAGS="-std=gnu11 -Wall -Wextra -g -Wno-unused-parameter ${EXTRA_FLAGS:-}"
 INC="-ITests/stubs -ITests -ICore/Inc -ICore/adbms6830 -ICore/DBC -ICore/config -ICore/comms -ICore/app -ICore/boot"
 DEFS="-DBOOT_HOST_TEST"   # a flash e a RAM do bootloader sao arrays (boot_layout.h)
 BOOT="Core/boot/boot_hash.c Core/boot/boot_image.c Core/boot/boot_journal.c Core/boot/boot_shared.c Core/boot/boot_names.c"
@@ -34,15 +39,29 @@ mkdir -p "$OUT"
 
 "$CC" $FLAGS $DEFS $INC -o "$OUT/test_adbms" Tests/test_adbms.c $APP -lm
 "$CC" $FLAGS $DEFS $INC -o "$OUT/test_system" Tests/test_system.c $APP -lm
+"$CC" $FLAGS $DEFS $INC -o "$OUT/test_config" Tests/test_config.c $APP -lm
+"$CC" $FLAGS $DEFS $INC -o "$OUT/test_comms" Tests/test_comms.c $APP -lm
+"$CC" $FLAGS $DEFS $INC -o "$OUT/test_modules" Tests/test_modules.c $APP -lm
 "$CC" $FLAGS $INC -o "$OUT/test_wrapper" Tests/test_wrapper.c Core/adbms6830/mcuWrapper.c
+# o driver da ADI (PEC, registos, comandos) contra uma cadeia de ADBMS6830 ao nivel do SPI
+"$CC" $FLAGS $INC -o "$OUT/test_adi" Tests/test_adi.c Tests/fake_spi_chain.c \
+	Core/adbms6830/adBms6830GenericType.c Core/adbms6830/adBms6830ParseCreate.c
 # o bootloader (Bootloader/Src) com a flash simulada; -O1 porque corta a energia em cada escrita
 "$CC" $FLAGS -O1 $DEFS -ICore/boot -I../Bootloader/Src -o "$OUT/test_boot" Tests/test_boot.c $BOOT $BOOTLOADER
+# os drivers do HAL (can_bus, uart_link, bsp) com o main.h verdadeiro e um HAL falso (Tests/hal)
+"$CC" $FLAGS -ITests/hal -ITests -ICore/Inc -ICore/comms -ICore/app -ICore/boot -ICore/config -ICore/DBC -ICore/adbms6830 \
+	-o "$OUT/test_drivers" Tests/test_drivers.c Tests/fake_hal.c Core/comms/can_bus.c Core/comms/uart_link.c Core/app/bsp.c
 
 status=0
 echo "== test_adbms";   "$OUT/test_adbms"   || status=1
 echo "== test_system";  "$OUT/test_system"  || status=1
+echo "== test_config";  "$OUT/test_config"  || status=1
+echo "== test_comms";   "$OUT/test_comms"   || status=1
+echo "== test_modules"; "$OUT/test_modules" || status=1
 echo "== test_wrapper"; "$OUT/test_wrapper" || status=1
+echo "== test_adi";     "$OUT/test_adi"     || status=1
 echo "== test_boot";    "$OUT/test_boot"    || status=1
+echo "== test_drivers"; "$OUT/test_drivers" || status=1
 # o uploader (Python) contra o bootloader num bus CAN virtual, se houver python-can e cantools
 if python3 -c "import can, cantools" 2>/dev/null; then
 	echo "== test_can_upload"

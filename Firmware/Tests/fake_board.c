@@ -22,6 +22,9 @@ void fake_board_reset(void) {
 	board.isa_pack_present = true;
 	board.isa_pack_bus_mV = -1;
 	board.isa_handcart_mV = -1;
+	board.adc_temp_raw = 1000;
+	board.adc_vref_raw = 1500;      // com o VREFINT_CAL a 1500: VDDA = 3,3 V
+	board.adc_current_raw = 2172;   // ~100 mA no MCS1802 (264 mV/A, zero a VDDA/2)
 	fake_can_clear();
 	fake_uart_clear(0);
 	fake_uart_clear(1);
@@ -55,10 +58,10 @@ uint8_t Bsp_ReadInputs(void) {
 	return inputs;
 }
 
+// nos testes o "pino" do EXTI e o proprio bit BSP_IN_* (o mapa verdadeiro testa-se no test_drivers)
 uint8_t Bsp_InputFromPin(uint16_t gpio_pin) {
 
-	(void) gpio_pin;
-	return 0;
+	return (gpio_pin <= BSP_IN_SDC) ? (uint8_t) gpio_pin : 0u;
 }
 
 void Bsp_SetContactors(bool air_pos, bool air_neg, bool precharge) {
@@ -92,15 +95,20 @@ void Bsp_AdcStart(void) {
 
 bool Bsp_AdcAverage(uint16_t *temp_raw, uint16_t *vref_raw, uint16_t *current_raw) {
 
-	*temp_raw = 1000;
-	*vref_raw = 1500;     // com o VREFINT_CAL a 1500: VDDA = 3,3 V
-	*current_raw = 2172;  // ~100 mA no MCS1802 (264 mV/A, zero a VDDA/2)
-	return true;
+	*temp_raw = board.adc_temp_raw;
+	*vref_raw = board.adc_vref_raw;
+	*current_raw = board.adc_current_raw;
+	return board.adc_vref_raw != 0u;
 }
 
 uint32_t Bsp_AdcConversions(void) {
 
-	return HAL_GetTick() / 33u;   // um buffer a cada ~33 ms
+	static uint32_t frozen;
+
+	if (!board.adc_stalled) {
+		frozen = HAL_GetTick() / 33u;   // um buffer a cada ~33 ms
+	}
+	return frozen;
 }
 
 uint16_t Bsp_VrefintCal(void) {
@@ -125,7 +133,8 @@ bool Bsp_EepromPresent(void) {
 
 bool Bsp_EepromRead(uint16_t address, uint8_t *data, uint16_t length) {
 
-	if (!board.eeprom_present || ((uint32_t) address + length > BSP_EEPROM_SIZE) || ((int32_t) (HAL_GetTick() - board.eeprom_busy_until_ms) < 0)) {
+	if (!board.eeprom_present || board.eeprom_fail_reads || ((uint32_t) address + length > BSP_EEPROM_SIZE)
+			|| ((int32_t) (HAL_GetTick() - board.eeprom_busy_until_ms) < 0)) {
 		return false;
 	}
 	memcpy(data, &board.eeprom[address], length);
@@ -140,6 +149,9 @@ bool Bsp_EepromWritePage(uint16_t address, const uint8_t *data, uint8_t length) 
 		return false;
 	}
 	memcpy(&board.eeprom[address], data, length);
+	if (board.eeprom_corrupt_writes) {
+		board.eeprom[address] ^= 0x01u;
+	}
 	board.eeprom_busy_until_ms = HAL_GetTick() + 5u;
 	board.eeprom_page_writes++;
 	if (length > board.eeprom_max_page_bytes) {
@@ -150,10 +162,12 @@ bool Bsp_EepromWritePage(uint16_t address, const uint8_t *data, uint8_t length) 
 
 bool Bsp_EepromReady(void) {
 
-	return board.eeprom_present && ((int32_t) (HAL_GetTick() - board.eeprom_busy_until_ms) >= 0);
+	return board.eeprom_present && !board.eeprom_stuck_busy && ((int32_t) (HAL_GetTick() - board.eeprom_busy_until_ms) >= 0);
 }
 
 void Bsp_EepromRecover(void) {
+
+	board.eeprom_recoveries++;
 }
 
 void Bsp_SystemReset(void) {
@@ -443,11 +457,18 @@ static void rn4871_receive(const char *data, uint16_t length) {
 		rn_line[rn_line_length] = '\0';
 		rn_line_length = 0;
 
+		if (board.rn_silent) {
+			continue;
+		}
 		if (strcmp(rn_line, "GN") == 0) {
 			char reply[sizeof(board.rn_name) + 16u];
 			snprintf(reply, sizeof(reply), "%s\r\nCMD> ", board.rn_name);
 			fake_uart_inject(UART_LINK_2, reply);
 		} else if (strncmp(rn_line, "SN,", 3) == 0) {
+			if (board.rn_sn_error) {
+				fake_uart_inject(UART_LINK_2, "Err\r\nCMD> ");
+				continue;
+			}
 			snprintf(board.rn_name, sizeof(board.rn_name), "%.31s", &rn_line[3]);
 			fake_uart_inject(UART_LINK_2, "AOK\r\nCMD> ");
 		} else if (strcmp(rn_line, "---") == 0) {
@@ -475,6 +496,10 @@ void UartLink_Init(void) {
 
 bool UartLink_Write(uint8_t link, const void *data, uint16_t length) {
 
+	if (board.uart_reject[link]) {
+		((link == UART_LINK_2) ? &bms.uart2 : &bms.uart1)->frames_dropped++;
+		return false;
+	}
 	if (link == UART_LINK_2) {
 		rn4871_receive((const char*) data, length);
 	} else {
@@ -492,8 +517,7 @@ uint16_t UartLink_Free(uint8_t link) {
 
 bool UartLink_TxIdle(uint8_t link) {
 
-	(void) link;
-	return true;
+	return !board.uart_tx_busy[link];
 }
 
 uint16_t UartLink_Read(uint8_t link, uint8_t *out, uint16_t max_length) {

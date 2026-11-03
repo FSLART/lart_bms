@@ -9,6 +9,9 @@
 
 #include "fake_chain.h"
 #include "fake_board.h"
+#include "adbms_cell_read.h"
+#include "adbms_temp_read.h"
+#include "adbms_open_wire.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -605,6 +608,92 @@ static void test_balancing_stops_without_data(void) {
 	CHECK(bms.balancing.cells_discharging == 0u);   // nunca descarregar as cegas
 }
 
+/* ================== ESTADOS ESTRAGADOS E CANTOS ================== */
+
+// um estado fora do enum (RAM estragada) acaba o ciclo em vez de ficar preso
+static void test_corrupted_states_recover(void) {
+
+	boot();
+
+	bms.adbms.cell_read = (cell_read_state_t) 77;
+	CHECK(CellRead_Step());
+	CHECK(bms.adbms.cell_read == CELL_READ_DONE);
+	CHECK(CellRead_Step());   // DONE: acabou
+
+	bms.adbms.temp_read = (temp_read_state_t) 77;
+	CHECK(TempRead_Step());
+	CHECK(bms.adbms.temp_read == TEMP_READ_DONE);
+	CHECK(TempRead_Step());
+
+	bms.adbms.open_wire = (open_wire_state_t) 77;
+	CHECK(OpenWire_Step());
+	CHECK(bms.adbms.open_wire == OPEN_WIRE_DONE);
+	CHECK(OpenWire_Step());
+
+	// a maquina principal: um estado desconhecido vai para FAULT e a cadeia volta a acordar
+	bms.adbms.state = (adbms_state_t) 77;
+	ADBMS_Run();
+	CHECK(bms.adbms.state == ADBMS_FAULT);
+	run_ms(3000);
+	CHECK(bms.cells.cells_valid);
+}
+
+// PEC errado nas leituras de AUX e de AUX redundante: contam nas flags de cada tipo
+static void test_aux_pec_flags(void) {
+
+	boot();
+	chain.pec_type = Aux;
+	chain.pec_always[2] = true;
+	run_cycles(2);
+	CHECK((bms.pec.flags[2] & PEC_FLAG_AUX) != 0u);
+	CHECK(bms.pec.total > 0u);
+
+	boot();
+	chain.pec_type = RAux;
+	chain.pec_always[3] = true;
+	run_cycles(2);
+	CHECK((bms.pec.flags[3] & PEC_FLAG_RAUX) != 0u);
+}
+
+// o DCC escrito nao volta igual na leitura: para o balanceamento e escreve zeros
+static void test_balancing_dcc_write_fails(void) {
+
+	boot();
+	bms.precharge.state = KILL;
+	chain.cell_mV[0][0] = 3760;
+	run_cycles(2);
+	CHECK(bms.balancing.cells_discharging > 0u);
+
+	chain.pec_type = Config;
+	chain.pec_always[0] = true;   // o CFGB lido nunca bate
+	run_cycles(2);
+	CHECK(bms.balancing.cells_discharging == 0u);
+	CHECK(bms.balancing.stage == BALANCING_OFF);
+	chain.pec_always[0] = false;
+}
+
+// NTC: o GPIO a 0 V ou no VREF2 nao e uma temperatura
+static void test_ntc_rail_values(void) {
+
+	boot();
+	chain.gpio_mV[1][0] = 0;
+	chain.gpio_mV[2][0] = chain.vref2_mV[2];
+	run_ms(300);
+	CHECK(bms.cells.ntc_open_wire[1][0]);
+	CHECK(bms.cells.ntc_open_wire[2][0]);
+}
+
+// NTC a mais na config: corta ao maximo e o arranque diz que a config nao bate
+static void test_init_clamps_ntcs(void) {
+
+	fake_reset();
+	memset(&bms, 0, sizeof(bms));
+	brain_start();
+	bms.config.ntcs_per_slave = BMS_MAX_NTCS + 1u;
+	CHECK(!ADBMS_Init());
+	CHECK(bms.config.ntcs_per_slave == BMS_MAX_NTCS);
+}
+
 /* ================== MAIN ================== */
 
 typedef struct {
@@ -618,6 +707,11 @@ int main(void) {
 
 	const test_t tests[] = {
 		TEST(test_code_conversion),
+		TEST(test_corrupted_states_recover),
+		TEST(test_aux_pec_flags),
+		TEST(test_balancing_dcc_write_fails),
+		TEST(test_ntc_rail_values),
+		TEST(test_init_clamps_ntcs),
 		TEST(test_healthy_chain),
 		TEST(test_cycle_timing),
 		TEST(test_wakes_sleeping_chain),

@@ -32,6 +32,10 @@ typedef struct {
 	uint8_t  eeprom[BSP_EEPROM_SIZE];
 	bool     eeprom_present;
 	bool     eeprom_fail_writes;
+	bool     eeprom_fail_reads;
+	bool     eeprom_stuck_busy;         // nunca acaba a escrita interna (sem ACK para sempre)
+	bool     eeprom_corrupt_writes;     // grava outra coisa (a verificacao tem de apanhar)
+	uint32_t eeprom_recoveries;         // Bsp_EepromRecover
 	uint32_t eeprom_busy_until_ms;     // escrita interna (tWC) a decorrer
 	uint32_t eeprom_page_writes;
 	uint32_t eeprom_max_page_bytes;
@@ -43,7 +47,17 @@ typedef struct {
 	uint32_t flash_programs;           // escritas no journal do bootloader
 	// RN4871
 	bool     rn_dead;                  // nao responde a nada
+	bool     rn_silent;                // entra em modo de comando mas nao responde aos comandos
+	bool     rn_sn_error;              // responde Err ao SN
 	char     rn_name[32];
+	// ADC da placa (medias por canal) e o DMA
+	uint16_t adc_temp_raw;
+	uint16_t adc_vref_raw;             // 0 = sem medida (Bsp_AdcAverage = false)
+	uint16_t adc_current_raw;
+	bool     adc_stalled;              // o DMA parou: o contador de buffers nao anda
+	// UART
+	bool     uart_tx_busy[2];          // o DMA nunca acaba (UartLink_TxIdle = false)
+	bool     uart_reject[2];           // o ring de TX esta cheio (UartLink_Write = false)
 	// ISA IVT-S: tramas de corrente e U1 a cada 25 ms enquanto presentes
 	bool     isa_pack_present;
 	int32_t  isa_pack_current_mA;
